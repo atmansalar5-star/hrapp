@@ -1,0 +1,5428 @@
+{
+  "generatedBy": "tools/gen/gen.mjs",
+  "roles": [
+    "admin",
+    "hr_manager",
+    "hr_spec",
+    "line_manager",
+    "employee"
+  ],
+  "actions": [
+    "read",
+    "write",
+    "delete",
+    "approve",
+    "report",
+    "admin"
+  ],
+  "sharedGroupTitleFa": "مشترک با سایر واحدها",
+  "directorates": [
+    {
+      "id": "hr_capital",
+      "order": 1,
+      "titleFa": "مدیریت سرمایه‌های انسانی",
+      "titleEn": "Human Capital Management",
+      "dutiesFa": [
+        "راهبری ادارات منابع انسانی: امور کارکنان، برنامه‌ریزی نیروی انسانی، روابط کار، آموزش، آمار و برون‌سپاری",
+        "تصویب سیاست‌ها، دستورالعمل‌ها و پارامترهای منابع انسانی در سطح سازمان"
+      ]
+    },
+    {
+      "id": "corporate",
+      "order": 2,
+      "titleFa": "حوزهٔ ستادی سازمان",
+      "titleEn": "Corporate Staff",
+      "dutiesFa": [
+        "داشبورد مدیریتی و پایش شاخص‌های کلان سازمان",
+        "راهبری سامانه: کاربران، دسترسی‌ها، پارامترها و پروفایل شرکت‌ها"
+      ]
+    }
+  ],
+  "departments": [
+    {
+      "id": "core",
+      "order": 1,
+      "directorate": "corporate",
+      "titleFa": "داشبورد",
+      "titleEn": "Dashboard",
+      "dutiesFa": [
+        "نمای کلی شاخص‌های سازمان و واحد بر پایهٔ نقش کاربر",
+        "دسترسی سریع به اقدام‌های در انتظار تأیید"
+      ],
+      "subUnits": []
+    },
+    {
+      "id": "staff_affairs",
+      "order": 2,
+      "directorate": "hr_capital",
+      "titleFa": "واحد امور کارکنان",
+      "titleEn": "Staff Affairs Unit",
+      "dutiesFa": [
+        "کارگزینی و خدمات پرسنلی: پرونده، مدارک، گواهی اشتغال، تسویه‌حساب و پاسخ به درخواست‌های کارکنان",
+        "انعقاد، تمدید و پایان قرارداد کار بر پایهٔ قراردادهای مدت موقت و مدت دائم",
+        "افراد تحت تکفل: ثبت وابستگان، پوشش بیمه و مدارک تکفل",
+        "درخواست پرواز: ثبت درخواست سفر هوایی کارکنان، تأیید و پیگیری صدور بلیت",
+        "بایگانی و شناسایی کارکنان: پروندهٔ پرسنلی، مدارک هویتی و کارت شناسایی",
+        "جبران خدمات: حضور و غیاب، کارانه، مرخصی، اضافه‌کاری، حقوق و دستمزد، احکام حقوق، رفاه، سرویس مدارس و اسکان",
+        "امور وام، بازنشستگی و پیگیری پرونده‌های بازنشستگی و تسویه",
+        "طبقه‌بندی مشاغل با تعامل واحد برون‌سپاری"
+      ],
+      "subUnits": [
+        {
+          "id": "personnel_services",
+          "order": 1,
+          "titleFa": "کارگزینی و خدمات پرسنلی",
+          "dutiesFa": [
+            "کارگزینی: نگهداری پرونده و انجام خدمت‌های پرسنلی کارکنان",
+            "انعقاد، تمدید و پایان قرارداد کار (مدت موقت و مدت دائم) و صدور گواهی‌ها",
+            "افراد تحت تکفل و درخواست‌های کارکنان مانند درخواست پرواز و تسویه‌حساب پایان همکاری"
+          ]
+        },
+        {
+          "id": "records_identity",
+          "order": 2,
+          "titleFa": "بایگانی و شناسایی کارکنان",
+          "dutiesFa": [
+            "بایگانی اسناد پرسنلی، امانت و تحویل مدارک",
+            "شناسایی کارکنان، مدارک هویتی و کارت شناسایی"
+          ]
+        },
+        {
+          "id": "job_classification",
+          "order": 3,
+          "titleFa": "طبقه‌بندی مشاغل",
+          "dutiesFa": [
+            "طبقه‌بندی، رتبه‌بندی و ارزشیابی مشاغل سازمان",
+            "تعامل با واحد برون‌سپاری برای مشاغل پیمانکاری و ارکان ثالث"
+          ]
+        },
+        {
+          "id": "compensation",
+          "order": 4,
+          "titleFa": "جبران خدمات",
+          "dutiesFa": [
+            "حضور و غیاب، مرخصی، ماموریت و اضافه‌کاری",
+            "حقوق و دستمزد، کارانه و پرداخت‌های متغیر",
+            "احکام حقوق: صدور، اصلاح و ابلاغ حکم حقوقی کارکنان",
+            "گواهی اشتغال: صدور گواهی اشتغال به کار و تاییدیه‌های بانکی و سفارتی",
+            "رفاه، سرویس مدارس، تورهای رفاهی و اسکان کارکنان"
+          ]
+        },
+        {
+          "id": "loans_retirement",
+          "order": 5,
+          "titleFa": "امور وام و بازنشستگی",
+          "dutiesFa": [
+            "وام کارکنان، اقساط و بازپرداخت",
+            "پرونده‌های بازنشستگی و هماهنگی با صندوق و تأمین اجتماعی"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hr_planning",
+      "order": 3,
+      "directorate": "hr_capital",
+      "titleFa": "واحد برنامه‌ریزی نیروی انسانی",
+      "titleEn": "Human Resources Planning Unit",
+      "dutiesFa": [
+        "انتصابات و ابلاغ‌های سازمانی",
+        "ترفیعات و ارتقای گروه شغلی",
+        "ساختار سازمانی، تشکیلات و شناسنامهٔ پست‌ها",
+        "کارراههٔ شغلی و جانشین‌پروری",
+        "تأمین و جذب نیرو و مدیریت عملکرد"
+      ],
+      "subUnits": [
+        {
+          "id": "org_design",
+          "order": 1,
+          "titleFa": "ساختار سازمانی و تشکیلات",
+          "dutiesFa": [
+            "نمودار سازمانی، پست‌های مصوب و ظرفیت تشکیلاتی",
+            "شناسنامهٔ پست و شرح شغل"
+          ]
+        },
+        {
+          "id": "assignments",
+          "order": 2,
+          "titleFa": "انتصابات، ترفیعات و کارراههٔ شغلی",
+          "dutiesFa": [
+            "صدور ابلاغ انتصاب، جابه‌جایی و پایان تصدی",
+            "بررسی ترفیع و ارتقای گروه شغلی",
+            "مسیر شغلی و جانشین‌پروری"
+          ]
+        },
+        {
+          "id": "talent_acquisition",
+          "order": 3,
+          "titleFa": "تأمین و جذب نیرو",
+          "dutiesFa": [
+            "نیازسنجی نیرو، مجوز استخدام و آگهی‌ها",
+            "غربالگری، مصاحبه و فرایند جذب"
+          ]
+        },
+        {
+          "id": "performance_management",
+          "order": 4,
+          "titleFa": "مدیریت عملکرد",
+          "dutiesFa": [
+            "دوره‌های ارزیابی عملکرد و فرم‌های ارزیابی",
+            "تحلیل نتایج و پیوند آن با ترفیع، آموزش و کارانه"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "labor_relations",
+      "order": 4,
+      "directorate": "hr_capital",
+      "titleFa": "واحد روابط کار و مددکاری اجتماعی",
+      "titleEn": "Labor Relations & Social Work Unit",
+      "dutiesFa": [
+        "کمیتهٔ انضباط کار: پرونده‌ها، جلسات و آرای انضباطی",
+        "شکایات کارکنان و امور ایثارگران",
+        "مددکاری اجتماعی: پرونده‌های مددکاری و کمک‌های موردی",
+        "درمان، معاینات دوره‌ای، طب کار و خدمات درمانی"
+      ],
+      "subUnits": [
+        {
+          "id": "discipline",
+          "order": 1,
+          "titleFa": "کمیتهٔ انضباط کار",
+          "dutiesFa": [
+            "تشکیل پروندهٔ تخلف و ارجاع به کمیته",
+            "صورت‌جلسه، رأی و پیگیری اجرای رأی"
+          ]
+        },
+        {
+          "id": "complaints_veterans",
+          "order": 2,
+          "titleFa": "شکایات و امور ایثارگران",
+          "dutiesFa": [
+            "ثبت و رسیدگی به شکایات کارکنان",
+            "امور ایثارگران، جانبازان و خانوادهٔ شهدا"
+          ]
+        },
+        {
+          "id": "social_work",
+          "order": 3,
+          "titleFa": "مددکاری اجتماعی",
+          "dutiesFa": [
+            "پرونده‌های مددکاری و بررسی وضعیت رفاهی-اجتماعی",
+            "کمک‌های موردی و معرفی به مراجع حمایتی"
+          ]
+        },
+        {
+          "id": "medical",
+          "order": 4,
+          "titleFa": "درمان، معاینات دوره‌ای و خدمات درمانی",
+          "dutiesFa": [
+            "پروندهٔ درمان و بازپرداخت هزینه‌های درمانی",
+            "معاینات دوره‌ای و طب کار",
+            "پوشش بیمهٔ درمان و خدمات تکمیلی"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "training_coordination",
+      "order": 5,
+      "directorate": "hr_capital",
+      "titleFa": "واحد هماهنگی آموزش",
+      "titleEn": "Training Coordination Unit",
+      "dutiesFa": [
+        "از برنامه‌ریزی آموزشی تا اجرا و هماهنگی اجرای دوره‌های آموزشی",
+        "نیازسنجی آموزشی و تعیین اولویت‌ها",
+        "سوابق آموزشی و گواهی‌نامه‌ها"
+      ],
+      "subUnits": [
+        {
+          "id": "training_cycle",
+          "order": 1,
+          "titleFa": "چرخهٔ آموزش: برنامه‌ریزی، نیازسنجی، اجرا و سوابق",
+          "dutiesFa": [
+            "تدوین برنامهٔ آموزشی سالانه و تقویم دوره‌ها",
+            "نظارت بر اجرا، ارزشیابی اثربخشی و ثبت سوابق"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "statistics",
+      "order": 6,
+      "directorate": "hr_capital",
+      "titleFa": "واحد آمار و گزارشات",
+      "titleEn": "Statistics & Reporting Unit",
+      "dutiesFa": [
+        "بررسی و تأیید حضور و غیاب و تردد، اطلاعات پایهٔ حقوق و مزایا، مرخصی‌ها، ماموریت‌ها و کارانه",
+        "تولید گزارش‌های مدیریتی و داشبوردهای تحلیلی",
+        "بررسی و تأیید جابه‌جایی و معرفی کارکنان"
+      ],
+      "subUnits": [
+        {
+          "id": "data_control",
+          "order": 1,
+          "titleFa": "آمار، پایش و تأیید اطلاعات پایه",
+          "dutiesFa": [
+            "کنترل و تأیید داده‌های پایهٔ حضور، حقوق، مرخصی، ماموریت و کارانه",
+            "پایش انحراف داده‌ها پیش از اجرای پرداخت"
+          ]
+        },
+        {
+          "id": "staffing_moves",
+          "order": 2,
+          "titleFa": "جابه‌جایی و معرفی کارکنان",
+          "dutiesFa": [
+            "بررسی و تأیید جابه‌جایی کارکنان میان واحدها",
+            "معرفی کارکنان و ابلاغ به واحد مقصد"
+          ]
+        },
+        {
+          "id": "management_reports",
+          "order": 3,
+          "titleFa": "گزارش‌های مدیریتی",
+          "dutiesFa": [
+            "گزارش‌های مدیریتی و تحلیلی سازمانی",
+            "خروجی Excel و PDF و زمان‌بندی گزارش‌ها"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "outsourcing",
+      "order": 7,
+      "directorate": "hr_capital",
+      "titleFa": "واحد برون‌سپاری",
+      "titleEn": "Outsourcing Unit",
+      "dutiesFa": [
+        "کنترل حقوق و دستمزد نیروهای ارکان ثالث و پیمانکاری",
+        "تحلیل و پیگیری پرونده‌های سخت و زیان‌آور با تأمین اجتماعی",
+        "طبقه‌بندی مشاغل با تعامل واحد امور کارکنان"
+      ],
+      "subUnits": [
+        {
+          "id": "third_party_payroll",
+          "order": 1,
+          "titleFa": "کنترل حقوق و تحلیل نیروهای ارکان ثالث",
+          "dutiesFa": [
+            "کنترل و انطباق حقوق نیروهای پیمانکاری با قانون کار",
+            "تحلیل هزینه، ترکیب نیرو و شاخص‌های پیمانکاران"
+          ]
+        },
+        {
+          "id": "hardship",
+          "order": 2,
+          "titleFa": "پرونده‌های سخت و زیان‌آور و تأمین اجتماعی",
+          "dutiesFa": [
+            "تشخیص و پیگیری مشاغل سخت و زیان‌آور",
+            "هماهنگی پرونده‌ها با سازمان تأمین اجتماعی"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hr_studies",
+      "order": 8,
+      "directorate": "hr_capital",
+      "titleFa": "واحد مطالعات منابع انسانی",
+      "titleEn": "HR Studies Unit",
+      "dutiesFa": [
+        "مطالعات و پژوهش‌های منابع انسانی زیر نظر مدیریت سرمایه‌های انسانی",
+        "نظرسنجی، جو سازمانی و شاخص‌های سرمایهٔ انسانی",
+        "نظام پیشنهادها و بهبود مستمر"
+      ],
+      "subUnits": [
+        {
+          "id": "research",
+          "order": 1,
+          "titleFa": "مطالعات و پژوهش",
+          "dutiesFa": [
+            "پژوهش‌های منابع انسانی و پیوند با مراکز علمی",
+            "طراحی و بازنگری دستورالعمل‌های منابع انسانی"
+          ]
+        },
+        {
+          "id": "surveys",
+          "order": 2,
+          "titleFa": "نظرسنجی و جو سازمانی",
+          "dutiesFa": [
+            "نظرسنجی از کارکنان و سنجش رضایت و جو سازمانی",
+            "تحلیل نتایج و ارائهٔ اقدام‌های اصلاحی"
+          ]
+        },
+        {
+          "id": "hr_metrics",
+          "order": 3,
+          "titleFa": "شاخص‌ها و نظام پیشنهادها",
+          "dutiesFa": [
+            "شاخص‌های کلیدی سرمایهٔ انسانی",
+            "دریافت، ارزیابی و پاداش پیشنهادهای کارکنان"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "platform",
+      "order": 9,
+      "directorate": "corporate",
+      "titleFa": "تنظیمات سامانه",
+      "titleEn": "Platform Settings",
+      "dutiesFa": [
+        "کاربران، نقش‌ها و ماتریس دسترسی",
+        "پارامترهای سازمانی، پروفایل شرکت‌ها و شبیه‌سازی پارامتریک برای شرکت‌های دیگر",
+        "لاگ حسابرسی"
+      ],
+      "subUnits": [
+        {
+          "id": "access",
+          "order": 1,
+          "titleFa": "کاربران و دسترسی‌ها",
+          "dutiesFa": [
+            "مدیریت کاربران و نقش‌ها",
+            "ماتریس دسترسی نقش × ماژول"
+          ]
+        },
+        {
+          "id": "org_params",
+          "order": 2,
+          "titleFa": "پارامترها و پروفایل شرکت‌ها",
+          "dutiesFa": [
+            "پارامترهای سامانه و پارامترهای حقوقی-مالی",
+            "پروفایل شرکت‌ها و فعال/غیرفعال کردن ماژول‌ها برای هر شرکت"
+          ]
+        },
+        {
+          "id": "governance",
+          "order": 3,
+          "titleFa": "پایش و حسابرسی",
+          "dutiesFa": [
+            "لاگ حسابرسی و ردگیری رویدادهای امنیتی"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sports",
+      "order": 10,
+      "directorate": "hr_capital",
+      "titleFa": "واحد امور ورزش",
+      "titleEn": "Sports Affairs Unit",
+      "dutiesFa": [
+        "برنامه‌ریزی و اجرای فعالیت‌های ورزشی کارکنان و خانوادهٔ آنان",
+        "رشته‌های ورزشی، اماکن و تجهیزات ورزشی سازمان",
+        "رویدادها، مسابقات و المپیادهای ورزشی درون و برون‌سازمانی"
+      ],
+      "subUnits": [
+        {
+          "id": "sports_programs",
+          "order": 1,
+          "titleFa": "رشته‌ها و برنامه‌های ورزشی",
+          "dutiesFa": [
+            "تعریف رشته‌های ورزشی، مربی و برنامهٔ تمرین",
+            "ثبت‌نام کارکنان و خانواده در رشته‌های ورزشی"
+          ]
+        },
+        {
+          "id": "sports_events",
+          "order": 2,
+          "titleFa": "رویدادها و مسابقات ورزشی",
+          "dutiesFa": [
+            "برگزاری مسابقات و المپیادهای ورزشی",
+            "ثبت نتیجه، شرکت‌کنندگان و تقدیر از برگزیدگان"
+          ]
+        }
+      ]
+    }
+  ],
+  "organizations": [
+    {
+      "id": "bandar_imam",
+      "order": 1,
+      "titleFa": "پتروشیمی بندر امام",
+      "titleEn": "Bandar Imam Petrochemical Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "BIPC",
+      "employeeCodePrefix": "BIPC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🏭",
+      "headcount": 4200,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "استقرار مرجع سامانه؛ همهٔ ادارات فعال. مشاغل عملیاتی سخت و زیان‌آور و نیروهای ارکان ثالث زیر نظر واحد برون‌سپاری پایش می‌شوند."
+    },
+    {
+      "id": "holding_hq",
+      "order": 2,
+      "titleFa": "ستاد هلدینگ خلیج فارس",
+      "titleEn": "Persian Gulf Holding HQ",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "PGH",
+      "employeeCodePrefix": "PGH",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🏛️",
+      "headcount": 320,
+      "enabledDepartments": [
+        "core",
+        "hr_planning",
+        "hr_studies",
+        "statistics",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "hrstudies",
+        "settings"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "168",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "semiannual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "استقرار ستادی برای شرکت مادر: برنامه‌ریزی نیروی انسانی، مطالعات، آمار و گزارش‌های تجمیعی شرکت‌های زیرمجموعه. ادارات عملیاتی (امور کارکنان، روابط کار، آموزش و برون‌سپاری) در این استقرار غیرفعال‌اند تا سامانه با دادهٔ شرکت‌های زیرمجموعه کار کند."
+    },
+    {
+      "id": "petro_company",
+      "order": 3,
+      "titleFa": "شرکت پتروشیمی نمونه",
+      "titleEn": "Sample Petrochemical Company",
+      "holdingFa": "هلدینگ نمونه",
+      "shortCode": "SPC",
+      "employeeCodePrefix": "SPC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "⚗️",
+      "headcount": 850,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "platform"
+      ],
+      "disabledModules": [
+        "jobclass"
+      ],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "settings"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "180",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "quarterly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "نمونهٔ شبیه‌سازی یک شرکت پتروشیمی دیگر: بدون واحد برون‌سپاری و مطالعات، و با دورهٔ کارانهٔ فصلی. برای دیدن اثر پارامتریک بودن سامانه ساخته شده است."
+    },
+    {
+      "id": "contractor_services",
+      "order": 4,
+      "titleFa": "شرکت خدمات و پیمانکاری نمونه",
+      "titleEn": "Sample Contracting & Services Company",
+      "holdingFa": "هلدینگ نمونه",
+      "shortCode": "CSC",
+      "employeeCodePrefix": "CSC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🛠️",
+      "headcount": 1500,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "outsourcing",
+        "statistics",
+        "platform"
+      ],
+      "disabledModules": [
+        "loans_retirement",
+        "jobclass"
+      ],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "settings"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "192",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "0",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "شرکت پیمانکاری با نیروهای ارکان ثالث: تمرکز روی حضور و غیاب، حقوق پیمانکاران، مشاغل سخت و زیان‌آور و آمار. سال مالی از ابتدای تیر آغاز می‌شود و مهلت تأخیر مجاز صفر است."
+    },
+    {
+      "id": "bu_ali_sina",
+      "order": 5,
+      "titleFa": "پتروشیمی بوعلی سینا",
+      "titleEn": "Bu Ali Sina Petrochemical Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "BASP",
+      "employeeCodePrefix": "BASP",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🧪",
+      "headcount": 950,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "شرکت زیرمجموعهٔ هلدینگ خلیج فارس؛ تولید الفین و آروماتیک در بندر امام."
+    },
+    {
+      "id": "fajr_energy",
+      "order": 6,
+      "titleFa": "پتروشیمی فجر انرژی",
+      "titleEn": "Fajr Energy Petrochemical Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "FJRE",
+      "employeeCodePrefix": "FJRE",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "⚡",
+      "headcount": 1200,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "تولید برق، بخار و آب صنعتی برای شرکت‌های منطقهٔ ماهشهر زیر هلدینگ خلیج فارس."
+    },
+    {
+      "id": "tondguyan",
+      "order": 7,
+      "titleFa": "پتروشیمی تندگویان",
+      "titleEn": "Tondguyan Petrochemical Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "TDPC",
+      "employeeCodePrefix": "TDPC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🛢️",
+      "headcount": 1100,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "تولید مواد اولیهٔ پلی‌استر و پلی‌اتیلن ترفتالات زیر هلدینگ خلیج فارس."
+    },
+    {
+      "id": "arvand",
+      "order": 8,
+      "titleFa": "پتروشیمی اروند",
+      "titleEn": "Arvand Petrochemical Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "ARPC",
+      "employeeCodePrefix": "ARPC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🏭",
+      "headcount": 1400,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "بزرگ‌ترین مجتمع کلرآلکالی خاورمیانه در منطقهٔ ماهشهر زیر هلدینگ خلیج فارس."
+    },
+    {
+      "id": "nouri",
+      "order": 9,
+      "titleFa": "پتروشیمی نوری",
+      "titleEn": "Nouri Petrochemical Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "NRPC",
+      "employeeCodePrefix": "NRPC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🌙",
+      "headcount": 900,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "تولید آروماتیک‌ها (پارازایلین و بنزن) در عسلویه زیر هلدینگ خلیج فارس."
+    },
+    {
+      "id": "bidboland",
+      "order": 10,
+      "titleFa": "پتروشیمی بیدبلند",
+      "titleEn": "Bidboland Petrochemical Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "BBPC",
+      "employeeCodePrefix": "BBPC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🏗️",
+      "headcount": 1050,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "تولید متانول و آمونیاک در بیدبلند خلیج فارس زیر هلدینگ خلیج فارس."
+    },
+    {
+      "id": "gachsaran",
+      "order": 11,
+      "titleFa": "پتروشیمی گچساران",
+      "titleEn": "Gachsaran Petrochemical Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "GCPC",
+      "employeeCodePrefix": "GCPC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "⛰️",
+      "headcount": 700,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "تولید اتیلن و پلی‌اتیلن سنگین در گچساران زیر هلدینگ خلیج فارس."
+    },
+    {
+      "id": "rahavaran_fonoon",
+      "order": 12,
+      "titleFa": "شرکت ره‌آوران فنون پتروشیمی",
+      "titleEn": "Rahavaran Fonoon Petrochemical Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "RFPC",
+      "employeeCodePrefix": "RFPC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🔧",
+      "headcount": 420,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "شرکت مهندسی و فنون (EPC) هلدینگ خلیج فارس."
+    },
+    {
+      "id": "petro_trading",
+      "order": 13,
+      "titleFa": "شرکت بازرگانی پتروشیمی",
+      "titleEn": "Petrochemical Trading Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "PCTC",
+      "employeeCodePrefix": "PCTC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "📦",
+      "headcount": 380,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [
+        "outsourcing"
+      ],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "بازرگانی، فروش و صادرات محصولات پتروشیمی هلدینگ خلیج فارس."
+    },
+    {
+      "id": "tejarat_sanat",
+      "order": 14,
+      "titleFa": "شرکت تجارت صنعت",
+      "titleEn": "Tejarat Sanat Company",
+      "holdingFa": "هلدینگ خلیج فارس",
+      "shortCode": "TJSP",
+      "employeeCodePrefix": "TJSP",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🏢",
+      "headcount": 260,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [
+        "jobclass"
+      ],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "تأمین کالا و تجارت صنعتی هلدینگ خلیج فارس."
+    },
+    {
+      "id": "maroun",
+      "order": 15,
+      "titleFa": "پتروشیمی مارون",
+      "titleEn": "Maroun Petrochemical Company",
+      "holdingFa": "هلدینگ پتروشیمی مارون",
+      "shortCode": "MRPC",
+      "employeeCodePrefix": "MRPC",
+      "calendar": "jalali",
+      "currencyFa": "ریال",
+      "logoEmoji": "🌊",
+      "headcount": 1300,
+      "enabledDepartments": [
+        "core",
+        "staff_affairs",
+        "hr_planning",
+        "labor_relations",
+        "training_coordination",
+        "statistics",
+        "outsourcing",
+        "hr_studies",
+        "sports",
+        "platform"
+      ],
+      "disabledModules": [],
+      "enabledModules": [
+        "dashboard",
+        "employee",
+        "contracts",
+        "staff_services",
+        "archive",
+        "jobclass",
+        "attendance",
+        "payroll",
+        "salary_admin",
+        "welfare",
+        "cards",
+        "education_bonus",
+        "bonus",
+        "loans_retirement",
+        "orgstructure",
+        "career",
+        "recruitment",
+        "performance",
+        "discipline",
+        "grievances",
+        "socialwork",
+        "medical",
+        "training",
+        "statistics",
+        "staffing_moves",
+        "reports",
+        "outsourcing",
+        "hrstudies",
+        "settings",
+        "sports"
+      ],
+      "params": [
+        {
+          "key": "payroll.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "payroll.payDay",
+          "titleFa": "روز پرداخت حقوق",
+          "value": "1",
+          "unitFa": "ام ماه بعد",
+          "groupFa": "حقوق و دستمزد"
+        },
+        {
+          "key": "leave.annualDays",
+          "titleFa": "مرخصی استحقاقی سالانه",
+          "value": "26",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "leave.sickDays",
+          "titleFa": "مرخصی استعلاجی سالانه",
+          "value": "30",
+          "unitFa": "روز",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "attendance.graceMinutes",
+          "titleFa": "مهلت تأخیر مجاز روزانه",
+          "value": "15",
+          "unitFa": "دقیقه",
+          "groupFa": "مرخصی و حضور"
+        },
+        {
+          "key": "mission.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
+          "value": "4500000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "karana.cycle",
+          "titleFa": "دورهٔ پرداخت کارانه",
+          "value": "monthly",
+          "unitFa": "ماهانه",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "retirement.ageMen",
+          "titleFa": "سن بازنشستگی مردان",
+          "value": "60",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "retirement.ageWomen",
+          "titleFa": "سن بازنشستگی زنان",
+          "value": "55",
+          "unitFa": "سال",
+          "groupFa": "بازنشستگی و بیمه"
+        },
+        {
+          "key": "outsourcing.socialSecurityCheck",
+          "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "outsourcing.hardshipReview",
+          "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور",
+          "value": "on",
+          "unitFa": "فعال/غیرفعال",
+          "groupFa": "برون‌سپاری"
+        },
+        {
+          "key": "studies.surveyCycle",
+          "titleFa": "دورهٔ نظرسنجی جو سازمانی",
+          "value": "annual",
+          "unitFa": "سالانه",
+          "groupFa": "مطالعات منابع انسانی"
+        },
+        {
+          "key": "reports.retentionMonths",
+          "titleFa": "نگهداری گزارش‌های تولیدشده",
+          "value": "60",
+          "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        }
+      ],
+      "notesFa": "بزرگ‌ترین تولیدکنندهٔ اتیلن کشور در منطقهٔ ماهشهر؛ هلدینگ مستقل پتروشیمی مارون، جدا از هلدینگ خلیج فارس."
+    }
+  ],
+  "activeOrganization": "bandar_imam",
+  "modules": [
+    {
+      "id": "dashboard",
+      "order": 1,
+      "department": "core",
+      "subUnit": "",
+      "sharedWith": [],
+      "titleFa": "داشبورد",
+      "titleEn": "Dashboard",
+      "apiPrefix": "/api/v1/dashboard",
+      "version": "1.0.0",
+      "featureFlag": "module.dashboard",
+      "dbSchema": "hr_dashboard",
+      "owner": "hr-core",
+      "entities": [
+        "StatWidget",
+        "TrendPoint"
+      ],
+      "roles": {
+        "admin": [
+          "read"
+        ],
+        "hr_manager": [
+          "read"
+        ],
+        "hr_spec": [
+          "read"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {},
+      "screens": [
+        {
+          "key": "dashboard",
+          "order": 1,
+          "titleFa": "داشبورد نقشمحور",
+          "component": "DashboardScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "employee",
+      "order": 2,
+      "department": "staff_affairs",
+      "subUnit": "personnel_services",
+      "sharedWith": [],
+      "titleFa": "امور کارکنان",
+      "titleEn": "Employee Management",
+      "apiPrefix": "/api/v1/employee",
+      "version": "1.0.0",
+      "featureFlag": "module.employee",
+      "dbSchema": "hr_employee",
+      "owner": "hr-core",
+      "entities": [
+        "Employee",
+        "Department",
+        "Contract",
+        "PersonnelServiceRequest"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "employees",
+          "order": 1,
+          "titleFa": "فهرست کارکنان",
+          "component": "EmployeeListScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "profile",
+          "order": 2,
+          "titleFa": "پرونده کارمند",
+          "component": "EmployeeProfileScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "personnelServices",
+          "order": 3,
+          "titleFa": "خدمات پرسنلی",
+          "component": "PersonnelServicesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "contracts",
+      "order": 3,
+      "department": "staff_affairs",
+      "subUnit": "personnel_services",
+      "sharedWith": [],
+      "titleFa": "کارگزینی و انعقاد قراردادها",
+      "titleEn": "Staffing & Employment Contracts",
+      "apiPrefix": "/api/v1/contracts",
+      "version": "1.0.0",
+      "featureFlag": "module.contracts",
+      "dbSchema": "hr_contracts",
+      "owner": "hr-core",
+      "entities": [
+        "Contract",
+        "ContractTemplate",
+        "ContractRenewal"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "contracts",
+          "order": 1,
+          "titleFa": "قراردادهای کارکنان",
+          "component": "ContractsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "contractLifecycle",
+          "order": 2,
+          "titleFa": "تمدید، تغییر و پایان قرارداد",
+          "component": "ContractLifecycleScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "contractTemplates",
+          "order": 3,
+          "titleFa": "قالب و متن قراردادها",
+          "component": "ContractTemplatesScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "staff_services",
+      "order": 4,
+      "department": "staff_affairs",
+      "subUnit": "personnel_services",
+      "sharedWith": [],
+      "titleFa": "افراد تحت تکفل و درخواست پرواز",
+      "titleEn": "Dependents & Service Requests",
+      "apiPrefix": "/api/v1/personnel",
+      "version": "1.0.0",
+      "featureFlag": "module.staff_services",
+      "dbSchema": "hr_personnel",
+      "owner": "hr-core",
+      "entities": [
+        "Dependent",
+        "DependentInsurance",
+        "FlightRequest"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "employee": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "dependents",
+          "order": 1,
+          "titleFa": "افراد تحت تکفل",
+          "component": "DependentsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "flightRequests",
+          "order": 2,
+          "titleFa": "فرم درخواست پرواز",
+          "component": "FlightRequestsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "archive",
+      "order": 5,
+      "department": "staff_affairs",
+      "subUnit": "records_identity",
+      "sharedWith": [],
+      "titleFa": "بایگانی و شناسایی کارکنان",
+      "titleEn": "Records & Employee Identity",
+      "apiPrefix": "/api/v1/archive",
+      "version": "1.0.0",
+      "featureFlag": "module.archive",
+      "dbSchema": "hr_archive",
+      "owner": "hr-core",
+      "entities": [
+        "PersonnelFile",
+        "EmployeeIdentity",
+        "ArchiveDocument",
+        "FileLending"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "personnelFiles",
+          "order": 1,
+          "titleFa": "پرونده‌های پرسنلی",
+          "component": "PersonnelFilesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "employeeIdentity",
+          "order": 2,
+          "titleFa": "شناسایی و مدارک کارکنان",
+          "component": "EmployeeIdentityScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "archiveDocuments",
+          "order": 3,
+          "titleFa": "بایگانی اسناد و امانت",
+          "component": "ArchiveDocumentsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jobclass",
+      "order": 6,
+      "department": "staff_affairs",
+      "subUnit": "job_classification",
+      "sharedWith": [
+        "outsourcing"
+      ],
+      "titleFa": "طبقه‌بندی مشاغل",
+      "titleEn": "Job Classification",
+      "apiPrefix": "/api/v1/jobclass",
+      "version": "1.0.0",
+      "featureFlag": "module.jobclass",
+      "dbSchema": "hr_jobclass",
+      "owner": "hr-core",
+      "entities": [
+        "JobCategory",
+        "JobEvaluation",
+        "JobDescription"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "jobCategories",
+          "order": 1,
+          "titleFa": "طبقه‌بندی و رتبه‌بندی مشاغل",
+          "component": "JobCategoriesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "jobEvaluation",
+          "order": 2,
+          "titleFa": "ارزشیابی مشاغل",
+          "component": "JobEvaluationScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "jobDescriptions",
+          "order": 3,
+          "titleFa": "شرح شغل و شناسنامهٔ شغل",
+          "component": "JobDescriptionsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "attendance",
+      "order": 7,
+      "department": "staff_affairs",
+      "subUnit": "compensation",
+      "sharedWith": [],
+      "titleFa": "حضور و غیاب، مرخصی و ماموریت",
+      "titleEn": "Attendance & Time",
+      "apiPrefix": "/api/v1/attendance",
+      "version": "1.0.0",
+      "featureFlag": "module.attendance",
+      "dbSchema": "hr_attendance",
+      "owner": "hr-ops",
+      "entities": [
+        "AttendanceRecord",
+        "LeaveRequest",
+        "LeaveBalance",
+        "Overtime",
+        "Shift",
+        "Mission"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read",
+          "approve"
+        ],
+        "employee": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "attendance",
+          "order": 1,
+          "titleFa": "ثبت تردد",
+          "component": "AttendanceScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "leaveRequests",
+          "order": 2,
+          "titleFa": "مرخصی و ماموریت",
+          "component": "LeaveRequestsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "leaveApprove",
+          "order": 3,
+          "titleFa": "تأیید مرخصی",
+          "component": "LeaveApprovalScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "overtime",
+          "order": 4,
+          "titleFa": "اضافه‌کاری",
+          "component": "OvertimeScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "missions",
+          "order": 5,
+          "titleFa": "ماموریت‌ها",
+          "component": "MissionsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "calendar",
+          "order": 6,
+          "titleFa": "تقویم کاری",
+          "component": "WorkCalendarScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "payroll",
+      "order": 8,
+      "department": "staff_affairs",
+      "subUnit": "compensation",
+      "sharedWith": [],
+      "titleFa": "حقوق و دستمزد (جبران خدمات)",
+      "titleEn": "Payroll",
+      "apiPrefix": "/api/v1/payroll",
+      "version": "1.0.0",
+      "featureFlag": "module.payroll",
+      "dbSchema": "hr_payroll",
+      "owner": "hr-finance",
+      "entities": [
+        "PayRun",
+        "Payslip",
+        "PayItem",
+        "PayFormula",
+        "Karana"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "payrollRun",
+          "order": 1,
+          "titleFa": "پردازش حقوق",
+          "component": "PayrollRunScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "payslip",
+          "order": 2,
+          "titleFa": "فیش حقوقی",
+          "component": "PayslipScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "payItems",
+          "order": 3,
+          "titleFa": "اجزای حقوق",
+          "component": "PayItemsScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "karana",
+          "order": 4,
+          "titleFa": "کارانه و پرداخت‌های متغیر",
+          "component": "KaranaScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "payReports",
+          "order": 5,
+          "titleFa": "گزارش‌های مالی حقوق",
+          "component": "PayReportsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "serviceBonus",
+          "order": 6,
+          "titleFa": "پاداش پایان خدمت (سنوات)",
+          "component": "ServiceBonusScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "payParams",
+          "order": 7,
+          "titleFa": "پارامترها و ضرائب حقوق",
+          "component": "PayParamsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "salary_admin",
+      "order": 9,
+      "department": "staff_affairs",
+      "subUnit": "compensation",
+      "sharedWith": [],
+      "titleFa": "احکام حقوق و گواهی اشتغال",
+      "titleEn": "Salary Decrees & Employment Certificates",
+      "apiPrefix": "/api/v1/salary_admin",
+      "version": "1.0.0",
+      "featureFlag": "module.salary_admin",
+      "dbSchema": "hr_salary_admin",
+      "owner": "hr-finance",
+      "entities": [
+        "SalaryDecree",
+        "SalaryDecreeLine",
+        "EmploymentCertificate"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "salaryDecrees",
+          "order": 1,
+          "titleFa": "احکام حقوق",
+          "component": "SalaryDecreesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "employmentCerts",
+          "order": 2,
+          "titleFa": "گواهی اشتغال",
+          "component": "EmploymentCertsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "welfare",
+      "order": 10,
+      "department": "staff_affairs",
+      "subUnit": "compensation",
+      "sharedWith": [],
+      "titleFa": "رفاه، سرویس مدارس و اسکان",
+      "titleEn": "Welfare",
+      "apiPrefix": "/api/v1/welfare",
+      "version": "1.0.0",
+      "featureFlag": "module.welfare",
+      "dbSchema": "hr_welfare",
+      "owner": "hr-ops",
+      "entities": [
+        "Facility",
+        "WelfareRequest",
+        "Loan"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read",
+          "write"
+        ],
+        "employee": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {
+        "employee": "own",
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "welfare",
+          "order": 1,
+          "titleFa": "تسهیلات رفاهی",
+          "component": "WelfareFacilitiesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "welfareReq",
+          "order": 2,
+          "titleFa": "درخواست‌های رفاهی",
+          "component": "WelfareRequestsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "schoolService",
+          "order": 3,
+          "titleFa": "سرویس مدارس",
+          "component": "SchoolServiceScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "welfareTours",
+          "order": 4,
+          "titleFa": "تورهای رفاهی",
+          "component": "WelfareToursScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "accommodation",
+          "order": 5,
+          "titleFa": "اسکان کارکنان",
+          "component": "AccommodationScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cards",
+      "order": 11,
+      "department": "staff_affairs",
+      "subUnit": "compensation",
+      "sharedWith": [],
+      "titleFa": "کارت‌های رفاهی و شارژ (پتروکارت، نفت‌کارت)",
+      "titleEn": "Welfare Cards and Charging",
+      "apiPrefix": "/api/v1/cards",
+      "version": "1.0.0",
+      "featureFlag": "module.cards",
+      "dbSchema": "hr_cards",
+      "owner": "hr-ops",
+      "entities": [
+        "CardRate",
+        "CardBeneficiary",
+        "CardCharge",
+        "Occasion",
+        "ChargeFile"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "employee": "own",
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "petrokart",
+          "order": 1,
+          "titleFa": "پتروکارت (فرهنگی و رستوران)",
+          "component": "PetrocardScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "cardAllocations",
+          "order": 2,
+          "titleFa": "تخصیص کارت به افراد تحت تکفل",
+          "component": "CardAllocationsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "naftmart",
+          "order": 3,
+          "titleFa": "نفت‌کارت و نفت‌مارت (فارس‌کارت، سامان‌کارت)",
+          "component": "NaftmartScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "cardRates",
+          "order": 4,
+          "titleFa": "نرخ‌ها و اقلام شارژ",
+          "component": "CardRatesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "occasions",
+          "order": 5,
+          "titleFa": "مناسبت‌های تقویمی و شارژ مناسبتی",
+          "component": "OccasionsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "chargeFiles",
+          "order": 6,
+          "titleFa": "فایل‌های شارژ و ارسال به مالی",
+          "component": "ChargeFilesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "education_bonus",
+      "order": 12,
+      "department": "staff_affairs",
+      "subUnit": "compensation",
+      "sharedWith": [],
+      "titleFa": "پاداش تحصیلی فرزندان ممتاز",
+      "titleEn": "Outstanding Students Education Bonus",
+      "apiPrefix": "/api/v1/education_bonus",
+      "version": "1.0.0",
+      "featureFlag": "module.education_bonus",
+      "dbSchema": "hr_education_bonus",
+      "owner": "hr-ops",
+      "entities": [
+        "OutstandingStudent",
+        "BonusLevelRate",
+        "BonusFile"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "employee": "own",
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "outstandingStudents",
+          "order": 1,
+          "titleFa": "دانش‌آموزان ممتاز و تحت تکفل",
+          "component": "OutstandingStudentsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "educationBonusRates",
+          "order": 2,
+          "titleFa": "مبالغ مصوب پاداش تحصیلی",
+          "component": "EducationBonusRatesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "educationBonusFiles",
+          "order": 3,
+          "titleFa": "فایل محاسباتی پرداخت به مالی",
+          "component": "EducationBonusFilesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bonus",
+      "order": 13,
+      "department": "staff_affairs",
+      "subUnit": "compensation",
+      "sharedWith": [],
+      "titleFa": "پاداش‌ها",
+      "titleEn": "Employee Bonuses",
+      "apiPrefix": "/api/v1/bonus",
+      "version": "1.0.0",
+      "featureFlag": "module.bonus",
+      "dbSchema": "hr_bonus",
+      "owner": "hr-ops",
+      "entities": [
+        "BonusPayment",
+        "BonusAllocation"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "bonusDashboard",
+          "order": 1,
+          "titleFa": "داشبورد مدیریتی پاداش",
+          "component": "BonusDashboardScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "bonusPayments",
+          "order": 2,
+          "titleFa": "پرداخت پاداش",
+          "component": "BonusPaymentsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "bonusReports",
+          "order": 3,
+          "titleFa": "گزارش پرداخت پاداش",
+          "component": "BonusReportsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "loans_retirement",
+      "order": 14,
+      "department": "staff_affairs",
+      "subUnit": "loans_retirement",
+      "sharedWith": [],
+      "titleFa": "امور وام و بازنشستگی",
+      "titleEn": "Loans & Retirement",
+      "apiPrefix": "/api/v1/loans",
+      "version": "1.0.0",
+      "featureFlag": "module.loans_retirement",
+      "dbSchema": "hr_loans",
+      "owner": "hr-finance",
+      "entities": [
+        "LoanRequest",
+        "LoanInstallment",
+        "RetirementFile",
+        "LoanFund"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "employee": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "loans",
+          "order": 1,
+          "titleFa": "وام کارکنان",
+          "component": "LoansScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "employee"
+          ]
+        },
+        {
+          "key": "loanInstallments",
+          "order": 2,
+          "titleFa": "اقساط و بازپرداخت",
+          "component": "LoanInstallmentsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "retirementFiles",
+          "order": 3,
+          "titleFa": "پرونده‌های بازنشستگی",
+          "component": "RetirementFilesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "orgstructure",
+      "order": 15,
+      "department": "hr_planning",
+      "subUnit": "org_design",
+      "sharedWith": [],
+      "titleFa": "ساختار سازمانی و تشکیلات",
+      "titleEn": "Organization Structure",
+      "apiPrefix": "/api/v1/orgstructure",
+      "version": "1.0.0",
+      "featureFlag": "module.orgstructure",
+      "dbSchema": "hr_orgstructure",
+      "owner": "hr-planning",
+      "entities": [
+        "OrgUnit",
+        "Position",
+        "OrgChartVersion"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "line_manager": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "org",
+          "order": 1,
+          "titleFa": "ساختار سازمانی",
+          "component": "OrgChartScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "positions",
+          "order": 2,
+          "titleFa": "شناسنامهٔ پست‌ها",
+          "component": "PositionsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "career",
+      "order": 16,
+      "department": "hr_planning",
+      "subUnit": "assignments",
+      "sharedWith": [],
+      "titleFa": "انتصابات، ترفیعات و کارراههٔ شغلی",
+      "titleEn": "Appointments, Promotions & Career Path",
+      "apiPrefix": "/api/v1/career",
+      "version": "1.0.0",
+      "featureFlag": "module.career",
+      "dbSchema": "hr_career",
+      "owner": "hr-planning",
+      "entities": [
+        "Appointment",
+        "Promotion",
+        "CareerPath",
+        "SuccessionPlan"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "appointments",
+          "order": 1,
+          "titleFa": "انتصابات",
+          "component": "AppointmentsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "promotions",
+          "order": 2,
+          "titleFa": "ترفیعات",
+          "component": "PromotionsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "careerPath",
+          "order": 3,
+          "titleFa": "کارراههٔ شغلی",
+          "component": "CareerPathScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "recruitment",
+      "order": 17,
+      "department": "hr_planning",
+      "subUnit": "talent_acquisition",
+      "sharedWith": [],
+      "titleFa": "تأمین و جذب نیرو",
+      "titleEn": "Recruitment",
+      "apiPrefix": "/api/v1/recruitment",
+      "version": "1.0.0",
+      "featureFlag": "module.recruitment",
+      "dbSchema": "hr_recruitment",
+      "owner": "hr-talent",
+      "entities": [
+        "HiringRequest",
+        "JobPosting",
+        "Candidate",
+        "Application"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "approve"
+        ]
+      },
+      "scopes": {},
+      "screens": [
+        {
+          "key": "hiringReqs",
+          "order": 1,
+          "titleFa": "درخواست‌های نیرو",
+          "component": "HiringRequestsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "jobs",
+          "order": 2,
+          "titleFa": "آگهی‌های شغلی",
+          "component": "JobPostingsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "candidates",
+          "order": 3,
+          "titleFa": "متقاضیان",
+          "component": "CandidatesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "hiringFlow",
+          "order": 4,
+          "titleFa": "فرآیند جذب",
+          "component": "HiringPipelineScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "performance",
+      "order": 18,
+      "department": "hr_planning",
+      "subUnit": "performance_management",
+      "sharedWith": [],
+      "titleFa": "مدیریت عملکرد",
+      "titleEn": "Performance",
+      "apiPrefix": "/api/v1/performance",
+      "version": "1.0.0",
+      "featureFlag": "module.performance",
+      "dbSchema": "hr_performance",
+      "owner": "hr-od",
+      "entities": [
+        "PerfCycle",
+        "PerfForm",
+        "KpiItem",
+        "PerfResult"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read"
+        ],
+        "line_manager": [
+          "read",
+          "write",
+          "approve"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "perfCycles",
+          "order": 1,
+          "titleFa": "دوره‌های ارزیابی",
+          "component": "PerfCyclesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "perfForms",
+          "order": 2,
+          "titleFa": "فرم‌های ارزیابی",
+          "component": "PerfFormsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "perfResults",
+          "order": 3,
+          "titleFa": "نتایج ارزیابی",
+          "component": "PerfResultsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "discipline",
+      "order": 19,
+      "department": "labor_relations",
+      "subUnit": "discipline",
+      "sharedWith": [],
+      "titleFa": "کمیتهٔ انضباط کار",
+      "titleEn": "Labor Discipline Committee",
+      "apiPrefix": "/api/v1/discipline",
+      "version": "1.0.0",
+      "featureFlag": "module.discipline",
+      "dbSchema": "hr_discipline",
+      "owner": "hr-labor",
+      "entities": [
+        "DisciplineCase",
+        "DisciplineMeeting",
+        "DisciplineRuling"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {},
+      "screens": [
+        {
+          "key": "disciplineCases",
+          "order": 1,
+          "titleFa": "پرونده‌های انضباطی",
+          "component": "DisciplineCasesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "disciplineMeetings",
+          "order": 2,
+          "titleFa": "جلسات کمیتهٔ انضباط",
+          "component": "DisciplineMeetingsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grievances",
+      "order": 20,
+      "department": "labor_relations",
+      "subUnit": "complaints_veterans",
+      "sharedWith": [],
+      "titleFa": "شکایات و امور ایثارگران",
+      "titleEn": "Complaints & Veterans Affairs",
+      "apiPrefix": "/api/v1/grievances",
+      "version": "1.0.0",
+      "featureFlag": "module.grievances",
+      "dbSchema": "hr_grievances",
+      "owner": "hr-labor",
+      "entities": [
+        "Complaint",
+        "ComplaintFollowUp",
+        "VeteranRecord"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "complaints",
+          "order": 1,
+          "titleFa": "شکایات کارکنان",
+          "component": "ComplaintsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "employee"
+          ]
+        },
+        {
+          "key": "veteransAffairs",
+          "order": 2,
+          "titleFa": "امور ایثارگران",
+          "component": "VeteransAffairsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "socialwork",
+      "order": 21,
+      "department": "labor_relations",
+      "subUnit": "social_work",
+      "sharedWith": [],
+      "titleFa": "مددکاری اجتماعی",
+      "titleEn": "Social Work",
+      "apiPrefix": "/api/v1/socialwork",
+      "version": "1.0.0",
+      "featureFlag": "module.socialwork",
+      "dbSchema": "hr_socialwork",
+      "owner": "hr-labor",
+      "entities": [
+        "SocialWorkCase",
+        "AidRequest",
+        "CounselingSession"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "employee": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "socialWorkCases",
+          "order": 1,
+          "titleFa": "پرونده‌های مددکاری",
+          "component": "SocialWorkCasesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "aidRequests",
+          "order": 2,
+          "titleFa": "کمک‌های موردی",
+          "component": "AidRequestsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "medical",
+      "order": 22,
+      "department": "labor_relations",
+      "subUnit": "medical",
+      "sharedWith": [],
+      "titleFa": "درمان، معاینات دوره‌ای و خدمات درمانی",
+      "titleEn": "Medical Care & Occupational Health",
+      "apiPrefix": "/api/v1/medical",
+      "version": "1.0.0",
+      "featureFlag": "module.medical",
+      "dbSchema": "hr_medical",
+      "owner": "hr-labor",
+      "entities": [
+        "MedicalService",
+        "TreatmentCase",
+        "PeriodicExam",
+        "SupplementaryInsurance"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit",
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "treatmentCases",
+          "order": 1,
+          "titleFa": "پروندهٔ درمان",
+          "component": "TreatmentCasesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "periodicExams",
+          "order": 2,
+          "titleFa": "معاینات دوره‌ای",
+          "component": "PeriodicExamsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "medicalServices",
+          "order": 3,
+          "titleFa": "خدمات درمانی و بیمه",
+          "component": "MedicalServicesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "supplementaryInsurance",
+          "order": 4,
+          "titleFa": "بیمهٔ تکمیلی",
+          "component": "SupplementaryInsuranceScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "training",
+      "order": 23,
+      "department": "training_coordination",
+      "subUnit": "training_cycle",
+      "sharedWith": [],
+      "titleFa": "هماهنگی آموزش",
+      "titleEn": "Training",
+      "apiPrefix": "/api/v1/training",
+      "version": "1.0.0",
+      "featureFlag": "module.training",
+      "dbSchema": "hr_training",
+      "owner": "hr-od",
+      "entities": [
+        "Course",
+        "Enrollment",
+        "Certificate",
+        "Skill",
+        "SkillGap"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {
+        "employee": "own",
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "trainingPlan",
+          "order": 1,
+          "titleFa": "برنامه‌ریزی آموزشی",
+          "component": "TrainingPlanScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "trainingNeeds",
+          "order": 2,
+          "titleFa": "نیازسنجی آموزشی",
+          "component": "TrainingNeedsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "trainingExecution",
+          "order": 3,
+          "titleFa": "اجرا و هماهنگی دوره‌ها",
+          "component": "TrainingExecutionScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "training",
+          "order": 4,
+          "titleFa": "دوره‌های آموزشی",
+          "component": "TrainingCoursesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "trainingHist",
+          "order": 5,
+          "titleFa": "سوابق آموزشی",
+          "component": "TrainingHistoryScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "statistics",
+      "order": 24,
+      "department": "statistics",
+      "subUnit": "data_control",
+      "sharedWith": [],
+      "titleFa": "آمار و پایش اطلاعات پایه",
+      "titleEn": "Statistics & Base Data Control",
+      "apiPrefix": "/api/v1/statistics",
+      "version": "1.0.0",
+      "featureFlag": "module.statistics",
+      "dbSchema": "hr_statistics",
+      "owner": "hr-analytics",
+      "entities": [
+        "StatSnapshot",
+        "DataApproval",
+        "BaseDataCheck"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve",
+          "report"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve",
+          "report"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "report"
+        ],
+        "line_manager": [
+          "read",
+          "report"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "statsOverview",
+          "order": 1,
+          "titleFa": "داشبورد آماری",
+          "component": "StatsOverviewScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "statsAttendance",
+          "order": 2,
+          "titleFa": "حضور و غیاب و تردد",
+          "component": "StatsAttendanceScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "statsLeave",
+          "order": 3,
+          "titleFa": "مرخصی‌ها",
+          "component": "StatsLeaveScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "statsMission",
+          "order": 4,
+          "titleFa": "ماموریت‌ها",
+          "component": "StatsMissionScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "statsBasePay",
+          "order": 5,
+          "titleFa": "اطلاعات پایه حقوق و مزایا",
+          "component": "StatsBasePayScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "statsKarana",
+          "order": 6,
+          "titleFa": "کارانه",
+          "component": "StatsKaranaScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "staffing_moves",
+      "order": 25,
+      "department": "statistics",
+      "subUnit": "staffing_moves",
+      "sharedWith": [],
+      "titleFa": "جابه‌جایی و معرفی کارکنان",
+      "titleEn": "Staff Transfers & Introductions",
+      "apiPrefix": "/api/v1/moves",
+      "version": "1.0.0",
+      "featureFlag": "module.staffing_moves",
+      "dbSchema": "hr_staffing_moves",
+      "owner": "hr-analytics",
+      "entities": [
+        "TransferRequest",
+        "EmployeeIntroduction"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "transfers",
+          "order": 1,
+          "titleFa": "جابه‌جایی کارکنان",
+          "component": "TransfersScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "introductions",
+          "order": 2,
+          "titleFa": "معرفی و ابلاغ کارکنان",
+          "component": "IntroductionsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reports",
+      "order": 26,
+      "department": "statistics",
+      "subUnit": "management_reports",
+      "sharedWith": [],
+      "titleFa": "گزارش‌ها",
+      "titleEn": "Reports",
+      "apiPrefix": "/api/v1/reports",
+      "version": "1.0.0",
+      "featureFlag": "module.reports",
+      "dbSchema": "hr_reports",
+      "owner": "hr-analytics",
+      "entities": [
+        "ReportDefinition",
+        "ReportRun",
+        "ExportJob"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "report",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "report",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "report",
+          "write"
+        ],
+        "line_manager": [
+          "read",
+          "report"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "reports",
+          "order": 1,
+          "titleFa": "گزارش‌های عملیاتی و تحلیلی",
+          "component": "ReportsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "mgmtReports",
+          "order": 2,
+          "titleFa": "گزارش‌های مدیریتی",
+          "component": "MgmtReportsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "reportBuilder",
+          "order": 3,
+          "titleFa": "گزارش‌ساز بر پایهٔ اقلام",
+          "component": "ReportBuilderScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "outsourcing",
+      "order": 27,
+      "department": "outsourcing",
+      "subUnit": "third_party_payroll",
+      "sharedWith": [],
+      "titleFa": "برون‌سپاری و نیروهای ارکان ثالث",
+      "titleEn": "Outsourcing & Third-Party Workforce",
+      "apiPrefix": "/api/v1/outsourcing",
+      "version": "1.0.0",
+      "featureFlag": "module.outsourcing",
+      "dbSchema": "hr_outsourcing",
+      "owner": "hr-outsource",
+      "entities": [
+        "Contractor",
+        "ThirdPartyWorker",
+        "OutsourcePayRun",
+        "HardshipFile"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve",
+          "report"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve",
+          "report"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "report"
+        ],
+        "line_manager": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "contractors",
+          "order": 1,
+          "titleFa": "پیمانکاران و قراردادها",
+          "component": "ContractorsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "thirdPartyPayroll",
+          "order": 2,
+          "titleFa": "کنترل حقوق نیروهای ارکان ثالث",
+          "component": "ThirdPartyPayrollScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "outsourceAnalysis",
+          "order": 3,
+          "titleFa": "تحلیل و پایش برون‌سپاری",
+          "component": "OutsourceAnalysisScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "hardshipFiles",
+          "order": 4,
+          "titleFa": "مشاغل سخت و زیان‌آور",
+          "component": "HardshipFilesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hrstudies",
+      "order": 28,
+      "department": "hr_studies",
+      "subUnit": "research",
+      "sharedWith": [],
+      "titleFa": "مطالعات منابع انسانی",
+      "titleEn": "HR Studies & Research",
+      "apiPrefix": "/api/v1/hrstudies",
+      "version": "1.0.0",
+      "featureFlag": "module.hrstudies",
+      "dbSchema": "hr_studies",
+      "owner": "hr-studies",
+      "entities": [
+        "StudyProject",
+        "Survey",
+        "HrIndex",
+        "Suggestion"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve",
+          "report"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve",
+          "report"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "report"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {
+        "employee": "own",
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "studies",
+          "order": 1,
+          "titleFa": "مطالعات و پژوهش",
+          "component": "StudiesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "surveys",
+          "order": 2,
+          "titleFa": "نظرسنجی و جو سازمانی",
+          "component": "SurveysScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "hrIndices",
+          "order": 3,
+          "titleFa": "شاخص‌های سرمایهٔ انسانی",
+          "component": "HrIndicesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "suggestions",
+          "order": 4,
+          "titleFa": "نظام پیشنهادها",
+          "component": "SuggestionsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "settings",
+      "order": 29,
+      "department": "platform",
+      "subUnit": "org_params",
+      "sharedWith": [],
+      "titleFa": "تنظیمات",
+      "titleEn": "Settings",
+      "apiPrefix": "/api/v1/settings",
+      "version": "1.0.0",
+      "featureFlag": "module.settings",
+      "dbSchema": "hr_settings",
+      "owner": "platform",
+      "entities": [
+        "User",
+        "Role",
+        "Permission",
+        "OrgUnit",
+        "SysParam",
+        "CatalogItem",
+        "AuditEvent"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve",
+          "admin"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve",
+          "admin"
+        ]
+      },
+      "scopes": {},
+      "screens": [
+        {
+          "key": "users",
+          "order": 1,
+          "titleFa": "مدیریت کاربران",
+          "component": "UsersScreen",
+          "roles": [
+            "admin"
+          ]
+        },
+        {
+          "key": "roles",
+          "order": 2,
+          "titleFa": "نقش‌ها و دسترسی‌ها",
+          "component": "RolesScreen",
+          "roles": [
+            "admin"
+          ]
+        },
+        {
+          "key": "orgProfile",
+          "order": 3,
+          "titleFa": "پروفایل شرکت و پارامترهای سازمانی",
+          "component": "OrgProfileScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "orgSettings",
+          "order": 4,
+          "titleFa": "تنظیمات سازمانی",
+          "component": "OrgSettingsScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "sysParams",
+          "order": 5,
+          "titleFa": "پارامترهای سیستم",
+          "component": "SysParamsScreen",
+          "roles": [
+            "admin"
+          ]
+        },
+        {
+          "key": "audit",
+          "order": 6,
+          "titleFa": "لاگ حسابرسی",
+          "component": "AuditLogScreen",
+          "roles": [
+            "admin"
+          ]
+        },
+        {
+          "key": "docTemplates",
+          "order": 7,
+          "titleFa": "قالب‌های متن اسناد",
+          "component": "DocTemplatesScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "catalogs",
+          "order": 8,
+          "titleFa": "کاتالوگ‌های مرجع",
+          "component": "CatalogsScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sports",
+      "order": 30,
+      "department": "sports",
+      "subUnit": "sports_programs",
+      "sharedWith": [],
+      "titleFa": "امور ورزش",
+      "titleEn": "Sports Affairs",
+      "apiPrefix": "/api/v1/sports",
+      "version": "1.0.0",
+      "featureFlag": "module.sports",
+      "dbSchema": "hr_sports",
+      "owner": "hr-welfare",
+      "entities": [
+        "SportsProgram",
+        "SportsEvent"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve"
+        ],
+        "hr_spec": [
+          "read",
+          "write"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read",
+          "write"
+        ]
+      },
+      "scopes": {
+        "employee": "own"
+      },
+      "screens": [
+        {
+          "key": "sportsPrograms",
+          "order": 1,
+          "titleFa": "رشته‌ها و برنامه‌های ورزشی",
+          "component": "SportsProgramsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "sportsEvents",
+          "order": 2,
+          "titleFa": "رویدادها و مسابقات ورزشی",
+          "component": "SportsEventsScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        }
+      ]
+    }
+  ]
+}

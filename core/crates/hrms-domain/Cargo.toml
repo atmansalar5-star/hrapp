@@ -1,0 +1,9 @@
+[package]
+name = "hrms-domain"
+version.workspace = true
+edition.workspace = true
+description = "انواع دامنه منابع انسانی، اعتبارسنجی و قواعد ساختاری"
+
+[dependencies]
+serde = { workspace = true }
+hrms-calendar = { path = "../hrms-calendar" }

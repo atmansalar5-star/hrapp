@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hrms.local/contracts/module-manifest.schema.json",
+  "title": "HRMS Module Manifest",
+  "description": "منبع واحد حقیقت هر ماژول. از این فایل، رجیستری Go، ناوبری React Native، seed دسترسی‌ها، مهاجرت‌ها و مستندات فارسی تولید می‌شود.",
+  "type": "object",
+  "required": ["id", "order", "department", "titleFa", "titleEn", "apiPrefix", "version", "featureFlag", "dbSchema", "owner", "entities", "roles", "scopes", "screens"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "description": "شناسه ماژول، هم‌نام پوشه" },
+    "order": { "type": "integer", "minimum": 1, "maximum": 99, "description": "ترتیب نمایش در منو" },
+    "department": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "description": "کلید ادارهٔ منابع انسانی در contracts/departments.json؛ گروه منو از همین فیلد ساخته می‌شود" },
+    "titleFa": { "type": "string", "minLength": 2 },
+    "titleEn": { "type": "string", "minLength": 2 },
+    "apiPrefix": { "type": "string", "pattern": "^/api/v[0-9]+/[a-z][a-z0-9_]*$" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "featureFlag": { "type": "string", "pattern": "^module\\.[a-z][a-z0-9_]*$" },
+    "dbSchema": { "type": "string", "pattern": "^hr_[a-z][a-z0-9_]*$" },
+    "owner": { "type": "string", "minLength": 2 },
+    "entities": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^[A-Z][A-Za-z]+$" } },
+    "roles": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "enum": ["read", "write", "delete", "approve", "report", "admin"] }
+      }
+    },
+    "scopes": {
+      "type": "object",
+      "additionalProperties": { "enum": ["all", "own_unit", "own"] }
+    },
+    "screens": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["key", "order", "icon", "titleFa", "component", "purposeFa", "actionsFa", "roles"],
+        "additionalProperties": false,
+        "properties": {
+          "key": { "type": "string", "pattern": "^[a-z][A-Za-z0-9]*$" },
+          "order": { "type": "integer", "minimum": 1 },
+          "icon": { "type": "string", "minLength": 1 },
+          "titleFa": { "type": "string", "minLength": 2 },
+          "component": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*Screen$" },
+          "purposeFa": { "type": "string", "minLength": 10 },
+          "actionsFa": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "roles": { "type": "array", "minItems": 1, "items": { "enum": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"] } }
+        }
+      }
+    }
+  }
+}

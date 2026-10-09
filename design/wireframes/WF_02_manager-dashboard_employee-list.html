@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>WF_02 — داشبورد مدیر | فهرست کارکنان</title>
+<style>
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:#FAFAFA;color:#111;margin:0;padding:24px;direction:rtl}
+h1{font-size:15px;border-bottom:2px solid #111;padding-bottom:6px}
+.wf-title{font-size:11px;letter-spacing:1px;color:#666;text-align:left;direction:ltr;margin:26px 0 6px}
+.wf-frame{border:2px solid #111;background:#fff;max-width:840px;margin:0 auto;padding:10px}
+.wf-box{border:1.5px solid #111;padding:8px;font-size:11px;background:#fff}
+.wf-box.gray{background:#EEE}
+.wf-line{border-top:1px dashed #999;margin:6px 0}
+.row{display:flex;gap:8px}
+.col{flex:1}
+.mono{font-family:monospace;direction:ltr;text-align:left}
+.note{font-size:11px;color:#555;max-width:840px;margin:8px auto 0;background:#FFF8DC;border:1px dashed #B8860B;padding:6px 10px}
+.screen{display:flex;gap:8px}
+.side{width:170px;display:flex;flex-direction:column;gap:6px}
+.main-a{flex:1;display:flex;flex-direction:column;gap:8px}
+</style>
+</head>
+<body>
+
+<div class="wf-title mono">WF_Dashboard_Manager — داشبورد مدیر واحد</div>
+<div class="wf-frame">
+  <div class="wf-box gray">«Header»: [لوگو] | جستجو | اعلان‌ها 🔔 | نام مدیر ▾</div>
+  <div class="screen">
+    <div class="side">
+      <div class="wf-box gray" style="text-align:center">«Sidebar (راست)»</div>
+      <div class="wf-box">داشبورد</div>
+      <div class="wf-box">مدیریت کارکنان (واحد من)</div>
+      <div class="wf-box">ثبت تردد</div>
+      <div class="wf-box">مرخصی و ماموریت</div>
+      <div class="wf-box">تأیید مرخصی [۳]</div>
+      <div class="wf-box">دوره‌های ارزیابی</div>
+      <div class="wf-box">فرم‌های ارزیابی</div>
+      <div class="wf-box">نتایج ارزیابی</div>
+      <div class="wf-box">تقویم</div>
+    </div>
+    <div class="main-a">
+      <div style="font-size:11px">Breadcrumb: «منابع انسانی ‹ داشبورد مدیر واحد»</div>
+      <div class="row">
+        <div class="wf-box col">ویجت: «کارکنان واحد» [عدد]</div>
+        <div class="wf-box col">ویجت: «در انتظار تأیید» [عدد]</div>
+        <div class="wf-box col">ویجت: «غایب امروز» [عدد]</div>
+        <div class="wf-box col">ویجت: «ارزیابی باقیمانده» [عدد]</div>
+      </div>
+      <div class="row">
+        <div class="wf-box col" style="flex:2">جدول: «کارکنان واحد شما» — نام / پست / وضعیت / مانده مرخصی</div>
+        <div class="wf-box col">«اقدامات سریع»<div class="wf-line"></div>[ تأیید مرخصی ] [ ارزیابی عملکرد ] [ تردد امروز ]</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="note">هدف: مدیریت واحد توسط مدیر مستقیم. اقدامات: تأیید/رد مرخصی، تکمیل ارزیابی، مشاهده تردد. نقش مجاز: مدیر واحد.</div>
+
+<div class="wf-title mono">WF_Employee_List_HR — فهرست کارکنان (HR / مدیر واحد)</div>
+<div class="wf-frame">
+  <div class="wf-box gray">«Header»</div>
+  <div class="screen">
+    <div class="side">
+      <div class="wf-box gray" style="text-align:center">«Sidebar (راست)»</div>
+      <div class="wf-box">داشبورد</div>
+      <div class="wf-box gray">مدیریت کارکنان ●</div>
+      <div class="wf-box">ساختار سازمانی</div>
+      <div class="wf-box">استخدام</div>
+      <div class="wf-box">حضور و غیاب</div>
+      <div class="wf-box">حقوق و دستمزد</div>
+    </div>
+    <div class="main-a">
+      <div style="font-size:11px">Breadcrumb: «منابع انسانی ‹ کارکنان»</div>
+      <div class="row">
+        <div class="col" style="font-weight:bold">«فهرست کارکنان» — تعداد رکورد: [n]</div>
+        <div>[ ⬇️ خروجی Excel ] [ ➕ ایجاد کارمند ]</div>
+      </div>
+      <div class="row">
+        <div class="wf-box col">جستجو: «نام / کد پرسنلی»</div>
+        <div class="wf-box col">فیلتر: «واحد ▾»</div>
+        <div class="wf-box col">فیلتر: «وضعیت ▾»</div>
+        <div class="wf-box col">فیلتر: «نوع قرارداد ▾»</div>
+      </div>
+      <div class="wf-box">
+        جدول (ستون‌ها از راست به چپ): «کد پرسنلی ⇅ | نام ⇅ | واحد ⇅ | پست ⇅ | وضعیت ⇅ | عملیات»
+        <div class="wf-line"></div>
+        [👁️] [✏️] [🗑️] — عملیات هر ردیف؛ کلیک روی ردیف ← پرونده کارمند
+      </div>
+      <div class="wf-box gray">صفحه‌بندی: «‹ 1 2 3 ›» + «نمایش n از m رکورد»</div>
+    </div>
+  </div>
+</div>
+<div class="note">هدف: جستجو/فیلتر و CRUD کارکنان. اقدامات: ایجاد، ویرایش، حذف، خروجی، مشاهده پرونده. نقش‌ها: مدیر HR، کارشناس HR، مدیر واحد (فقط مشاهده واحد خود).</div>
+
+</body>
+</html>

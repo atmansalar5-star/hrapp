@@ -1,0 +1,4079 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "HRMS API",
+    "version": "1.0.0",
+    "description": "قرارداد سرور ماژولار سامانهٔ جامع منابع انسانی. هر ماژول زیر پیشوند اختصاصی خودش قرار می‌گیرد و رجیستری آن از server/internal/modules/*/module.json تولید می‌شود. دروازهٔ CI انحراف بین این قرارداد و مانیفست‌ها را می‌گیرد."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "توسعهٔ محلی"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "توکن دسترسی کوتاه‌عمر که از /api/v1/auth/login گرفته می‌شود"
+      }
+    },
+    "parameters": {
+      "PageParam": {
+        "name": "page",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "SizeParam": {
+        "name": "size",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 20
+        }
+      }
+    },
+    "schemas": {
+      "CardChargeRequest": {
+        "type": "object",
+        "description": "درخواست ساخت شارژ یا فایل شارژ کارت‌های رفاهی (پتروکارت / نفت‌کارت).",
+        "required": [
+          "card",
+          "period"
+        ],
+        "properties": {
+          "card": {
+            "type": "string",
+            "enum": [
+              "petrokart",
+              "naftmart"
+            ],
+            "description": "کارت هدف"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "group",
+              "individual"
+            ],
+            "description": "شارژ گروهی یا انفرادی"
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "بخش‌های شارژ؛ خالی یعنی همهٔ بخش‌های کارت"
+          },
+          "period": {
+            "type": "string",
+            "description": "دورهٔ شارژ به قالب شمسی YYYY/MM"
+          },
+          "occasionId": {
+            "type": "string",
+            "description": "مناسبت تقویمی برای شارژ مناسبتی"
+          },
+          "employeeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "کارکنان انتخاب‌شده در شارژ انفرادی"
+          },
+          "trialRun": {
+            "type": "boolean",
+            "description": "پیش‌نمایش بدون ذخیره"
+          }
+        }
+      },
+      "CardChargeRow": {
+        "type": "object",
+        "description": "یک ردیف شارژ برای یک ذی‌نفع (کارمند یا فرد تحت تکفل) در یک بخش.",
+        "required": [
+          "employeeId",
+          "beneficiary",
+          "section",
+          "amount"
+        ],
+        "properties": {
+          "employeeId": {
+            "type": "string"
+          },
+          "employeeName": {
+            "type": "string"
+          },
+          "beneficiary": {
+            "type": "string",
+            "description": "نام ذی‌نفع؛ خود کارمند یا فرد تحت تکفل"
+          },
+          "relation": {
+            "type": "string",
+            "description": "نسبت با کارمند"
+          },
+          "section": {
+            "type": "string"
+          },
+          "sectionFa": {
+            "type": "string"
+          },
+          "occasionFa": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "مبلغ به ریال"
+          },
+          "basisFa": {
+            "type": "string",
+            "description": "مبنای محاسبه"
+          }
+        }
+      },
+      "CardChargeTotal": {
+        "type": "object",
+        "description": "جمع یک بخش در فایل شارژ.",
+        "required": [
+          "section",
+          "count",
+          "total"
+        ],
+        "properties": {
+          "section": {
+            "type": "string"
+          },
+          "sectionFa": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "CardChargeResult": {
+        "type": "object",
+        "description": "نتیجهٔ ساخت شارژ: ردیف‌ها، جمع کل، جمع هر بخش و شناسهٔ فایل ثبت‌شده.",
+        "required": [
+          "card",
+          "period",
+          "rows",
+          "count",
+          "total"
+        ],
+        "properties": {
+          "card": {
+            "type": "string"
+          },
+          "cardFa": {
+            "type": "string"
+          },
+          "period": {
+            "type": "string"
+          },
+          "scopeFa": {
+            "type": "string"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardChargeRow"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "bySection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardChargeTotal"
+            }
+          },
+          "fileId": {
+            "type": "string",
+            "description": "شناسهٔ فایل شارژ ثبت‌شده"
+          },
+          "fileNoFa": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CardOption": {
+        "type": "object",
+        "description": "گزینهٔ انتخابی (کارت، بخش شارژ یا مناسبت) برای فرم‌های رابط.",
+        "required": [
+          "key",
+          "titleFa"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "titleFa": {
+            "type": "string"
+          },
+          "card": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "dateFa": {
+            "type": "string"
+          }
+        }
+      },
+      "CardOptions": {
+        "type": "object",
+        "description": "فهرست‌های پایهٔ ماژول کارت‌های رفاهی: کارت‌ها، بخش‌ها با نرخ جاری و مناسبت‌های فعال.",
+        "required": [
+          "cards",
+          "sections",
+          "occasions"
+        ],
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardOption"
+            }
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardOption"
+            }
+          },
+          "occasions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardOption"
+            }
+          },
+          "ratesByCard": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CardOption"
+              }
+            }
+          },
+          "todayFa": {
+            "type": "string",
+            "description": "تاریخ شمسی امروز سرور"
+          }
+        }
+      },
+      "BonusRequest": {
+        "type": "object",
+        "description": "درخواست محاسبهٔ پاداش تحصیلی فرزندان ممتاز (مستقل از پتروکارت و نفت‌کارت).",
+        "required": [
+          "period"
+        ],
+        "properties": {
+          "levels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "مقطع‌های محاسبه؛ خالی یعنی همهٔ مقاطع"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "group",
+              "individual"
+            ],
+            "description": "محاسبهٔ گروهی یا انفرادی"
+          },
+          "period": {
+            "type": "string",
+            "description": "دورهٔ پرداخت/سال تحصیلی به قالب شمسی"
+          },
+          "employeeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "کارکنان انتخاب‌شده در محاسبهٔ انفرادی"
+          },
+          "trialRun": {
+            "type": "boolean",
+            "description": "پیش‌نمایش بدون ذخیره"
+          }
+        }
+      },
+      "BonusRow": {
+        "type": "object",
+        "description": "یک ردیف پاداش تحصیلی برای یک دانش‌آموز ممتاز.",
+        "required": [
+          "employeeId",
+          "student",
+          "level",
+          "amount"
+        ],
+        "properties": {
+          "employeeId": {
+            "type": "string"
+          },
+          "employeeName": {
+            "type": "string"
+          },
+          "student": {
+            "type": "string",
+            "description": "نام دانش‌آموز ممتاز"
+          },
+          "relation": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "levelFa": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "مبلغ به ریال"
+          },
+          "basisFa": {
+            "type": "string",
+            "description": "مبنای محاسبه"
+          }
+        }
+      },
+      "BonusTotal": {
+        "type": "object",
+        "description": "جمع یک مقطع در فایل پاداش تحصیلی.",
+        "required": [
+          "level",
+          "count",
+          "total"
+        ],
+        "properties": {
+          "level": {
+            "type": "string"
+          },
+          "levelFa": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "BonusResult": {
+        "type": "object",
+        "description": "نتیجهٔ محاسبهٔ پاداش: ردیف‌ها، جمع کل، جمع هر مقطع و شناسهٔ فایل ثبت‌شده.",
+        "required": [
+          "period",
+          "rows",
+          "count",
+          "total"
+        ],
+        "properties": {
+          "period": {
+            "type": "string"
+          },
+          "scopeFa": {
+            "type": "string"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BonusRow"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "byLevel": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BonusTotal"
+            }
+          },
+          "fileId": {
+            "type": "string",
+            "description": "شناسهٔ فایل پرداخت ثبت‌شده"
+          },
+          "fileNoFa": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "BonusOption": {
+        "type": "object",
+        "description": "گزینهٔ انتخابی (مقطع با مبلغ مصوب) برای فرم‌های رابط.",
+        "required": [
+          "key",
+          "titleFa"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "titleFa": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer"
+          }
+        }
+      },
+      "BonusOptions": {
+        "type": "object",
+        "description": "فهرست‌های پایهٔ ماژول پاداش تحصیلی: مقاطع با مبلغ مصوب جاری.",
+        "required": [
+          "levels"
+        ],
+        "properties": {
+          "levels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BonusOption"
+            }
+          },
+          "todayFa": {
+            "type": "string",
+            "description": "تاریخ شمسی امروز سرور"
+          }
+        }
+      },
+      "ReportCondition": {
+        "type": "object",
+        "required": [
+          "field",
+          "op"
+        ],
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "op": {
+            "type": "string",
+            "description": "عملگر شرط مانند eq، contains، gt، between، in"
+          },
+          "value": {
+            "type": "string"
+          },
+          "value2": {
+            "type": "string",
+            "description": "مقدار دوم برای عملگر بین دو مقدار"
+          }
+        }
+      },
+      "ReportField": {
+        "type": "object",
+        "required": [
+          "key",
+          "labelFa",
+          "type"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "labelFa": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "text|number|money|date"
+          }
+        }
+      },
+      "ReportFilterOption": {
+        "type": "object",
+        "required": [
+          "value",
+          "labelFa"
+        ],
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "labelFa": {
+            "type": "string"
+          }
+        }
+      },
+      "ReportFilterDef": {
+        "type": "object",
+        "required": [
+          "key",
+          "labelFa",
+          "type"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "labelFa": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportFilterOption"
+            }
+          },
+          "multiple": {
+            "type": "boolean",
+            "description": "چندانتخابی: کاربر چند گزینه را تیک می‌زند و مقدارهای تیک‌خورده با کاما فرستاده می‌شوند."
+          }
+        }
+      },
+      "ReportOperator": {
+        "type": "object",
+        "required": [
+          "key",
+          "labelFa"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "labelFa": {
+            "type": "string"
+          }
+        }
+      },
+      "ReportSourceMeta": {
+        "type": "object",
+        "required": [
+          "key",
+          "titleFa",
+          "fields"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "titleFa": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportField"
+            }
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportFilterDef"
+            }
+          }
+        }
+      },
+      "ReportRequest": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportCondition"
+            }
+          },
+          "limit": {
+            "type": "integer"
+          }
+        }
+      },
+      "ReportSummary": {
+        "type": "object",
+        "required": [
+          "key",
+          "labelFa",
+          "total"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "labelFa": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      },
+      "ReportResult": {
+        "type": "object",
+        "required": [
+          "source",
+          "titleFa",
+          "columns",
+          "rows",
+          "total"
+        ],
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "titleFa": {
+            "type": "string"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportField"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "noteFa": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportSummary"
+            }
+          }
+        }
+      },
+      "LoanOption": {
+        "type": "object",
+        "required": [
+          "key",
+          "titleFa"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "titleFa": {
+            "type": "string"
+          },
+          "isSupplement": {
+            "type": "boolean",
+            "description": "متمم بودن وام (مثل متمم ودیعهٔ مسکن)"
+          },
+          "baseKey": {
+            "type": "string",
+            "description": "کلید وام پایه برای وام‌های متمم"
+          },
+          "feeRatePercent": {
+            "type": "number",
+            "description": "نرخ کارمزد پیشنهادی (درصد)"
+          },
+          "maxInstallments": {
+            "type": "integer",
+            "description": "سقف تعداد اقساط"
+          },
+          "maxAmount": {
+            "type": "integer",
+            "description": "سقف مبلغ وام"
+          },
+          "purposeFa": {
+            "type": "string"
+          },
+          "sharePercent": {
+            "type": "number",
+            "description": "درصد سهمیهٔ مصوب مدیریت از کل صندوق تسهیلات"
+          },
+          "eligible": {
+            "type": "integer",
+            "description": "سرشماری مشمولین مدیریت"
+          }
+        }
+      },
+      "LoanCriterionOption": {
+        "type": "object",
+        "required": [
+          "value",
+          "titleFa",
+          "score"
+        ],
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "titleFa": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer"
+          }
+        }
+      },
+      "LoanCriterion": {
+        "type": "object",
+        "required": [
+          "key",
+          "titleFa",
+          "weight",
+          "options"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "titleFa": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanCriterionOption"
+            }
+          }
+        }
+      },
+      "LoanOptions": {
+        "type": "object",
+        "description": "فهرست‌های پایهٔ ماژول وام: انواع وام، بانک‌های عامل و معیارهای امتیازبندی تخصیص.",
+        "required": [
+          "loanTypes",
+          "banks",
+          "managementUnits",
+          "units",
+          "criteria"
+        ],
+        "properties": {
+          "loanTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanOption"
+            }
+          },
+          "banks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanOption"
+            }
+          },
+          "managementUnits": {
+            "type": "array",
+            "description": "مدیریت‌های بندر امام در جدول سهمیهٔ تسهیلات",
+            "items": {
+              "$ref": "#/components/schemas/LoanOption"
+            }
+          },
+          "units": {
+            "type": "array",
+            "description": "واحدهای سازمانی زیر هر مدیریت، از کاتالوگ مرجع تنظیمات",
+            "items": { "$ref": "#/components/schemas/CatalogItem" }
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanCriterion"
+            }
+          },
+          "todayFa": {
+            "type": "string"
+          }
+        }
+      },
+      "LoanScoringRequest": {
+        "type": "object",
+        "properties": {
+          "employeeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "کد متقاضیان؛ خالی یعنی همهٔ نمونه‌ها"
+          }
+        }
+      },
+      "LoanScoreLine": {
+        "type": "object",
+        "required": [
+          "criterion",
+          "criterionFa",
+          "score",
+          "weight",
+          "points"
+        ],
+        "properties": {
+          "criterion": {
+            "type": "string"
+          },
+          "criterionFa": {
+            "type": "string"
+          },
+          "valueFa": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "weight": {
+            "type": "integer"
+          },
+          "points": {
+            "type": "integer"
+          }
+        }
+      },
+      "LoanScoreRow": {
+        "type": "object",
+        "required": [
+          "employeeId",
+          "employeeName",
+          "total",
+          "rank",
+          "breakdown"
+        ],
+        "properties": {
+          "employeeId": {
+            "type": "string"
+          },
+          "employeeName": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "rank": {
+            "type": "integer"
+          },
+          "breakdown": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanScoreLine"
+            }
+          }
+        }
+      },
+      "LoanAllocationResult": {
+        "type": "object",
+        "description": "خروجی امتیازبندی و رتبه‌بندی تخصیص وام.",
+        "required": [
+          "rows",
+          "count"
+        ],
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanScoreRow"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "noteFa": {
+            "type": "string"
+          }
+        }
+      },
+      "Management": {
+        "type": "object",
+        "description": "مدیریت (واحد تولیدی یا پشتیبانی) در سازمان",
+        "required": ["key", "titleFa"],
+        "properties": {
+          "key": { "type": "string" },
+          "titleFa": { "type": "string" },
+          "noteFa": { "type": "string" }
+        }
+      },
+      "BonusChoice": {
+        "type": "object",
+        "description": "گزینهٔ فرم پاداش (نوع پاداش یا روش پرداخت)",
+        "required": ["key", "titleFa"],
+        "properties": {
+          "key": { "type": "string" },
+          "titleFa": { "type": "string" },
+          "defaultAmount": { "type": "integer" },
+          "requiresDecree": { "type": "boolean" },
+          "noteFa": { "type": "string" }
+        }
+      },
+      "BonusChoices": {
+        "type": "object",
+        "description": "گزینه‌های فرم پاداش: انواع، مدیریت‌ها و روش‌های پرداخت",
+        "required": ["types", "managements", "paymentMethods", "todayFa"],
+        "properties": {
+          "types": { "type": "array", "items": { "$ref": "#/components/schemas/BonusChoice" } },
+          "managements": { "type": "array", "items": { "$ref": "#/components/schemas/Management" } },
+          "paymentMethods": { "type": "array", "items": { "$ref": "#/components/schemas/BonusChoice" } },
+          "todayFa": { "type": "string" }
+        }
+      },
+      "BonusManagementRow": {
+        "type": "object",
+        "description": "جمع پاداش‌های یک مدیریت",
+        "properties": {
+          "managementKey": { "type": "string" },
+          "managementFa": { "type": "string" },
+          "payments": { "type": "integer" },
+          "beneficiaries": { "type": "integer" },
+          "totalAmount": { "type": "number" },
+          "averagePerPerson": { "type": "number" },
+          "maxPayment": { "type": "number" },
+          "companyCount": { "type": "integer" },
+          "thirdPartyCount": { "type": "integer" },
+          "firstDate": { "type": "string" },
+          "lastDate": { "type": "string" }
+        }
+      },
+      "BonusEmployeeRow": {
+        "type": "object",
+        "description": "جمع پاداش‌های یک نفر در یک مدیریت",
+        "properties": {
+          "employeeId": { "type": "string" },
+          "employeeName": { "type": "string" },
+          "managementKey": { "type": "string" },
+          "managementFa": { "type": "string" },
+          "payments": { "type": "integer" },
+          "totalAmount": { "type": "number" },
+          "averagePayment": { "type": "number" },
+          "typeTitlesFa": { "type": "array", "items": { "type": "string" } },
+          "firstDate": { "type": "string" },
+          "lastDate": { "type": "string" }
+        }
+      },
+      "BonusTypeRow": {
+        "type": "object",
+        "description": "جمع پاداش‌ها به تفکیک نوع پاداش",
+        "properties": {
+          "typeKey": { "type": "string" },
+          "typeFa": { "type": "string" },
+          "payments": { "type": "integer" },
+          "amount": { "type": "number" },
+          "sharePercent": { "type": "number" }
+        }
+      },
+      "BonusPeriodRow": {
+        "type": "object",
+        "description": "جمع پاداش‌ها به تفکیک دورهٔ پرداخت",
+        "properties": {
+          "period": { "type": "string" },
+          "payments": { "type": "integer" },
+          "beneficiaries": { "type": "integer" },
+          "amount": { "type": "number" }
+        }
+      },
+      "BonusStatusRow": {
+        "type": "object",
+        "description": "جمع پاداش‌ها به تفکیک وضعیت گردش‌کار",
+        "properties": {
+          "statusKey": { "type": "string" },
+          "statusFa": { "type": "string" },
+          "payments": { "type": "integer" },
+          "amount": { "type": "number" }
+        }
+      },
+      "BonusDashboard": {
+        "type": "object",
+        "description": "داشبورد مدیریتی پرداخت پاداش",
+        "properties": {
+          "managementRows": { "type": "array", "items": { "$ref": "#/components/schemas/BonusManagementRow" } },
+          "employeeRows": { "type": "array", "items": { "$ref": "#/components/schemas/BonusEmployeeRow" } },
+          "typeRows": { "type": "array", "items": { "$ref": "#/components/schemas/BonusTypeRow" } },
+          "periodRows": { "type": "array", "items": { "$ref": "#/components/schemas/BonusPeriodRow" } },
+          "statusRows": { "type": "array", "items": { "$ref": "#/components/schemas/BonusStatusRow" } },
+          "totalPayments": { "type": "integer" },
+          "paidPayments": { "type": "integer" },
+          "approvedPayments": { "type": "integer" },
+          "draftPayments": { "type": "integer" },
+          "cancelledPayments": { "type": "integer" },
+          "totalAmount": { "type": "number" },
+          "paidAmount": { "type": "number" },
+          "totalBeneficiaries": { "type": "integer" },
+          "averagePerPayment": { "type": "number" },
+          "averagePerPerson": { "type": "number" },
+          "maxPayment": { "type": "number" },
+          "minPayment": { "type": "number" },
+          "managementsCovered": { "type": "integer" },
+          "managementsTotal": { "type": "integer" },
+          "companyAmount": { "type": "number" },
+          "thirdPartyAmount": { "type": "number" },
+          "noteFa": { "type": "string" }
+        }
+      },
+      "BonusAllocationRequest": {
+        "type": "object",
+        "description": "ورودی فرم تخصیص پاداش",
+        "required": ["bonusType", "amount", "paymentDate"],
+        "properties": {
+          "management": { "type": "string" },
+          "bonusType": { "type": "string" },
+          "amount": { "type": "integer" },
+          "paymentDate": { "type": "string" },
+          "paymentMethod": { "type": "string" },
+          "decreeNo": { "type": "string" },
+          "reference": { "type": "string" },
+          "employeeIds": { "type": "array", "items": { "type": "string" } },
+          "noteFa": { "type": "string" }
+        }
+      },
+      "BonusAllocationRow": {
+        "type": "object",
+        "description": "یک ردیف تخصیص پاداش (پیش‌نمایش یا ساخته‌شده)",
+        "properties": {
+          "employeeId": { "type": "string" },
+          "employeeName": { "type": "string" },
+          "departmentName": { "type": "string" },
+          "managementKey": { "type": "string" },
+          "managementFa": { "type": "string" },
+          "bonusTypeFa": { "type": "string" },
+          "amount": { "type": "number" },
+          "sequence": { "type": "integer" },
+          "recordId": { "type": "string" }
+        }
+      },
+      "BonusAllocationResult": {
+        "type": "object",
+        "description": "نتیجهٔ پیش‌نمایش یا ثبت تخصیص پاداش",
+        "properties": {
+          "rows": { "type": "array", "items": { "$ref": "#/components/schemas/BonusAllocationRow" } },
+          "count": { "type": "integer" },
+          "totalAmount": { "type": "number" },
+          "created": { "type": "integer" },
+          "noteFa": { "type": "string" }
+        }
+      },
+      "LoanGrantRequest": {
+        "type": "object",
+        "description": "ورودی فرم تخصیص وام (مبلغ و اقساط هر نفر)",
+        "required": ["loanType", "amount", "receivedDate"],
+        "properties": {
+          "loanType": { "type": "string" },
+          "bank": { "type": "string" },
+          "management": { "type": "string" },
+          "unit": { "type": "string" },
+          "amount": { "type": "integer" },
+          "installments": { "type": "integer" },
+          "receivedDate": { "type": "string" },
+          "purpose": { "type": "string" },
+          "guarantorName": { "type": "string" },
+          "guarantorNationalId": { "type": "string" },
+          "guarantorRelation": { "type": "string" },
+          "supplementOf": { "type": "string" },
+          "employeeIds": { "type": "array", "items": { "type": "string" } },
+          "noteFa": { "type": "string" }
+        }
+      },
+      "LoanGrantRow": {
+        "type": "object",
+        "description": "یک ردیف تخصیص وام (پیش‌نمایش یا ساخته‌شده)",
+        "properties": {
+          "employeeId": { "type": "string" },
+          "employeeName": { "type": "string" },
+          "departmentName": { "type": "string" },
+          "loanTypeFa": { "type": "string" },
+          "bankFa": { "type": "string" },
+          "managementKey": { "type": "string" },
+          "managementFa": { "type": "string" },
+          "unitKey": { "type": "string" },
+          "unitFa": { "type": "string" },
+          "amount": { "type": "number" },
+          "feeRatePercent": { "type": "number" },
+          "feeAmount": { "type": "number" },
+          "installments": { "type": "integer" },
+          "installmentAmount": { "type": "number" },
+          "recordId": { "type": "string" }
+        }
+      },
+      "LoanGrantResult": {
+        "type": "object",
+        "description": "نتیجهٔ پیش‌نمایش یا ثبت تخصیص وام",
+        "properties": {
+          "rows": { "type": "array", "items": { "$ref": "#/components/schemas/LoanGrantRow" } },
+          "count": { "type": "integer" },
+          "totalAmount": { "type": "number" },
+          "totalFee": { "type": "number" },
+          "created": { "type": "integer" },
+          "noteFa": { "type": "string" }
+        }
+      },
+      "CatalogItem": {
+        "type": "object",
+        "description": "قلم کاتالوگ مرجع زمان‌اجرا (مدیریت، بانک عامل یا واحد سازمانی)",
+        "required": [
+          "key",
+          "titleFa",
+          "active"
+        ],
+        "properties": {
+          "key": { "type": "string", "description": "کلید ماشین‌خوان و پایدار قلم (مثل bandar_imam)" },
+          "titleFa": { "type": "string" },
+          "noteFa": { "type": "string" },
+          "parentKey": { "type": "string", "description": "والد قلم؛ برای واحد، کلید مدیریت بالادست" },
+          "active": { "type": "boolean", "description": "قلم در فرم‌ها و اعتبارسنجی دیده شود یا نه" },
+          "recordId": { "type": "string", "description": "شناسهٔ رکورد کاتالوگ در ماژول تنظیمات" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "کد ماشین‌خوان مانند forbidden یا validation_failed"
+          },
+          "message": {
+            "type": "string",
+            "description": "پیام فارسی قابل نمایش به کاربر"
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "خطاهای فیلد‌به‌فیلد"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "expiresAt",
+          "user"
+        ],
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "integer",
+            "description": "زمان انقضای توکن دسترسی (ثانیه یونیکس)"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "username",
+          "displayName",
+          "role"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "hr_manager",
+              "hr_spec",
+              "line_manager",
+              "employee"
+            ]
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "departmentId": {
+            "type": "string"
+          }
+        }
+      },
+      "Employee": {
+        "type": "object",
+        "required": [
+          "id",
+          "fullName",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "nationalId": {
+            "type": "string"
+          },
+          "departmentId": {
+            "type": "string"
+          },
+          "departmentName": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "contractType": {
+            "type": "string",
+            "enum": [
+              "تمام‌وقت",
+              "پیمانکاری",
+              "پاره‌وقت"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "leave",
+              "probation",
+              "terminated"
+            ]
+          },
+          "hireDate": {
+            "type": "string",
+            "description": "تاریخ شمسی به قالب YYYY/MM/DD"
+          },
+          "baseSalary": {
+            "type": "integer",
+            "description": "حقوق پایه به ریال"
+          },
+          "leaveBalance": {
+            "type": "integer"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "managerName": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "description": "نسخهٔ رکورد برای حل تعارض سینک"
+          }
+        }
+      },
+      "EmployeeInput": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "nationalId",
+          "departmentId",
+          "position",
+          "contractType",
+          "hireDate"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 3
+          },
+          "nationalId": {
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          },
+          "departmentId": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "contractType": {
+            "type": "string",
+            "enum": [
+              "تمام‌وقت",
+              "پیمانکاری",
+              "پاره‌وقت"
+            ]
+          },
+          "hireDate": {
+            "type": "string",
+            "description": "تاریخ شمسی به قالب YYYY/MM/DD"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "leave",
+              "probation",
+              "terminated"
+            ]
+          },
+          "baseSalary": {
+            "type": "integer"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "EmployeePage": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Employee"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "size": {
+            "type": "integer"
+          }
+        }
+      },
+      "Department": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "head": {
+            "type": "string"
+          },
+          "headcount": {
+            "type": "integer"
+          },
+          "parentId": {
+            "type": "string"
+          }
+        }
+      },
+      "Widget": {
+        "type": "object",
+        "required": [
+          "key",
+          "titleFa",
+          "value"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "titleFa": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "trend": {
+            "type": "number"
+          }
+        }
+      },
+      "ChangeItem": {
+        "type": "object",
+        "required": [
+          "entity",
+          "op",
+          "id",
+          "version"
+        ],
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "upsert",
+              "delete"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "ChangeSet": {
+        "type": "object",
+        "required": [
+          "since",
+          "nextSeq",
+          "changes"
+        ],
+        "properties": {
+          "since": {
+            "type": "integer",
+            "description": "نشانگری که کلاینت فرستاده است"
+          },
+          "nextSeq": {
+            "type": "integer",
+            "description": "نشانگر بعدی که کلاینت باید ذخیره کند"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChangeItem"
+            }
+          }
+        }
+      },
+      "Mutation": {
+        "type": "object",
+        "required": [
+          "opId",
+          "entity",
+          "op",
+          "id",
+          "payload"
+        ],
+        "properties": {
+          "opId": {
+            "type": "string",
+            "description": "شناسهٔ یکتای عملیات سمت کلاینت برای ایدمپوتنت بودن"
+          },
+          "entity": {
+            "type": "string"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "create",
+              "update",
+              "delete"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object"
+          },
+          "clientTs": {
+            "type": "string"
+          },
+          "baseVersion": {
+            "type": "integer"
+          }
+        }
+      },
+      "RejectedMutation": {
+        "type": "object",
+        "required": [
+          "opId",
+          "reason"
+        ],
+        "properties": {
+          "opId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "validation_failed",
+              "forbidden",
+              "version_conflict",
+              "not_found"
+            ]
+          },
+          "serverVersion": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "MutationResult": {
+        "type": "object",
+        "required": [
+          "accepted",
+          "rejected",
+          "nextSeq"
+        ],
+        "properties": {
+          "accepted": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rejected": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RejectedMutation"
+            }
+          },
+          "nextSeq": {
+            "type": "integer"
+          }
+        }
+      },
+      "LoanQuotaUnitRow": {
+        "type": "object",
+        "description": "ردیف تخصیص سهمیه یک مدیریت بندر امام",
+        "required": [
+          "unitKey",
+          "unitFa",
+          "sharePercent",
+          "quotaAmount",
+          "eligible",
+          "applicants"
+        ],
+        "properties": {
+          "unitKey": {
+            "type": "string"
+          },
+          "unitFa": {
+            "type": "string"
+          },
+          "sharePercent": {
+            "type": "number"
+          },
+          "quotaAmount": {
+            "type": "number"
+          },
+          "eligible": {
+            "type": "integer"
+          },
+          "applicants": {
+            "type": "integer"
+          },
+          "pending": {
+            "type": "integer"
+          },
+          "sent": {
+            "type": "integer"
+          },
+          "rejected": {
+            "type": "integer"
+          },
+          "recordsCount": {
+            "type": "integer"
+          },
+          "companyCount": {
+            "type": "integer"
+          },
+          "thirdPartyCount": {
+            "type": "integer"
+          },
+          "requestedAmount": {
+            "type": "number"
+          },
+          "sentAmount": {
+            "type": "number"
+          },
+          "companyAmount": {
+            "type": "number"
+          },
+          "thirdPartyAmount": {
+            "type": "number"
+          },
+          "claimPercent": {
+            "type": "number",
+            "description": "درصد تعلق: مبلغ درخواستی ÷ سهمیهٔ ریالی مدیریت"
+          },
+          "coveragePercent": {
+            "type": "number",
+            "description": "پوشش مشمولین: متقاضیان ÷ سرشماری مشمولین"
+          }
+        }
+      },
+      "LoanQuotaStageRow": {
+        "type": "object",
+        "description": "توزیع درخواست‌ها بین مراحل ارسال به مدیریت مالی",
+        "required": [
+          "stageKey",
+          "stageFa",
+          "sentToFinance"
+        ],
+        "properties": {
+          "stageKey": {
+            "type": "string"
+          },
+          "stageFa": {
+            "type": "string"
+          },
+          "sentToFinance": {
+            "type": "boolean"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "companyCount": {
+            "type": "integer"
+          },
+          "thirdPartyCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "LoanQuotaGroupRow": {
+        "type": "object",
+        "description": "سهم گروه کارگزینی (شرکتی / ارکان ثالث)",
+        "required": [
+          "groupKey",
+          "groupFa"
+        ],
+        "properties": {
+          "groupKey": {
+            "type": "string"
+          },
+          "groupFa": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "sentCount": {
+            "type": "integer"
+          },
+          "sentAmount": {
+            "type": "number"
+          },
+          "sharePercent": {
+            "type": "number"
+          },
+          "sentSharePercent": {
+            "type": "number"
+          }
+        }
+      },
+      "LoanQuotaFeeTierRow": {
+        "type": "object",
+        "description": "درخواست‌ها به تفکیک درصد کارمزد تسهیلات",
+        "required": [
+          "feeRatePercent"
+        ],
+        "properties": {
+          "feeRatePercent": {
+            "type": "number"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "companyCount": {
+            "type": "integer"
+          },
+          "thirdPartyCount": {
+            "type": "integer"
+          },
+          "companyAmount": {
+            "type": "number"
+          },
+          "thirdPartyAmount": {
+            "type": "number"
+          }
+        }
+      },
+      "LoanQuotaDashboard": {
+        "type": "object",
+        "description": "داشبورد تخصیص سهمیهٔ تسهیلات",
+        "required": [
+          "units",
+          "stages",
+          "groups",
+          "feeTiers"
+        ],
+        "properties": {
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanQuotaUnitRow"
+            }
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanQuotaStageRow"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanQuotaGroupRow"
+            }
+          },
+          "feeTiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoanQuotaFeeTierRow"
+            }
+          },
+          "quotaTotalAmount": {
+            "type": "number"
+          },
+          "requestedTotalAmount": {
+            "type": "number"
+          },
+          "sentTotalAmount": {
+            "type": "number"
+          },
+          "eligibleTotal": {
+            "type": "integer"
+          },
+          "applicantTotal": {
+            "type": "integer"
+          },
+          "pendingTotal": {
+            "type": "integer"
+          },
+          "sentTotal": {
+            "type": "integer"
+          },
+          "rejectedTotal": {
+            "type": "integer"
+          },
+          "companySharePercent": {
+            "type": "number"
+          },
+          "thirdPartySharePercent": {
+            "type": "number"
+          },
+          "noteFa": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "summary": "بررسی سلامت سرویس",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "سرویس زنده است",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "modules": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "ورود کاربر",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ورود موفق",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "نام کاربری یا رمز نادرست",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "summary": "تمدید نشست",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refreshToken"
+                ],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "نشست تازه",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "summary": "کاربر جاری و دسترسی‌های مؤثر",
+        "responses": {
+          "200": {
+            "description": "کاربر جاری",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/widgets": {
+      "get": {
+        "summary": "کارت‌های آماری داشبورد بر اساس نقش",
+        "responses": {
+          "200": {
+            "description": "فهرست کارت‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Widget"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employee/employees": {
+      "get": {
+        "summary": "فهرست کارکنان با جستجو، فیلتر و صفحه‌بندی",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "جستجو در نام، شناسه و کد ملی"
+          },
+          {
+            "name": "departmentId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "leave",
+                "probation",
+                "terminated"
+              ]
+            }
+          },
+          {
+            "name": "contractType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "description": "مانند fullName:asc یا hireDate:desc"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/SizeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "صفحهٔ کارکنان",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeePage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "دسترسی ندارید",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "ایجاد کارمند",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "کارمند ساخته شد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "خطای اعتبارسنجی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employee/employees/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "پروندهٔ کارمند",
+        "responses": {
+          "200": {
+            "description": "پرونده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "یافت نشد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "ویرایش کارمند",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ویرایش شد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "حذف کارمند",
+        "responses": {
+          "204": {
+            "description": "حذف شد"
+          },
+          "403": {
+            "description": "دسترسی ندارید",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employee/departments": {
+      "get": {
+        "summary": "ساختار سازمانی واحدها",
+        "responses": {
+          "200": {
+            "description": "فهرست واحدها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Department"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/recruitment/requests": {
+      "get": {
+        "summary": "درخواست‌های نیرو",
+        "responses": {
+          "200": {
+            "description": "فهرست",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attendance/leave-requests": {
+      "get": {
+        "summary": "درخواست‌های مرخصی",
+        "responses": {
+          "200": {
+            "description": "فهرست",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "ثبت درخواست مرخصی",
+        "responses": {
+          "201": {
+            "description": "ثبت شد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attendance/leave-requests/{id}/decision": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "تأیید یا رد مرخصی",
+        "responses": {
+          "200": {
+            "description": "ثبت تصمیم",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attendance/calendar": {
+      "get": {
+        "summary": "تقویم کاری ماهانه",
+        "responses": {
+          "200": {
+            "description": "روزهای ماه",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/runs": {
+      "get": {
+        "summary": "دوره‌های پردازش حقوق",
+        "responses": {
+          "200": {
+            "description": "فهرست دوره‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/payslips": {
+      "get": {
+        "summary": "فیش‌های حقوقی",
+        "responses": {
+          "200": {
+            "description": "فهرست فیش‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/performance/results": {
+      "get": {
+        "summary": "نتایج ارزیابی عملکرد",
+        "responses": {
+          "200": {
+            "description": "فهرست نتایج",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/training/courses": {
+      "get": {
+        "summary": "دوره‌های آموزشی",
+        "responses": {
+          "200": {
+            "description": "فهرست دوره‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/welfare/requests": {
+      "get": {
+        "summary": "درخواست‌های رفاهی",
+        "responses": {
+          "200": {
+            "description": "فهرست درخواست‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/orgstructure/units": {
+      "get": {
+        "summary": "واحدهای سازمانی",
+        "responses": {
+          "200": {
+            "description": "درخت واحدها و سرپرست هر واحد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/orgstructure/positions": {
+      "get": {
+        "summary": "شناسنامهٔ پست‌ها",
+        "responses": {
+          "200": {
+            "description": "فهرست پست‌های سازمانی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/career/appointments": {
+      "get": {
+        "summary": "انتصابات و ابلاغ‌ها",
+        "responses": {
+          "200": {
+            "description": "فهرست ابلاغ‌های سازمانی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/career/promotions": {
+      "get": {
+        "summary": "ترفیعات",
+        "responses": {
+          "200": {
+            "description": "فهرست درخواست‌های ترفیع",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/career/paths": {
+      "get": {
+        "summary": "کارراههٔ شغلی",
+        "responses": {
+          "200": {
+            "description": "مسیرهای رشد شغلی و جانشین‌پروری",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discipline/cases": {
+      "get": {
+        "summary": "پرونده‌های انضباطی",
+        "responses": {
+          "200": {
+            "description": "فهرست پرونده‌های کمیتهٔ انضباط کار",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discipline/meetings": {
+      "get": {
+        "summary": "جلسات کمیتهٔ انضباط",
+        "responses": {
+          "200": {
+            "description": "فهرست جلسات و صورت‌جلسه‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/socialwork/cases": {
+      "get": {
+        "summary": "پرونده‌های مددکاری",
+        "responses": {
+          "200": {
+            "description": "فهرست پرونده‌های مددکاری اجتماعی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/socialwork/aid-requests": {
+      "get": {
+        "summary": "کمک‌های موردی",
+        "responses": {
+          "200": {
+            "description": "فهرست درخواست‌های کمک موردی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/medical/services": {
+      "get": {
+        "summary": "خدمات درمانی و بیمه",
+        "responses": {
+          "200": {
+            "description": "فهرست خدمات درمانی و پوشش بیمه",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/medical/treatment-cases": {
+      "get": {
+        "summary": "پرونده‌های درمان",
+        "responses": {
+          "200": {
+            "description": "فهرست پرونده‌های درمان و هزینه‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/medical/periodic-exams": {
+      "get": {
+        "summary": "معاینات دوره‌ای",
+        "responses": {
+          "200": {
+            "description": "فهرست معاینات دوره‌ای و طب کار",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/archive/files": {
+      "get": {
+        "summary": "پرونده‌های پرسنلی بایگانی",
+        "responses": {
+          "200": {
+            "description": "فهرست پرونده‌های بایگانی و وضعیت کامل بودن آن‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/archive/identities": {
+      "get": {
+        "summary": "شناسایی و مدارک کارکنان",
+        "responses": {
+          "200": {
+            "description": "مشخصات هویتی و وضعیت کارت شناسایی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contracts/contracts": {
+      "get": {
+        "summary": "قراردادهای کارکنان (مدت موقت و مدت دائم)",
+        "responses": {
+          "200": {
+            "description": "فهرست قراردادها با نوع، تاریخ شروع و پایان و وضعیت جاری",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "انعقاد قرارداد تازه",
+        "responses": {
+          "201": {
+            "description": "قرارداد ساخته شد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contracts/renewals": {
+      "get": {
+        "summary": "تمدید، تغییر و پایان قرارداد",
+        "responses": {
+          "200": {
+            "description": "سرآمدهای نزدیک و درخواست‌های تمدید",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contracts/templates": {
+      "get": {
+        "summary": "قالب و متن قراردادها",
+        "responses": {
+          "200": {
+            "description": "قالب‌های قرارداد مدت موقت، مدت دائم و پیمانکاری",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/personnel/dependents": {
+      "get": {
+        "summary": "افراد تحت تکفل کارکنان",
+        "responses": {
+          "200": {
+            "description": "فهرست افراد تحت تکفل و پوشش بیمهٔ آن‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "ثبت فرد تحت تکفل",
+        "responses": {
+          "201": {
+            "description": "فرد تحت تکفل ثبت شد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/personnel/flight-requests": {
+      "get": {
+        "summary": "فرم‌های درخواست پرواز",
+        "responses": {
+          "200": {
+            "description": "درخواست‌های پرواز کارکنان و وضعیت تأیید و صدور بلیت",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "ثبت درخواست پرواز",
+        "responses": {
+          "201": {
+            "description": "درخواست پرواز ثبت شد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/salary_admin/decrees": {
+      "get": {
+        "summary": "احکام حقوق کارکنان",
+        "responses": {
+          "200": {
+            "description": "احکام حقوق و سابقهٔ تغییرات آن‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "صدور حکم حقوق",
+        "responses": {
+          "201": {
+            "description": "حکم حقوق صادر شد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/salary_admin/certificates": {
+      "get": {
+        "summary": "گواهی‌های اشتغال",
+        "responses": {
+          "200": {
+            "description": "درخواست‌ها و گواهی‌های اشتغال صادرشده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "صدور گواهی اشتغال به کار",
+        "responses": {
+          "201": {
+            "description": "گواهی صادر شد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobclass/categories": {
+      "get": {
+        "summary": "طبقه‌بندی و رتبه‌بندی مشاغل",
+        "responses": {
+          "200": {
+            "description": "طبقات شغلی سازمان و مشاغل پیمانکاری",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobclass/evaluations": {
+      "get": {
+        "summary": "ارزشیابی مشاغل",
+        "responses": {
+          "200": {
+            "description": "نتیجهٔ ارزشیابی مشاغل بر پایهٔ عوامل امتیاز",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loans/requests": {
+      "get": {
+        "summary": "وام کارکنان",
+        "responses": {
+          "200": {
+            "description": "درخواست‌های وام و وضعیت بررسی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loans/retirements": {
+      "get": {
+        "summary": "پرونده‌های بازنشستگی",
+        "responses": {
+          "200": {
+            "description": "پرونده‌های بازنشستگی و وضعیت حکم",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grievances/complaints": {
+      "get": {
+        "summary": "شکایات کارکنان",
+        "responses": {
+          "200": {
+            "description": "شکایات ثبت‌شده و وضعیت رسیدگی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/statistics/attendance": {
+      "get": {
+        "summary": "بررسی و تأیید حضور و غیاب و تردد",
+        "responses": {
+          "200": {
+            "description": "دادهٔ تردد دوره برای بررسی و تأیید واحد آمار",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/statistics/base-pay": {
+      "get": {
+        "summary": "اطلاعات پایهٔ حقوق و مزایا",
+        "responses": {
+          "200": {
+            "description": "اطلاعات پایهٔ مزایا و کسورات برای تأیید",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/statistics/karana": {
+      "get": {
+        "summary": "بررسی و تأیید کارانه",
+        "responses": {
+          "200": {
+            "description": "کارانهٔ محاسبه‌شدهٔ هر واحد برای بررسی و تأیید",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/statistics/leave": {
+      "get": {
+        "summary": "برش مرخصی‌ها به تفکیک نوع و وضعیت تأیید",
+        "responses": {
+          "200": {
+            "description": "جمع و ردیف‌های برش مرخصی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/statistics/missions": {
+      "get": {
+        "summary": "برش مأموریت‌ها به تفکیک واحد سازمانی",
+        "responses": {
+          "200": {
+            "description": "جمع روز و فوق‌العادهٔ برآوردی مأموریت",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/statistics/dashboard": {
+      "get": {
+        "summary": "داشبورد آماری تجمیعی",
+        "responses": {
+          "200": {
+            "description": "جمعیت کارکنان، جرم حقوقی، کارکرد دوره و صف تأیید",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/statistics/pay-elements": {
+      "get": {
+        "summary": "اقلام فعال حقوق و محاسبهٔ نمونه",
+        "responses": {
+          "200": {
+            "description": "تفکیک اقلام مزایا و کسور با موتور مشترک قواعد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settings/work-calendar": {
+      "get": {
+        "summary": "تقویم کاری استقرار شرکت فعال",
+        "parameters": [
+          {
+            "name": "month",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]{4}/[0-9]{2}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "روزهای ماه با پرچم تعطیل هفتگی/رسمی و پارامترهای حضور و مرخصی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/moves/transfers": {
+      "get": {
+        "summary": "جابه‌جایی کارکنان",
+        "responses": {
+          "200": {
+            "description": "درخواست‌های جابه‌جایی و وضعیت تأیید",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/moves/introductions": {
+      "get": {
+        "summary": "معرفی و ابلاغ کارکنان",
+        "responses": {
+          "200": {
+            "description": "معرفی‌نامه‌های صادرشده و واحد مقصد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/outsourcing/payroll": {
+      "get": {
+        "summary": "کنترل حقوق نیروهای ارکان ثالث",
+        "responses": {
+          "200": {
+            "description": "لیست حقوق پیمانکاران و نتیجهٔ کنترل انطباق",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/outsourcing/hardship-files": {
+      "get": {
+        "summary": "پرونده‌های سخت و زیان‌آور",
+        "responses": {
+          "200": {
+            "description": "پرونده‌های مشاغل سخت و زیان‌آور و پیگیری تأمین اجتماعی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hrstudies/surveys": {
+      "get": {
+        "summary": "نظرسنجی و جو سازمانی",
+        "responses": {
+          "200": {
+            "description": "نظرسنجی‌ها و نتیجهٔ تحلیل جو سازمانی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hrstudies/indices": {
+      "get": {
+        "summary": "شاخص‌های سرمایهٔ انسانی",
+        "responses": {
+          "200": {
+            "description": "شاخص‌های کلیدی سرمایهٔ انسانی و مقایسه با هدف",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attendance/missions": {
+      "get": {
+        "summary": "ماموریت‌ها",
+        "responses": {
+          "200": {
+            "description": "درخواست‌های ماموریت و فوق‌العادهٔ محاسبه‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/karana": {
+      "get": {
+        "summary": "کارانه و پرداخت‌های متغیر",
+        "responses": {
+          "200": {
+            "description": "کارانهٔ محاسبه‌شدهٔ واحدها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/worktime": {
+      "get": {
+        "summary": "کارکرد دوره به تفکیک کارمند (پورت کارکرد ماژول حضور)",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]{4}/[0-9]{2}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "کارکرد، روزهای پرداختی/کسری و مبلغ محاسبه‌شدهٔ هر کارمند",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/worktime-periods": {
+      "get": {
+        "summary": "دوره‌های دارای کارکرد و ماه جاری سرور",
+        "responses": {
+          "200": {
+            "description": "فهرست دوره‌ها به قالب YYYY/MM",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payroll/runs/{id}/calculate": {
+      "post": {
+        "summary": "اجرای محاسبهٔ دوره بر پایهٔ کارکرد کارکنان",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ردیف‌های محاسبه‌شده و جمع دوره؛ نتیجه روی رکورد دوره نوشته می‌شود",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/welfare/school-service": {
+      "get": {
+        "summary": "سرویس مدارس",
+        "responses": {
+          "200": {
+            "description": "ثبت‌نام سرویس مدارس فرزندان کارکنان",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/welfare/accommodation": {
+      "get": {
+        "summary": "اسکان کارکنان",
+        "responses": {
+          "200": {
+            "description": "ظرفیت و تخصیص واحدهای اسکان",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cards/options": {
+      "get": {
+        "summary": "گزینه‌های کارت‌های رفاهی (کارت‌ها، بخش‌ها با نرخ جاری و مناسبت‌ها)",
+        "responses": {
+          "200": {
+            "description": "فهرست کارت‌ها، بخش‌های شارژ با نرخ جاری و مناسبت‌های فعال",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardOptions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cards/charge/preview": {
+      "post": {
+        "summary": "پیش‌نمایش شارژ (بدون ذخیره)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardChargeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ردیف‌های شارژ محاسبه‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardChargeResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cards/charge-files": {
+      "post": {
+        "summary": "ساخت فایل شارژ و ثبت آن برای مالی",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardChargeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "فایل شارژ ساخته‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardChargeResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cards/charge-files/{id}/export": {
+      "get": {
+        "summary": "خروجی CSV فایل شارژ برای واحد مالی",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "فایل شارژ با ردیف‌های هر فرد و جمع هر بخش",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/education_bonus/options": {
+      "get": {
+        "summary": "گزینه‌های پاداش تحصیلی (مقاطع با مبلغ مصوب جاری)",
+        "responses": {
+          "200": {
+            "description": "فهرست مقاطع با مبلغ مصوب جاری",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BonusOptions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/education_bonus/bonus/preview": {
+      "post": {
+        "summary": "پیش‌نمایش محاسبهٔ پاداش تحصیلی (بدون ذخیره)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BonusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ردیف‌های پاداش محاسبه‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BonusResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/education_bonus/bonus-files": {
+      "post": {
+        "summary": "ساخت فایل محاسباتی پاداش تحصیلی و ثبت آن برای مالی",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BonusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "فایل پاداش ساخته‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BonusResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/education_bonus/bonus-files/{id}/export": {
+      "get": {
+        "summary": "خروجی CSV فایل پاداش تحصیلی برای واحد مالی",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "فایل پاداش با ردیف‌های هر دانش‌آموز و جمع هر مقطع",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bonus/options": {
+      "get": {
+        "summary": "گزینه‌های پاداش: انواع، مدیریت‌های بندر امام و روش‌های پرداخت",
+        "responses": {
+          "200": {
+            "description": "انواع پاداش، مدیریت‌ها و روش‌های پرداخت",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BonusChoices"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bonus/dashboard": {
+      "get": {
+        "summary": "داشبورد مدیریتی پرداخت پاداش به تفکیک مدیریت، نفر، نوع، دوره و وضعیت",
+        "responses": {
+          "200": {
+            "description": "جمع پرداخت به تفکیک مدیریت، نفر، نوع، دوره و وضعیت",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BonusDashboard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bonus/allocate/preview": {
+      "post": {
+        "summary": "پیش‌نمایش تخصیص گروهی پاداش (بدون ذخیره)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BonusAllocationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ردیف‌های تخصیص با شمارهٔ دفعهٔ هر نفر",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BonusAllocationResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bonus/allocate": {
+      "post": {
+        "summary": "ثبت تخصیص گروهی پاداش و ساخت رکوردهای پرداخت در وضعیت پیش‌نویس",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BonusAllocationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "تخصیص ثبت‌شده و رکوردهای پرداخت ساخته‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BonusAllocationResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sports/programs": {
+      "get": {
+        "summary": "رشته‌ها و برنامه‌های ورزشی",
+        "responses": {
+          "200": {
+            "description": "برنامه‌های ورزشی سازمان و وضعیت آن‌ها",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sports/events": {
+      "get": {
+        "summary": "رویدادها و مسابقات ورزشی",
+        "responses": {
+          "200": {
+            "description": "رویدادهای ورزشی و نتیجهٔ برگزاری",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loans/options": {
+      "get": {
+        "summary": "گزینه‌های وام (انواع وام، بانک‌های عامل و معیارهای امتیازبندی)",
+        "responses": {
+          "200": {
+            "description": "فهرست انواع وام، بانک‌های عامل و معیارهای امتیازبندی تخصیص",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanOptions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loans/allocation/preview": {
+      "post": {
+        "summary": "پیش‌نمایش امتیازبندی و رتبه‌بندی تخصیص وام",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanScoringRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "رتبه‌بندی متقاضیان با ریز امتیاز هر معیار",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanAllocationResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/sources": {
+      "get": {
+        "summary": "منابع دادهٔ گزارش با اقلام، فیلترها و عملگرهای شرط",
+        "responses": {
+          "200": {
+            "description": "منابع گزارش به همراه عملگرهای شرط",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/run": {
+      "post": {
+        "summary": "اجرای گزارش با اقلام، فیلترها و شرط‌های انتخابی",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "نتیجهٔ گزارش",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/orgs": {
+      "get": {
+        "summary": "شرکت‌های قابل شبیه‌سازی (استقرار پارامتریک)",
+        "responses": {
+          "200": {
+            "description": "فهرست شرکت‌ها همراه با شرکت فعال و پارامترهای هر شرکت",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/orgs/holdings": {
+      "get": {
+        "summary": "هلدینگ‌ها و شرکت‌های زیرمجموعه",
+        "responses": {
+          "200": {
+            "description": "هلدینگ‌ها همراه شرکت‌های زیرمجموعه؛ مدیر سیستم همه و بقیه فقط هلدینگ خودشان",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/orgs/active": {
+      "get": {
+        "summary": "پروفایل شرکت فعال",
+        "responses": {
+          "200": {
+            "description": "مشخصات برند و پارامترهای شرکت فعال",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/runs": {
+      "get": {
+        "summary": "اجرای گزارش",
+        "responses": {
+          "200": {
+            "description": "نتیجهٔ گزارش",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settings/users": {
+      "get": {
+        "summary": "کاربران سامانه",
+        "responses": {
+          "200": {
+            "description": "فهرست کاربران",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settings/audit": {
+      "get": {
+        "summary": "لاگ حسابرسی",
+        "responses": {
+          "200": {
+            "description": "رخدادهای حسابرسی",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sync/changes": {
+      "get": {
+        "summary": "دلتای تغییرات از نشانگر مشخص",
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "مجموعهٔ تغییرات",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeSet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sync/mutations": {
+      "post": {
+        "summary": "اعمال ایدمپوتنت عملیات آفلاین",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Mutation"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "نتیجهٔ اعمال",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MutationResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loans/quota-dashboard": {
+      "get": {
+        "summary": "داشبورد تخصیص سهمیهٔ تسهیلات (مدیریت‌ها، متقاضیان، ارسال به مالی، شرکتی/ارکان ثالث، نرخ کارمزد)",
+        "responses": {
+          "200": {
+            "description": "برش‌های تخصیص سهمیه بر پایهٔ کاتالوگ دامنه و رکوردهای واقعی وام",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanQuotaDashboard"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+,
+    "/api/v1/loans/allocate/preview": {
+      "post": {
+        "summary": "پیش‌نمایش تخصیص وام — محاسبهٔ کارمزد و مبلغ قسط بدون ذخیره‌سازی",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanGrantRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ردیف‌های تخصیص با کارمزد و مبلغ هر قسط محاسبه‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanGrantResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/loans/allocate": {
+      "post": {
+        "summary": "ثبت تخصیص وام و ساخت رکوردهای درخواست وام با کارمزد محاسبه‌شده",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanGrantRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "تخصیص ثبت‌شده و رکوردهای درخواست وام ساخته‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanGrantResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

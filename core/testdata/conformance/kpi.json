@@ -1,0 +1,73 @@
+{
+  "id": "kpi",
+  "description": "میانگین موزون شاخص‌های عملکرد و رتبه‌بندی فارسی",
+  "cases": [
+    {
+      "name": "ارزیابی متوازن",
+      "items": [
+        {
+          "kpiId": "KPI-1",
+          "weight": 30,
+          "score": 4.5
+        },
+        {
+          "kpiId": "KPI-2",
+          "weight": 30,
+          "score": 3.0
+        },
+        {
+          "kpiId": "KPI-3",
+          "weight": 40,
+          "score": 4.0
+        }
+      ],
+      "totalWeight": 100,
+      "weightedScore": 3.85,
+      "gradeFa": "خوب"
+    },
+    {
+      "name": "وزن صفر",
+      "items": [
+        {
+          "kpiId": "KPI-1",
+          "weight": 0,
+          "score": 5.0
+        },
+        {
+          "kpiId": "KPI-2",
+          "weight": 50,
+          "score": 3.5
+        }
+      ],
+      "totalWeight": 50,
+      "weightedScore": 3.5,
+      "gradeFa": "خوب"
+    },
+    {
+      "name": "همه صفر",
+      "items": [
+        {
+          "kpiId": "KPI-1",
+          "weight": 0,
+          "score": 5.0
+        }
+      ],
+      "totalWeight": 0,
+      "weightedScore": 0.0,
+      "gradeFa": "بدون ارزیابی"
+    },
+    {
+      "name": "نمرهٔ کامل",
+      "items": [
+        {
+          "kpiId": "KPI-1",
+          "weight": 100,
+          "score": 5.0
+        }
+      ],
+      "totalWeight": 100,
+      "weightedScore": 5.0,
+      "gradeFa": "عالی"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+[package]
+name = "hrms-store"
+version.workspace = true
+edition.workspace = true
+description = "انبار محلی کلاینت: داده، Outbox آفلاین، نشانگر سینک و حل تعارض"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+hrms-calendar = { path = "../hrms-calendar" }
+rusqlite = { version = "0.32", features = ["bundled"], optional = true }
+
+[features]
+default = []
+sqlite = ["dep:rusqlite"]

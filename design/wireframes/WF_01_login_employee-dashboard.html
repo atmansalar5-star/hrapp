@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>WF_01 — ورود | داشبورد کارمند</title>
+<style>
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:#FAFAFA;color:#111;margin:0;padding:24px;direction:rtl}
+h1{font-size:15px;border-bottom:2px solid #111;padding-bottom:6px}
+.wf-title{font-size:11px;letter-spacing:1px;color:#666;text-align:left;direction:ltr;margin:26px 0 6px}
+.wf-frame{border:2px solid #111;background:#fff;max-width:840px;margin:0 auto;padding:10px}
+.wf-box{border:1.5px solid #111;padding:8px;font-size:11px;background:#fff}
+.wf-box.gray{background:#EEE}
+.wf-line{border-top:1px dashed #999;margin:6px 0}
+.row{display:flex;gap:8px}
+.col{flex:1}
+.mono{font-family:monospace;direction:ltr;text-align:left}
+.note{font-size:11px;color:#555;max-width:840px;margin:8px auto 0;background:#FFF8DC;border:1px dashed #B8860B;padding:6px 10px}
+ul{margin:4px 16px 4px 0;padding:0;font-size:11px}
+.screen{display:flex;gap:8px;min-height:420px}
+.side{width:170px;display:flex;flex-direction:column;gap:6px}
+.main-a{flex:1;display:flex;flex-direction:column;gap:8px}
+</style>
+</head>
+<body>
+
+<h1>بخش الف — Wireframe صفحات (Low-Fidelity)</h1>
+
+<div class="wf-title mono">WF_Login_Common — صفحه ورود (همه نقش‌ها)</div>
+<div class="wf-frame" style="text-align:center;padding:30px 10px">
+  <div class="wf-box" style="display:inline-block;width:300px;text-align:right">
+    <div class="wf-box gray" style="text-align:center">[لوگو]</div>
+    <div style="text-align:center;font-weight:bold;margin:6px 0">«ورود به سامانه منابع انسانی»</div>
+    <div class="wf-box">«نام کاربری *»</div>
+    <div class="wf-box" style="margin-top:6px">«رمز عبور *»</div>
+    <div class="wf-box gray" style="margin-top:8px;text-align:center">[ دکمه ورود ]</div>
+    <div style="font-size:10px;color:#666;margin-top:6px;text-align:center">پیام خطا در صورت نامعتبر بودن</div>
+  </div>
+</div>
+<div class="note">هدف: احراز هویت کاربر و انتقال به داشبورد متناسب با نقش. اقدامات: ورود؛ نقش‌های مجاز: همه.</div>
+
+<div class="wf-title mono">WF_Dashboard_Employee — داشبورد کارمند</div>
+<div class="wf-frame">
+  <div class="wf-box gray">«Header»: [لوگو] | جستجو | اعلان‌ها 🔔 | نام کاربر ▾</div>
+  <div class="screen">
+    <div class="side">
+      <div class="wf-box gray" style="text-align:center">«Sidebar (راست)»</div>
+      <div class="wf-box">داشبورد</div>
+      <div class="wf-box">مرخصی و ماموریت</div>
+      <div class="wf-box">فیش حقوقی</div>
+      <div class="wf-box">دوره‌های آموزشی</div>
+      <div class="wf-box">سوابق آموزشی</div>
+      <div class="wf-box">درخواست‌های رفاهی</div>
+      <div class="wf-box">تقویم</div>
+    </div>
+    <div class="main-a">
+      <div style="font-size:11px">Breadcrumb: «منابع انسانی ‹ داشبورد»</div>
+      <div class="row">
+        <div class="wf-box col">ویجت: «مانده مرخصی» [عدد] [لینک]</div>
+        <div class="wf-box col">ویجت: «درخواست‌های در انتظار» [عدد]</div>
+        <div class="wf-box col">ویجت: «آخرین فیش حقوقی» [لینک]</div>
+      </div>
+      <div class="row">
+        <div class="wf-box col" style="flex:2">جدول: «درخواست‌های اخیر من» — نوع / از / تا / وضعیت</div>
+        <div class="wf-box col">«اقدامات سریع»<div class="wf-line"></div>[ ثبت مرخصی ] [ فیش حقوقی ] [ درخواست رفاهی ]</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="note">هدف: نمای کلی وضعیت کارمند و دسترسی سریع به درخواست‌ها. عناصر: ۳ ویجت آماری، جدول، اقدامات سریع. نقش مجاز: کارمند.</div>
+
+</body>
+</html>

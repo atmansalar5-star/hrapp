@@ -1,0 +1,121 @@
+{
+  "id": "leave",
+  "description": "قواعد شمارش روز مرخصی، ساندویچ، مانده و ذخیره‌سازی سالانه",
+  "params": {
+    "accrualPerMonth": 2.5,
+    "annualCap": 30,
+    "carryCap": 9,
+    "weekend": [
+      6
+    ],
+    "holidays": {
+      "1404/07/02": "تعطیل رسمی نمونه"
+    }
+  },
+  "cases": [
+    {
+      "name": "مرخصی سه‌روزه با یک جمعه",
+      "from": "1404/07/14",
+      "to": "1404/07/16",
+      "sandwich": false,
+      "balance": 12.0,
+      "days": 3.0,
+      "eligible": true,
+      "balanceAfter": 9.0
+    },
+    {
+      "name": "مرخصی هفت‌روزه شامل جمعه",
+      "from": "1404/07/05",
+      "to": "1404/07/11",
+      "sandwich": false,
+      "balance": 12.0,
+      "days": 6.0,
+      "eligible": true,
+      "balanceAfter": 6.0
+    },
+    {
+      "name": "همان بازه با قاعدهٔ ساندویچ",
+      "from": "1404/07/05",
+      "to": "1404/07/11",
+      "sandwich": true,
+      "balance": 12.0,
+      "days": 6.0,
+      "eligible": true,
+      "balanceAfter": 6.0
+    },
+    {
+      "name": "مرخصی یک‌روزه روی تعطیل رسمی",
+      "from": "1404/07/02",
+      "to": "1404/07/02",
+      "sandwich": false,
+      "balance": 5.0,
+      "days": 0.0,
+      "eligible": true,
+      "balanceAfter": 5.0
+    },
+    {
+      "name": "ماندهٔ ناکافی",
+      "from": "1404/07/01",
+      "to": "1404/07/10",
+      "sandwich": false,
+      "balance": 2.0,
+      "days": 8.0,
+      "eligible": false,
+      "balanceAfter": 2.0
+    }
+  ],
+  "accrualCases": [
+    {
+      "monthsWorked": 0,
+      "rawAccrual": 0.0,
+      "cappedAccrual": 0.0
+    },
+    {
+      "monthsWorked": 1,
+      "rawAccrual": 2.5,
+      "cappedAccrual": 2.5
+    },
+    {
+      "monthsWorked": 6,
+      "rawAccrual": 15.0,
+      "cappedAccrual": 15.0
+    },
+    {
+      "monthsWorked": 12,
+      "rawAccrual": 30.0,
+      "cappedAccrual": 30.0
+    },
+    {
+      "monthsWorked": 18,
+      "rawAccrual": 45.0,
+      "cappedAccrual": 30.0
+    },
+    {
+      "monthsWorked": 30,
+      "rawAccrual": 75.0,
+      "cappedAccrual": 30.0
+    }
+  ],
+  "carryCases": [
+    {
+      "balance": 14.5,
+      "carryCap": 9,
+      "carried": 9.0
+    },
+    {
+      "balance": 6.0,
+      "carryCap": 9,
+      "carried": 6.0
+    },
+    {
+      "balance": 9.0,
+      "carryCap": 9,
+      "carried": 9.0
+    },
+    {
+      "balance": 0.0,
+      "carryCap": 9,
+      "carried": 0.0
+    }
+  ]
+}

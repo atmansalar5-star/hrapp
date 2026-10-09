@@ -1,0 +1,12 @@
+[package]
+name = "hrms-rules"
+version.workspace = true
+edition.workspace = true
+description = "قواعد خالص حقوق، مرخصی و ارزیابی عملکرد — میزبان مرجع قواعد سامانه"
+
+[dependencies]
+serde = { workspace = true }
+hrms-calendar = { path = "../hrms-calendar" }
+
+[dev-dependencies]
+serde_json = { workspace = true }

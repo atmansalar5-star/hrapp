@@ -1,0 +1,39 @@
+# وابستگی‌ها و خروجی ساخت
+node_modules/
+apps/mobile/android/app/build/
+apps/mobile/ios/Pods/
+apps/mobile/android/app/src/main/jniLibs/
+*.tsbuildinfo
+
+# Rust
+core/target/
+**/*.rs.bk
+
+# Go
+server/bin/
+# فقط باینری ساخته‌شده نادیده گرفته می‌شود، نه پوشهٔ کد `server/cmd/hrmsd/`
+# (الگوی بدون اسلش «hrmsd» هر پوشه و فایل هم‌نام آن را هم نادیده می‌گرفت).
+/server/hrmsd
+/server/hrmsd.exe
+/hrmsd
+/hrmsd.exe
+
+# گردآوری‌های محلی
+.tools/
+*.log
+
+# دادهٔ «سیستم پاداش» (bonusd): پوشهٔ دادهٔ محلی — رکوردها، کاربران، کارکنان و کلید امضا.
+# دادهٔ عملیاتی است، نه کد؛ برای پشتیبان‌گیری همین پوشه کپی می‌شود.
+bonus-data/
+server/bonus-data/
+
+# محیط و رمزها — کلید امضای توکن هرگز کامیت نمی‌شود
+.env
+.env.*
+!.env.example
+
+# سیستم‌عامل و ویرایشگر
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
