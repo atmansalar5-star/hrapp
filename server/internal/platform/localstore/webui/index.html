@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سیستم پاداش</title>
+<!--
+  رابط وب سیستم پاداش.
+  تک‌فایل و بی‌وابستگی: هیچ CSS/JS/Font بیرونی بارگذاری نمی‌شود تا روی یک رایانهٔ
+  بدون اینترنت هم کامل کار کند. برچسب‌ها، وضعیت‌ها و دکمه‌های عملیات از خود سرور
+  (schema ماژول پاداش) خوانده می‌شود؛ پس هیچ قاعدهٔ کسب‌وکاری در این صفحه تکرار نشده و
+  تغییر دامنه، خودکار در همین رابط دیده می‌شود.
+-->
+<style>
+  :root {
+    --bg:#f4f6fa; --surface:#fff; --border:#dfe5ef; --text:#1f2937; --muted:#6b7280;
+    --brand:#0f6e5c; --brand-soft:#e6f4f0; --accent:#b45309; --danger:#b91c1c;
+    --ok:#15803d; --warn:#a16207; --radius:14px;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:Vazirmatn,"IRANSans","Segoe UI",Tahoma,sans-serif; font-size:15px; line-height:1.9;
+  }
+  .num { font-variant-numeric:tabular-nums; }
+  .ltr { direction:ltr; unicode-bidi:embed; }
+  header.top {
+    background:linear-gradient(90deg,#0f6e5c,#128a72); color:#fff; padding:14px 22px;
+    display:flex; flex-wrap:wrap; align-items:center; gap:14px;
+  }
+  header.top h1 { font-size:1.15rem; margin:0; font-weight:800; }
+  header.top .sub { font-size:.8rem; opacity:.9; }
+  header.top .spacer { flex:1; }
+  header.top button { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.4); color:#fff; }
+  /* آرم سازمان: در بالای صفحه می‌نشیند و مسیر مطلق دارد تا در هر آدرسی درست بار
+     شود (سرور برای مسیرهای تازه همان صفحه را می‌دهد، پس مسیر نسبی می‌شکست). */
+  img.brand-logo {
+    width:52px; height:52px; object-fit:contain; flex:none;
+    background:#fff; border-radius:12px; padding:4px; box-shadow:0 2px 8px rgba(0,0,0,.18);
+  }
+  /* خط مالکیت برنامه: فقط یک اعلامِ کم‌رنگ و کوچک است، نه عنصر برجسته. */
+  header.top .owner { font-size:.72rem; font-weight:400; opacity:.82; }
+  .wrap { max-width:1220px; margin:0 auto; padding:18px; }
+  .tabs { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
+  .tabs button {
+    background:var(--surface); border:1px solid var(--border); color:var(--text);
+    padding:9px 16px; border-radius:999px; cursor:pointer; font-family:inherit; font-size:.9rem;
+  }
+  .tabs button.active { background:var(--brand); border-color:var(--brand); color:#fff; font-weight:700; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; margin-bottom:14px; }
+  .card > h2 { font-size:1rem; margin:0 0 10px; }
+  .muted { color:var(--muted); }
+  .grid-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin-bottom:14px; }
+  .stat { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; }
+  .stat b { display:block; font-size:1.25rem; margin-top:4px; }
+  .stat span { font-size:.78rem; color:var(--muted); }
+  .grid-3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field label { font-size:.8rem; color:var(--muted); }
+  input,select,textarea {
+    font-family:inherit; font-size:.92rem; padding:9px 11px; border:1px solid var(--border);
+    border-radius:10px; background:#fff; color:var(--text); width:100%;
+  }
+  input:focus,select:focus,textarea:focus { outline:2px solid var(--brand-soft); border-color:var(--brand); }
+  .req { color:var(--danger); }
+  button.btn {
+    font-family:inherit; font-size:.9rem; padding:9px 16px; border-radius:10px; cursor:pointer;
+    border:1px solid var(--border); background:#fff; color:var(--text);
+  }
+  button.btn.primary { background:var(--brand); border-color:var(--brand); color:#fff; font-weight:700; }
+  button.btn.ghost { background:#fff; }
+  button.btn.danger { background:#fff; border-color:#fecaca; color:var(--danger); }
+  button.btn.sm { padding:4px 10px; font-size:.8rem; border-radius:8px; }
+  .row-actions { display:flex; gap:6px; flex-wrap:wrap; }
+  table { width:100%; border-collapse:collapse; font-size:.86rem; }
+  th,td { padding:8px 10px; border-bottom:1px solid var(--border); text-align:right; vertical-align:middle; }
+  th { background:#f8fafc; color:var(--muted); font-weight:600; font-size:.78rem; white-space:nowrap; }
+  tr:last-child td { border-bottom:none; }
+  .table-scroll { overflow-x:auto; }
+  .chip { display:inline-block; padding:2px 10px; border-radius:999px; font-size:.76rem; border:1px solid; }
+  .c-wait { color:var(--warn); border-color:#fde68a; background:#fffbeb; }
+  .c-ok { color:var(--ok); border-color:#bbf7d0; background:#f0fdf4; }
+  .c-rej { color:var(--danger); border-color:#fecaca; background:#fef2f2; }
+  .c-muted { color:var(--muted); border-color:var(--border); background:#f8fafc; }
+  .offline { display:none; }
+  .login-wrap { max-width:420px; margin:8vh auto; }
+  .login-wrap .card { padding:24px; }
+  .login-wrap h1 { font-size:1.1rem; margin:0 0 4px; }
+  .login-wrap img.brand-logo {
+    display:block; width:76px; height:76px; margin:0 auto 10px;
+    border:1px solid var(--border); box-shadow:none;
+  }
+  .owner-line { font-size:.72rem; font-weight:400; color:var(--muted); margin-top:10px; }
+  .toast {
+    position:fixed; inset-inline-start:18px; bottom:18px; background:#111827; color:#fff;
+    padding:11px 16px; border-radius:10px; font-size:.88rem; box-shadow:0 8px 22px rgba(0,0,0,.25);
+    opacity:0; transform:translateY(8px); transition:.2s; z-index:50; max-width:70vw;
+  }
+  .toast.show { opacity:1; transform:none; }
+  .toast.error { background:#7f1d1d; }
+  .modal-back { position:fixed; inset:0; background:rgba(15,23,42,.45); display:flex; align-items:center; justify-content:center; z-index:40; padding:16px; }
+  .modal { background:#fff; border-radius:var(--radius); max-width:640px; width:100%; max-height:88vh; overflow:auto; padding:20px; }
+  .modal h3 { margin:0 0 12px; font-size:1rem; }
+  .hint { font-size:.82rem; color:var(--muted); }
+  .path { font-family:ui-monospace,Consolas,monospace; font-size:.8rem; direction:ltr; unicode-bidi:embed; }
+  .empty { text-align:center; color:var(--muted); padding:22px; }
+
+  /* ---------- گزارش چاپی ----------
+     گزارش در جریان عادی پنهان است و فقط هنگام چاپ دیده می‌شود. این کار یک صفحهٔ
+     تمیزِ چاپی می‌سازد بی‌آنکه رابط کار روزمره شلوغ شود. */
+  #printView { display:none; }
+  .pr-title { font-size:1.5rem; font-weight:800; text-align:center; }
+  .pr-sub { text-align:center; color:#334155; font-size:.95rem; margin-bottom:10px; }
+  .pr-meta {
+    display:flex; flex-wrap:wrap; gap:6px 26px; font-size:.85rem;
+    border:1px solid #9aa4b2; border-radius:8px; padding:8px 12px; margin:10px 0 14px;
+  }
+  .pr-meta b { font-weight:700; }
+  .pr-foot { display:flex; justify-content:space-between; gap:14px; margin-top:30px; font-size:.9rem; }
+  .pr-sign { border-top:1px dashed #64748b; padding-top:6px; min-width:180px; text-align:center; color:#334155; }
+  @media print {
+    body { background:#fff; }
+    #loginView, #appView, #toast, #modalHost { display:none !important; }
+    #printView { display:block !important; }
+    @page { size:A4 portrait; margin:14mm; }
+    table { font-size:.8rem; }
+    th, td { border-color:#94a3b8; }
+    .pr-title, .pr-sub, .pr-foot, .pr-sign { break-inside:avoid; }
+    thead { display:table-header-group; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loginView" class="login-wrap">
+  <div class="card">
+    <img class="brand-logo" src="/assets/brand/logo-pgpic.jpg" alt="آرم پتروشیمی بندر امام">
+    <h1>سیستم پاداش</h1>
+    <p class="hint">نسخهٔ مستقل برای اجرا روی یک رایانه — داده در پوشهٔ خودِ برنامه ذخیره می‌شود.</p>
+    <p class="owner-line">مالکیت برنامه: مسعود وائقی</p>
+    <div class="field" style="margin-top:12px">
+      <label>نام کاربری</label>
+      <input id="lgUser" value="admin" autocomplete="username">
+    </div>
+    <div class="field" style="margin-top:8px">
+      <label>رمز عبور</label>
+      <input id="lgPass" type="password" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <div class="row-actions" style="margin-top:14px">
+      <button class="btn primary" onclick="doLogin()">ورود</button>
+    </div>
+    <div id="lgError" class="hint" style="color:#b91c1c; margin-top:10px"></div>
+  </div>
+</div>
+
+<div id="appView" class="offline">
+  <header class="top">
+    <img class="brand-logo" src="/assets/brand/logo-pgpic.jpg" alt="آرم پتروشیمی بندر امام">
+    <div>
+      <h1>سیستم پاداش</h1>
+      <div class="sub" id="hdrSub">مدیریت پرداخت و تخصیص پاداش کارکنان</div>
+      <div class="sub owner">مالکیت برنامه: مسعود وائقی</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="sub" id="hdrUser"></div>
+    <button class="btn" onclick="printReport()">🖨 چاپ گزارش</button>
+    <button class="btn" onclick="showDashboard()">↻ بازخوانی</button>
+    <button class="btn" onclick="doLogout()">خروج</button>
+  </header>
+  <div class="wrap">
+    <div class="tabs" id="tabs"></div>
+    <div id="view"></div>
+    <div class="card" style="font-size:.8rem">
+      <b>پشتیبان‌گیری:</b> همهٔ داده‌ها در پوشهٔ زیر است. برای پشتیبان، همین پوشه را کپی کنید.
+      <div class="path" id="dataDir">—</div>
+      <!-- فقط در نسخهٔ دسکتاپ (پنجرهٔ بومی) نمایش داده می‌شود؛ وجود این توابع را
+           در جاوااسکریپت تشخیص می‌دهیم، پس همین فایل بین دو نسخه مشترک است. -->
+      <div id="desktopActions" style="display:none; margin-top:.55rem; gap:.5rem">
+        <button class="btn" id="btnFolder">📂 پوشهٔ داده</button>
+        <button class="btn" id="btnBackup">🗄 ساخت پشتیبان</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="modalHost"></div>
+<!-- نگهدارندهٔ گزارش چاپی؛ در صفحهٔ عادی پنهان است و فقط هنگام چاپ دیده می‌شود. -->
+<div id="printView"></div>
+
+<script>
+/* =====================================================================
+   ابزارهای پایه
+   ===================================================================== */
+
+const T = {
+  token: () => localStorage.getItem('bonus.token') || '',
+  setToken: t => t ? localStorage.setItem('bonus.token', t) : localStorage.removeItem('bonus.token'),
+  user: null,
+};
+
+const $ = id => document.getElementById(id);
+
+/** ارقام لاتین را فارسی می‌کند؛ همهٔ اعداد نمایشی رابط از این مسیر می‌گذرند. */
+function fa(value) {
+  const map = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  return String(value == null ? '' : value).replace(/\d/g, d => map[+d]);
+}
+/** مبلغ با جداکنندهٔ هزارگان و ارقام فارسی. */
+function money(value) {
+  const n = Number(value) || 0;
+  return fa(n.toLocaleString('en-US'));
+}
+function esc(text) {
+  return String(text == null ? '' : text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function toast(message, kind) {
+  const box = $('toast');
+  box.textContent = message;
+  box.className = 'toast show' + (kind === 'error' ? ' error' : '');
+  clearTimeout(box._t);
+  box._t = setTimeout(() => { box.className = 'toast'; }, 4200);
+}
+
+/** فراخوانی API با توکن نشست؛ خطای سرور به پیام فارسی تبدیل می‌شود. */
+async function api(path, options) {
+  options = options || {};
+  const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+  if (T.token()) headers['Authorization'] = 'Bearer ' + T.token();
+  let res;
+  try {
+    res = await fetch(path, { method: options.method || 'GET', headers, body: options.body ? JSON.stringify(options.body) : undefined });
+  } catch (e) {
+    return { ok: false, status: 0, message: 'ارتباط با موتور برنامه برقرار نشد. برنامه را دوباره اجرا کنید.' };
+  }
+  const text = await res.text();
+  let data = null;
+  if (text) { try { data = JSON.parse(text); } catch (e) { data = null; } }
+  if (res.status === 401) { T.setToken(''); showLogin('نشست شما منقضی شد؛ دوباره وارد شوید.'); return { ok: false, status: 401, message: 'نشست منقضی شد' }; }
+  if (!res.ok) {
+    const message = (data && (data.message || data.error)) || ('خطای سرور (' + res.status + ')');
+    return { ok: false, status: res.status, message, data };
+  }
+  return { ok: true, status: res.status, data };
+}
+
+/* =====================================================================
+   ورود و خروج
+   ===================================================================== */
+async function doLogin() {
+  const username = $('lgUser').value.trim();
+  const password = $('lgPass').value;
+  $('lgError').textContent = '';
+  const res = await api('/api/v1/auth/login', { method: 'POST', body: { username, password } });
+  if (!res.ok) { $('lgError').textContent = res.message; return; }
+  T.setToken(res.data.accessToken);
+  T.user = res.data.user;
+  await boot();
+}
+function doLogout() { T.setToken(''); T.user = null; showLogin(''); }
+function showLogin(message) {
+  $('loginView').style.display = 'block';
+  $('appView').style.display = 'none';
+  $('lgError').textContent = message || '';
+  $('lgPass').value = '';
+}
+
+/* =====================================================================
+   وضعیت برنامه: options، schema، info
+   ===================================================================== */
+const S = { info: null, options: null, schema: null, kind: null, records: [], filter: { status: '', query: '' } };
+
+async function boot() {
+  const info = await api('/api/v1/standalone/info');
+  const options = await api('/api/v1/bonus/options');
+  const schema = await api('/api/v1/bonus/schema');
+  if (!info.ok || !options.ok || !schema.ok) {
+    showLogin((info.message || options.message || schema.message) + '');
+    return;
+  }
+  S.info = info.data; S.options = options.data;
+  S.schema = schema.data;
+  S.kind = (schema.data.kinds || [])[0] || null;
+
+  $('loginView').style.display = 'none';
+  $('appView').style.display = 'block';
+  $('hdrUser').textContent = (T.user ? T.user.displayName + ' — ' + fa(T.user.role === 'admin' ? 'مدیر سیستم' : T.user.role) : '');
+  $('dataDir').textContent = S.info.dataDir || '';
+  const staff = S.info.staffCount || 0;
+  $('hdrSub').textContent = 'مدیریت پرداخت و تخصیص پاداش — ' + fa(staff) + ' کارمند در فهرست';
+  setupDesktopActions(staff);
+  renderTabs();
+  showDashboard();
+}
+
+/* ---------------------------------------------------------------------
+   پل نسخهٔ دسکتاپ
+
+   برنامهٔ دسکتاپ سه تابع سراسری به همین صفحه تزریق می‌کند
+   (desktopOpenDataFolder، desktopBackup، desktopReady). وجودشان یعنی ما داخل
+   پنجرهٔ بومی هستیم. پس همین رابط هم در مرورگر و هم در اپ کار می‌کند و قاعده‌ای
+   از دسکتاپ در UI جداگانه نوشته نمی‌شود.
+   --------------------------------------------------------------------- */
+const inDesktopApp = () => typeof window.desktopOpenDataFolder === 'function';
+
+function setupDesktopActions(staff) {
+  if (!inDesktopApp()) return;
+  const box = $('desktopActions');
+  if (box) box.style.display = 'flex';
+
+  const folder = $('btnFolder');
+  if (folder) folder.onclick = () => {
+    desktopOpenDataFolder().catch(() => toast('باز کردن پوشهٔ داده ناموفق بود'));
+  };
+
+  const backup = $('btnBackup');
+  if (backup) backup.onclick = async () => {
+    backup.disabled = true;
+    toast('در حال ساخت پشتیبان…');
+    try {
+      const out = await desktopBackup();
+      toast('پشتیبان ساخته شد: ' + out.path + ' — ' + fa(out.files) + ' فایل');
+    } catch (err) {
+      toast('پشتیبان‌گیری ناموفق بود: ' + (err && err.message ? err.message : err));
+    } finally {
+      backup.disabled = false;
+    }
+  };
+
+  // گزارش بارشدن رابط به لاگ برنامه؛ برای پشتیبانی و برای اطمینان از سالم بودن پنجره.
+  if (typeof window.desktopReady === 'function') {
+    try {
+      window.desktopReady(JSON.stringify({
+        stage: 'ui-ready',
+        title: document.title,
+        kind: (S.kind && S.kind.key) || '',
+        tabs: TABS.length,
+        options: (S.options && (S.options.types || []).length) || 0,
+        staffCount: staff,
+        records: (S.info && S.info.recordCount) || 0,
+        version: (S.info && S.info.version) || '',
+      }));
+    } catch (err) { /* گزارش تشخیصی نباید کار کاربر را متوقف کند */ }
+  }
+}
+
+const TABS = [
+  { key: 'dashboard', label: '📊 داشبورد مدیریتی' },
+  { key: 'allocate', label: '🎁 تخصیص پاداش' },
+  { key: 'payments', label: '💳 پرداخت‌ها' },
+  { key: 'staff', label: '👥 کارکنان' },
+];
+let activeTab = 'dashboard';
+function renderTabs() {
+  $('tabs').innerHTML = TABS.map(t =>
+    `<button class="${t.key === activeTab ? 'active' : ''}" onclick="go('${t.key}')">${t.label}</button>`).join('');
+}
+function go(tab) {
+  activeTab = tab;
+  renderTabs();
+  if (tab === 'dashboard') showDashboard();
+  if (tab === 'allocate') showAllocate();
+  if (tab === 'payments') showPayments();
+  if (tab === 'staff') showStaff();
+}
+
+/* ---------------------------- داشبورد ---------------------------- */
+async function showDashboard() {
+  $('view').innerHTML = '<div class="card empty">در حال خواندن از سرور…</div>';
+  const res = await api('/api/v1/bonus/dashboard');
+  if (!res.ok) { $('view').innerHTML = `<div class="card empty">${esc(res.message)}</div>`; return; }
+  const d = res.data;
+  const stat = (label, value, extra) => `<div class="stat"><span>${label}</span><b>${value}</b>${extra ? `<span>${extra}</span>` : ''}</div>`;
+
+  const cards = `
+    <div class="grid-stats">
+      ${stat('کل پرداخت‌ها', fa(d.totalPayments) + ' مورد')}
+      ${stat('پرداخت‌شده', fa(d.paidPayments) + ' مورد', 'مبلغ ' + money(d.paidAmount) + ' ریال')}
+      ${stat('تأییدشده', fa(d.approvedPayments) + ' مورد')}
+      ${stat('پیش‌نویس', fa(d.draftPayments) + ' مورد')}
+      ${stat('جمع مبالغ', money(d.totalAmount) + ' ریال')}
+      ${stat('شمار بهره‌مندان', fa(d.totalBeneficiaries) + ' نفر')}
+      ${stat('میانگین هر نفر', money(d.averagePerPerson) + ' ریال')}
+      ${stat('مدیریت‌های پوشش‌داده‌شده', fa(d.managementsCovered) + ' از ' + fa(d.managementsTotal))}
+      ${stat('بیشترین پرداخت', money(d.maxPayment) + ' ریال')}
+      ${stat('سهم شرکتی', money(d.companyAmount) + ' ریال')}
+      ${stat('سهم ارکان ثالث', money(d.thirdPartyAmount) + ' ریال')}
+    </div>
+    <div class="card"><h2>پاداش به تفکیک مدیریت</h2>${table(
+      ['مدیریت','تعداد پرداخت','بهره‌مندان','جمع مبلغ (ریال)','میانگین هر نفر','بیشترین پرداخت'],
+      (d.managementRows || []).map(r => [esc(r.managementFa || r.managementKey), fa(r.payments), fa(r.beneficiaries), money(r.totalAmount), money(r.averagePerPerson), money(r.maxPayment)])
+    )}</div>
+    <div class="card"><h2>مبالغ پرداختی به هر نفر (برترین‌ها)</h2>${table(
+      ['کارمند','مدیریت','تعداد دفعه','جمع (ریال)','میانگین','آخرین پرداخت'],
+      (d.employeeRows || []).slice(0, 30).map(r => [esc(r.employeeName || r.employeeId), esc(r.managementFa || ''), fa(r.payments), money(r.totalAmount), money(r.averagePayment), esc(r.lastDate || '—')])
+    )}</div>
+    <div class="card"><h2>ترکیب انواع پاداش</h2>${table(
+      ['نوع پاداش','تعداد','جمع (ریال)','سهم'],
+      (d.typeRows || []).map(r => [esc(r.typeFa || r.typeKey), fa(r.payments), money(r.amount), fa(r.sharePercent) + '٪'])
+    )}</div>
+    <div class="card"><h2>روند دوره‌ای و وضعیت‌ها</h2>
+      <div class="grid-3">
+        <div>${table(['دوره','تعداد','جمع (ریال)'], (d.periodRows || []).map(r => [esc(r.period), fa(r.payments), money(r.amount)]))}</div>
+        <div>${table(['وضعیت','تعداد','جمع (ریال)'], (d.statusRows || []).map(r => [esc(r.statusFa || r.statusKey), fa(r.payments), money(r.amount)]))}</div>
+      </div>
+    </div>
+    <div class="card hint">${esc(d.noteFa || '')}</div>`;
+  $('view').innerHTML = cards;
+}
+
+/** جدول ساده با ستون‌های عنوان و ردیف‌های آمادهٔ HTML. */
+function table(head, rows) {
+  if (!rows.length) return '<div class="empty">داده‌ای برای نمایش نیست.</div>';
+  return `<div class="table-scroll"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+
+/* -------------------------- تخصیص پاداش -------------------------- */
+function optionList(list, selected) {
+  return (list || []).map(o => `<option value="${esc(o.key)}" ${o.key === selected ? 'selected' : ''}>${esc(o.titleFa)}</option>`).join('');
+}
+function showAllocate() {
+  const o = S.options || {};
+  const firstType = (o.types || [])[0] || {};
+  const firstMethod = (o.paymentMethods || [])[0] || {};
+  const today = o.todayFa || '';
+  $('view').innerHTML = `
+    <div class="card">
+      <h2>فرم تخصیص پاداش (گروهی به چند کارمند یا تک‌کارمند)</h2>
+      <div class="grid-3">
+        <div class="field"><label>نوع پاداش <span class="req">*</span></label><select id="alType">${optionList(o.types)}</select></div>
+        <div class="field"><label>مدیریت <span class="req">*</span></label><select id="alMgmt">${optionList(o.managements)}</select></div>
+        <div class="field"><label>مبلغ هر نفر (ریال) <span class="req">*</span></label><input id="alAmount" type="number" min="0" value="${esc(String(firstType.defaultAmount || ''))}"></div>
+        <div class="field"><label>تاریخ پرداخت (YYYY/MM/DD) <span class="req">*</span></label><input id="alDate" value="${esc(today)}" placeholder="1404/07/15"></div>
+        <div class="field"><label>روش پرداخت</label><select id="alMethod"><option value="">—</option>${optionList(o.paymentMethods, (firstMethod || {}).key)}</select></div>
+        <div class="field"><label>شمارهٔ مصوبه / حکم</label><input id="alDecree" placeholder="در صورت نیاز نوع پاداش"></div>
+        <div class="field"><label>شرح / مرجع</label><input id="alRef" placeholder="مصوبهٔ صندوق…"></div>
+        <div class="field"><label>کد کارکنان هدف (با کاما) — خالی یعنی همهٔ فهرست</label><input id="alEmps" placeholder="EMP-005, EMP-010"></div>
+        <div class="field"><label>یادداشت</label><input id="alNote"></div>
+      </div>
+      <div class="row-actions" style="margin-top:12px">
+        <button class="btn primary" onclick="allocate(true)">🔎 پیش‌نمایش</button>
+        <button class="btn ghost" onclick="allocate(false)">🧾 ثبت تخصیص</button>
+        <button class="btn ghost" onclick="$('alResult').innerHTML=''">↩️ پاک‌کردن نتیجه</button>
+      </div>
+      <div id="alResult" style="margin-top:12px"></div>
+    </div>`;
+}
+function allocateBody() {
+  return {
+    bonusType: $('alType').value,
+    management: $('alMgmt').value,
+    amount: Number($('alAmount').value) || 0,
+    paymentDate: ($('alDate').value || '').trim(),
+    paymentMethod: $('alMethod').value,
+    decreeNo: ($('alDecree').value || '').trim(),
+    reference: ($('alRef').value || '').trim(),
+    noteFa: ($('alNote').value || '').trim(),
+    employeeIds: ($('alEmps').value || '').split(',').map(s => s.trim()).filter(Boolean),
+  };
+}
+async function allocate(preview) {
+  const box = $('alResult');
+  box.innerHTML = '<div class="empty">در حال محاسبه…</div>';
+  const res = await api('/api/v1/bonus/allocate' + (preview ? '/preview' : ''), { method: 'POST', body: allocateBody() });
+  if (!res.ok) { box.innerHTML = `<div class="card empty">${esc(res.message)}</div>`; toast(res.message, 'error'); return; }
+  const r = res.data;
+  const head = ['کارمند','مدیریت','نوع پاداش','مبلغ (ریال)','شمارهٔ دفعه','شناسهٔ رکورد'];
+  const rows = (r.rows || []).map(x => [esc(x.employeeName || x.employeeId), esc(x.managementFa || ''), esc(x.bonusTypeFa || ''), money(x.amount), fa(x.sequence), `<span class="ltr">${esc(x.recordId || '—')}</span>`]);
+  box.innerHTML = `<div class="hint" style="margin-bottom:8px">${preview ? 'پیش‌نمایش' : 'تخصیص ثبت‌شده'} —
+      ${fa(r.count || 0)} نفر — جمع ${money(r.totalAmount || 0)} ریال${r.created ? ' — ' + fa(r.created) + ' رکورد ساخته شد' : ''}${preview ? '' : ' (در وضعیت پیش‌نویس)'}</div>` + table(head, rows);
+  toast(preview ? 'پیش‌نمایش آماده است' : 'تخصیص ثبت شد — پرداخت‌ها در وضعیت پیش‌نویس');
+}
+
+/* --------------------------- پرداخت‌ها --------------------------- */
+async function showPayments() {
+  $('view').innerHTML = '<div class="card empty">در حال خواندن از سرور…</div>';
+  const kind = S.kind ? S.kind.key : 'bonusPayments';
+  const q = new URLSearchParams({ kind, size: '500' });
+  if (S.filter.query) q.set('query', S.filter.query);
+  if (S.filter.status) q.set('status', S.filter.status);
+  const res = await api('/api/v1/bonus/records?' + q.toString());
+  if (!res.ok) { $('view').innerHTML = `<div class="card empty">${esc(res.message)}</div>`; return; }
+  S.records = (res.data.items || []);
+  const statuses = (S.kind && S.kind.statuses) || [];
+  const typeMap = keyTitle(S.options.types);
+  const mgmtMap = keyTitle(S.options.managements);
+  const methodMap = keyTitle(S.options.paymentMethods);
+
+  const rows = S.records.map(rec => {
+    const f = rec.fields || {};
+    const actions = legalActions(rec);
+    const actionBtns = actions.map(a =>
+      `<button class="btn sm ${a.style === 'primary' ? 'primary' : 'ghost'}" onclick="act('${esc(rec.id)}','${esc(a.value)}',${a.noteRequired ? 'true' : 'false'},'${esc(a.labelFa)}')">${esc(a.labelFa)}</button>`).join('');
+    const editable = (S.kind.editableStatuses || [S.kind.initialStatus]).indexOf(rec.status) >= 0;
+    const editBtns = editable
+      ? `<button class="btn sm ghost" title="ویرایش" onclick="editRecord('${esc(rec.id)}')">✏️</button>
+         <button class="btn sm danger" title="حذف" onclick="removeRecord('${esc(rec.id)}')">🗑️</button>` : '';
+    return [
+      `<span class="ltr">${esc(rec.id)}</span>`,
+      `<div>${esc(rec.employeeName || '—')}<div class="hint ltr">${esc(rec.employeeId || '')}</div></div>`,
+      esc(typeMap[f.bonusType] || f.bonusType || '—'),
+      esc(mgmtMap[f.management] || f.management || '—'),
+      money(f.amount),
+      fa(f.paymentDate || '—'),
+      fa(f.sequence || 0),
+      esc(methodMap[f.paymentMethod] || '—'),
+      `<span class="chip ${statusClass(rec.status)}">${esc(rec.statusFa || rec.status)}</span>`,
+      `<div class="row-actions">${actionBtns}${editBtns}</div>`,
+    ];
+  });
+
+  $('view').innerHTML = `
+    <div class="card">
+      <div class="grid-3">
+        <div class="field"><label>جستجو (نام، شناسه، مرجع)</label><input id="fltQuery" value="${esc(S.filter.query)}" onkeydown="if(event.key==='Enter')applyFilter()"></div>
+        <div class="field"><label>وضعیت</label><select id="fltStatus" onchange="applyFilter()">
+          <option value="">— همه —</option>
+          ${statuses.map(s => `<option value="${esc(s.value)}" ${s.value === S.filter.status ? 'selected' : ''}>${esc(s.labelFa)}</option>`).join('')}
+        </select></div>
+        <div class="field"><label>&nbsp;</label>
+          <div class="row-actions">
+            <button class="btn primary" onclick="applyFilter()">فیلتر</button>
+            <button class="btn ghost" onclick="exportCsv()">⬇️ خروجی CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>پرداخت‌های ثبت‌شده — ${fa(S.records.length)} مورد</h2>
+      ${table(['شناسه','کارمند','نوع پاداش','مدیریت','مبلغ (ریال)','تاریخ پرداخت','دفعه','روش پرداخت','وضعیت','عملیات'], rows)}
+    </div>`;
+}
+function applyFilter() {
+  S.filter.query = ($('fltQuery') || {}).value || '';
+  S.filter.status = ($('fltStatus') || {}).value || '';
+  showPayments();
+}
+function keyTitle(list) {
+  const out = {};
+  (list || []).forEach(o => { out[o.key] = o.titleFa; });
+  return out;
+}
+function statusClass(status) {
+  if (status === 'paid') return 'c-ok';
+  if (status === 'approved') return 'c-wait';
+  if (status === 'cancelled') return 'c-rej';
+  return 'c-muted';
+}
+/** اقدام‌های مجاز از خود شناسهٔ سرور؛ هیچ قاعده‌ای در UI بازنویسی نشده است. */
+function legalActions(rec) {
+  const actions = (S.kind && S.kind.actions) || [];
+  const transitions = (S.kind && S.kind.transitions) || {};
+  const allowed = transitions[rec.status] || [];
+  return actions.filter(a => !a.to || allowed.indexOf(a.to) >= 0);
+}
+async function act(id, action, noteRequired, labelFa) {
+  let note = '';
+  if (noteRequired) {
+    note = prompt('دلیل «' + labelFa + '» را وارد کنید:') || '';
+    if (!note) return;
+  }
+  const res = await api('/api/v1/bonus/records/' + encodeURIComponent(id) + '/action', { method: 'POST', body: { action, noteFa: note } });
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  toast('«' + labelFa + '» انجام شد');
+  showPayments();
+}
+async function removeRecord(id) {
+  if (!confirm('این پرداخت حذف شود؟')) return;
+  const res = await api('/api/v1/bonus/records/' + encodeURIComponent(id), { method: 'DELETE' });
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  toast('پرداخت حذف شد');
+  showPayments();
+}
+/** خروجی CSV ردیف‌های نمایش‌داده‌شده (با BOM تا Excel فارسی را درست بخواند). */
+function exportCsv() {
+  const typeMap = keyTitle(S.options.types), mgmtMap = keyTitle(S.options.managements), methodMap = keyTitle(S.options.paymentMethods);
+  const lines = [['شناسه','کارمند','کد پرسنلی','نوع پاداش','مدیریت','مبلغ (ریال)','تاریخ پرداخت','شمارهٔ دفعه','روش پرداخت','وضعیت','شمارهٔ مصوبه','مرجع']];
+  S.records.forEach(rec => {
+    const f = rec.fields || {};
+    lines.push([rec.id, rec.employeeName || '', rec.employeeId || '', typeMap[f.bonusType] || f.bonusType || '',
+      mgmtMap[f.management] || f.management || '', f.amount || '', f.paymentDate || '', f.sequence || '',
+      methodMap[f.paymentMethod] || '', rec.statusFa || rec.status || '', f.decreeNo || '', f.reference || '']);
+  });
+  const csv = '\uFEFF' + lines.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'bonus-payments.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('خروجی CSV ساخته شد');
+}
+
+/* ---------------------- ویرایش رکورد (فرم از schema) ---------------------- */
+async function editRecord(id) {
+  const res = await api('/api/v1/bonus/records/' + encodeURIComponent(id));
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  const rec = res.data;
+  const fields = (S.kind.fields || []).map(f => {
+    const value = (rec.fields || {})[f.key] || '';
+    const list = fieldOptions(f.key);
+    const input = list.length
+      ? `<select id="ed_${esc(f.key)}"><option value="">— انتخاب کنید —</option>${list.map(o => `<option value="${esc(o.key)}" ${String(o.key) === String(value) ? 'selected' : ''}>${esc(o.titleFa)}</option>`).join('')}</select>`
+      : `<input id="ed_${esc(f.key)}" type="${f.type === 'money' || f.type === 'number' ? 'number' : 'text'}" value="${esc(value)}">`;
+    return `<div class="field"><label>${esc(f.labelFa)}${f.required ? ' <span class="req">*</span>' : ''}</label>${input}</div>`;
+  }).join('');
+  // کارمند رکورد در ویرایش عوض نمی‌شود ولی باید در درخواست بماند، چون دامنه انتخاب
+  // کارمند را برای این نوع رکورد اجباری می‌داند؛ پس همان شناسهٔ فعلی نمایش و ارسال می‌شود.
+  const employee = S.kind.employeeScoped
+    ? `<div class="field" style="margin-top:10px"><label>کارمند (در ویرایش تغییر نمی‌کند)</label>
+         <input value="${esc((rec.employeeName || '') + ' — ' + (rec.employeeId || ''))}" disabled></div>` : '';
+  openModal(`ویرایش ${esc(S.kind.titleFa)}`, `
+    <div class="field"><label>عنوان</label><input id="edTitle" value="${esc(rec.title)}"></div>
+    ${employee}
+    <div class="grid-3" style="margin-top:10px">${fields}</div>
+    <div class="field" style="margin-top:10px"><label>یادداشت</label><input id="edNote" value="${esc(rec.noteFa || '')}"></div>`,
+    `<button class="btn primary" onclick="saveRecord('${esc(id)}')">ذخیره</button>
+     <button class="btn ghost" onclick="closeModal()">انصراف</button>`);
+  S.editing = rec;
+}
+function fieldOptions(key) {
+  const o = S.options || {};
+  if (key === 'bonusType') return o.types || [];
+  if (key === 'management') return o.managements || [];
+  if (key === 'paymentMethod') return o.paymentMethods || [];
+  return [];
+}
+async function saveRecord(id) {
+  const body = { kind: S.kind.key, title: ($('edTitle').value || '').trim(), noteFa: ($('edNote').value || '').trim(), fields: {} };
+  if (S.kind.employeeScoped && S.editing) body.employeeId = S.editing.employeeId || '';
+  (S.kind.fields || []).forEach(f => {
+    const el = $('ed_' + f.key);
+    if (el) body.fields[f.key] = el.value;
+  });
+  const res = await api('/api/v1/bonus/records/' + encodeURIComponent(id), { method: 'PATCH', body });
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  closeModal();
+  toast('رکورد ویرایش شد');
+  showPayments();
+}
+function openModal(title, body, foot) {
+  $('modalHost').innerHTML = `<div class="modal-back" onclick="if(event.target===this)closeModal()">
+    <div class="modal"><h3>${title}</h3>${body}<div class="row-actions" style="margin-top:14px">${foot}</div></div></div>`;
+}
+function closeModal() { $('modalHost').innerHTML = ''; }
+
+/* ---------------------------- کارکنان ---------------------------- */
+async function showStaff() {
+  $('view').innerHTML = '<div class="card empty">در حال خواندن از سرور…</div>';
+  const query = S.staffQuery || '';
+  const res = await api('/api/v1/standalone/staff?size=500' + (query ? '&query=' + encodeURIComponent(query) : ''));
+  if (!res.ok) { $('view').innerHTML = `<div class="card empty">${esc(res.message)}</div>`; return; }
+  const items = res.data.items || [];
+  $('view').innerHTML = `
+    <div class="card">
+      <div class="grid-3">
+        <div class="field"><label>جستجو در نام، کد پرسنلی، واحد یا سمت</label><input id="stQuery" value="${esc(query)}" onkeydown="if(event.key==='Enter')applyStaffFilter()"></div>
+        <div class="field"><label>&nbsp;</label><div class="row-actions"><button class="btn primary" onclick="applyStaffFilter()">جستجو</button></div></div>
+      </div>
+      <p class="hint" style="margin:10px 0 0">این فهرست از فایل CSV خوانده می‌شود و پس از ویرایش فایل، بی‌نیاز از راه‌اندازی دوباره به‌روز می‌شود.
+        مسیر فایل: <span class="path">${esc((S.info && S.info.staffPath) || '')}</span></p>
+    </div>
+    <div class="card">
+      <h2>کارکنان — ${fa(res.data.total || items.length)} نفر</h2>
+      ${table(['کد پرسنلی','نام و نام خانوادگی','واحد','سمت','وضعیت'],
+        items.map(e => [`<span class="ltr">${esc(e.id)}</span>`, esc(e.fullName), esc(e.departmentName || '—'), esc(e.position || '—'),
+          `<span class="chip ${e.status === 'terminated' ? 'c-rej' : 'c-ok'}">${esc(e.status === 'terminated' ? 'خاتمه‌یافته' : e.status === 'leave' ? 'مرخصی' : 'فعال')}</span>`]))}
+    </div>`;
+}
+function applyStaffFilter() { S.staffQuery = ($('stQuery') || {}).value || ''; showStaff(); }
+
+/* ------------------------- گزارش چاپی ------------------------- */
+/**
+ * گزارش پرداخت‌های پاداش را برای چاپ آماده می‌کند.
+ *
+ * چرا این‌گونه: گزارش از همان دادهٔ سروری ساخته می‌شود که فهرست پرداخت‌ها را
+ * می‌سازد؛ پس هیچ عددی در UI بازمحاسبه نمی‌شود و قاعده‌ای از دامنه در صفحه تکرار
+ * نمی‌گردد. سرصفحه فقط نام سامانه است (نام مالک برنامه در بالای خودِ برنامه
+ * می‌نشیند، نه در گزارش‌های چاپی) و خروجی با window.print() روی کاغذ یا به PDF
+ * می‌رود.
+ */
+async function printReport() {
+  const box = $('printView');
+  if (!box) return;
+  toast('در حال آماده‌سازی گزارش…');
+  const kind = (S.kind && S.kind.key) || 'bonusPayments';
+  const [dashRes, recRes] = await Promise.all([
+    api('/api/v1/bonus/dashboard'),
+    api('/api/v1/bonus/records?' + new URLSearchParams({ kind, size: '1000' }).toString()),
+  ]);
+  if (!recRes.ok) { toast(recRes.message, 'error'); return; }
+  const records = recRes.data.items || [];
+  const summary = dashRes.ok ? dashRes.data : {};
+  const typeMap = keyTitle(S.options && S.options.types);
+  const mgmtMap = keyTitle(S.options && S.options.managements);
+  const methodMap = keyTitle(S.options && S.options.paymentMethods);
+  const total = records.reduce((sum, rec) => sum + (Number((rec.fields || {}).amount) || 0), 0);
+  const today = (S.options && S.options.todayFa) || '';
+
+  const rows = records.map(rec => {
+    const f = rec.fields || {};
+    return `<tr>
+      <td class="ltr">${esc(rec.id)}</td>
+      <td>${esc(rec.employeeName || '—')}<div class="ltr">${esc(rec.employeeId || '')}</div></td>
+      <td>${esc(typeMap[f.bonusType] || f.bonusType || '—')}</td>
+      <td>${esc(mgmtMap[f.management] || f.management || '—')}</td>
+      <td>${money(f.amount)}</td>
+      <td>${fa(f.paymentDate || '—')}</td>
+      <td>${esc(methodMap[f.paymentMethod] || '—')}</td>
+      <td>${esc(rec.statusFa || rec.status || '')}</td>
+    </tr>`;
+  }).join('');
+
+  box.innerHTML = `
+    <div class="pr-title">سیستم پاداش</div>
+    <div class="pr-sub">گزارش پرداخت‌های پاداش کارکنان</div>
+    <div class="pr-meta">
+      <div>تاریخ گزارش: <b>${fa(today || '—')}</b></div>
+      <div>تعداد موارد: <b>${fa(records.length)}</b></div>
+      <div>جمع مبلغ: <b>${money(total)} ریال</b></div>
+      <div>جمع پرداخت‌شده: <b>${money(summary.paidAmount || 0)} ریال</b></div>
+    </div>
+    <table>
+      <thead><tr><th>شناسه</th><th>کارمند</th><th>نوع پاداش</th><th>مدیریت</th><th>مبلغ (ریال)</th><th>تاریخ پرداخت</th><th>روش پرداخت</th><th>وضعیت</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="8" class="empty">داده‌ای برای گزارش نیست.</td></tr>'}</tbody>
+    </table>
+    <div class="pr-foot">
+      <div class="pr-sign">تأییدکننده: ................</div>
+      <div class="pr-sign">تاریخ و مهر: ................</div>
+    </div>`;
+  window.print();
+}
+
+/* ------------------------------ راه‌اندازی ------------------------------ */
+$('lgPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+(async function start() {
+  // در پنجرهٔ دسکتاپ، پیش از هر ورودی کاربر گزارش می‌دهیم که پوسته بالا آمد. این خط
+  // برای پشتیبانی تعیین‌کننده است: اگر در لاگ باشد، پنجره و پل داخلی سالم‌اند و مشکل
+  // (اگر باشد) جای دیگری است.
+  if (inDesktopApp() && typeof window.desktopReady === 'function') {
+    try {
+      window.desktopReady(JSON.stringify({ stage: 'shell-loaded', title: document.title }));
+    } catch (err) { /* گزارش تشخیصی نباید راه‌اندازی را متوقف کند */ }
+  }
+  if (T.token()) {
+    const me = await api('/api/v1/auth/me');
+    if (me.ok) { T.user = me.data.user; await boot(); return; }
+  }
+  showLogin('');
+})();
+</script>
+</body>
+</html>

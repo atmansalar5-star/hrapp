@@ -1,0 +1,8 @@
+[package]
+name = "hrms-calendar"
+version.workspace = true
+edition.workspace = true
+description = "تقویم شمسی، روز کاری و تعطیلات — پایهٔ همهٔ محاسبات زمانی سامانه"
+
+[dependencies]
+serde = { workspace = true }

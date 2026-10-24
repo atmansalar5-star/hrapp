@@ -1,0 +1,106 @@
+{
+  "id": "loans_retirement",
+  "order": 14,
+  "department": "staff_affairs",
+  "subUnit": "loans_retirement",
+  "titleFa": "امور وام و بازنشستگی",
+  "titleEn": "Loans & Retirement",
+  "apiPrefix": "/api/v1/loans",
+  "version": "1.0.0",
+  "featureFlag": "module.loans_retirement",
+  "dbSchema": "hr_loans",
+  "owner": "hr-finance",
+  "entities": [
+    "LoanRequest",
+    "LoanInstallment",
+    "RetirementFile",
+    "LoanFund"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write"
+    ],
+    "employee": [
+      "read",
+      "write"
+    ]
+  },
+  "scopes": {
+    "employee": "own"
+  },
+  "screens": [
+    {
+      "key": "loans",
+      "order": 1,
+      "icon": "hand-coins",
+      "titleFa": "وام کارکنان",
+      "component": "LoansScreen",
+      "purposeFa": "ثبت درخواست وام کارکنان از صندوق، بررسی اهلیت و ضامن، تعیین مبلغ و دورهٔ بازپرداخت و صدور مصوبهٔ وام.",
+      "actionsFa": [
+        "ثبت درخواست وام",
+        "بررسی اهلیت و ضامن",
+        "تعیین دورهٔ بازپرداخت",
+        "صدور مصوبه",
+        "گزارش صف وام"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "employee"
+      ]
+    },
+    {
+      "key": "loanInstallments",
+      "order": 2,
+      "icon": "receipt",
+      "titleFa": "اقساط و بازپرداخت",
+      "component": "LoanInstallmentsScreen",
+      "purposeFa": "پیگیری اقساط وام‌های جاری، کسر خودکار از حقوق، ثبت بازپرداخت پیش از موعد و کنترل معوقات پیش از تسویه‌حساب.",
+      "actionsFa": [
+        "مشاهدهٔ جدول اقساط",
+        "ثبت بازپرداخت",
+        "کسر از حقوق",
+        "کنترل معوقات",
+        "گزارش مانده وام‌ها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "retirementFiles",
+      "order": 3,
+      "icon": "hourglass",
+      "titleFa": "پرونده‌های بازنشستگی",
+      "component": "RetirementFilesScreen",
+      "purposeFa": "شناسایی کارکنان مشمول بازنشستگی، تشکیل پرونده و هماهنگی با صندوق بازنشستگی و تأمین اجتماعی تا صدور حکم و تسویه.",
+      "actionsFa": [
+        "شناسایی مشمولان",
+        "تشکیل پرونده",
+        "ارسال به صندوق",
+        "پیگیری حکم بازنشستگی",
+        "گزارش بازنشستگان"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    }
+  ]
+}

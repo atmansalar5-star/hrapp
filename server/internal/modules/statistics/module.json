@@ -1,0 +1,172 @@
+{
+  "id": "statistics",
+  "order": 24,
+  "department": "statistics",
+  "subUnit": "data_control",
+  "titleFa": "آمار و پایش اطلاعات پایه",
+  "titleEn": "Statistics & Base Data Control",
+  "apiPrefix": "/api/v1/statistics",
+  "version": "1.0.0",
+  "featureFlag": "module.statistics",
+  "dbSchema": "hr_statistics",
+  "owner": "hr-analytics",
+  "entities": [
+    "StatSnapshot",
+    "DataApproval",
+    "BaseDataCheck"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve",
+      "report"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve",
+      "report"
+    ],
+    "hr_spec": [
+      "read",
+      "write",
+      "report"
+    ],
+    "line_manager": [
+      "read",
+      "report"
+    ]
+  },
+  "scopes": {
+    "line_manager": "own_unit"
+  },
+  "screens": [
+    {
+      "key": "statsOverview",
+      "order": 1,
+      "icon": "bar-chart",
+      "titleFa": "داشبورد آماری",
+      "component": "StatsOverviewScreen",
+      "purposeFa": "نمای تجمیعی آمار منابع انسانی و صف بررسی‌های در انتظار تأیید واحد آمار و گزارشات بر پایهٔ داده‌های پایه سامانه.",
+      "actionsFa": [
+        "انتخاب بازهٔ زمانی",
+        "مشاهدهٔ صف تأیید",
+        "تحلیل روند شاخص‌ها",
+        "خروجی آمار",
+        "زمان‌بندی ارسال گزارش"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "statsAttendance",
+      "order": 2,
+      "icon": "clock",
+      "titleFa": "حضور و غیاب و تردد",
+      "component": "StatsAttendanceScreen",
+      "purposeFa": "بررسی و تأیید دادهٔ تردد کارکنان پیش از اجرای حقوق: کنترل تأخیر، تعجیل، غیبت و کارکرد دستگاه‌های تردد و اعلام مغایرت به واحد امور کارکنان.",
+      "actionsFa": [
+        "بررسی کارکرد دوره",
+        "کنترل مغایرت تردد",
+        "تأیید دادهٔ تردد",
+        "اعلام اصلاح به امور کارکنان",
+        "گزارش تردد"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "statsLeave",
+      "order": 3,
+      "icon": "calendar-off",
+      "titleFa": "مرخصی‌ها",
+      "component": "StatsLeaveScreen",
+      "purposeFa": "بررسی و تأیید مرخصی‌های ثبت‌شده، کنترل مانده مرخصی و مغایرت‌های تأیید مدیران در دورهٔ جاری.",
+      "actionsFa": [
+        "بررسی مرخصی‌های دوره",
+        "کنترل ماندهٔ مرخصی",
+        "تأیید یا برگشت مرخصی",
+        "گزارش مرخصی‌ها",
+        "خروجی برای حقوق"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "statsMission",
+      "order": 4,
+      "icon": "pin",
+      "titleFa": "ماموریت‌ها",
+      "component": "StatsMissionScreen",
+      "purposeFa": "بررسی و تأیید ماموریت‌ها و محاسبهٔ فوق‌العادهٔ ماموریت بر پایهٔ حکم ماموریت، مقصد و مدت، پیش از ارسال به حقوق.",
+      "actionsFa": [
+        "بررسی ماموریت‌ها",
+        "کنترل اسناد ماموریت",
+        "تأیید فوق‌العاده",
+        "برگشت برای اصلاح",
+        "گزارش هزینهٔ ماموریت"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "statsBasePay",
+      "order": 5,
+      "icon": "database",
+      "titleFa": "اطلاعات پایه حقوق و مزایا",
+      "component": "StatsBasePayScreen",
+      "purposeFa": "کنترل و تأیید اطلاعات پایهٔ حقوق و مزایا: گروه شغلی، پایه، مزایای ثابت و متغیر، عائله‌مندی و کسورات هر کارمند پیش از اجرای پرداخت.",
+      "actionsFa": [
+        "کنترل اطلاعات پایه",
+        "تأیید دادهٔ مزایا",
+        "اعلام مغایرت",
+        "مقایسه با دورهٔ قبل",
+        "خروجی اطلاعات پایه"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "statsKarana",
+      "order": 6,
+      "icon": "percent",
+      "titleFa": "کارانه",
+      "component": "StatsKaranaScreen",
+      "purposeFa": "بررسی و تأیید کارانهٔ محاسبه‌شده هر واحد بر پایهٔ شاخص‌های بهره‌وری و عملکرد، کنترل سقف پرداخت و ارسال تأییدیهٔ نهایی به حقوق و دستمزد.",
+      "actionsFa": [
+        "بررسی کارانهٔ واحدها",
+        "کنترل شاخص‌های بهره‌وری",
+        "تأیید یا اصلاح کارانه",
+        "ثبت تأییدیهٔ نهایی",
+        "گزارش کارانه"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    }
+  ]
+}

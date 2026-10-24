@@ -1,0 +1,74 @@
+{
+  "id": "welfare",
+  "order": 10,
+  "department": "staff_affairs",
+  "subUnit": "compensation",
+  "titleFa": "رفاه، سرویس مدارس و اسکان",
+  "titleEn": "Welfare",
+  "apiPrefix": "/api/v1/welfare",
+  "version": "1.0.0",
+  "featureFlag": "module.welfare",
+  "dbSchema": "hr_welfare",
+  "owner": "hr-ops",
+  "entities": ["Facility", "WelfareRequest", "Loan"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "delete", "approve"],
+    "hr_spec": ["read", "write"],
+    "line_manager": ["read", "write"],
+    "employee": ["read", "write"]
+  },
+  "scopes": { "employee": "own", "line_manager": "own_unit" },
+  "screens": [
+    {
+      "key": "welfare",
+      "order": 1,
+      "icon": "gift",
+      "titleFa": "تسهیلات رفاهی",
+      "component": "WelfareFacilitiesScreen",
+      "purposeFa": "تعریف تسهیلات مانند وام، بیمهٔ تکمیلی و سفر همراه با شرایط و سقف استفاده.",
+      "actionsFa": ["تعریف تسهیلات", "ویرایش شرایط", "فعال/غیرفعال کردن"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "welfareReq",
+      "order": 2,
+      "icon": "hand-helping",
+      "titleFa": "درخواست‌های رفاهی",
+      "component": "WelfareRequestsScreen",
+      "purposeFa": "ثبت و پیگیری درخواست‌های رفاهی کارکنان و وضعیت تأیید و پرداخت.",
+      "actionsFa": ["ثبت درخواست", "پیگیری وضعیت", "تأیید", "رد"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    },
+    {
+      "key": "schoolService",
+      "order": 3,
+      "icon": "bus",
+      "titleFa": "سرویس مدارس",
+      "component": "SchoolServiceScreen",
+      "purposeFa": "ثبت‌نام فرزندان کارکنان در سرویس مدارس، تخصیص مسیر و خودرو، محاسبهٔ سهم سازمان و کارمند و پیگیری پرداخت.",
+      "actionsFa": ["ثبت‌نام فرزند", "تخصیص مسیر", "محاسبهٔ سهم کارمند", "تأیید", "گزارش هزینه"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    },
+    {
+      "key": "welfareTours",
+      "order": 4,
+      "icon": "ticket",
+      "titleFa": "تورهای رفاهی",
+      "component": "WelfareToursScreen",
+      "purposeFa": "برگزاری و ثبت‌نام تورهای رفاهی و اردوهای زیارتی-تفریحی کارکنان، سهمیه‌بندی، قرعه‌کشی و تسویهٔ هزینه‌ها.",
+      "actionsFa": ["تعریف تور", "ثبت‌نام کارمند", "قرعه‌کشی سهمیه", "تسویهٔ هزینه", "گزارش برگزاری"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    },
+    {
+      "key": "accommodation",
+      "order": 5,
+      "icon": "bed",
+      "titleFa": "اسکان کارکنان",
+      "component": "AccommodationScreen",
+      "purposeFa": "مدیریت خوابگاه و واحدهای اسکان کارکنان و مهمانسرا: تخصیص، تخلیه، شارژ ماهانه و پیگیری بدهی.",
+      "actionsFa": ["تخصیص واحد", "ثبت تخلیه", "صدور شارژ", "پیگیری بدهی", "گزارش ظرفیت"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    }
+  ]
+}

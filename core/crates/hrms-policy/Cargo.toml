@@ -1,0 +1,8 @@
+[package]
+name = "hrms-policy"
+version.workspace = true
+edition.workspace = true
+description = "موتور سیاست دسترسی نقش‌محور (RBAC) — تولیدشده از مانیفست مشترک با سرور"
+
+[dependencies]
+serde = { workspace = true }

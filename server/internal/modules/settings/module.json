@@ -1,0 +1,177 @@
+{
+  "id": "settings",
+  "order": 29,
+  "department": "platform",
+  "subUnit": "org_params",
+  "titleFa": "تنظیمات",
+  "titleEn": "Settings",
+  "apiPrefix": "/api/v1/settings",
+  "version": "1.0.0",
+  "featureFlag": "module.settings",
+  "dbSchema": "hr_settings",
+  "owner": "platform",
+  "entities": [
+    "User",
+    "Role",
+    "Permission",
+    "OrgUnit",
+    "SysParam",
+    "CatalogItem",
+    "AuditEvent"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve",
+      "admin"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve",
+      "admin"
+    ]
+  },
+  "scopes": {},
+  "screens": [
+    {
+      "key": "users",
+      "order": 1,
+      "icon": "user-cog",
+      "titleFa": "مدیریت کاربران",
+      "component": "UsersScreen",
+      "purposeFa": "ایجاد و ویرایش کاربران سامانه، اتصال کاربر به کارمند و تعیین نقش.",
+      "actionsFa": [
+        "ایجاد کاربر",
+        "ویرایش",
+        "فعال/غیرفعال کردن",
+        "بازنشانی رمز"
+      ],
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "key": "roles",
+      "order": 2,
+      "icon": "shield",
+      "titleFa": "نقش‌ها و دسترسی‌ها",
+      "component": "RolesScreen",
+      "purposeFa": "مدیریت نقش‌ها و ماتریس دسترسی هر نقش به ماژول‌ها و اقدام‌ها.",
+      "actionsFa": [
+        "ایجاد نقش",
+        "ویرایش دسترسی",
+        "مشاهدهٔ ماتریس"
+      ],
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "key": "orgProfile",
+      "order": 3,
+      "icon": "store",
+      "titleFa": "پروفایل شرکت و پارامترهای سازمانی",
+      "component": "OrgProfileScreen",
+      "purposeFa": "مدیریت پارامتریک شرکت‌ها: انتخاب شرکت فعال، فعال یا غیرفعال کردن ادارات و ماژول‌ها، پارامترهای حقوقی-مالی و مشخصات برند، تا سامانه برای شرکت‌های دیگر هلدینگ شبیه‌سازی شود.",
+      "actionsFa": [
+        "انتخاب شرکت فعال",
+        "فعال/غیرفعال کردن ماژول",
+        "ویرایش پارامترها",
+        "مقایسهٔ استقرار شرکت‌ها",
+        "خروجی پروفایل"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager"
+      ]
+    },
+    {
+      "key": "orgSettings",
+      "order": 4,
+      "icon": "building",
+      "titleFa": "تنظیمات سازمانی",
+      "component": "OrgSettingsScreen",
+      "purposeFa": "تعریف واحدها، پست‌ها و تقویم کاری سازمان (روزهای هفته و تعطیلات رسمی).",
+      "actionsFa": [
+        "مدیریت واحدها",
+        "مدیریت پست‌ها",
+        "تنظیم تقویم کاری"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager"
+      ]
+    },
+    {
+      "key": "sysParams",
+      "order": 5,
+      "icon": "settings",
+      "titleFa": "پارامترهای سیستم",
+      "component": "SysParamsScreen",
+      "purposeFa": "تعریف کدهای دسترسی، سطوح و زنجیرهٔ تأیید و پارامترهای محاسباتی مانند ضرایب اضافه‌کاری و جدول مالیات.",
+      "actionsFa": [
+        "ویرایش پارامتر",
+        "افزودن سطح تأیید",
+        "نسخه‌بندی پارامترها"
+      ],
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "key": "audit",
+      "order": 6,
+      "icon": "history",
+      "titleFa": "لاگ حسابرسی",
+      "component": "AuditLogScreen",
+      "purposeFa": "مشاهدهٔ رخدادهای حساس سامانه به‌صورت فقط-افزودن با زنجیرهٔ هش برای اثبات دست‌نخورده بودن.",
+      "actionsFa": [
+        "مشاهدهٔ لاگ",
+        "فیلتر بر اساس کاربر/ماژول/بازه",
+        "خروجی"
+      ],
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "key": "docTemplates",
+      "order": 7,
+      "icon": "file-text",
+      "titleFa": "قالب‌های متن اسناد",
+      "component": "DocTemplatesScreen",
+      "purposeFa": "طراحی متن قرارداد کار، فیش حقوقی، حکم حقوق و گواهی اشتغال با جای‌نگهدارهای پویا؛ موتور اسناد قالب فعال هر نوع سند را هنگام چاپ می‌خواند.",
+      "actionsFa": [
+        "تعریف قالب",
+        "ویرایش متن",
+        "فعال‌سازی قالب",
+        "بایگانی قالب"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager"
+      ]
+    },
+    {
+      "key": "catalogs",
+      "order": 8,
+      "icon": "database",
+      "titleFa": "کاتالوگ‌های مرجع",
+      "component": "CatalogsScreen",
+      "purposeFa": "تعریف و ویرایش واحدهای سازمانی، مدیریت‌ها و بانک‌های عامل. اقلام همین کاتالوگ‌ها مرجع فرم‌های تخصیص وام و پاداش و اعتبارسنجی‌اند، پس افزودن یا ویرایش هر قلم بی‌درنگ در همهٔ فرم‌ها دیده می‌شود.",
+      "actionsFa": [
+        "افزودن مدیریت/بانک/واحد",
+        "ویرایش قلم",
+        "فعال/غیرفعال کردن",
+        "حذف قلم"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager"
+      ]
+    }
+  ]
+}

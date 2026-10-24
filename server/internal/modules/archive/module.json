@@ -1,0 +1,54 @@
+{
+  "id": "archive",
+  "order": 5,
+  "department": "staff_affairs",
+  "subUnit": "records_identity",
+  "titleFa": "بایگانی و شناسایی کارکنان",
+  "titleEn": "Records & Employee Identity",
+  "apiPrefix": "/api/v1/archive",
+  "version": "1.0.0",
+  "featureFlag": "module.archive",
+  "dbSchema": "hr_archive",
+  "owner": "hr-core",
+  "entities": ["PersonnelFile", "EmployeeIdentity", "ArchiveDocument", "FileLending"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "approve"],
+    "hr_spec": ["read", "write"],
+    "line_manager": ["read"],
+    "employee": ["read"]
+  },
+  "scopes": { "line_manager": "own_unit", "employee": "own" },
+  "screens": [
+    {
+      "key": "personnelFiles",
+      "order": 1,
+      "icon": "folder-open",
+      "titleFa": "پرونده‌های پرسنلی",
+      "component": "PersonnelFilesScreen",
+      "purposeFa": "نگهداری، بازیابی و کنترل کامل بودن پروندهٔ پرسنلی هر کارمند: مدارک استخدام، احکام، مدرک تحصیلی و سابقهٔ بیمه.",
+      "actionsFa": ["جستجوی پرونده", "افزودن مدرک", "کنترل کامل بودن پرونده", "بازنشانی پروندهٔ کاغذی", "خروجی فهرست پرونده‌ها"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "employeeIdentity",
+      "order": 2,
+      "icon": "id-badge",
+      "titleFa": "شناسایی و مدارک کارکنان",
+      "component": "EmployeeIdentityScreen",
+      "purposeFa": "ثبت و تطبیق مشخصات هویتی کارکنان (کد ملی، شناسنامه، تاریخ تولد و وضعیت تأهل)، صدور و تمدید کارت شناسایی و کنترل انطباق با سامانه‌های بیرونی.",
+      "actionsFa": ["ثبت مشخصات هویتی", "کنترل کد ملی", "صدور کارت شناسایی", "تمدید کارت", "گزارش کارت‌های منقضی"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager"]
+    },
+    {
+      "key": "archiveDocuments",
+      "order": 3,
+      "icon": "scroll",
+      "titleFa": "بایگانی اسناد و امانت",
+      "component": "ArchiveDocumentsScreen",
+      "purposeFa": "بایگانی الکترونیکی اسناد پرسنلی، امانت و بازگشت مدارک کاغذی و پیگیری نسخه‌های فیزیکی خارج‌شده از بایگانی.",
+      "actionsFa": ["بارگذاری سند", "ثبت امانت مدرک", "ثبت بازگشت", "پیگیری مدارک خارج‌شده", "خروجی دفتر امانات"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    }
+  ]
+}

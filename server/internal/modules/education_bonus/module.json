@@ -1,0 +1,54 @@
+{
+  "id": "education_bonus",
+  "order": 12,
+  "department": "staff_affairs",
+  "subUnit": "compensation",
+  "titleFa": "پاداش تحصیلی فرزندان ممتاز",
+  "titleEn": "Outstanding Students Education Bonus",
+  "apiPrefix": "/api/v1/education_bonus",
+  "version": "1.0.0",
+  "featureFlag": "module.education_bonus",
+  "dbSchema": "hr_education_bonus",
+  "owner": "hr-ops",
+  "entities": ["OutstandingStudent", "BonusLevelRate", "BonusFile"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "delete", "approve"],
+    "hr_spec": ["read", "write", "approve"],
+    "line_manager": ["read"],
+    "employee": ["read"]
+  },
+  "scopes": { "employee": "own", "line_manager": "own_unit" },
+  "screens": [
+    {
+      "key": "outstandingStudents",
+      "order": 1,
+      "icon": "graduation-cap",
+      "titleFa": "دانش‌آموزان ممتاز و تحت تکفل",
+      "component": "OutstandingStudentsScreen",
+      "purposeFa": "ثبت مستقل دانش‌آموزان ممتاز هر کارمند با مقطع تحصیلی، معدل و سال تحصیلی، جدا از کارت‌های رفاهی؛ مبنای تعلق پاداش تحصیلی.",
+      "actionsFa": ["ثبت دانش‌آموز ممتاز", "ویرایش معدل", "تعیین مقطع", "غیرفعال کردن تعلق", "گزارش مشمولان"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "educationBonusRates",
+      "order": 2,
+      "icon": "percent",
+      "titleFa": "مبالغ مصوب پاداش تحصیلی",
+      "component": "EducationBonusRatesScreen",
+      "purposeFa": "تعریف مبلغ مصوب پاداش تحصیلی به تفکیک مقطع (ابتدایی، متوسطه اول و دوم، هنرستان، دانشگاهی) با شمارهٔ مصوبه و تاریخ اعتبار؛ قابل بازتعریف.",
+      "actionsFa": ["تعریف مبلغ مصوب", "بازتعریف مبلغ", "ثبت شمارهٔ مصوبه", "تعیین تاریخ اعتبار", "فعال/غیرفعال کردن"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "educationBonusFiles",
+      "order": 3,
+      "icon": "receipt",
+      "titleFa": "فایل محاسباتی پرداخت به مالی",
+      "component": "EducationBonusFilesScreen",
+      "purposeFa": "محاسبهٔ پاداش تحصیلی مشمولان بر پایهٔ مبالغ مصوب و ساخت فایل قابل ارسال به مالی، مستقل از پتروکارت و نفت‌کارت.",
+      "actionsFa": ["محاسبهٔ پاداش", "پیش‌نمایش ردیف‌ها", "ساخت فایل مالی", "خروجی CSV", "ثبت ارسال به مالی"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+[package]
+name = "hrms-ffi"
+version.workspace = true
+edition.workspace = true
+description = "تنها سطح صادرشدهٔ هسته به بیرون: پل JSON روی C ABI"
+
+[lib]
+name = "hrms_ffi"
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+hrms-calendar = { path = "../hrms-calendar" }
+hrms-domain = { path = "../hrms-domain" }
+hrms-policy = { path = "../hrms-policy" }
+hrms-rules = { path = "../hrms-rules" }
+hrms-store = { path = "../hrms-store" }

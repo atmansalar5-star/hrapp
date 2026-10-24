@@ -1,0 +1,154 @@
+{
+  "id": "training",
+  "order": 23,
+  "department": "training_coordination",
+  "subUnit": "training_cycle",
+  "titleFa": "هماهنگی آموزش",
+  "titleEn": "Training",
+  "apiPrefix": "/api/v1/training",
+  "version": "1.0.0",
+  "featureFlag": "module.training",
+  "dbSchema": "hr_training",
+  "owner": "hr-od",
+  "entities": [
+    "Course",
+    "Enrollment",
+    "Certificate",
+    "Skill",
+    "SkillGap"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "line_manager": [
+      "read"
+    ],
+    "employee": [
+      "read",
+      "write"
+    ]
+  },
+  "scopes": {
+    "employee": "own",
+    "line_manager": "own_unit"
+  },
+  "screens": [
+    {
+      "key": "trainingPlan",
+      "order": 1,
+      "icon": "map",
+      "titleFa": "برنامه‌ریزی آموزشی",
+      "component": "TrainingPlanScreen",
+      "purposeFa": "تدوین برنامهٔ آموزشی سالانه بر پایهٔ نیازسنجی و بودجه: تعیین دوره‌ها، بازهٔ اجرا، واحد هدف و برآورد هزینه.",
+      "actionsFa": [
+        "ایجاد برنامه",
+        "افزودن دوره به برنامه",
+        "تعیین بودجه",
+        "تصویب برنامه",
+        "خروجی برنامه"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "trainingNeeds",
+      "order": 2,
+      "icon": "target",
+      "titleFa": "نیازسنجی آموزشی",
+      "component": "TrainingNeedsScreen",
+      "purposeFa": "تحلیل شکاف مهارتی بین مهارت مورد نیاز پست و مهارت موجود کارکنان و تبدیل شکاف‌ها به سرفصل دوره.",
+      "actionsFa": [
+        "اجرای تحلیل شکاف",
+        "مشاهدهٔ شکاف‌ها",
+        "تبدیل شکاف به دوره",
+        "تعیین اولویت"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "trainingExecution",
+      "order": 3,
+      "icon": "presentation",
+      "titleFa": "اجرا و هماهنگی دوره‌ها",
+      "component": "TrainingExecutionScreen",
+      "purposeFa": "هماهنگی اجرای دوره‌ها: تعیین مدرس و محل برگزاری، دعوت از شرکت‌کنندگان، ثبت حضور و جلسات و پیگیری برگزاری.",
+      "actionsFa": [
+        "زمان‌بندی جلسه",
+        "تعیین مدرس",
+        "ارسال دعوت‌نامه",
+        "ثبت حضور و غیاب",
+        "ثبت گزارش اجرا"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "training",
+      "order": 4,
+      "icon": "book-open",
+      "titleFa": "دوره‌های آموزشی",
+      "component": "TrainingCoursesScreen",
+      "purposeFa": "تعریف دوره، ثبت‌نام، کنترل ظرفیت و مشاهدهٔ وضعیت برگزاری.",
+      "actionsFa": [
+        "تعریف دوره",
+        "ثبت‌نام",
+        "مدیریت ظرفیت",
+        "لغو دوره"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager",
+        "employee"
+      ]
+    },
+    {
+      "key": "trainingHist",
+      "order": 5,
+      "icon": "scroll",
+      "titleFa": "سوابق آموزشی",
+      "component": "TrainingHistoryScreen",
+      "purposeFa": "گواهی‌نامه‌ها و مهارت‌های کسب‌شدهٔ هر کارمند در یک نمای زمانی.",
+      "actionsFa": [
+        "مشاهدهٔ سوابق",
+        "ثبت گواهی‌نامه",
+        "افزودن مهارت"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager",
+        "employee"
+      ]
+    }
+  ]
+}

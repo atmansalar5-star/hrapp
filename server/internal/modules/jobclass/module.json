@@ -1,0 +1,54 @@
+{
+  "id": "jobclass",
+  "order": 6,
+  "department": "staff_affairs",
+  "subUnit": "job_classification",
+  "sharedWith": ["outsourcing"],
+  "titleFa": "طبقه‌بندی مشاغل",
+  "titleEn": "Job Classification",
+  "apiPrefix": "/api/v1/jobclass",
+  "version": "1.0.0",
+  "featureFlag": "module.jobclass",
+  "dbSchema": "hr_jobclass",
+  "owner": "hr-core",
+  "entities": ["JobCategory", "JobEvaluation", "JobDescription"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "approve"],
+    "hr_spec": ["read", "write"],
+    "line_manager": ["read"]
+  },
+  "scopes": { "line_manager": "own_unit" },
+  "screens": [
+    {
+      "key": "jobCategories",
+      "order": 1,
+      "icon": "layers",
+      "titleFa": "طبقه‌بندی و رتبه‌بندی مشاغل",
+      "component": "JobCategoriesScreen",
+      "purposeFa": "تعریف طبقات و رتبه‌های شغلی سازمان و مشاغل پیمانکاری (ارکان ثالث) با ضریب و شرایط ارتقای هر طبقه.",
+      "actionsFa": ["تعریف طبقهٔ شغلی", "تعیین ضریب و رتبه", "افزودن شغل پیمانکاری", "بازنگری سالانه", "خروجی جدول طبقات"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "jobEvaluation",
+      "order": 2,
+      "icon": "target",
+      "titleFa": "ارزشیابی مشاغل",
+      "component": "JobEvaluationScreen",
+      "purposeFa": "ارزشیابی مشاغل بر پایهٔ عوامل امتیاز (دانش، تجربه، مسئولیت و شرایط کار) و تعیین طبقهٔ متناظر برای چانه‌زنی با تأمین اجتماعی و پیمانکاران.",
+      "actionsFa": ["ثبت عوامل امتیاز", "محاسبهٔ امتیاز شغل", "تعیین طبقهٔ پیشنهادی", "مقایسهٔ مشاغل مشابه", "تأیید ارزشیابی"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "jobDescriptions",
+      "order": 3,
+      "icon": "file-text",
+      "titleFa": "شرح شغل و شناسنامهٔ شغل",
+      "component": "JobDescriptionsScreen",
+      "purposeFa": "تدوین و بازنگری شرح شغل، وظایف، مسئولیت‌ها و شرایط احراز هر شغل به‌عنوان مرجع طبقه‌بندی، استخدام و تنظیم قرارداد پیمانکاری.",
+      "actionsFa": ["تدوین شرح شغل", "بازنگری شرح شغل", "تأیید شرح شغل", "خروجی شناسنامهٔ شغل"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager"]
+    }
+  ]
+}

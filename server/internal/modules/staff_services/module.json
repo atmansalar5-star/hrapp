@@ -1,0 +1,44 @@
+{
+  "id": "staff_services",
+  "order": 4,
+  "department": "staff_affairs",
+  "subUnit": "personnel_services",
+  "titleFa": "افراد تحت تکفل و درخواست پرواز",
+  "titleEn": "Dependents & Service Requests",
+  "apiPrefix": "/api/v1/personnel",
+  "version": "1.0.0",
+  "featureFlag": "module.staff_services",
+  "dbSchema": "hr_personnel",
+  "owner": "hr-core",
+  "entities": ["Dependent", "DependentInsurance", "FlightRequest"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "delete", "approve"],
+    "hr_spec": ["read", "write"],
+    "line_manager": ["read", "write", "approve"],
+    "employee": ["read", "write"]
+  },
+  "scopes": { "line_manager": "own_unit", "employee": "own" },
+  "screens": [
+    {
+      "key": "dependents",
+      "order": 1,
+      "icon": "users-round",
+      "titleFa": "افراد تحت تکفل",
+      "component": "DependentsScreen",
+      "purposeFa": "ثبت و نگهداری افراد تحت تکفل کارکنان مانند همسر و فرزندان، تعیین نوع تکفل، پیوست مدارک و محاسبهٔ حق بیمه و پوشش درمانی هر تکفل‌شده.",
+      "actionsFa": ["ثبت فرد تحت تکفل", "ویرایش اطلاعات", "پیوست مدارک تکفل", "خروج تکفل", "صدور تأییدیهٔ تکفل"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    },
+    {
+      "key": "flightRequests",
+      "order": 2,
+      "icon": "ticket",
+      "titleFa": "فرم درخواست پرواز",
+      "component": "FlightRequestsScreen",
+      "purposeFa": "ثبت فرم درخواست پرواز کارکنان و افراد تحت تکفل، تعیین مبدأ و مقصد، مسیر و تاریخ، تأیید مدیر واحد و صدور بلیت و پیگیری تسویهٔ هزینهٔ سفر.",
+      "actionsFa": ["ثبت درخواست پرواز", "تأیید درخواست", "صدور بلیت", "لغو یا تغییر پرواز", "گزارش هزینهٔ سفر"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    }
+  ]
+}

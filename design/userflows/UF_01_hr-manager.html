@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>UF_HRMS_HR-Manager — فلوجارت نقش مدیر منابع انسانی</title>
+<style>
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:#FAFAFA;color:#111;margin:0;padding:24px;direction:rtl}
+h1{font-size:15px;border-bottom:2px solid #111;padding-bottom:6px}
+.legend{font-size:11px;color:#555;margin:8px 0 16px}
+.legend span{border:1px solid #999;padding:2px 8px;margin-inline-end:8px;background:#fff}
+.canvas{border:2px solid #111;background:#fff;max-width:900px;padding:20px;overflow-x:auto}
+.row{display:flex;align-items:center;justify-content:center;gap:10px;min-height:60px;flex-wrap:nowrap}
+.arrow{font-size:18px;color:#111;flex-shrink:0}
+.page{border:2px solid #111;background:#fff;padding:8px 14px;font-size:11px;text-align:center;min-width:110px}
+.decision{width:120px;height:80px;display:flex;align-items:center;justify-content:center;font-size:11px;text-align:center;
+  background:#FFF8DC;border:2px solid #B8860B;transform:rotate(0deg);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.startend{border-radius:50px;border:2px solid #111;background:#EEE;padding:8px 18px;font-size:11px;text-align:center;font-weight:bold}
+.col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.vrow{display:flex;flex-direction:column;align-items:center;gap:8px}
+.darr{font-size:16px}
+.lbl{font-size:10px;color:#555}
+</style>
+</head>
+<body>
+
+<h1>بخش ب — User Flow (فلوجارت)</h1>
+<div class="legend">
+  <span>▢ مستطیل = صفحه</span><span>◇ لوزی = تصمیم</span><span>⬭ بیضی = شروع/پایان</span><span>→ فلش = انتقال</span>
+</div>
+
+<div class="wf-title" style="font-size:12px;font-weight:bold">UF_Login_HR-Manager — فلوجارت ورود و کار روزانه — نقش: مدیر منابع انسانی (HR Manager)</div>
+<div class="canvas">
+  <div class="vrow">
+    <div class="startend">شروع</div>
+    <div class="darr">↓</div>
+    <div class="page">صفحه ورود (Login)</div>
+    <div class="darr">↓</div>
+    <div class="decision">اعتبارنامه معتبر؟</div>
+    <div class="vrow">
+      <div class="lbl">خیر ← پیام خطا</div>
+      <div class="page" style="border-style:dashed">نمایش خطا — بازگشت به Login</div>
+    </div>
+    <div class="lbl">بله ↓</div>
+    <div class="page">داشبورد مدیر HR (ویجت‌ها + نمودارها + اعلان‌ها)</div>
+    <div class="darr">↓</div>
+    <div class="decision">انتخاب ماژول از منو؟</div>
+    <div class="row" style="flex-wrap:wrap;gap:14px">
+      <div class="col">
+        <div class="page">مدیریت کارکنان<br>(فهرست)</div>
+        <div class="darr">↓</div>
+        <div class="decision">عملیات؟</div>
+        <div class="row" style="flex-wrap:wrap;gap:8px">
+          <div class="col"><div class="page">ایجاد/ویرایش کارمند</div><div class="darr">↓</div><div class="page" style="border-style:dashed">ذخیره → پیام موفقیت</div></div>
+          <div class="col"><div class="page">پرونده کارمند (Tabs)</div></div>
+          <div class="col"><div class="page">حذف کارمند</div><div class="darr">↓</div><div class="decision">تأیید؟</div></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="page">تأیید مرخصی</div>
+        <div class="darr">تأیید ↓</div>
+        <div class="page" style="border-style:dashed">کسر مانده مرخصی + پیام</div>
+        <div class="darr">رد ↓</div>
+        <div class="page" style="border-style:dashed">ثبت رد + پیام</div>
+      </div>
+      <div class="col">
+        <div class="page">پردازش حقوق</div>
+        <div class="darr">↓</div>
+        <div class="decision">تأیید اجرا؟</div>
+        <div class="darr">↓</div>
+        <div class="page" style="border-style:dashed">اجرای محاسبات + پیام</div>
+      </div>
+      <div class="col">
+        <div class="page">گزارش‌ها</div>
+        <div class="darr">↓</div>
+        <div class="page" style="border-style:dashed">خروجی Excel / PDF</div>
+      </div>
+    </div>
+    <div class="darr">↓</div>
+    <div class="startend">پایان (خروج)</div>
+  </div>
+</div>
+<div class="note" style="font-size:11px;color:#555;max-width:900px;margin:8px auto 0;background:#FFF8DC;border:1px dashed #B8860B;padding:6px 10px">
+  نقش مدیر منابع انسانی به همه ماژول‌ها دسترسی دارد؛ مسیرهای پرتکرار: تأیید نهایی مرخصی‌ها، اجرای پردازش حقوق، و مشاهده گزارش‌های کلان.
+</div>
+
+</body>
+</html>

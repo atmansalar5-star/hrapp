@@ -1,0 +1,84 @@
+{
+  "id": "cards",
+  "order": 11,
+  "department": "staff_affairs",
+  "subUnit": "compensation",
+  "titleFa": "کارت‌های رفاهی و شارژ (پتروکارت، نفت‌کارت)",
+  "titleEn": "Welfare Cards and Charging",
+  "apiPrefix": "/api/v1/cards",
+  "version": "1.0.0",
+  "featureFlag": "module.cards",
+  "dbSchema": "hr_cards",
+  "owner": "hr-ops",
+  "entities": ["CardRate", "CardBeneficiary", "CardCharge", "Occasion", "ChargeFile"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "delete", "approve"],
+    "hr_spec": ["read", "write", "approve"],
+    "line_manager": ["read"],
+    "employee": ["read"]
+  },
+  "scopes": { "employee": "own", "line_manager": "own_unit" },
+  "screens": [
+    {
+      "key": "petrokart",
+      "order": 1,
+      "icon": "hand-coins",
+      "titleFa": "پتروکارت (فرهنگی و رستوران)",
+      "component": "PetrocardScreen",
+      "purposeFa": "شارژ ماهانهٔ پتروکارت در دو بخش فرهنگی و رستوران برای کارکنان و افراد تحت تکفل؛ شارژ گروهی و انفرادی و ثبت شارژ هر دوره.",
+      "actionsFa": ["شارژ گروهی", "شارژ انفرادی", "ویرایش مبلغ", "ثبت شارژ دوره", "گزارش شارژ"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "cardAllocations",
+      "order": 2,
+      "icon": "users-round",
+      "titleFa": "تخصیص کارت به افراد تحت تکفل",
+      "component": "CardAllocationsScreen",
+      "purposeFa": "تعریف افراد مشمول و تحت تکفل هر کارمند و تعیین تخصیص یا عدم تخصیص هر یک به بخش فرهنگی، رستوران، پاداش تحصیلی فرزندان ممتاز و نفت‌کارت.",
+      "actionsFa": ["تعریف فرد تحت تکفل", "تخصیص بخش", "عدم تخصیص", "ثبت معدل و ممتازی", "گزارش مشمولان"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "naftmart",
+      "order": 3,
+      "icon": "store",
+      "titleFa": "نفت‌کارت و نفت‌مارت (فارس‌کارت، سامان‌کارت)",
+      "component": "NaftmartScreen",
+      "purposeFa": "شارژ نفت‌کارت (نفت‌مارت / فارس‌کارت / سامان‌کارت) با چهار قلم رفاهی و امکان شارژ گروهی و انفرادی بر پایهٔ نرخ‌های جاری.",
+      "actionsFa": ["شارژ گروهی", "شارژ انفرادی", "ثبت اقلام چهارگانه", "بازمحاسبه با نرخ جدید", "گزارش شارژ"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "cardRates",
+      "order": 4,
+      "icon": "percent",
+      "titleFa": "نرخ‌ها و اقلام شارژ",
+      "component": "CardRatesScreen",
+      "purposeFa": "تعریف و بازتعریف نرخ شارژ هر قلم و هر بخش (فرهنگی، رستوران، چهار قلم رفاهی، پاداش تحصیلی) با تاریخ اعتبار، تا شارژها با نرخ جدید بازمحاسبه شوند.",
+      "actionsFa": ["تعریف نرخ", "بازتعریف نرخ", "تعیین تاریخ اعتبار", "فعال/غیرفعال کردن"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "occasions",
+      "order": 5,
+      "icon": "calendar",
+      "titleFa": "مناسبت‌های تقویمی و شارژ مناسبتی",
+      "component": "OccasionsScreen",
+      "purposeFa": "تعریف و ویرایش مناسبت‌های تقویمی (ملی، مذهبی، سازمانی) با تاریخ شمسی و مبلغ شارژ هر مناسبت برای کارت‌های رفاهی.",
+      "actionsFa": ["تعریف مناسبت", "ویرایش تاریخ", "تعیین مبلغ مناسبتی", "فعال/غیرفعال کردن"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "chargeFiles",
+      "order": 6,
+      "icon": "receipt",
+      "titleFa": "فایل‌های شارژ و ارسال به مالی",
+      "component": "ChargeFilesScreen",
+      "purposeFa": "ساخت فایل شارژ گروهی یا انفرادی از روی نرخ‌ها و مناسبت‌ها، مشاهدهٔ جمع مبالغ و خروجی قابل ارسال به واحد مالی.",
+      "actionsFa": ["ساخت فایل شارژ", "پیش‌نمایش ردیف‌ها", "خروجی برای مالی", "ثبت ارسال به مالی"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    }
+  ]
+}

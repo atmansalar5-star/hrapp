@@ -1,0 +1,132 @@
+{
+  "id": "medical",
+  "order": 22,
+  "department": "labor_relations",
+  "subUnit": "medical",
+  "titleFa": "درمان، معاینات دوره‌ای و خدمات درمانی",
+  "titleEn": "Medical Care & Occupational Health",
+  "apiPrefix": "/api/v1/medical",
+  "version": "1.0.0",
+  "featureFlag": "module.medical",
+  "dbSchema": "hr_medical",
+  "owner": "hr-labor",
+  "entities": [
+    "MedicalService",
+    "TreatmentCase",
+    "PeriodicExam",
+    "SupplementaryInsurance"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write"
+    ],
+    "line_manager": [
+      "read"
+    ],
+    "employee": [
+      "read"
+    ]
+  },
+  "scopes": {
+    "line_manager": "own_unit",
+    "employee": "own"
+  },
+  "screens": [
+    {
+      "key": "treatmentCases",
+      "order": 1,
+      "icon": "stethoscope",
+      "titleFa": "پروندهٔ درمان",
+      "component": "TreatmentCasesScreen",
+      "purposeFa": "ثبت پروندهٔ درمان و هزینه‌های درمانی کارمند بر پایهٔ اسناد بیمارستانی، محاسبهٔ سهم سازمان و بیمه و پیگیری بازپرداخت.",
+      "actionsFa": [
+        "گشودن پروندهٔ درمان",
+        "ثبت اسناد بیمارستانی",
+        "محاسبهٔ سهم سازمان",
+        "ثبت بازپرداخت",
+        "خروجی پرونده"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "periodicExams",
+      "order": 2,
+      "icon": "clipboard-plus",
+      "titleFa": "معاینات دوره‌ای",
+      "component": "PeriodicExamsScreen",
+      "purposeFa": "برنامه‌ریزی معاینات دوره‌ای و طب کار بر پایهٔ ریسک شغلی واحد: تعیین نوبت، ثبت نتیجه و هشدار کارکنان با معاینهٔ عقب‌افتاده.",
+      "actionsFa": [
+        "تعریف دورهٔ معاینه",
+        "تعیین نوبت",
+        "ثبت نتیجهٔ معاینه",
+        "اعلام کدهای ریسک",
+        "پیگیری معاینات عقب‌افتاده"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "medicalServices",
+      "order": 3,
+      "icon": "heart-pulse",
+      "titleFa": "خدمات درمانی و بیمه",
+      "component": "MedicalServicesScreen",
+      "purposeFa": "معرفی خدمات درمانی سازمان (درمانگاه، آزمایشگاه، مشاورهٔ پزشک) و وضعیت پوشش بیمهٔ درمان و تکمیلی هر کارمند و افراد تحت تکفل.",
+      "actionsFa": [
+        "مشاهدهٔ فهرست خدمات",
+        "صدور معرفی‌نامه",
+        "مشاهدهٔ پوشش بیمه",
+        "افزودن فرد تحت تکفل"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager",
+        "employee"
+      ]
+    },
+    {
+      "key": "supplementaryInsurance",
+      "order": 4,
+      "icon": "shield-plus",
+      "titleFa": "بیمهٔ تکمیلی",
+      "component": "SupplementaryInsuranceScreen",
+      "purposeFa": "ثبت و پیگیری پروندهٔ بیمهٔ تکمیلی کارکنان و افراد تحت تکفل: شرکت بیمه‌گر، درصد پوشش، حق بیمهٔ ماهانه و دورهٔ اعتبار تا تمدید و کنترل پوشش.",
+      "actionsFa": [
+        "ثبت بیمه‌نامهٔ تکمیلی",
+        "افزودن فرد تحت تکفل",
+        "تمدید اعتبار",
+        "تعلیق و فعال‌سازی",
+        "گزارش پوشش بیمه"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager",
+        "employee"
+      ]
+    }
+  ]
+}

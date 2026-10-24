@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>WF_03 — پرونده کارمند | فرم درخواست مرخصی</title>
+<style>
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:#FAFAFA;color:#111;margin:0;padding:24px;direction:rtl}
+.wf-title{font-size:11px;letter-spacing:1px;color:#666;text-align:left;direction:ltr;margin:26px 0 6px}
+.wf-frame{border:2px solid #111;background:#fff;max-width:840px;margin:0 auto;padding:10px}
+.wf-box{border:1.5px solid #111;padding:8px;font-size:11px;background:#fff}
+.wf-box.gray{background:#EEE}
+.wf-box.dashed{border-style:dashed;background:#fff}
+.wf-line{border-top:1px dashed #999;margin:6px 0}
+.row{display:flex;gap:8px}
+.col{flex:1}
+.mono{font-family:monospace;direction:ltr;text-align:left}
+.note{font-size:11px;color:#555;max-width:840px;margin:8px auto 0;background:#FFF8DC;border:1px dashed #B8860B;padding:6px 10px}
+.screen{display:flex;gap:8px}
+.side{width:170px;display:flex;flex-direction:column;gap:6px}
+.main-a{flex:1;display:flex;flex-direction:column;gap:8px}
+.req{color:#B8860B;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div class="wf-title mono">WF_Employee_Profile_HR — پرونده کارمند</div>
+<div class="wf-frame">
+  <div class="wf-box gray">«Header»</div>
+  <div class="screen">
+    <div class="side">
+      <div class="wf-box gray" style="text-align:center">«Sidebar (راست)»</div>
+      <div class="wf-box">داشبورد</div>
+      <div class="wf-box gray">مدیریت کارکنان ●</div>
+      <div class="wf-box">…</div>
+    </div>
+    <div class="main-a">
+      <div style="font-size:11px">Breadcrumb: «منابع انسانی ‹ کارکنان ‹ پرونده کارمند»</div>
+      <div class="wf-box">[عکس] «نام و نام خانوادگی» — «پست» — «واحد» — [چیپ وضعیت] [✏️ ویرایش]</div>
+      <div class="wf-box gray">Tab: «اطلاعات فردی» | «اطلاعات شغلی» | «مدارک» | «مهارت‌ها» | «قرارداد»</div>
+      <div class="row">
+        <div class="wf-box col">«اطلاعات فردی»: کد ملی / تاریخ تولد / تلفن / ایمیل / نشانی</div>
+        <div class="wf-box col">«اطلاعات شغلی»: واحد / پست / مدیر مستقیم / تاریخ استخدام / سوابق شغلی</div>
+      </div>
+      <div class="wf-box dashed">«مدارک»: جدول فایل‌ها + [ بارگذاری مدرک ]</div>
+    </div>
+  </div>
+</div>
+<div class="note">هدف: مشاهده کامل پرونده در قالب Tab (فرم طولانی). اقدامات: ویرایش، بارگذاری مدرک، چاپ. نقش‌ها: HR، مدیر واحد (پرسنل خود)، خود کارمند.</div>
+
+<div class="wf-title mono">WF_Leave_Request_Employee — فرم درخواست مرخصی</div>
+<div class="wf-frame" style="max-width:560px">
+  <div class="wf-box gray">عنوان مودال: «ثبت درخواست مرخصی»</div>
+  <div class="wf-box dashed" style="margin-top:8px">خلاصه: «مانده مرخصی استحقاقی: [n] روز»</div>
+  <div class="wf-box" style="margin-top:8px">
+    «نوع مرخصی ▾ *» <span class="req">(استحقاقی / مریضی / بدون حقوق / ماموریت)</span>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <div class="wf-box col">«از تاریخ *» <div class="wf-line"></div> خطا: کنار فیلد</div>
+    <div class="wf-box col">«تا تاریخ *» <div class="wf-line"></div> خطا: کنار فیلد</div>
+    <div class="wf-box col">«مدت (روز) *»</div>
+  </div>
+  <div class="wf-box" style="margin-top:8px">«دلیل» (متن آزاد)</div>
+  <div class="row" style="margin-top:8px">
+    <div class="wf-box gray">[ ثبت درخواست ]</div><div class="wf-box">[ انصراف ]</div>
+  </div>
+</div>
+<div class="note">هدف: ثبت درخواست مرخصی با اعتبارسنجی فیلدهای اجباری (ستاره *) و نمایش خطا کنار فیلد. پس از ثبت: پیام موفقیت و بازگشت به فهرست. نقش مجاز: کارمند (و سایر نقش‌ها برای خودشان).</div>
+
+</body>
+</html>

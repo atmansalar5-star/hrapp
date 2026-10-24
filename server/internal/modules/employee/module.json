@@ -1,0 +1,54 @@
+{
+  "id": "employee",
+  "order": 2,
+  "department": "staff_affairs",
+  "subUnit": "personnel_services",
+  "titleFa": "امور کارکنان",
+  "titleEn": "Employee Management",
+  "apiPrefix": "/api/v1/employee",
+  "version": "1.0.0",
+  "featureFlag": "module.employee",
+  "dbSchema": "hr_employee",
+  "owner": "hr-core",
+  "entities": ["Employee", "Department", "Contract", "PersonnelServiceRequest"],
+  "roles": {
+    "admin": ["read", "write", "delete"],
+    "hr_manager": ["read", "write", "delete"],
+    "hr_spec": ["read", "write"],
+    "line_manager": ["read"],
+    "employee": ["read"]
+  },
+  "scopes": { "line_manager": "own_unit", "employee": "own" },
+  "screens": [
+    {
+      "key": "employees",
+      "order": 1,
+      "icon": "users",
+      "titleFa": "فهرست کارکنان",
+      "component": "EmployeeListScreen",
+      "purposeFa": "جستجو، فیلتر بر اساس واحد/وضعیت/نوع قرارداد و عملیات CRUD روی کارکنان؛ جدول با سرستون‌های مرتب‌شدنی، شمارش رکورد و صفحه‌بندی.",
+      "actionsFa": ["ایجاد کارمند", "ویرایش", "حذف", "خروجی", "جستجو و فیلتر", "کلیک روی ردیف برای پرونده"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager"]
+    },
+    {
+      "key": "profile",
+      "order": 2,
+      "icon": "id-card",
+      "titleFa": "پرونده کارمند",
+      "component": "EmployeeProfileScreen",
+      "purposeFa": "نمایش اطلاعات شخصی، سوابق شغلی، مدارک، مهارت‌ها و اطلاعات قرارداد در قالب تب‌های گروه‌بندی‌شده.",
+      "actionsFa": ["مشاهده پرونده", "ویرایش اطلاعات", "افزودن مدرک", "مشاهده قرارداد"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    },
+    {
+      "key": "personnelServices",
+      "order": 3,
+      "icon": "folder-open",
+      "titleFa": "خدمات پرسنلی",
+      "component": "PersonnelServicesScreen",
+      "purposeFa": "ارائهٔ خدمات پرسنلی به کارکنان: صدور گواهی اشتغال و معرفی‌نامه، تمدید قرارداد، ثبت مدارک و تسویه‌حساب پایان همکاری.",
+      "actionsFa": ["ثبت درخواست خدمت", "صدور گواهی", "ثبت مدرک", "شروع تسویه‌حساب", "پیگیری وضعیت"],
+      "roles": ["admin", "hr_manager", "hr_spec", "employee"]
+    }
+  ]
+}

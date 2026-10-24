@@ -1,0 +1,54 @@
+{
+  "id": "bonus",
+  "order": 13,
+  "department": "staff_affairs",
+  "subUnit": "compensation",
+  "titleFa": "پاداش‌ها",
+  "titleEn": "Employee Bonuses",
+  "apiPrefix": "/api/v1/bonus",
+  "version": "1.0.0",
+  "featureFlag": "module.bonus",
+  "dbSchema": "hr_bonus",
+  "owner": "hr-ops",
+  "entities": ["BonusPayment", "BonusAllocation"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "delete", "approve"],
+    "hr_spec": ["read", "write", "approve"],
+    "line_manager": ["read"],
+    "employee": ["read"]
+  },
+  "scopes": { "line_manager": "own_unit", "employee": "own" },
+  "screens": [
+    {
+      "key": "bonusDashboard",
+      "order": 1,
+      "icon": "gift",
+      "titleFa": "داشبورد مدیریتی پاداش",
+      "component": "BonusDashboardScreen",
+      "purposeFa": "نمای مدیریتی پرداخت پاداش به مدیریت‌های بندر امام: تعداد دفعات پرداخت، مبالغ پرداختی و میانگین هر نفر در هر مدیریت، ترکیب انواع پاداش، روند دوره‌ای و سهم نیروی شرکتی در برابر ارکان ثالث.",
+      "actionsFa": ["مشاهدهٔ پرداخت به تفکیک مدیریت", "تعداد دفعات پرداخت", "مبلغ هر نفر", "روند دوره‌ای", "خروجی مدیریتی"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager"]
+    },
+    {
+      "key": "bonusPayments",
+      "order": 2,
+      "icon": "hand-coins",
+      "titleFa": "پرداخت پاداش",
+      "component": "BonusPaymentsScreen",
+      "purposeFa": "ثبت و گردش‌کار پرداخت پاداش به کارکنان (پیش‌نویس ← تأییدشده ← پرداخت‌شده) همراه فرم تخصیص گروهی به یک مدیریت با مبلغ سرانه و ساخت رکوردهای پرداخت.",
+      "actionsFa": ["فرم تخصیص پاداش", "پیش‌نمایش تخصیص", "ثبت تخصیص گروهی", "تأیید پرداخت", "ثبت پرداخت", "لغو پرداخت"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "bonusReports",
+      "order": 3,
+      "icon": "bar-chart",
+      "titleFa": "گزارش پرداخت پاداش",
+      "component": "BonusReportsScreen",
+      "purposeFa": "گزارش مبالغ پرداختی به هر نفر در هر مدیریت، جمع هر مدیریت، جمع دوره‌ای و خروجی CSV برای واحد مالی؛ بر پایهٔ رکوردهای واقعی پرداخت.",
+      "actionsFa": ["گزارش به تفکیک مدیریت", "گزارش به تفکیک نفر", "گزارش دوره‌ای", "خروجی CSV", "چاپ"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    }
+  ]
+}

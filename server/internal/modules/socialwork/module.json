@@ -1,0 +1,85 @@
+{
+  "id": "socialwork",
+  "order": 21,
+  "department": "labor_relations",
+  "subUnit": "social_work",
+  "titleFa": "مددکاری اجتماعی",
+  "titleEn": "Social Work",
+  "apiPrefix": "/api/v1/socialwork",
+  "version": "1.0.0",
+  "featureFlag": "module.socialwork",
+  "dbSchema": "hr_socialwork",
+  "owner": "hr-labor",
+  "entities": [
+    "SocialWorkCase",
+    "AidRequest",
+    "CounselingSession"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write"
+    ],
+    "employee": [
+      "read",
+      "write"
+    ]
+  },
+  "scopes": {
+    "employee": "own"
+  },
+  "screens": [
+    {
+      "key": "socialWorkCases",
+      "order": 1,
+      "icon": "heart-handshake",
+      "titleFa": "پرونده‌های مددکاری",
+      "component": "SocialWorkCasesScreen",
+      "purposeFa": "ثبت و پیگیری پرونده‌های مددکاری کارکنان: مشکل شناسایی‌شده، اقدام‌های حمایتی، جلسات مشاوره و نتیجهٔ پیگیری — با دسترسی محرمانه.",
+      "actionsFa": [
+        "گشودن پرونده",
+        "ثبت جلسهٔ مشاوره",
+        "ثبت اقدام حمایتی",
+        "ارجاع به مراجع بیرونی",
+        "بستن پرونده"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "aidRequests",
+      "order": 2,
+      "icon": "hand-coins",
+      "titleFa": "کمک‌های موردی",
+      "component": "AidRequestsScreen",
+      "purposeFa": "ثبت درخواست کمک موردی کارکنان (درمانی، معیشتی، وام ضروری) و پیگیری مراحل بررسی، تأیید و پرداخت.",
+      "actionsFa": [
+        "ثبت درخواست",
+        "بررسی مستندات",
+        "تأیید و تعیین مبلغ",
+        "ثبت پرداخت",
+        "پیگیری وضعیت"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "employee"
+      ]
+    }
+  ]
+}

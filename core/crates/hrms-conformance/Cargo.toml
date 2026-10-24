@@ -1,0 +1,10 @@
+[package]
+name = "hrms-conformance"
+version.workspace = true
+edition.workspace = true
+description = "ابزار تطبیق قواعد: تولید و بازبینی fixtureهای طلایی مشترک با سرور Go"
+
+[dependencies]
+serde_json = { workspace = true }
+hrms-calendar = { path = "../hrms-calendar" }
+hrms-rules = { path = "../hrms-rules" }

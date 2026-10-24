@@ -1,0 +1,127 @@
+{
+  "id": "outsourcing",
+  "order": 27,
+  "department": "outsourcing",
+  "subUnit": "third_party_payroll",
+  "titleFa": "برون‌سپاری و نیروهای ارکان ثالث",
+  "titleEn": "Outsourcing & Third-Party Workforce",
+  "apiPrefix": "/api/v1/outsourcing",
+  "version": "1.0.0",
+  "featureFlag": "module.outsourcing",
+  "dbSchema": "hr_outsourcing",
+  "owner": "hr-outsource",
+  "entities": [
+    "Contractor",
+    "ThirdPartyWorker",
+    "OutsourcePayRun",
+    "HardshipFile"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve",
+      "report"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve",
+      "report"
+    ],
+    "hr_spec": [
+      "read",
+      "write",
+      "report"
+    ],
+    "line_manager": [
+      "read"
+    ]
+  },
+  "scopes": {
+    "line_manager": "own_unit"
+  },
+  "screens": [
+    {
+      "key": "contractors",
+      "order": 1,
+      "icon": "briefcase",
+      "titleFa": "پیمانکاران و قراردادها",
+      "component": "ContractorsScreen",
+      "purposeFa": "نگهداری پروندهٔ پیمانکاران ارکان ثالث، قراردادها، تعداد نیروی متعهد، تعهدات بیمه‌ای و رتبه‌بندی عملکرد پیمانکار.",
+      "actionsFa": [
+        "ثبت پیمانکار",
+        "افزودن قرارداد",
+        "کنترل تعهدات بیمه‌ای",
+        "ارزیابی عملکرد پیمانکار",
+        "گزارش قراردادها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "thirdPartyPayroll",
+      "order": 2,
+      "icon": "receipt",
+      "titleFa": "کنترل حقوق نیروهای ارکان ثالث",
+      "component": "ThirdPartyPayrollScreen",
+      "purposeFa": "کنترل و انطباق لیست حقوق نیروهای ارکان ثالث با قانون کار و قرارداد: پایه، مزایای قانونی، بیمه، اضافه‌کاری و کسورات پیش از تأیید صورت‌وضعیت.",
+      "actionsFa": [
+        "بارگذاری لیست حقوق پیمانکار",
+        "کنترل انطباق با قانون کار",
+        "کنترل کسورات بیمه",
+        "تأیید یا برگشت لیست",
+        "گزارش مغایرت‌ها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "outsourceAnalysis",
+      "order": 3,
+      "icon": "trending-up",
+      "titleFa": "تحلیل و پایش برون‌سپاری",
+      "component": "OutsourceAnalysisScreen",
+      "purposeFa": "تحلیل هزینه، ترکیب نیرو، نرخ جابه‌جایی و بهره‌وری نیروهای پیمانکاری و پایش شاخص‌های برون‌سپاری برای تصمیم‌های مدیریتی.",
+      "actionsFa": [
+        "تحلیل هزینهٔ برون‌سپاری",
+        "مقایسهٔ پیمانکاران",
+        "پایش ترکیب نیرو",
+        "تحلیل نرخ جابه‌جایی",
+        "خروجی تحلیلی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "hardshipFiles",
+      "order": 4,
+      "icon": "heart-pulse",
+      "titleFa": "مشاغل سخت و زیان‌آور",
+      "component": "HardshipFilesScreen",
+      "purposeFa": "شناسایی مشاغل سخت و زیان‌آور، تشکیل و پیگیری پروندهٔ بازنشستگی پیش از موعد با سازمان تأمین اجتماعی و پیگیری نتیجهٔ کمیتهٔ بدوی و تجدیدنظر.",
+      "actionsFa": [
+        "تشخیص مشاغل سخت و زیان‌آور",
+        "تشکیل پرونده",
+        "ارسال به تأمین اجتماعی",
+        "پیگیری کمیتهٔ بدوی و تجدیدنظر",
+        "گزارش وضعیت پرونده‌ها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    }
+  ]
+}

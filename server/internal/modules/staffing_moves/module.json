@@ -1,0 +1,83 @@
+{
+  "id": "staffing_moves",
+  "order": 25,
+  "department": "statistics",
+  "subUnit": "staffing_moves",
+  "titleFa": "جابه‌جایی و معرفی کارکنان",
+  "titleEn": "Staff Transfers & Introductions",
+  "apiPrefix": "/api/v1/moves",
+  "version": "1.0.0",
+  "featureFlag": "module.staffing_moves",
+  "dbSchema": "hr_staffing_moves",
+  "owner": "hr-analytics",
+  "entities": [
+    "TransferRequest",
+    "EmployeeIntroduction"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write"
+    ],
+    "line_manager": [
+      "read"
+    ]
+  },
+  "scopes": {
+    "line_manager": "own_unit"
+  },
+  "screens": [
+    {
+      "key": "transfers",
+      "order": 1,
+      "icon": "workflow",
+      "titleFa": "جابه‌جایی کارکنان",
+      "component": "TransfersScreen",
+      "purposeFa": "بررسی و تأیید جابه‌جایی کارکنان میان واحدها: کنترل کفایت نیروی مبدأ و مقصد، هم‌خوانی با تشکیلات و اعمال اثر آن در پست و حقوق.",
+      "actionsFa": [
+        "ثبت درخواست جابه‌جایی",
+        "بررسی ظرفیت مبدأ و مقصد",
+        "تأیید واحد آمار",
+        "ثبت اثر در پست و حقوق",
+        "گزارش جابه‌جایی‌ها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "introductions",
+      "order": 2,
+      "icon": "stamp",
+      "titleFa": "معرفی و ابلاغ کارکنان",
+      "component": "IntroductionsScreen",
+      "purposeFa": "صدور معرفی‌نامه و ابلاغ حضور کارمند به واحد مقصد، ثبت تاریخ شروع به کار در پست جدید و اطلاع‌رسانی به واحدهای حقوق، آموزش و رفاه.",
+      "actionsFa": [
+        "صدور معرفی‌نامه",
+        "ابلاغ به واحد مقصد",
+        "ثبت تاریخ شروع",
+        "اطلاع‌رسانی بین‌واحدی",
+        "گزارش معرفی‌نامه‌ها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    }
+  ]
+}

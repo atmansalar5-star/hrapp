@@ -1,0 +1,54 @@
+{
+  "id": "contracts",
+  "order": 3,
+  "department": "staff_affairs",
+  "subUnit": "personnel_services",
+  "titleFa": "کارگزینی و انعقاد قراردادها",
+  "titleEn": "Staffing & Employment Contracts",
+  "apiPrefix": "/api/v1/contracts",
+  "version": "1.0.0",
+  "featureFlag": "module.contracts",
+  "dbSchema": "hr_contracts",
+  "owner": "hr-core",
+  "entities": ["Contract", "ContractTemplate", "ContractRenewal"],
+  "roles": {
+    "admin": ["read", "write", "delete"],
+    "hr_manager": ["read", "write", "delete", "approve"],
+    "hr_spec": ["read", "write"],
+    "line_manager": ["read"],
+    "employee": ["read"]
+  },
+  "scopes": { "line_manager": "own_unit", "employee": "own" },
+  "screens": [
+    {
+      "key": "contracts",
+      "order": 1,
+      "icon": "scroll",
+      "titleFa": "قراردادهای کارکنان",
+      "component": "ContractsScreen",
+      "purposeFa": "فهرست قراردادهای کارکنان با تفکیک قرارداد مدت موقت و مدت دائم، تاریخ شروع و پایان، مبلغ پایه و وضعیت جاری هر قرارداد.",
+      "actionsFa": ["انعقاد قرارداد تازه", "ویرایش قرارداد", "چاپ متن قرارداد", "فیلتر بر اساس نوع قرارداد", "خروجی فهرست"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager"]
+    },
+    {
+      "key": "contractLifecycle",
+      "order": 2,
+      "icon": "repeat",
+      "titleFa": "تمدید، تغییر و پایان قرارداد",
+      "component": "ContractLifecycleScreen",
+      "purposeFa": "پیگیری چرخهٔ عمر قرارداد: هشدار نزدیک شدن پایان مدت، تمدید یا تبدیل مدت موقت به دائم، اصلاح شرایط و ثبت پایان قرارداد و تسویه‌حساب.",
+      "actionsFa": ["تمدید قرارداد", "تبدیل موقت به دائم", "اصلاح شرایط", "ثبت پایان قرارداد", "یادآوری سرآمدها"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "contractTemplates",
+      "order": 3,
+      "icon": "file-text",
+      "titleFa": "قالب و متن قراردادها",
+      "component": "ContractTemplatesScreen",
+      "purposeFa": "نگهداری قالب‌های متن قرارداد کار به تفکیک مدت موقت، مدت دائم و پیمانکاری همراه با بندهای قانونی و پیوست‌های مورد نیاز هر قالب.",
+      "actionsFa": ["قالب تازه", "ویرایش بندها", "پیوست‌های قالب", "پیش‌نمایش متن", "تعیین قالب پیش‌فرض"],
+      "roles": ["admin", "hr_manager"]
+    }
+  ]
+}

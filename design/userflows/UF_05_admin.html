@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>UF_HRMS_Admin — فلوجارت نقش مدیر سیستم</title>
+<style>
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:#FAFAFA;color:#111;margin:0;padding:24px;direction:rtl}
+h1{font-size:15px;border-bottom:2px solid #111;padding-bottom:6px}
+.legend{font-size:11px;color:#555;margin:8px 0 16px}
+.legend span{border:1px solid #999;padding:2px 8px;margin-inline-end:8px;background:#fff}
+.canvas{border:2px solid #111;background:#fff;max-width:880px;padding:20px;overflow-x:auto}
+.page{border:2px solid #111;background:#fff;padding:8px 14px;font-size:11px;text-align:center;min-width:110px}
+.decision{width:130px;height:84px;display:flex;align-items:center;justify-content:center;font-size:11px;text-align:center;
+  background:#FFF8DC;border:2px solid #B8860B;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.startend{border-radius:50px;border:2px solid #111;background:#EEE;padding:8px 18px;font-size:11px;font-weight:bold}
+.col{display:flex;flex-direction:column;align-items:center;gap:8px}
+.vrow{display:flex;flex-direction:column;align-items:center;gap:8px}
+.row{display:flex;align-items:flex-start;justify-content:center;gap:14px;flex-wrap:wrap}
+.darr{font-size:16px}
+.lbl{font-size:10px;color:#555}
+.note{font-size:11px;color:#555;max-width:880px;margin:8px auto 0;background:#FFF8DC;border:1px dashed #B8860B;padding:6px 10px}
+</style>
+</head>
+<body>
+
+<h1>User Flow — مدیر سیستم (Admin)</h1>
+<div class="legend">
+  <span>▢ مستطیل = صفحه</span><span>◇ لوزی = تصمیم</span><span>⬭ بیضی = شروع/پایان</span><span>→ فلش = انتقال</span>
+</div>
+
+<div class="canvas">
+  <div class="vrow">
+    <div class="startend">شروع</div>
+    <div class="darr">↓</div>
+    <div class="page">صفحه ورود</div>
+    <div class="darr">↓</div>
+    <div class="page">داشبورد (نمای کل سیستم)</div>
+    <div class="darr">↓</div>
+    <div class="decision">وظیفه مدیریتی؟</div>
+    <div class="row">
+      <div class="col">
+        <div class="lbl">کاربران ↓</div>
+        <div class="page">مدیریت کاربران</div>
+        <div class="darr">↓</div>
+        <div class="page">ایجاد/ویرایش کاربر + تعیین نقش</div>
+        <div class="darr">↓</div>
+        <div class="decision">حساب قفل‌شده؟</div>
+        <div class="row">
+          <div class="col"><div class="lbl">بله</div><div class="page" style="border-style:dashed">بازکردن حساب + پیام</div></div>
+          <div class="col"><div class="lbl">خیر</div><div class="page" style="border-style:dashed">ذخیره + پیام موفقیت</div></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="lbl">دسترسی‌ها ↓</div>
+        <div class="page">نقش‌ها و دسترسی‌ها</div>
+        <div class="darr">↓</div>
+        <div class="page" style="border-style:dashed">ویرایش مجوزهای نقش</div>
+      </div>
+      <div class="col">
+        <div class="lbl">تنظیمات ↓</div>
+        <div class="page">تنظیمات سازمانی + پارامترهای سیستم</div>
+        <div class="darr">↓</div>
+        <div class="page" style="border-style:dashed">ذخیره پارامترها</div>
+      </div>
+      <div class="col">
+        <div class="lbl">حسابرسی ↓</div>
+        <div class="page">لاگ حسابرسی</div>
+        <div class="darr">↓</div>
+        <div class="decision">رویداد مشکوک؟</div>
+        <div class="row">
+          <div class="col"><div class="lbl">بله</div><div class="page" style="border-style:dashed">قفل کاربر / پیگیری</div></div>
+          <div class="col"><div class="lbl">خیر</div><div class="page" style="border-style:dashed">خروجی گزارش</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="darr">↓</div>
+    <div class="startend">پایان</div>
+  </div>
+</div>
+<div class="note">تمام اقدامات مدیر سیستم در لاگ حسابرسی ثبت می‌شود؛ این نقش به ماژول‌های عملیاتی منابع انسانی (مثل استخدام) دسترسی پیش‌فرض ندارد و متمرکز بر پیکربندی است.</div>
+
+</body>
+</html>

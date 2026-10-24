@@ -1,0 +1,84 @@
+{
+  "id": "attendance",
+  "order": 7,
+  "department": "staff_affairs",
+  "subUnit": "compensation",
+  "titleFa": "حضور و غیاب، مرخصی و ماموریت",
+  "titleEn": "Attendance & Time",
+  "apiPrefix": "/api/v1/attendance",
+  "version": "1.0.0",
+  "featureFlag": "module.attendance",
+  "dbSchema": "hr_attendance",
+  "owner": "hr-ops",
+  "entities": ["AttendanceRecord", "LeaveRequest", "LeaveBalance", "Overtime", "Shift", "Mission"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "approve"],
+    "hr_spec": ["read", "write"],
+    "line_manager": ["read", "approve"],
+    "employee": ["read", "write"]
+  },
+  "scopes": { "line_manager": "own_unit", "employee": "own" },
+  "screens": [
+    {
+      "key": "attendance",
+      "order": 1,
+      "icon": "clock",
+      "titleFa": "ثبت تردد",
+      "component": "AttendanceScreen",
+      "purposeFa": "مشاهده و اصلاح رکوردهای ورود و خروج با نمایش کسر کار و تاخیر.",
+      "actionsFa": ["اصلاح رکورد", "افزودن رکورد", "خروجی"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager"]
+    },
+    {
+      "key": "leaveRequests",
+      "order": 2,
+      "icon": "calendar-off",
+      "titleFa": "مرخصی و ماموریت",
+      "component": "LeaveRequestsScreen",
+      "purposeFa": "ثبت درخواست مرخصی، مشاهده وضعیت تأیید و موجودی مرخصی کارمند.",
+      "actionsFa": ["ثبت درخواست", "ویرایش درخواست", "لغو درخواست", "مشاهده موجودی"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    },
+    {
+      "key": "leaveApprove",
+      "order": 3,
+      "icon": "check-circle",
+      "titleFa": "تأیید مرخصی",
+      "component": "LeaveApprovalScreen",
+      "purposeFa": "صفحهٔ مدیر برای تأیید یا رد درخواست‌های مرخصی در انتظار، با نمایش زنجیرهٔ تأیید و مانده.",
+      "actionsFa": ["تأیید", "رد با دلیل", "مشاهده سابقهٔ تأییدها"],
+      "roles": ["admin", "hr_manager", "line_manager"]
+    },
+    {
+      "key": "overtime",
+      "order": 4,
+      "icon": "timer",
+      "titleFa": "اضافه‌کاری",
+      "component": "OvertimeScreen",
+      "purposeFa": "ثبت، تأیید و محاسبهٔ اضافه‌کاری بر پایهٔ نرخ ساعتی و ضرایب تعریف‌شده در تنظیمات.",
+      "actionsFa": ["ثبت اضافه‌کاری", "تأیید", "رد", "مشاهدهٔ محاسبه"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager"]
+    },
+    {
+      "key": "missions",
+      "order": 5,
+      "icon": "map",
+      "titleFa": "ماموریت‌ها",
+      "component": "MissionsScreen",
+      "purposeFa": "ثبت درخواست ماموریت، تأیید مدیر واحد، محاسبهٔ فوق‌العادهٔ ماموریت و ارسال داده به واحد آمار و گزارشات برای بررسی و تأیید.",
+      "actionsFa": ["ثبت درخواست ماموریت", "تأیید مدیر واحد", "محاسبهٔ فوق‌العاده", "ارسال به واحد آمار", "گزارش ماموریت‌ها"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    },
+    {
+      "key": "calendar",
+      "order": 6,
+      "icon": "calendar",
+      "titleFa": "تقویم کاری",
+      "component": "WorkCalendarScreen",
+      "purposeFa": "نمایش ماهانهٔ شیفت‌ها، تعطیلات و مرخصی‌ها روی تقویم شمسی.",
+      "actionsFa": ["جابه‌جایی ماه", "مشاهدهٔ روز", "تعریف تعطیلی"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "id": "sports",
+  "order": 30,
+  "department": "sports",
+  "subUnit": "sports_programs",
+  "titleFa": "امور ورزش",
+  "titleEn": "Sports Affairs",
+  "apiPrefix": "/api/v1/sports",
+  "version": "1.0.0",
+  "featureFlag": "module.sports",
+  "dbSchema": "hr_sports",
+  "owner": "hr-welfare",
+  "entities": [
+    "SportsProgram",
+    "SportsEvent"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write"
+    ],
+    "line_manager": [
+      "read"
+    ],
+    "employee": [
+      "read",
+      "write"
+    ]
+  },
+  "scopes": {
+    "employee": "own"
+  },
+  "screens": [
+    {
+      "key": "sportsPrograms",
+      "order": 1,
+      "icon": "dumbbell",
+      "titleFa": "رشته‌ها و برنامه‌های ورزشی",
+      "component": "SportsProgramsScreen",
+      "purposeFa": "تعریف رشته‌های ورزشی، مربی، اماکن و ظرفیت، و ثبت‌نام کارکنان و خانوادهٔ آنان در برنامه‌های ورزشی سازمان.",
+      "actionsFa": [
+        "تعریف رشتهٔ ورزشی",
+        "ثبت‌نام کارکنان",
+        "تعیین مربی و محل",
+        "تأیید برنامه",
+        "گزارش مشارکت ورزشی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager",
+        "employee"
+      ]
+    },
+    {
+      "key": "sportsEvents",
+      "order": 2,
+      "icon": "trophy",
+      "titleFa": "رویدادها و مسابقات ورزشی",
+      "component": "SportsEventsScreen",
+      "purposeFa": "برگزاری مسابقات و المپیادهای ورزشی: زمان‌بندی رویداد، ثبت شرکت‌کنندگان، ثبت نتیجه و تقدیر از برگزیدگان.",
+      "actionsFa": [
+        "برنامه‌ریزی رویداد",
+        "ثبت شرکت‌کنندگان",
+        "ثبت نتیجه و رتبه",
+        "تقدیر از برگزیدگان",
+        "گزارش مسابقات"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    }
+  ]
+}

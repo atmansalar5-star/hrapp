@@ -1,0 +1,51 @@
+# آزمون پایان‌به‌پایان هفت صفحهٔ حداقلی سند طراحی (دستور ۴-۴).
+#
+# با Maestro اجرا می‌شود (ساده‌ترین گزینه برای React Native بدون نیاز به بیلد Detox):
+#   maestro test apps/mobile/e2e/minimum-flows.yaml
+#
+# پیش‌نیاز: سرور hrmsd در حال اجرا و اپ روی شبیه‌ساز/دستگاه نصب‌شده باشد.
+appId: com.hrms.mobile
+---
+- launchApp:
+    clearState: true
+
+# ۱) صفحهٔ ورود — ورود مدیر منابع انسانی
+- assertVisible: 'ورود به سامانه منابع انسانی'
+- tapOn: 'نام کاربری'
+- inputText: 'hr.manager'
+- tapOn: 'رمز عبور'
+- inputText: 'demo'
+- tapOn: 'ورود'
+
+# ۲) داشبورد — کارت‌های آماری نقش‌محور
+- assertVisible: 'داشبورد'
+- assertVisible: 'کل کارکنان'
+
+# ۳) فهرست کارکنان — جستجو و مرتب‌سازی
+- tapOn: 'فهرست کارکنان'
+- assertVisible: 'رکورد'
+- tapOn: 'نام و نام خانوادگی'
+- inputText: 'نگار'
+- assertVisible: 'نگار حسینی'
+
+# ۴) پروندهٔ کارمند — تب‌ها
+- tapOn: 'نگار حسینی'
+- assertVisible: 'پرونده کارمند'
+- tapOn: 'اطلاعات قرارداد'
+- assertVisible: 'حقوق پایه'
+
+# ۵) فرم ایجاد کارمند — اعتبارسنجی فارسی
+- tapOn: 'فهرست کارکنان'
+- tapOn: 'ایجاد کارمند'
+- tapOn: 'کد ملی'
+- inputText: '1111111111'
+- tapOn: 'ایجاد کارمند'
+- assertVisible: 'کد ملی'
+
+# ۶) تأیید مرخصی — نمای مدیر
+- tapOn: 'تأیید مرخصی'
+- assertVisible: 'تأیید'
+
+# ۷) داشبورد مدیر — بازگشت و بررسی منو
+- tapOn: 'داشبورد'
+- assertVisible: 'اقدام‌های سریع'

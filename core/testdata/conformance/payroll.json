@@ -1,0 +1,104 @@
+{
+  "id": "payroll",
+  "description": "زنجیرهٔ محاسبهٔ حقوق: ناخالص ← بیمه ← مالیات پله‌ای ← خالص",
+  "params": {
+    "insuranceEmployeeRate": 0.07,
+    "insuranceEmployerRate": 0.23,
+    "insuranceCeiling": 200000000,
+    "housingAllowance": 9000000,
+    "childAllowancePerChild": 7000000,
+    "taxExemption": 24000000,
+    "taxBrackets": [
+      {
+        "upto": 50000000,
+        "rate": 0.1
+      },
+      {
+        "upto": 100000000,
+        "rate": 0.15
+      },
+      {
+        "upto": 200000000,
+        "rate": 0.2
+      },
+      {
+        "upto": 0,
+        "rate": 0.3
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "کارمند بدون اضافه‌کاری",
+      "baseSalary": 52000000,
+      "children": 0,
+      "overtimeHours": 0,
+      "overtimeHourlyRate": 0,
+      "otherDeductions": 0,
+      "expected": {
+        "overtimePay": 0,
+        "gross": 61000000,
+        "insuranceBase": 61000000,
+        "insuranceEmployee": 4270000,
+        "insuranceEmployer": 14030000,
+        "taxableIncome": 32730000,
+        "tax": 3273000,
+        "net": 53457000
+      }
+    },
+    {
+      "name": "کارمند با دو فرزند و اضافه‌کاری",
+      "baseSalary": 34000000,
+      "children": 2,
+      "overtimeHours": 12,
+      "overtimeHourlyRate": 250000,
+      "otherDeductions": 1500000,
+      "expected": {
+        "overtimePay": 3000000,
+        "gross": 60000000,
+        "insuranceBase": 60000000,
+        "insuranceEmployee": 4200000,
+        "insuranceEmployer": 13800000,
+        "taxableIncome": 31800000,
+        "tax": 3180000,
+        "net": 51120000
+      }
+    },
+    {
+      "name": "حقوق بالای سقف بیمه",
+      "baseSalary": 250000000,
+      "children": 1,
+      "overtimeHours": 0,
+      "overtimeHourlyRate": 0,
+      "otherDeductions": 0,
+      "expected": {
+        "overtimePay": 0,
+        "gross": 266000000,
+        "insuranceBase": 200000000,
+        "insuranceEmployee": 14000000,
+        "insuranceEmployer": 46000000,
+        "taxableIncome": 228000000,
+        "tax": 40900000,
+        "net": 211100000
+      }
+    },
+    {
+      "name": "درآمد زیر سقف معافیت",
+      "baseSalary": 15000000,
+      "children": 0,
+      "overtimeHours": 0,
+      "overtimeHourlyRate": 0,
+      "otherDeductions": 0,
+      "expected": {
+        "overtimePay": 0,
+        "gross": 24000000,
+        "insuranceBase": 24000000,
+        "insuranceEmployee": 1680000,
+        "insuranceEmployer": 5520000,
+        "taxableIncome": 0,
+        "tax": 0,
+        "net": 22320000
+      }
+    }
+  ]
+}

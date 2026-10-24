@@ -1,0 +1,147 @@
+name: CI
+
+# دروازه‌های این گردش کار همان چیزهایی است که در پلن وعده داده شده:
+#  ۱. انحراف قرارداد: خروجی‌های تولیدشده باید با مانیفست‌ها هم‌خوان باشند.
+#  ۲. مرز ماژول: هیچ ماژول Go داخلی‌های ماژول دیگر را import نکند.
+#  ۳. تطبیق قواعد: هستهٔ Rust و سرور Go باید با fixtureهای طلایی یکی باشند.
+#  ۴. صفحه‌های کلاینت: هر صفحهٔ اعلام‌شده در مانیفست باید کامپوننت واقعی داشته باشد.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  contracts:
+    name: قرارداد و مرزهای معماری
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: بررسی انحراف خروجی‌های تولیدشده
+        run: node tools/gen/gen.mjs --check
+      - name: دروازه‌های معماری، مرز ماژول و قرارداد API
+        run: node tools/check/verify.mjs
+
+  go:
+    name: سرور Go
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache-dependency-path: server/go.sum
+      - name: بررسی ساختار
+        working-directory: server
+        run: go vet ./...
+      - name: ساخت
+        working-directory: server
+        run: go build ./...
+      - name: آزمون‌ها (با شناساگر مسابقه)
+        working-directory: server
+        run: go test -race -count=1 ./...
+      - name: آزمون تطبیق قواعد با fixtureهای هسته
+        working-directory: server
+        run: go test -run Parity -v ./internal/rules/...
+
+  postgres-smoke:
+    name: آزمون دودی Postgres
+    runs-on: ubuntu-latest
+    # چرا این کار جدا از کار «سرور Go» است: آزمون‌های دیگر روی انبار درون‌حافظه‌ای
+    # اجرا می‌شوند و ایرادهای «بذرکاری روی پایگاه‌دادهٔ واقعی» و «اشتراک داده بین دو
+    # نمونهٔ سرور» را نمی‌بینند. اینجا سرویس Postgres بالا می‌آید و سرور واقعی (مهاجرت +
+    # بذرکاری نمونه) روی آن اجرا می‌شود؛ سپس پُر بودن همهٔ ماژول‌ها، چرخهٔ
+    # ایجاد/جستجو/ویرایش/حذف برای هر نوع رکورد و خواندن رکورد از نمونهٔ دوم سنجیده
+    # می‌شود. همین آزمون بود که تکراری بودن پیشوند شناسهٔ JOB را در دو ماژول پیدا کرد.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: hrms
+          POSTGRES_PASSWORD: hrms
+          POSTGRES_DB: hrms_smoke
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U hrms -d hrms_smoke"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      HRMS_TEST_DATABASE_URL: postgres://hrms:hrms@127.0.0.1:5432/hrms_smoke?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+          cache-dependency-path: server/go.sum
+      - name: آزمون دودی — پُری ماژول‌ها و چرخهٔ رکوردها روی Postgres
+        working-directory: server
+        run: go test -count=1 -v -run PostgresSmoke ./internal/bootstrap/
+
+  rust-core:
+    name: هستهٔ Rust
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: core
+      - name: قالب‌بندی
+        working-directory: core
+        run: cargo fmt --all -- --check
+      - name: تحلیل ایستا
+        working-directory: core
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: آزمون‌ها (شامل هستهٔ انبار)
+        working-directory: core
+        run: cargo test --workspace --all-features
+      - name: دروازهٔ تطبیق قواعد طلایی
+        working-directory: core
+        run: cargo run -p hrms-conformance
+
+  rust-android:
+    name: کراس‌کامپایل هسته برای اندروید
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android, x86_64-linux-android
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: core
+      - uses: nttld/setup-ndk@v1
+        id: ndk
+        with:
+          ndk-version: r27
+      - uses: taiki-e/install-action@cargo-ndk
+      - name: ساخت کتابخانهٔ بومی برای اندروید
+        working-directory: core
+        env:
+          ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
+        run: cargo ndk -t arm64-v8a -t x86_64 -o ../apps/mobile/android/app/src/main/jniLibs build -p hrms-ffi --release
+
+  mobile:
+    name: کلاینت React Native
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: نصب وابستگی‌ها
+        working-directory: apps/mobile
+        run: npm install --no-audit --no-fund
+      - name: بررسی نوع‌ها
+        working-directory: apps/mobile
+        run: npm run typecheck
+      - name: آزمون‌های واحد
+        working-directory: apps/mobile
+        run: npm test -- --ci

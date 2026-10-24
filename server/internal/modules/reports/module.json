@@ -1,0 +1,107 @@
+{
+  "id": "reports",
+  "order": 26,
+  "department": "statistics",
+  "subUnit": "management_reports",
+  "titleFa": "گزارش‌ها",
+  "titleEn": "Reports",
+  "apiPrefix": "/api/v1/reports",
+  "version": "1.0.0",
+  "featureFlag": "module.reports",
+  "dbSchema": "hr_reports",
+  "owner": "hr-analytics",
+  "entities": [
+    "ReportDefinition",
+    "ReportRun",
+    "ExportJob"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "report",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "report",
+      "write",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "report",
+      "write"
+    ],
+    "line_manager": [
+      "read",
+      "report"
+    ]
+  },
+  "scopes": {
+    "line_manager": "own_unit"
+  },
+  "screens": [
+    {
+      "key": "reports",
+      "order": 1,
+      "icon": "file-text",
+      "titleFa": "گزارش‌های عملیاتی و تحلیلی",
+      "component": "ReportsScreen",
+      "purposeFa": "گزارش‌های عملیاتی (لیست پرسنل، ترک خدمت، ورود و خروج) و تحلیلی (نرخ جذب، نرخ ترک، بهره‌وری) با خروجی Excel و PDF.",
+      "actionsFa": [
+        "اجرای گزارش",
+        "فیلتر بازه",
+        "خروجی Excel",
+        "خروجی PDF",
+        "زمان‌بندی گزارش"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "mgmtReports",
+      "order": 2,
+      "icon": "trending-up",
+      "titleFa": "گزارش‌های مدیریتی",
+      "component": "MgmtReportsScreen",
+      "purposeFa": "گزارش‌های مدیریتی ویژهٔ مدیران ارشد و واحد آمار و گزارشات: شاخص‌های کلان نیروی انسانی، تحلیل هزینهٔ جبران خدمات و داشبوردهای تجمیعی.",
+      "actionsFa": [
+        "انتخاب داشبورد",
+        "مقایسهٔ دوره‌ای",
+        "خروجی مدیریتی",
+        "ارسال زمان‌بندی‌شده"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "reportBuilder",
+      "order": 3,
+      "icon": "list-checks",
+      "titleFa": "گزارش‌ساز بر پایهٔ اقلام",
+      "component": "ReportBuilderScreen",
+      "purposeFa": "ساخت گزارش دلخواه با انتخاب منبع داده و اقلام (مثل اقلام حقوق و ضرائب) و اجرای فوری آن؛ تعریف‌های گزارش برای اجرای مکرر ذخیره می‌شوند.",
+      "actionsFa": [
+        "انتخاب منبع داده",
+        "انتخاب اقلام",
+        "اجرای گزارش",
+        "ذخیرهٔ تعریف گزارش",
+        "خروجی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    }
+  ]
+}

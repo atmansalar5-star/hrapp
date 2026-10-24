@@ -1,0 +1,111 @@
+{
+  "id": "career",
+  "order": 16,
+  "department": "hr_planning",
+  "subUnit": "assignments",
+  "titleFa": "انتصابات، ترفیعات و کارراههٔ شغلی",
+  "titleEn": "Appointments, Promotions & Career Path",
+  "apiPrefix": "/api/v1/career",
+  "version": "1.0.0",
+  "featureFlag": "module.career",
+  "dbSchema": "hr_career",
+  "owner": "hr-planning",
+  "entities": [
+    "Appointment",
+    "Promotion",
+    "CareerPath",
+    "SuccessionPlan"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write"
+    ],
+    "line_manager": [
+      "read"
+    ],
+    "employee": [
+      "read"
+    ]
+  },
+  "scopes": {
+    "line_manager": "own_unit",
+    "employee": "own"
+  },
+  "screens": [
+    {
+      "key": "appointments",
+      "order": 1,
+      "icon": "stamp",
+      "titleFa": "انتصابات",
+      "component": "AppointmentsScreen",
+      "purposeFa": "ثبت و پیگیری ابلاغ‌های سازمانی: انتصاب، جابه‌جایی، مأموریت بلندمدت و پایان تصدی، همراه با زنجیرهٔ تأیید و صدور ابلاغ.",
+      "actionsFa": [
+        "ثبت پیشنهاد انتصاب",
+        "تعیین پست و واحد",
+        "تأیید و صدور ابلاغ",
+        "لغو ابلاغ",
+        "پیگیری سابقهٔ تصدی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "promotions",
+      "order": 2,
+      "icon": "trending-up",
+      "titleFa": "ترفیعات",
+      "component": "PromotionsScreen",
+      "purposeFa": "مدیریت درخواست‌های ترفیع و ارتقای گروه شغلی بر پایهٔ امتیاز ارزیابی عملکرد، سابقهٔ خدمت و ظرفیت تشکیلات.",
+      "actionsFa": [
+        "ثبت درخواست ترفیع",
+        "محاسبهٔ امتیاز",
+        "بررسی کمیته",
+        "تأیید و اجرا",
+        "مشاهدهٔ سابقهٔ ترفیع"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "careerPath",
+      "order": 3,
+      "icon": "route",
+      "titleFa": "کارراههٔ شغلی",
+      "component": "CareerPathScreen",
+      "purposeFa": "تعریف مسیر رشد شغلی هر گروه شغلی، مقایسهٔ موقعیت فعلی کارمند با مسیر پیشنهادی و ثبت برنامهٔ جانشین‌پروری پست‌های کلیدی.",
+      "actionsFa": [
+        "مشاهدهٔ مسیر شغلی",
+        "ثبت هدف شغلی",
+        "تعریف جانشین",
+        "تحلیل شکاف آمادگی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager",
+        "employee"
+      ]
+    }
+  ]
+}

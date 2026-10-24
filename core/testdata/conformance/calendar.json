@@ -1,0 +1,215 @@
+{
+  "id": "calendar",
+  "description": "صحت تبدیل تقویم شمسی/میلادی، کبیسه، طول ماه و شمارش روز کاری",
+  "years": [
+    {
+      "year": 1398,
+      "leap": false,
+      "esfandLength": 29,
+      "farvardin1Gregorian": "2019-03-21"
+    },
+    {
+      "year": 1399,
+      "leap": true,
+      "esfandLength": 30,
+      "farvardin1Gregorian": "2020-03-20"
+    },
+    {
+      "year": 1400,
+      "leap": false,
+      "esfandLength": 29,
+      "farvardin1Gregorian": "2021-03-21"
+    },
+    {
+      "year": 1401,
+      "leap": false,
+      "esfandLength": 29,
+      "farvardin1Gregorian": "2022-03-21"
+    },
+    {
+      "year": 1402,
+      "leap": false,
+      "esfandLength": 29,
+      "farvardin1Gregorian": "2023-03-21"
+    },
+    {
+      "year": 1403,
+      "leap": true,
+      "esfandLength": 30,
+      "farvardin1Gregorian": "2024-03-20"
+    },
+    {
+      "year": 1404,
+      "leap": false,
+      "esfandLength": 29,
+      "farvardin1Gregorian": "2025-03-21"
+    },
+    {
+      "year": 1405,
+      "leap": false,
+      "esfandLength": 29,
+      "farvardin1Gregorian": "2026-03-21"
+    },
+    {
+      "year": 1408,
+      "leap": true,
+      "esfandLength": 30,
+      "farvardin1Gregorian": "2029-03-20"
+    }
+  ],
+  "conversions": [
+    {
+      "jalali": "1404/01/01",
+      "gregorian": "2025-03-21",
+      "jdn": 2460756,
+      "weekdayIndex": 6,
+      "weekdayFa": "جمعه",
+      "monthLabelFa": "فروردین ۱۴۰۴"
+    },
+    {
+      "jalali": "1404/06/31",
+      "gregorian": "2025-09-22",
+      "jdn": 2460941,
+      "weekdayIndex": 2,
+      "weekdayFa": "دوشنبه",
+      "monthLabelFa": "شهریور ۱۴۰۴"
+    },
+    {
+      "jalali": "1404/07/01",
+      "gregorian": "2025-09-23",
+      "jdn": 2460942,
+      "weekdayIndex": 3,
+      "weekdayFa": "سه‌شنبه",
+      "monthLabelFa": "مهر ۱۴۰۴"
+    },
+    {
+      "jalali": "1404/07/22",
+      "gregorian": "2025-10-14",
+      "jdn": 2460963,
+      "weekdayIndex": 3,
+      "weekdayFa": "سه‌شنبه",
+      "monthLabelFa": "مهر ۱۴۰۴"
+    },
+    {
+      "jalali": "1404/12/29",
+      "gregorian": "2026-03-20",
+      "jdn": 2461120,
+      "weekdayIndex": 6,
+      "weekdayFa": "جمعه",
+      "monthLabelFa": "اسفند ۱۴۰۴"
+    },
+    {
+      "jalali": "1403/12/30",
+      "gregorian": "2025-03-20",
+      "jdn": 2460755,
+      "weekdayIndex": 5,
+      "weekdayFa": "پنجشنبه",
+      "monthLabelFa": "اسفند ۱۴۰۳"
+    },
+    {
+      "jalali": "1400/12/29",
+      "gregorian": "2022-03-20",
+      "jdn": 2459659,
+      "weekdayIndex": 1,
+      "weekdayFa": "یکشنبه",
+      "monthLabelFa": "اسفند ۱۴۰۰"
+    },
+    {
+      "jalali": "1399/12/30",
+      "gregorian": "2021-03-20",
+      "jdn": 2459294,
+      "weekdayIndex": 0,
+      "weekdayFa": "شنبه",
+      "monthLabelFa": "اسفند ۱۳۹۹"
+    },
+    {
+      "jalali": "1398/07/14",
+      "gregorian": "2019-10-06",
+      "jdn": 2458763,
+      "weekdayIndex": 1,
+      "weekdayFa": "یکشنبه",
+      "monthLabelFa": "مهر ۱۳۹۸"
+    }
+  ],
+  "monthLengths": [
+    {
+      "year": 1404,
+      "month": 1,
+      "days": 31
+    },
+    {
+      "year": 1404,
+      "month": 6,
+      "days": 31
+    },
+    {
+      "year": 1404,
+      "month": 7,
+      "days": 30
+    },
+    {
+      "year": 1404,
+      "month": 12,
+      "days": 29
+    },
+    {
+      "year": 1403,
+      "month": 12,
+      "days": 30
+    },
+    {
+      "year": 1400,
+      "month": 12,
+      "days": 29
+    }
+  ],
+  "workWindows": [
+    {
+      "name": "بازهٔ یک هفته‌ای با یک جمعه",
+      "from": "1404/07/01",
+      "to": "1404/07/05",
+      "weekend": [
+        6
+      ],
+      "holidays": {},
+      "workingDays": 4,
+      "sandwichDays": 5
+    },
+    {
+      "name": "بازه‌ای که با تعطیل هفتگی آغاز می‌شود",
+      "from": "1404/07/03",
+      "to": "1404/07/06",
+      "weekend": [
+        6
+      ],
+      "holidays": {},
+      "workingDays": 3,
+      "sandwichDays": 4
+    },
+    {
+      "name": "بازه با یک تعطیل رسمی در میانه",
+      "from": "1404/07/01",
+      "to": "1404/07/05",
+      "weekend": [
+        6
+      ],
+      "holidays": {
+        "1404/07/02": "تعطیل رسمی نمونه"
+      },
+      "workingDays": 3,
+      "sandwichDays": 5
+    },
+    {
+      "name": "کل ماه مهر با پنجشنبه و جمعه تعطیل",
+      "from": "1404/07/01",
+      "to": "1404/07/30",
+      "weekend": [
+        5,
+        6
+      ],
+      "holidays": {},
+      "workingDays": 22,
+      "sandwichDays": 30
+    }
+  ]
+}

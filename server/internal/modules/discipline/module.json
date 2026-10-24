@@ -1,0 +1,77 @@
+{
+  "id": "discipline",
+  "order": 19,
+  "department": "labor_relations",
+  "subUnit": "discipline",
+  "titleFa": "کمیتهٔ انضباط کار",
+  "titleEn": "Labor Discipline Committee",
+  "apiPrefix": "/api/v1/discipline",
+  "version": "1.0.0",
+  "featureFlag": "module.discipline",
+  "dbSchema": "hr_discipline",
+  "owner": "hr-labor",
+  "entities": [
+    "DisciplineCase",
+    "DisciplineMeeting",
+    "DisciplineRuling"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write"
+    ]
+  },
+  "scopes": {},
+  "screens": [
+    {
+      "key": "disciplineCases",
+      "order": 1,
+      "icon": "gavel",
+      "titleFa": "پرونده‌های انضباطی",
+      "component": "DisciplineCasesScreen",
+      "purposeFa": "ثبت تخلف گزارش‌شده، تشکیل پروندهٔ انضباطی، پیگیری دفاعیات کارمند و ثبت رأی نهایی کمیته با رعایت محرمانگی.",
+      "actionsFa": [
+        "ثبت گزارش تخلف",
+        "تشکیل پرونده",
+        "ثبت دفاعیات",
+        "ثبت رأی",
+        "بایگانی پرونده"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "disciplineMeetings",
+      "order": 2,
+      "icon": "users-round",
+      "titleFa": "جلسات کمیتهٔ انضباط",
+      "component": "DisciplineMeetingsScreen",
+      "purposeFa": "زمان‌بندی جلسات کمیتهٔ انضباط کار، دعوت اعضا و کارمند، ثبت صورت‌جلسه و پیگیری مصوبات دورهٔ قبل.",
+      "actionsFa": [
+        "زمان‌بندی جلسه",
+        "ارسال دعوت‌نامه",
+        "ثبت صورت‌جلسه",
+        "پیگیری مصوبات"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    }
+  ]
+}

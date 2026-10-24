@@ -1,0 +1,33 @@
+{
+  "id": "dashboard",
+  "order": 1,
+  "department": "core",
+  "titleFa": "داشبورد",
+  "titleEn": "Dashboard",
+  "apiPrefix": "/api/v1/dashboard",
+  "version": "1.0.0",
+  "featureFlag": "module.dashboard",
+  "dbSchema": "hr_dashboard",
+  "owner": "hr-core",
+  "entities": ["StatWidget", "TrendPoint"],
+  "roles": {
+    "admin": ["read"],
+    "hr_manager": ["read"],
+    "hr_spec": ["read"],
+    "line_manager": ["read"],
+    "employee": ["read"]
+  },
+  "scopes": {},
+  "screens": [
+    {
+      "key": "dashboard",
+      "order": 1,
+      "icon": "gauge",
+      "titleFa": "داشبورد نقشمحور",
+      "component": "DashboardScreen",
+      "purposeFa": "نمایش شاخص‌های کلیدی سازمان و واحد بر اساس نقش کاربر؛ کارت‌های آماری در بالا، نمودارها در میانه و جداول اقدام‌های در انتظار در پایین.",
+      "actionsFa": ["مشاهده آماری", "پرش به صفحه جزئیات از طریق لینک هر کارت"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    }
+  ]
+}

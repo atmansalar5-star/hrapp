@@ -1,0 +1,136 @@
+{
+  "id": "hrstudies",
+  "order": 28,
+  "department": "hr_studies",
+  "subUnit": "research",
+  "titleFa": "مطالعات منابع انسانی",
+  "titleEn": "HR Studies & Research",
+  "apiPrefix": "/api/v1/hrstudies",
+  "version": "1.0.0",
+  "featureFlag": "module.hrstudies",
+  "dbSchema": "hr_studies",
+  "owner": "hr-studies",
+  "entities": [
+    "StudyProject",
+    "Survey",
+    "HrIndex",
+    "Suggestion"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve",
+      "report"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve",
+      "report"
+    ],
+    "hr_spec": [
+      "read",
+      "write",
+      "report"
+    ],
+    "line_manager": [
+      "read"
+    ],
+    "employee": [
+      "read",
+      "write"
+    ]
+  },
+  "scopes": {
+    "employee": "own",
+    "line_manager": "own_unit"
+  },
+  "screens": [
+    {
+      "key": "studies",
+      "order": 1,
+      "icon": "book",
+      "titleFa": "مطالعات و پژوهش",
+      "component": "StudiesScreen",
+      "purposeFa": "تعریف و پیگیری پروژه‌های مطالعاتی منابع انسانی (طراحی نظام‌ها، بازنگری دستورالعمل‌ها و پژوهش‌های سازمانی) زیر نظر مدیریت سرمایه‌های انسانی.",
+      "actionsFa": [
+        "تعریف پروژهٔ مطالعاتی",
+        "تخصیص پژوهشگر",
+        "پیگیری پیشرفت",
+        "تأیید گزارش نهایی",
+        "بایگانی مطالعات"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "surveys",
+      "order": 2,
+      "icon": "list-checks",
+      "titleFa": "نظرسنجی و جو سازمانی",
+      "component": "SurveysScreen",
+      "purposeFa": "طراحی و اجرای نظرسنجی از کارکنان، سنجش رضایت شغلی و جو سازمانی و تحلیل نتایج برای اقدام‌های اصلاحی.",
+      "actionsFa": [
+        "طراحی پرسشنامه",
+        "انتشار نظرسنجی",
+        "تحلیل نتایج",
+        "تعریف اقدام اصلاحی",
+        "گزارش جو سازمانی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager",
+        "employee"
+      ]
+    },
+    {
+      "key": "hrIndices",
+      "order": 3,
+      "icon": "percent",
+      "titleFa": "شاخص‌های سرمایهٔ انسانی",
+      "component": "HrIndicesScreen",
+      "purposeFa": "تعریف، محاسبه و پایش شاخص‌های کلیدی سرمایهٔ انسانی (نرخ ترک خدمت، بهره‌وری، هزینهٔ جبران خدمات و رضایت) و مقایسه با اهداف سازمان.",
+      "actionsFa": [
+        "تعریف شاخص",
+        "محاسبهٔ دوره‌ای",
+        "مقایسه با هدف",
+        "تحلیل انحراف",
+        "خروجی شاخص‌ها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "suggestions",
+      "order": 4,
+      "icon": "lightbulb",
+      "titleFa": "نظام پیشنهادها",
+      "component": "SuggestionsScreen",
+      "purposeFa": "دریافت، ارزیابی و پاداش پیشنهادهای کارکنان برای بهبود فرایندها و پیگیری اجرای پیشنهادهای پذیرفته‌شده.",
+      "actionsFa": [
+        "ثبت پیشنهاد",
+        "ارزیابی کارشناسی",
+        "تعیین پاداش",
+        "پیگیری اجرا",
+        "گزارش پیشنهادها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager",
+        "employee"
+      ]
+    }
+  ]
+}

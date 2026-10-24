@@ -1,0 +1,44 @@
+{
+  "id": "salary_admin",
+  "order": 9,
+  "department": "staff_affairs",
+  "subUnit": "compensation",
+  "titleFa": "احکام حقوق و گواهی اشتغال",
+  "titleEn": "Salary Decrees & Employment Certificates",
+  "apiPrefix": "/api/v1/salary_admin",
+  "version": "1.0.0",
+  "featureFlag": "module.salary_admin",
+  "dbSchema": "hr_salary_admin",
+  "owner": "hr-finance",
+  "entities": ["SalaryDecree", "SalaryDecreeLine", "EmploymentCertificate"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "delete", "approve"],
+    "hr_spec": ["read", "write"],
+    "line_manager": ["read"],
+    "employee": ["read"]
+  },
+  "scopes": { "line_manager": "own_unit", "employee": "own" },
+  "screens": [
+    {
+      "key": "salaryDecrees",
+      "order": 1,
+      "icon": "stamp",
+      "titleFa": "احکام حقوق",
+      "component": "SalaryDecreesScreen",
+      "purposeFa": "صدور، اصلاح و ابلاغ حکم حقوق کارکنان بر پایهٔ پارامترهای شرکت: گروه شغلی، پایه، فوق‌العاده‌ها و تاریخ اجرا، همراه با سابقهٔ تغییرات و علت هر تغییر.",
+      "actionsFa": ["صدور حکم حقوق", "اصلاح حکم", "ابلاغ حکم", "مشاهدهٔ سابقهٔ تغییرات", "چاپ حکم"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "employmentCerts",
+      "order": 2,
+      "icon": "scroll",
+      "titleFa": "گواهی اشتغال",
+      "component": "EmploymentCertsScreen",
+      "purposeFa": "ثبت درخواست و صدور گواهی اشتغال به کار برای کارکنان: گواهی ساده، گواهی جهت بانک و گواهی جهت سفارت همراه با تاییدیه‌های مورد نیاز.",
+      "actionsFa": ["ثبت درخواست گواهی", "صدور گواهی", "تأیید مدیر واحد", "چاپ و تحویل", "گزارش گواهی‌های صادرشده"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    }
+  ]
+}

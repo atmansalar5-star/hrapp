@@ -1,0 +1,37 @@
+{
+  "name": "hrms-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "کلاینت موبایل سامانهٔ جامع منابع انسانی — رابط React Native روی هستهٔ Rust",
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "codegen": "node ../../tools/gen/gen.mjs",
+    "link-core:android": "cargo ndk -t arm64-v8a -t x86_64 -o android/app/src/main/jniLibs build -p hrms-ffi --release --manifest-path ../../core/Cargo.toml",
+    "verify": "node ../../tools/check/verify.mjs"
+  },
+  "dependencies": {
+    "react": "19.0.0",
+    "react-native": "0.79.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/runtime": "^7.24.0",
+    "@react-native/babel-preset": "0.79.2",
+    "@react-native/eslint-config": "0.79.2",
+    "@react-native/metro-config": "0.79.2",
+    "@react-native/typescript-config": "0.79.2",
+    "@types/jest": "^29.5.12",
+    "@types/react": "^19.0.0",
+    "jest": "^29.7.0",
+    "typescript": "5.5.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

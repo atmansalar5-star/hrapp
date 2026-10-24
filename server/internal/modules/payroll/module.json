@@ -1,0 +1,94 @@
+{
+  "id": "payroll",
+  "order": 8,
+  "department": "staff_affairs",
+  "subUnit": "compensation",
+  "titleFa": "حقوق و دستمزد (جبران خدمات)",
+  "titleEn": "Payroll",
+  "apiPrefix": "/api/v1/payroll",
+  "version": "1.0.0",
+  "featureFlag": "module.payroll",
+  "dbSchema": "hr_payroll",
+  "owner": "hr-finance",
+  "entities": ["PayRun", "Payslip", "PayItem", "PayFormula", "Karana"],
+  "roles": {
+    "admin": ["read", "write", "delete", "approve"],
+    "hr_manager": ["read", "write", "approve"],
+    "hr_spec": ["read", "write"],
+    "line_manager": ["read"],
+    "employee": ["read"]
+  },
+  "scopes": { "employee": "own" },
+  "screens": [
+    {
+      "key": "payrollRun",
+      "order": 1,
+      "icon": "play-circle",
+      "titleFa": "پردازش حقوق",
+      "component": "PayrollRunScreen",
+      "purposeFa": "اجرای محاسبات ماهانهٔ حقوق و مشاهدهٔ جمع ناخالص، مالیات، بیمه و خالص هر دوره.",
+      "actionsFa": ["اجرای پردازش", "مشاهدهٔ جزئیات دوره", "قفل دوره", "خروجی لیست پرداخت"],
+      "roles": ["admin", "hr_manager"]
+    },
+    {
+      "key": "payslip",
+      "order": 2,
+      "icon": "receipt",
+      "titleFa": "فیش حقوقی",
+      "component": "PayslipScreen",
+      "purposeFa": "نمایش و دانلود فیش حقوقی دوره‌های گذشته؛ کارمند فقط فیش خود را می‌بیند.",
+      "actionsFa": ["مشاهدهٔ فیش", "دانلود PDF", "مقایسهٔ دوره‌ها"],
+      "roles": ["admin", "hr_manager", "hr_spec", "line_manager", "employee"]
+    },
+    {
+      "key": "payItems",
+      "order": 3,
+      "icon": "sliders",
+      "titleFa": "اجزای حقوق",
+      "component": "PayItemsScreen",
+      "purposeFa": "تعریف آیتم‌های حقوقی، فرمول‌ها و معافیت‌ها به‌صورت پارامتریک و نسخه‌دار.",
+      "actionsFa": ["تعریف آیتم", "ویرایش فرمول", "فعال/غیرفعال کردن", "نسخهٔ جدید"],
+      "roles": ["admin", "hr_manager"]
+    },
+    {
+      "key": "karana",
+      "order": 4,
+      "icon": "hand-coins",
+      "titleFa": "کارانه و پرداخت‌های متغیر",
+      "component": "KaranaScreen",
+      "purposeFa": "محاسبهٔ کارانه و پرداخت‌های متغیر بر پایهٔ عملکرد و بهره‌وری، تأیید مدیر واحد و ارسال به واحد آمار و گزارشات پیش از پرداخت.",
+      "actionsFa": ["محاسبهٔ کارانه", "تأیید مدیر واحد", "ارسال به واحد آمار", "اصلاح کارانه", "خروجی پرداخت"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "payReports",
+      "order": 5,
+      "icon": "bar-chart",
+      "titleFa": "گزارش‌های مالی حقوق",
+      "component": "PayReportsScreen",
+      "purposeFa": "لیست پرداخت، گزارش بیمه و گزارش مالیات با خروجی Excel و PDF.",
+      "actionsFa": ["مشاهدهٔ گزارش", "خروجی Excel", "خروجی PDF"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "serviceBonus",
+      "order": 6,
+      "icon": "calculator",
+      "titleFa": "پاداش پایان خدمت (سنوات)",
+      "component": "ServiceBonusScreen",
+      "purposeFa": "محاسبهٔ پاداش پایان خدمت کارکنان رسمی بر پایهٔ صورت‌حساب مرجع صنعت نفت: سابقهٔ شمال و جنوب، پایهٔ حقوق، ترمیم حقوق و فوق‌العاده‌های حکم. ورودی‌ها از کاربر یا از پروندهٔ پرسنلی و آخرین حکم ابلاغ‌شده بارگذاری می‌شود و پروندهٔ محاسبه‌شده با همان گردش‌کار تأیید و پرداخت ذخیره می‌گردد.",
+      "actionsFa": ["بارگذاری از پرونده و حکم", "محاسبهٔ پاداش", "ثبت پرونده", "ویرایش", "جستجو", "حذف", "تأیید پرونده", "ثبت پرداخت"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    },
+    {
+      "key": "payParams",
+      "order": 7,
+      "icon": "percent",
+      "titleFa": "پارامترها و ضرائب حقوق",
+      "component": "PayParamsScreen",
+      "purposeFa": "تعریف پارامتریک نرخ بیمه، معافیت و پله‌های مالیات، حق مسکن و حق اولاد، ضریب اضافه‌کاری، نوبت‌کاری و سختی شرایط کار؛ مبنای محاسبهٔ همهٔ دوره‌های حقوق و قابل تغییر بدون انتشار نسخهٔ تازه.",
+      "actionsFa": ["تعریف پارامتر", "ویرایش ضریب", "فعال/غیرفعال کردن", "تاریخ اجرا"],
+      "roles": ["admin", "hr_manager", "hr_spec"]
+    }
+  ]
+}

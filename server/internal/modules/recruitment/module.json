@@ -1,0 +1,114 @@
+{
+  "id": "recruitment",
+  "order": 17,
+  "department": "hr_planning",
+  "subUnit": "talent_acquisition",
+  "titleFa": "تأمین و جذب نیرو",
+  "titleEn": "Recruitment",
+  "apiPrefix": "/api/v1/recruitment",
+  "version": "1.0.0",
+  "featureFlag": "module.recruitment",
+  "dbSchema": "hr_recruitment",
+  "owner": "hr-talent",
+  "entities": [
+    "HiringRequest",
+    "JobPosting",
+    "Candidate",
+    "Application"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write",
+      "approve"
+    ]
+  },
+  "scopes": {},
+  "screens": [
+    {
+      "key": "hiringReqs",
+      "order": 1,
+      "icon": "file-plus",
+      "titleFa": "درخواست‌های نیرو",
+      "component": "HiringRequestsScreen",
+      "purposeFa": "ثبت و پیگیری درخواست استخدام ارسالی از واحدها همراه با وضعیت تأیید و اولویت.",
+      "actionsFa": [
+        "ثبت درخواست",
+        "ویرایش",
+        "تأیید درخواست",
+        "رد درخواست"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "jobs",
+      "order": 2,
+      "icon": "megaphone",
+      "titleFa": "آگهی‌های شغلی",
+      "component": "JobPostingsScreen",
+      "purposeFa": "مدیریت آگهی‌های شغلی و کانال‌های انتشار و مشاهده تعداد متقاضی هر آگهی.",
+      "actionsFa": [
+        "ایجاد آگهی",
+        "ویرایش",
+        "انتشار",
+        "بستن آگهی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "candidates",
+      "order": 3,
+      "icon": "user-search",
+      "titleFa": "متقاضیان",
+      "component": "CandidatesScreen",
+      "purposeFa": "بانک رزومه، وضعیت بررسی متقاضی و زمان‌بندی مصاحبه.",
+      "actionsFa": [
+        "افزودن متقاضی",
+        "زمان‌بندی مصاحبه",
+        "ثبت نتیجه بررسی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "hiringFlow",
+      "order": 4,
+      "icon": "workflow",
+      "titleFa": "فرآیند جذب",
+      "component": "HiringPipelineScreen",
+      "purposeFa": "نمایش گردش‌کار جذب از غربالگری تا پیشنهاد نهایی به‌صورت مراحل قابل جابه‌جایی.",
+      "actionsFa": [
+        "جابه‌جایی متقاضی بین مراحل",
+        "ارسال پیشنهاد نهایی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    }
+  ]
+}

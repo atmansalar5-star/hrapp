@@ -1,0 +1,89 @@
+{
+  "id": "grievances",
+  "order": 20,
+  "department": "labor_relations",
+  "subUnit": "complaints_veterans",
+  "titleFa": "شکایات و امور ایثارگران",
+  "titleEn": "Complaints & Veterans Affairs",
+  "apiPrefix": "/api/v1/grievances",
+  "version": "1.0.0",
+  "featureFlag": "module.grievances",
+  "dbSchema": "hr_grievances",
+  "owner": "hr-labor",
+  "entities": [
+    "Complaint",
+    "ComplaintFollowUp",
+    "VeteranRecord"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write"
+    ],
+    "line_manager": [
+      "read"
+    ],
+    "employee": [
+      "read",
+      "write"
+    ]
+  },
+  "scopes": {
+    "line_manager": "own_unit",
+    "employee": "own"
+  },
+  "screens": [
+    {
+      "key": "complaints",
+      "order": 1,
+      "icon": "comment",
+      "titleFa": "شکایات کارکنان",
+      "component": "ComplaintsScreen",
+      "purposeFa": "ثبت محرمانهٔ شکایات کارکنان، ارجاع به مرجع رسیدگی، ثبت پاسخ و پیگیری نتیجه تا بستن پرونده با حفظ محرمانگی هویت شاکی.",
+      "actionsFa": [
+        "ثبت شکایت",
+        "ارجاع به مرجع رسیدگی",
+        "ثبت پاسخ و اقدام",
+        "پیگیری و بستن پرونده",
+        "گزارش روند شکایات"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "employee"
+      ]
+    },
+    {
+      "key": "veteransAffairs",
+      "order": 2,
+      "icon": "flag",
+      "titleFa": "امور ایثارگران",
+      "component": "VeteransAffairsScreen",
+      "purposeFa": "نگهداری پروندهٔ ایثارگران، جانبازان و خانوادهٔ شهدا، اعمال سهمیه‌ها و تسهیلات قانونی و پیگیری معرفی‌نامه‌های سازمان‌های حمایتی.",
+      "actionsFa": [
+        "ثبت پروندهٔ ایثارگری",
+        "اعمال سهمیهٔ استخدامی",
+        "صدور معرفی‌نامه",
+        "پیگیری تسهیلات",
+        "گزارش جامعهٔ ایثارگران"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    }
+  ]
+}

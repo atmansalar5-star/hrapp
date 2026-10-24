@@ -1,0 +1,85 @@
+{
+  "id": "orgstructure",
+  "order": 15,
+  "department": "hr_planning",
+  "subUnit": "org_design",
+  "titleFa": "ساختار سازمانی و تشکیلات",
+  "titleEn": "Organization Structure",
+  "apiPrefix": "/api/v1/orgstructure",
+  "version": "1.0.0",
+  "featureFlag": "module.orgstructure",
+  "dbSchema": "hr_orgstructure",
+  "owner": "hr-planning",
+  "entities": [
+    "OrgUnit",
+    "Position",
+    "OrgChartVersion"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_spec": [
+      "read",
+      "write",
+      "approve"
+    ],
+    "line_manager": [
+      "read"
+    ]
+  },
+  "scopes": {
+    "line_manager": "own_unit"
+  },
+  "screens": [
+    {
+      "key": "org",
+      "order": 1,
+      "icon": "sitemap",
+      "titleFa": "ساختار سازمانی",
+      "component": "OrgChartScreen",
+      "purposeFa": "نمودار درختی واحدها و پست‌ها با امکان افزودن و ویرایش واحد و مشاهده سرپرست و تعداد نیرو هر واحد.",
+      "actionsFa": [
+        "افزودن واحد",
+        "ویرایش واحد",
+        "مشاهده پست‌ها",
+        "تعیین سرپرست واحد"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "positions",
+      "order": 2,
+      "icon": "id-badge",
+      "titleFa": "شناسنامهٔ پست‌ها",
+      "component": "PositionsScreen",
+      "purposeFa": "تعریف پست سازمانی با شرح شغل، شرط‌های احراز، گروه شغلی و مهارت‌های مورد نیاز به‌عنوان مرجع انتصاب، ترفیع و نیازسنجی آموزشی.",
+      "actionsFa": [
+        "افزودن پست",
+        "ویرایش شرح شغل",
+        "تعیین شرط‌های احراز",
+        "انتساب پست به واحد",
+        "خروجی شناسنامهٔ پست"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    }
+  ]
+}

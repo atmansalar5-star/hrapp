@@ -1,0 +1,101 @@
+{
+  "id": "performance",
+  "order": 18,
+  "department": "hr_planning",
+  "subUnit": "performance_management",
+  "titleFa": "مدیریت عملکرد",
+  "titleEn": "Performance",
+  "apiPrefix": "/api/v1/performance",
+  "version": "1.0.0",
+  "featureFlag": "module.performance",
+  "dbSchema": "hr_performance",
+  "owner": "hr-od",
+  "entities": [
+    "PerfCycle",
+    "PerfForm",
+    "KpiItem",
+    "PerfResult"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "delete",
+      "approve"
+    ],
+    "hr_spec": [
+      "read"
+    ],
+    "line_manager": [
+      "read",
+      "write",
+      "approve"
+    ]
+  },
+  "scopes": {
+    "line_manager": "own_unit"
+  },
+  "screens": [
+    {
+      "key": "perfCycles",
+      "order": 1,
+      "icon": "repeat",
+      "titleFa": "دوره‌های ارزیابی",
+      "component": "PerfCyclesScreen",
+      "purposeFa": "تعریف و مدیریت دوره‌های ارزیابی (نیم‌سال/سالانه) و بازهٔ ثبت نمرات.",
+      "actionsFa": [
+        "تعریف دوره",
+        "ویرایش",
+        "باز/بسته کردن دوره"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "perfForms",
+      "order": 2,
+      "icon": "list-checks",
+      "titleFa": "فرم‌های ارزیابی",
+      "component": "PerfFormsScreen",
+      "purposeFa": "طراحی شاخص‌های کلیدی عملکرد، وزن‌دهی و مقیاس نمره‌دهی.",
+      "actionsFa": [
+        "افزودن شاخص",
+        "تعیین وزن",
+        "ویرایش فرم"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "perfResults",
+      "order": 3,
+      "icon": "award",
+      "titleFa": "نتایج ارزیابی",
+      "component": "PerfResultsScreen",
+      "purposeFa": "مشاهده و تحلیل نتایج دوره، رتبه‌بندی و ثبت بازخورد.",
+      "actionsFa": [
+        "مشاهدهٔ نتایج",
+        "ثبت بازخورد",
+        "خروجی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    }
+  ]
+}

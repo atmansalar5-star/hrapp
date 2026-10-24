@@ -1,0 +1,22 @@
+{
+  "name": "hrms-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "سامانهٔ جامع منابع انسانی — هستهٔ Rust، کلاینت React Native، سرور Go ماژولار",
+  "scripts": {
+    "gen": "node tools/gen/gen.mjs",
+    "gen:check": "node tools/gen/gen.mjs --check",
+    "verify": "node tools/check/verify.mjs",
+    "check": "npm run gen:check && npm run verify",
+    "fixtures": "python tools/check/ref_fixtures.py",
+    "server": "cd server && infisical run --env=dev -- go run ./cmd/hrmsd -addr 127.0.0.1:8080 -web ../design/prototype -env .env",
+    "server:test": "cd server && go test -race ./...",
+    "core:test": "cd core && cargo test --workspace --all-features",
+    "core:conformance": "cd core && cargo run -p hrms-conformance",
+    "mobile": "cd apps/mobile && npm start",
+    "mobile:test": "cd apps/mobile && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
