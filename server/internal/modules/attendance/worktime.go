@@ -4,9 +4,11 @@ package attendance
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"hrms/internal/contracts"
 	"hrms/internal/modules/attendance/domain"
@@ -42,6 +44,16 @@ type workTimeBuckets struct {
 	sickLeave      float64
 	pendingLeave   float64
 	missionDays    float64
+	// ساعت‌های نوبت/شب/تعطیل و تأخیر/تعجیل از ترددهای همان دوره.
+	shiftHours   float64
+	nightHours   float64
+	fridayHours  float64
+	lateMinutes  int
+	earlyMinutes int
+	// attendedDates روزهای دارای تردد و coveredDates روزهایی که مرخصی/مأموریت
+	// پوشش داده است؛ مبنای سنجش «غیبت» در برابر روزهای موظفی نوبت مصوب.
+	attendedDates map[string]bool
+	coveredDates  map[string]bool
 }
 
 // WorkTime کارکرد دوره را به تفکیک کارمند می‌سازد. فقط رکوردهای مؤثر شمرده می‌شوند و
@@ -59,7 +71,10 @@ func (p workTimeProvider) WorkTime(ctx context.Context, q contracts.WorkTimeQuer
 	get := func(rec contracts.Record) *workTimeBuckets {
 		b, ok := buckets[rec.EmployeeID]
 		if !ok {
-			b = &workTimeBuckets{employeeID: rec.EmployeeID, employeeName: rec.EmployeeName, departmentName: rec.DepartmentName}
+			b = &workTimeBuckets{
+				employeeID: rec.EmployeeID, employeeName: rec.EmployeeName, departmentName: rec.DepartmentName,
+				attendedDates: map[string]bool{}, coveredDates: map[string]bool{},
+			}
 			buckets[rec.EmployeeID] = b
 		}
 		if b.employeeName == "" {
@@ -70,6 +85,11 @@ func (p workTimeProvider) WorkTime(ctx context.Context, q contracts.WorkTimeQuer
 		}
 		return b
 	}
+
+	// نوبت مصوب کارکنان و مهلت تأخیر مجاز شرکت: مبنای سنجش شب‌کاری، تأخیر/تعجیل و
+	// روزهای موظفی (غیبت). هر دو یک‌بار خوانده می‌شوند، نه در هر رکورد.
+	rost := loadRoster(ctx, p.svc)
+	grace := graceMinutes(p.deps)
 
 	for _, spec := range []struct {
 		kind      string
@@ -106,7 +126,20 @@ func (p workTimeProvider) WorkTime(ctx context.Context, q contracts.WorkTimeQuer
 			switch spec.kind {
 			case "attendanceRecords":
 				if effective {
-					b.workedHours += number(rec.Fields["workedHours"])
+					hours := number(rec.Fields["workedHours"])
+					b.workedHours += hours
+					date := strings.TrimSpace(rec.Fields["date"])
+					if date != "" {
+						b.attendedDates[date] = true
+					}
+					if shift, ok := rost.ShiftFor(rec.EmployeeID, date); ok && !shift.Rest {
+						b.shiftHours += hours
+					}
+					b.nightHours += number(rec.Fields["nightHours"])
+					b.fridayHours += number(rec.Fields["fridayHours"])
+					late, early := lateEarlyOf(rec, rost, grace)
+					b.lateMinutes += late
+					b.earlyMinutes += early
 				}
 			case "overtime":
 				hours := number(rec.Fields["hours"])
@@ -122,6 +155,10 @@ func (p workTimeProvider) WorkTime(ctx context.Context, q contracts.WorkTimeQuer
 					days = rangeDays(rec.Fields["fromDate"], rec.Fields["toDate"])
 				}
 				class := domain.ClassifyLeave(rec.Fields["leaveType"])
+				if effective {
+					// روزهای پوشش‌داده‌شده با مرخصی، «غیبت» شمرده نمی‌شوند.
+					markRange(b.coveredDates, rec.Fields["fromDate"], rec.Fields["toDate"])
+				}
 				switch {
 				case !effective:
 					b.pendingLeave += days
@@ -135,6 +172,7 @@ func (p workTimeProvider) WorkTime(ctx context.Context, q contracts.WorkTimeQuer
 			case "missions":
 				if effective {
 					b.missionDays += rangeDays(rec.Fields["fromDate"], rec.Fields["toDate"])
+					markRange(b.coveredDates, rec.Fields["fromDate"], rec.Fields["toDate"])
 				}
 			}
 		}
@@ -155,6 +193,21 @@ func (p workTimeProvider) WorkTime(ctx context.Context, q contracts.WorkTimeQuer
 		if b.overtime > 0 {
 			factor = math2(b.overtimeWeight / b.overtime)
 		}
+		// غیبت: روزهای موظفی نوبت مصوب که نه تردد دارند و نه مرخصی/مأموریت پوشششان
+		// داده است. روزهای آیندهٔ دوره «غیبت» نیستند (کسی برای فردا غایب شمرده
+		// نمی‌شود)، پس سنجش فقط تا امروز سرور جلو می‌رود. بدون دوره یا بدون تخصیص
+		// مصوب، محاسبه انجام نمی‌شود (صفر می‌ماند).
+		expected, missing := 0, 0
+		if windowFrom, windowTo, ok := absenceWindow(period, p.deps.Now()); ok {
+			dates := rost.ExpectedWorkDates(b.employeeID, windowFrom, windowTo)
+			expected = len(dates)
+			for _, d := range dates {
+				if b.attendedDates[d] || b.coveredDates[d] {
+					continue
+				}
+				missing++
+			}
+		}
 		summary := rules.ComputeWorkTime(rules.WorkTimeInput{
 			Period:          period,
 			WorkedHours:     round2(b.workedHours),
@@ -163,6 +216,7 @@ func (p workTimeProvider) WorkTime(ctx context.Context, q contracts.WorkTimeQuer
 			UnpaidLeaveDays: round2(b.unpaidLeave),
 			SickLeaveDays:   round2(b.sickLeave),
 			MissionDays:     round2(b.missionDays),
+			AbsenceDays:     float64(missing),
 		}, params)
 
 		rows = append(rows, contracts.WorkTimeRow{
@@ -181,6 +235,13 @@ func (p workTimeProvider) WorkTime(ctx context.Context, q contracts.WorkTimeQuer
 			PendingLeaveDays:     round2(b.pendingLeave),
 			MissionDays:          summary.MissionDays,
 			AbsenceDays:          summary.AbsenceDays,
+			ShiftHours:           round2(b.shiftHours),
+			NightHours:           round2(b.nightHours),
+			FridayHours:          round2(b.fridayHours),
+			LateMinutes:          b.lateMinutes,
+			EarlyLeaveMinutes:    b.earlyMinutes,
+			ExpectedDays:         float64(expected),
+			MissingDays:          float64(missing),
 			PayableDays:          summary.PayableDays,
 			DeductibleDays:       summary.DeductibleDays,
 			PresenceRatio:        summary.PresenceRatio,
@@ -189,6 +250,73 @@ func (p workTimeProvider) WorkTime(ctx context.Context, q contracts.WorkTimeQuer
 		})
 	}
 	return rows, nil
+}
+
+// lateEarlyOf تأخیر و تعجیل یک رکورد تردد.
+//
+// قاعده: اگر ورود فایل دستگاه این دو را نوشته باشد همان ملاک است؛ وگرنه از ساعت
+// ورود/خروج همان رکورد و نوبت مصوب آن روز دوباره سنجیده می‌شود (تردد دستی هم باید
+// تأخیرش شمرده شود).
+func lateEarlyOf(rec contracts.Record, rost *roster, grace int) (int, int) {
+	if raw := strings.TrimSpace(rec.Fields["lateMinutes"]); raw != "" {
+		late, _ := strconv.Atoi(strings.TrimSpace(calendar.NormalizeDigits(raw)))
+		early := 0
+		if rawEarly := strings.TrimSpace(rec.Fields["earlyMinutes"]); rawEarly != "" {
+			early, _ = strconv.Atoi(strings.TrimSpace(calendar.NormalizeDigits(rawEarly)))
+		}
+		return late, early
+	}
+	date := strings.TrimSpace(rec.Fields["date"])
+	if strings.TrimSpace(rec.Fields["checkIn"]) == "" || strings.TrimSpace(rec.Fields["checkOut"]) == "" {
+		return 0, 0
+	}
+	shift, ok := rost.ShiftFor(rec.EmployeeID, date)
+	holiday := false
+	if ok {
+		holiday = shift.Holiday
+	}
+	metrics := domain.PunchMetricsFor(domain.DevicePunch{
+		Date: date, CheckIn: rec.Fields["checkIn"], CheckOut: rec.Fields["checkOut"],
+		WorkedHours: number(rec.Fields["workedHours"]),
+	}, shift, grace, holiday)
+	return metrics.LateMinutes, metrics.EarlyLeaveMinutes
+}
+
+// markRange روزهای یک بازهٔ شمسی را در مجموعه علامت می‌زند.
+func markRange(set map[string]bool, from, to string) {
+	if len(set) == 0 {
+		return
+	}
+	a, errA := calendar.Parse(strings.TrimSpace(from))
+	b, errB := calendar.Parse(strings.TrimSpace(to))
+	if errA != nil || errB != nil {
+		return
+	}
+	days, err := calendar.EachDay(a, b)
+	if err != nil {
+		return
+	}
+	for _, d := range days {
+		set[d.String()] = true
+	}
+}
+
+// periodRange بازهٔ روزهای یک دورهٔ «YYYY/MM» را می‌سازد.
+func periodRange(period string) (string, string) {
+	parts := strings.Split(strings.TrimSpace(period), "/")
+	if len(parts) != 2 {
+		return "", ""
+	}
+	year, errY := strconv.Atoi(parts[0])
+	month, errM := strconv.Atoi(parts[1])
+	if errY != nil || errM != nil || year < 1300 || month < 1 || month > 12 {
+		return "", ""
+	}
+	length, err := calendar.MonthLength(year, month)
+	if err != nil {
+		return "", ""
+	}
+	return fmt.Sprintf("%04d/%02d/01", year, month), fmt.Sprintf("%04d/%02d/%02d", year, month, length)
 }
 
 // Periods دوره‌های دارای کارکرد را از رکوردهای همین ماژول استخراج می‌کند.
@@ -301,6 +429,30 @@ func parseFloat(raw string) (float64, bool) {
 }
 
 func round2(x float64) float64 { return math2(x) }
+
+// absenceWindow بازهٔ سنجش غیبت یک دوره: از آغاز دوره تا پایان آن، ولی نه پس از
+// امروز سرور — چون روزهای نرسیده «غیبت» نیستند و نباید مبنای کسر از مزد شوند.
+//
+// ok=false یعنی در این دوره روز سپری‌شده‌ای نیست (دورهٔ آینده) یا دوره نامعتبر است.
+func absenceWindow(period string, now time.Time) (string, string, bool) {
+	from, to := periodRange(period)
+	if from == "" {
+		return "", "", false
+	}
+	first, errFirst := calendar.Parse(from)
+	last, errLast := calendar.Parse(to)
+	today, errToday := calendar.FromGregorian(now)
+	if errFirst != nil || errLast != nil || errToday != nil {
+		return "", "", false
+	}
+	if gap, err := calendar.DaysBetween(first, today); err != nil || gap < 0 {
+		return "", "", false
+	}
+	if gap, err := calendar.DaysBetween(today, last); err != nil || gap > 0 {
+		to = today.String()
+	}
+	return from, to, true
+}
 
 func math2(x float64) float64 {
 	if x < 0 {

@@ -30,4 +30,6 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// پورت «کارکرد دوره»: جمع تردد/مرخصی/ماموریت/اضافه‌کاری را به قرارداد کارکرد
 	// تبدیل می‌کند تا ماژول حقوق از همان راه به کارکرد لینک شود.
 	deps.Ports.SetWorkTime(workTimeProvider{svc: svc, deps: deps})
+	// ورود فایل دستگاه تردد، برنامهٔ نوبت و پوشش شیفت (زیرکارهای ۱.۲ و ۱.۳ فاز ۱).
+	registerDeviceEndpoints(mux, deps, svc)
 }

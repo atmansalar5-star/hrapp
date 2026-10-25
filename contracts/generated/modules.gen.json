@@ -5349,6 +5349,16 @@
             "admin",
             "hr_manager"
           ]
+        },
+        {
+          "key": "companies",
+          "order": 9,
+          "titleFa": "شرکت‌ها و استقرارها",
+          "component": "CompaniesScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
         }
       ]
     },

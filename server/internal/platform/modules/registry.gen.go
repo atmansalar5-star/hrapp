@@ -657,6 +657,7 @@ var All = []Module{
 			{Key: "audit", Order: 6, Icon: "history", TitleFa: "لاگ حسابرسی", Component: "AuditLogScreen", Roles: []string{"admin"}},
 			{Key: "docTemplates", Order: 7, Icon: "file-text", TitleFa: "قالب‌های متن اسناد", Component: "DocTemplatesScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "catalogs", Order: 8, Icon: "database", TitleFa: "کاتالوگ‌های مرجع", Component: "CatalogsScreen", Roles: []string{"admin", "hr_manager"}},
+			{Key: "companies", Order: 9, Icon: "building", TitleFa: "شرکت‌ها و استقرارها", Component: "CompaniesScreen", Roles: []string{"admin", "hr_manager"}},
 		},
 	},
 	{

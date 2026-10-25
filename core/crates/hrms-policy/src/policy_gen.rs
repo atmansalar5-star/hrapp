@@ -1495,6 +1495,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             icon: "database",
             roles: &[RoleKey::Admin, RoleKey::HrManager],
         },
+        ScreenPolicy {
+            key: "companies",
+            title_fa: "شرکت‌ها و استقرارها",
+            component: "CompaniesScreen",
+            icon: "building",
+            roles: &[RoleKey::Admin, RoleKey::HrManager],
+        },
         ],
     },
     ModulePolicy {

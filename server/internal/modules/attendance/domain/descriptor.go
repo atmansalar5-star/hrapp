@@ -92,6 +92,16 @@ func Descriptor() recordkit.Descriptor {
 					"checkIn|ورود|text|0",
 					"checkOut|خروج|text|0",
 					"workedHours|ساعت کارکرد|number|0",
+					// فیلدهای زیر را «ورود فایل دستگاه تردد» پر می‌کند: نوبت همان روز از
+					// چرخهٔ مصوب حل می‌شود و تأخیر/تعجیل/شب‌کاری/جمعه‌کاری در دامنه سنجیده
+					// و همین‌جا ذخیره می‌شود تا کارکرد دوره و تطبیق حقوق از همان بخوانند.
+					"shift|نوبت روز|text|0",
+					"lateMinutes|تأخیر (دقیقه)|number|0",
+					"earlyMinutes|تعجیل (دقیقه)|number|0",
+					"nightHours|ساعت شب‌کاری|number|0",
+					"fridayHours|ساعت جمعه/تعطیل‌کاری|number|0",
+					"deviceCode|کد دستگاه تردد|text|0",
+					"sourceFile|فایل مبدأ|text|0",
 				),
 				Statuses: recordkit.Statuses(
 					"recorded|ثبت‌شده", "confirmed|تأییدشده", "disputed|دارای اعتراض",
@@ -101,6 +111,30 @@ func Descriptor() recordkit.Descriptor {
 				Actions: recordkit.Actions(
 					"confirm|تأیید تردد|primary|confirmed|0",
 					"dispute|ثبت اعتراض|danger|disputed|1",
+				),
+			},
+			{
+				// سند گردش ورود فایل تردد: چه فایلی، چند خط، چند رکورد ساخته/ویرایش شد و
+				// چند ردیف ثبت نشد. برای ردیابی «این تردد از کدام فایل آمده» نگه داشته می‌شود.
+				Key: "deviceImports", TitleFa: "ورود فایل دستگاه تردد", IDPrefix: "DVI", EmployeeScoped: false,
+				Fields: recordkit.Fields(
+					"fileName|نام فایل|text|0",
+					"importedAt|تاریخ ورود|text|0",
+					"lines|خطوط فایل|number|0",
+					"accepted|ردیف پذیرفته|number|0",
+					"rejected|ردیف ردشده|number|0",
+					"duplicate|ردیف تکراری|number|0",
+					"created|رکورد ساخته‌شده|number|0",
+					"updated|رکورد ویرایش‌شده|number|0",
+					"skipped|ردیف ثبت‌نشده|number|0",
+				),
+				Statuses: recordkit.Statuses(
+					"recorded|ثبت‌شده", "confirmed|تأییدشده توسط کارگزینی",
+				),
+				Initial:     "recorded",
+				Transitions: recordkit.Steps("recorded|confirmed"),
+				Actions: recordkit.Actions(
+					"confirm|تأیید فایل|primary|confirmed|0|hr_spec,hr_manager",
 				),
 			},
 			{

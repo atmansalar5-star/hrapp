@@ -83,6 +83,8 @@ const RK_PAGES = {
   orgSettings: {kind: 'orgSettings'},
   // قالب‌های متن اسناد (قرارداد، فیش حقوق، حکم، گواهی)
   docTemplates: {kind: 'docTemplates'},
+  // شرکت‌ها و استقرارهای هلدینگ: فرم ورود شرکت تازه و ویرایش شرکت‌های موجود
+  companies: {kind: 'companyProfiles'},
   // مددکاری اجتماعی
   socialWorkCases: {kind: 'socialWorkCases'},
   aidRequests: {kind: 'aidRequests'},

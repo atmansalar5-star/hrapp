@@ -647,6 +647,7 @@ export const MODULES: ModuleSpec[] = [
       { key: "audit", order: 6, icon: "history", titleFa: "لاگ حسابرسی", purposeFa: "مشاهدهٔ رخدادهای حساس سامانه به‌صورت فقط-افزودن با زنجیرهٔ هش برای اثبات دست‌نخورده بودن.", component: "AuditLogScreen", roles: ["admin"] },
       { key: "docTemplates", order: 7, icon: "file-text", titleFa: "قالب‌های متن اسناد", purposeFa: "طراحی متن قرارداد کار، فیش حقوقی، حکم حقوق و گواهی اشتغال با جای‌نگهدارهای پویا؛ موتور اسناد قالب فعال هر نوع سند را هنگام چاپ می‌خواند.", component: "DocTemplatesScreen", roles: ["admin", "hr_manager"] },
       { key: "catalogs", order: 8, icon: "database", titleFa: "کاتالوگ‌های مرجع", purposeFa: "تعریف و ویرایش واحدهای سازمانی، مدیریت‌ها و بانک‌های عامل. اقلام همین کاتالوگ‌ها مرجع فرم‌های تخصیص وام و پاداش و اعتبارسنجی‌اند، پس افزودن یا ویرایش هر قلم بی‌درنگ در همهٔ فرم‌ها دیده می‌شود.", component: "CatalogsScreen", roles: ["admin", "hr_manager"] },
+      { key: "companies", order: 9, icon: "building", titleFa: "شرکت‌ها و استقرارها", purposeFa: "ورود اطلاعات شرکت تازه و ویرایش شرکت‌های موجود: نام و کد شرکت، هلدینگ، برند، شمار کارکنان، شناسه‌های قانونی (شناسهٔ ملی، کد اقتصادی، پروندهٔ مالیاتی، کد کارگاه)، تقویم و سال مالی، ادارات فعال، ماژول‌های خاموش و پارامترهای بازنویسی‌شده.", component: "CompaniesScreen", roles: ["admin", "hr_manager"] },
     ],
   },
   {

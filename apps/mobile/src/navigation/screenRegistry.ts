@@ -124,6 +124,8 @@ import SysParamsScreen from '../features/settings/SysParamsScreen';
 import AuditLogScreen from '../features/settings/AuditLogScreen';
 import DocTemplatesScreen from '../features/settings/DocTemplatesScreen';
 import CatalogsScreen from '../features/settings/CatalogsScreen';
+// شرکت‌ها و استقرارها: ورود شرکت تازه و ویرایش اطلاعات شرکت‌های موجود (رکورد companyProfiles).
+import CompaniesScreen from '../features/settings/CompaniesScreen';
 
 // واحد امور کارکنان — بایگانی و شناسایی کارکنان
 import PersonnelFilesScreen from '../features/archive/PersonnelFilesScreen';
@@ -244,6 +246,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   AuditLogScreen,
   DocTemplatesScreen,
   CatalogsScreen,
+  CompaniesScreen,
   OrgProfileScreen,
   PersonnelFilesScreen,
   EmployeeIdentityScreen,

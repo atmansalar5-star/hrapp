@@ -651,6 +651,7 @@ window.HRMS_MENU = [
         { page: "audit", label: "لاگ حسابرسی", icon: "history", roles: ['admin'] },
         { page: "docTemplates", label: "قالب‌های متن اسناد", icon: "file-text", roles: ['admin', 'hr_manager'] },
         { page: "catalogs", label: "کاتالوگ‌های مرجع", icon: "database", roles: ['admin', 'hr_manager'] },
+        { page: "companies", label: "شرکت‌ها و استقرارها", icon: "building", roles: ['admin', 'hr_manager'] },
         ],
       },
       ],

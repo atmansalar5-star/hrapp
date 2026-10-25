@@ -36,6 +36,18 @@ type WorkTimeRow struct {
 	// AbsenceDays روزهای غیبت ثبت‌شده.
 	AbsenceDays float64 `json:"absenceDays"`
 
+	// ShiftHours ساعت کارکرد در روزهایی که نوبت مصوب دارند.
+	ShiftHours float64 `json:"shiftHours"`
+	// NightHours و FridayHours ساعت‌های شب‌کاری و کار در روز تعطیل/پایان هفته.
+	NightHours  float64 `json:"nightHours"`
+	FridayHours float64 `json:"fridayHours"`
+	// LateMinutes و EarlyLeaveMinutes مجموع تأخیر و تعجیل دوره به دقیقه.
+	LateMinutes       int `json:"lateMinutes"`
+	EarlyLeaveMinutes int `json:"earlyLeaveMinutes"`
+	// ExpectedDays روزهای موظفی از نوبت مصوب و MissingDays روزهای بی‌تردد و بی‌مرخصی.
+	ExpectedDays float64 `json:"expectedDays"`
+	MissingDays  float64 `json:"missingDays"`
+
 	// PayableDays روزهای قابل پرداخت و DeductibleDays روزهای کسری.
 	PayableDays    float64 `json:"payableDays"`
 	DeductibleDays float64 `json:"deductibleDays"`

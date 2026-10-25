@@ -67,6 +67,8 @@ func Descriptor() recordkit.Descriptor {
 				),
 			},
 			docTemplatesKind(),
+			// شرکت‌ها و استقرارهای هلدینگ: فرم ورود شرکت تازه و ویرایش شرکت‌های موجود.
+			companyProfilesKind(),
 			{
 				Key: "orgSettings", TitleFa: "پارامتر سازمانی", IDPrefix: "SET", EmployeeScoped: false,
 				Fields: recordkit.Fields(
@@ -215,7 +217,7 @@ func validateDocTemplate(in contracts.RecordInput) error {
 
 // Seed رکوردهای نمونهٔ سازمان.
 func Seed() []contracts.RecordInput {
-	return []contracts.RecordInput{
+	out := []contracts.RecordInput{
 		{Kind: "sysParams", Title: "ساعت کاری ماهانه",
 			Fields: map[string]string{"key": "payroll.monthlyHours", "value": "192", "group": "حقوق و دستمزد"},
 			NoteFa: "مبنای محاسبهٔ نرخ ساعتی"},
@@ -261,6 +263,9 @@ func Seed() []contracts.RecordInput {
 			},
 			NoteFa: "قالب متن فیش را می‌توانید ویرایش کنید؛ محاسبه از پارامترهای حقوق می‌آید."},
 	}
+	// شرکت‌های همین استقرار از فهرست استقرارها بذر می‌شوند تا فرم ویرایش از ابتدا پر
+	// باشد و افزودن شرکت تازه کنار دادهٔ موجود بنشیند.
+	return append(out, CompanySeed()...)
 }
 
 // mgmtCatalog یک قلم کاتالوگ مدیریت.
