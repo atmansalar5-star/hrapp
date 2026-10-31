@@ -91,8 +91,9 @@ const fa = value => String(value).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[Num
 /** پیام خطای فارسی روی خروجی خطا. */
 const err = message => console.error(`✖ ${message}`);
 
-/** هشدار فارسی؛ کد خروج را عوض نمی‌کند. */
-const warn = message => console.error(`⚠ ${message}`);
+/** هشدار فارسی؛ روی خروجی استاندارد نوشته می‌شود تا کد خروج را ناموفق نشان ندهد
+ *  (برخی پوسته‌ها نوشتن روی stderr را به‌عنوان شکست فرمان می‌بینند). */
+const warn = message => console.log(`⚠ ${message}`);
 
 /** قالب‌بندی بایت‌اندازهٔ پرونده‌ها لازم نیست؛ فقط رخدادها گزارش می‌شوند. */
 const oneLine = text => String(text ?? '').replace(/\s+/g, ' ').trim();

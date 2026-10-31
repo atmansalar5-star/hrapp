@@ -5,6 +5,7 @@ package infra
 import (
 	"time"
 
+	"hrms/internal/contracts"
 	"hrms/internal/modules/contracts/domain"
 	"hrms/internal/platform/calendar"
 )
@@ -40,6 +41,12 @@ func SeedContracts(today calendar.Date, clock func() time.Time) []domain.Contrac
 			Kind: domain.KindPermanent, StartDate: day(-3600), MonthlySalary: 54_000_000,
 			Status: domain.StatusActive, CreatedBy: "hr.manager", DecidedBy: "hr.manager",
 			Events: created("hr.manager", "انعقاد قرارداد مدت دائم", 3600),
+			WageStructure: contracts.WageStructure{
+				ClimateRegion: "south_coast", RankWage: 9_000_000, SeniorityWage: 14_000_000,
+				PostAllowance: 11_000_000, ClimateAllowance: 16_000_000,
+				BadClimatePercent: 0.25, DeprivationPercent: 0.25,
+				RegionHardshipPercent: 0.30, ExtraTimePercent: 0.15,
+			},
 		},
 		{
 			ID: "CT-1395-0006", EmployeeID: "EMP-006", EmployeeName: "نرگس کریمی",
@@ -64,6 +71,11 @@ func SeedContracts(today calendar.Date, clock func() time.Time) []domain.Contrac
 			Kind: domain.KindPermanent, StartDate: day(-2500), MonthlySalary: 52_000_000,
 			Status: domain.StatusActive, CreatedBy: "hr.manager", DecidedBy: "hr.manager",
 			Events: created("hr.manager", "انعقاد قرارداد مدت دائم", 2500),
+			WageStructure: contracts.WageStructure{
+				ClimateRegion: "south_coast", RankWage: 8_000_000, SeniorityWage: 12_000_000,
+				PostAllowance: 10_000_000, ClimateAllowance: 14_000_000,
+				BadClimatePercent: 0.30, RegionHardshipPercent: 0.35,
+			},
 		},
 		{
 			ID: "CT-1398-0003", EmployeeID: "EMP-003", EmployeeName: "نگار حسینی",

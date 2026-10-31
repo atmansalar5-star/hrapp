@@ -15,6 +15,7 @@ import (
 	"hrms/internal/platform/auth"
 	"hrms/internal/platform/httpx"
 	"hrms/internal/platform/modulekit"
+	"hrms/internal/rules"
 )
 
 // Handler هندلرهای ماژول.
@@ -298,12 +299,23 @@ func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {
 	for _, s := range domain.CertStatuses {
 		certStatuses = append(certStatuses, map[string]string{"value": s, "label": domain.CertStatusFa[s]})
 	}
+	// مناطق اقلیمی از دامنهٔ قواعد می‌آید تا فرم حکم، فهرست ثابت خودش را نسازد (هیچ قاعدهٔ
+	// کسب‌وکاری در رابط نیست) و ضرایب پیشنهادی هر منطقه هم همان‌جا دیده شود.
+	regions := []map[string]any{}
+	for _, region := range rules.ClimateRegionsTable {
+		regions = append(regions, map[string]any{
+			"value": region.Key, "label": region.TitleFa,
+			"badClimate": region.BadClimate, "deprivation": region.Deprivation,
+			"regionHardship": region.RegionHardship, "extraTime": region.ExtraTime,
+		})
+	}
 	httpx.WriteJSON(w, http.StatusOK, map[string]any{
 		"certificateKinds": kinds,
 		"decreeStatuses":   decreeStatuses,
 		"certStatuses":     certStatuses,
 		"employmentTypes":  contracts.EmploymentTypes(),
 		"employmentGroups": contracts.EmploymentGroups(),
+		"climateRegions":   regions,
 	})
 }
 

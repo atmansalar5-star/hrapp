@@ -56,6 +56,10 @@ func Mount(mux *http.ServeMux, deps modulekit.Deps, desc Descriptor, seed []cont
 	}
 
 	Register(mux, deps, svc, prefix)
+	// هر ماژول رکوردی، خودش را روی پورت «فهرست/شناسهٔ رکورد» منتشر می‌کند: مصرف‌کننده‌ها
+	// (لایهٔ یکپارچه‌سازی برای ساخت قالب بارگذاری، آمار، سوابق) از راه قرارداد می‌خوانند
+	// و هیچ‌کدام داخلی‌های این ماژول را import نمی‌کنند.
+	deps.Ports.SetRecordList(svc.Module(), svc)
 	// ثبت سرویس به‌عنوان منبع کارهای گردش‌کاری تا کارتابل سراسری بتواند کارهای مجاز
 	// هر نقش را بدون شکستن مرز ماژول بخواند.
 	deps.Ports.RegisterWorkflowSource(svc)

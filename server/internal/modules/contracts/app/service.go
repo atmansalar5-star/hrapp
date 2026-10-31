@@ -154,6 +154,7 @@ func (s *Service) Create(ctx context.Context, in contracts.ContractInput, actor 
 		Status:         domain.StatusDraft,
 		NoteFa:         in.NoteFa,
 		CreatedBy:      actor,
+		WageStructure:  in.WageStructure,
 	}
 	if err := s.ensureNoActiveOverlap(ctx, draft, ""); err != nil {
 		return contracts.Contract{}, err
@@ -208,6 +209,7 @@ func (s *Service) Update(ctx context.Context, id string, in contracts.ContractIn
 	updated.EndDate = in.EndDate
 	updated.MonthlySalary = in.MonthlySalary
 	updated.NoteFa = in.NoteFa
+	updated.WageStructure = in.WageStructure
 	if updated.Status == domain.StatusRejected {
 		updated.Status = domain.StatusDraft
 	}
@@ -417,6 +419,9 @@ func (s *Service) Renew(ctx context.Context, id string, in contracts.ContractRen
 	draft.CreatedBy = actor
 	draft.Version = 0
 	draft.NoteFa = in.NoteFa
+	// اجزای مزد و اقلیمی از قرارداد پیشین ارث می‌رسد و مقدارهای داده‌شده آن را بازنویسی
+	// می‌کنند؛ تمدید قرارداد نباید بی‌صدا فوق‌العاده‌های اقلیمی کارمند را صفر کند.
+	draft.WageStructure.ApplyOverride(in.WageStructure)
 	draft.Events = []domain.Event{s.event(actor, domain.ActionRenew, "تمدید قرارداد پیشین "+current.ID)}
 
 	if err := s.ensureNoActiveOverlap(ctx, draft, ""); err != nil {

@@ -557,18 +557,22 @@ func TestParametricPayrollTemplatesAndReportBuilder(t *testing.T) {
 		t.Fatalf("فیش چاپی تفکیک اقلام حقوق را ندارد")
 	}
 
-	// حکم کارگزینی و قرارداد کار باید جدول اجزای مزد و فوق‌العاده‌ها را داشته باشند.
+	// حکم کارگزینی و قرارداد کار باید جدول «اجزای مزد مبنا و فوق‌العاده‌ها» را داشته باشند
+	// و فوق‌العاده‌های اقلیمی همان کارمند (از حکم/قرارداد او) در آن آمده باشد.
 	for _, docKind := range []string{"salary_decree", "contract"} {
 		doc := call(t, h, http.MethodGet, "/api/v1/documents/preview/"+docKind, token, nil)
 		if doc.Code != http.StatusOK {
 			t.Fatalf("پیش‌نمایش %s باید ۲۰۰ بدهد، %d داد: %s", docKind, doc.Code, doc.Body.String())
 		}
 		body := doc.Body.String()
-		if !strings.Contains(body, "اجزای مزد و فوق") {
-			t.Fatalf("سند %s جدول اجزای مزد را ندارد", docKind)
+		if !strings.Contains(body, "اجزای مزد مبنا و فوق") {
+			t.Fatalf("سند %s جدول اجزای مزد مبنا را ندارد", docKind)
 		}
 		if !strings.Contains(body, "بدی آب و هوا") {
 			t.Fatalf("سند %s فوق‌العادهٔ بدی آب و هوا را ندارد", docKind)
+		}
+		if !strings.Contains(body, "مزد مبنا") {
+			t.Fatalf("سند %s سطر مزد مبنا را ندارد", docKind)
 		}
 	}
 

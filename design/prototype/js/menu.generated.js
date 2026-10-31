@@ -131,6 +131,8 @@ window.HRMS_MENU = [
         { page: "payReports", label: "گزارش‌های مالی حقوق", icon: "bar-chart", roles: ['admin', 'hr_manager', 'hr_spec'] },
         { page: "serviceBonus", label: "پاداش پایان خدمت (سنوات)", icon: "calculator", roles: ['admin', 'hr_manager', 'hr_spec'] },
         { page: "payParams", label: "پارامترها و ضرائب حقوق", icon: "percent", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "statutoryFiles", label: "فایل قانونی بیمه و مالیات", icon: "file-check", roles: ['admin', 'hr_manager'] },
+        { page: "bankPayments", label: "فایل پرداخت بانکی", icon: "banknote", roles: ['admin', 'hr_manager'] },
         ],
       },
       {
@@ -652,6 +654,8 @@ window.HRMS_MENU = [
         { page: "docTemplates", label: "قالب‌های متن اسناد", icon: "file-text", roles: ['admin', 'hr_manager'] },
         { page: "catalogs", label: "کاتالوگ‌های مرجع", icon: "database", roles: ['admin', 'hr_manager'] },
         { page: "companies", label: "شرکت‌ها و استقرارها", icon: "building", roles: ['admin', 'hr_manager'] },
+        { page: "branding", label: "نشان و QR کد شرکت‌ها", icon: "image", roles: ['admin', 'hr_manager'] },
+        { page: "dataExchange", label: "تبادل داده و قالب‌های بارگذاری", icon: "database", roles: ['admin', 'hr_manager'] },
         ],
       },
       ],

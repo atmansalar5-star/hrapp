@@ -3486,6 +3486,26 @@
             "hr_manager",
             "hr_spec"
           ]
+        },
+        {
+          "key": "statutoryFiles",
+          "order": 8,
+          "titleFa": "فایل قانونی بیمه و مالیات",
+          "component": "StatutoryFilesScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "bankPayments",
+          "order": 9,
+          "titleFa": "فایل پرداخت بانکی",
+          "component": "BankFilesScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
         }
       ]
     },
@@ -5355,6 +5375,26 @@
           "order": 9,
           "titleFa": "شرکت‌ها و استقرارها",
           "component": "CompaniesScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "branding",
+          "order": 10,
+          "titleFa": "نشان و QR کد شرکت‌ها",
+          "component": "BrandingScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "dataExchange",
+          "order": 11,
+          "titleFa": "تبادل داده و قالب‌های بارگذاری",
+          "component": "DataExchangeScreen",
           "roles": [
             "admin",
             "hr_manager"

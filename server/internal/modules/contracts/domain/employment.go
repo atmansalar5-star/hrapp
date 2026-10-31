@@ -13,6 +13,7 @@ import (
 
 	"hrms/internal/contracts"
 	"hrms/internal/platform/calendar"
+	"hrms/internal/rules"
 )
 
 // Contract قرارداد کار در حافظهٔ سامانه.
@@ -35,6 +36,10 @@ type Contract struct {
 	DecidedBy      string
 	Events         []Event
 	Version        int
+
+	// WageStructure اجزای ثابت مزد و فوق‌العاده‌های اقلیمی همین قرارداد؛ همان ساختاری که
+	// حکم کارگزینی دارد تا فیش حقوق در نبود حکم از قرارداد هم همان مزد مبنا را بسازد.
+	contracts.WageStructure
 }
 
 // Event رخداد زندگی قرارداد.
@@ -161,6 +166,7 @@ func (c Contract) ToContract(today calendar.Date) contracts.Contract {
 		DecidedBy:        c.DecidedBy,
 		Events:           eventsToContract(c.Events),
 		Version:          c.Version,
+		WageStructure:    c.WageStructure,
 	}
 }
 
@@ -324,6 +330,47 @@ func Validate(in contracts.ContractInput) map[string]string {
 			case days > MaxFixedTermDays:
 				errs["endDate"] = "مدت قرارداد موقت نمی‌تواند از ۵ سال بیشتر باشد."
 			}
+		}
+	}
+	// اجزای مزد و ضرایب اقلیمی همان قاعدهٔ حکم کارگزینی را دارند (۰٫۲۵ = ۲۵٪).
+	for k, v := range ValidateWageStructure(in.WageStructure) {
+		errs[k] = v
+	}
+	return errs
+}
+
+// ValidateWageStructure اعتبارسنجی اجزای مزد و ضرایب اقلیمی قرارداد.
+//
+// چرا در دامنهٔ ماژول قراردادها تکرار شده: هر ماژول قاعدهٔ سند خودش را دارد و مرز ماژول
+// اجازه نمی‌دهد از دامنهٔ ماژول احکام import شود؛ متن پیام‌ها یکی است و هر دو از همان
+// جدول مناطق اقلیمی (`rules`) می‌خوانند، پس واگرایی معنا رخ نمی‌دهد.
+func ValidateWageStructure(w contracts.WageStructure) map[string]string {
+	errs := map[string]string{}
+	if region := strings.TrimSpace(w.ClimateRegion); region != "" {
+		if _, ok := rules.ClimateRegionByKey(region); !ok {
+			errs["climateRegion"] = "منطقهٔ اقلیمی انتخابی در فهرست مناطق اقلیمی نیست."
+		}
+	}
+	for key, p := range map[string]float64{
+		"badClimatePercent":     w.BadClimatePercent,
+		"deprivationPercent":    w.DeprivationPercent,
+		"regionHardshipPercent": w.RegionHardshipPercent,
+		"extraTimePercent":      w.ExtraTimePercent,
+	} {
+		if p < 0 || p > 1 {
+			errs[key] = "ضریب فوق‌العاده‌های اقلیمی باید نسبتی بین ۰ و ۱ باشد (۰٫۲۵ یعنی ۲۵٪)."
+		}
+	}
+	for key, amount := range map[string]int64{
+		"rankWage":           w.RankWage,
+		"seniorityWage":      w.SeniorityWage,
+		"postAllowance":      w.PostAllowance,
+		"sacrificeAllowance": w.SacrificeAllowance,
+		"climateAllowance":   w.ClimateAllowance,
+		"salaryRepair":       w.SalaryRepair,
+	} {
+		if amount < 0 {
+			errs[key] = "مبلغ این جزء نمی‌تواند منفی باشد."
 		}
 	}
 	return errs

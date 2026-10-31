@@ -14,9 +14,15 @@ import (
 )
 
 // newTestServer سرور کامل (همهٔ ماژول‌ها) روی حافظه می‌سازد.
+//
+// پوشهٔ دادهٔ سرور به یک پوشهٔ موقت آزمون تنظیم می‌شود: بارگذاری فایل در آزمون‌ها نباید
+// در درخت مخزن (مثل server/internal/bootstrap/data) رد پا بگذارد.
 func newTestServer(t *testing.T) http.Handler {
 	t.Helper()
-	deps, err := NewDeps(Config{JWTSecret: []byte("test-secret-key-for-integration")})
+	deps, err := NewDeps(Config{
+		JWTSecret: []byte("test-secret-key-for-integration"),
+		DataDir:   t.TempDir(),
+	})
 	if err != nil {
 		t.Fatalf("ساخت وابستگی‌ها ناموفق: %v", err)
 	}

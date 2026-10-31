@@ -55,6 +55,7 @@ func run() error {
 	orgFlag := flag.String("org", "", "شناسهٔ شرکت فعال (استقرار پارامتریک)؛ خالی یعنی پیش‌فرض organizations.json")
 	dbFlag := flag.String("db", "", "نشانی Postgres؛ خالی یعنی متغیر HRMS_DATABASE_URL و در نبود آن اجرای درون‌حافظه‌ای")
 	rootFlag := flag.String("root", ".", "ریشهٔ پوشهٔ سرور برای یافتن migrations (پوشهٔ migrations و internal/modules/*/migrations)")
+	dataFlag := flag.String("data", "data", "پوشهٔ دادهٔ سرور برای فایل‌های بارگذاری‌شده (نشان شرکت)؛ نسبی یعنی کنار ریشهٔ سرور")
 	migrateFlag := flag.Bool("migrate", true, "اجرای مهاجرت‌های اعمال‌نشده در زمان راه‌اندازی (وقتی پایگاه‌داده تنظیم شده باشد)")
 	seedDemoFlag := flag.Bool("seed-demo", false, "بذرکاری دادهٔ نمونهٔ آزمایشی روی پایگاه‌دادهٔ واقعی، فقط برای جدول‌های خالی (متغیر محیطی: HRMS_SEED_DEMO=1)")
 	debug := flag.Bool("debug", false, "سطح لاگ تفصیلی")
@@ -109,6 +110,7 @@ func run() error {
 		Org:         orgID,
 		DatabaseURL: dsn,
 		ServerRoot:  *rootFlag,
+		DataDir:     *dataFlag,
 		Migrate:     *migrateFlag,
 		SeedDemo:    seedDemo,
 	}

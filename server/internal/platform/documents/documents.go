@@ -118,6 +118,12 @@ type PayslipInfo struct {
 	InsuranceEmployer int64
 	Tax               int64
 	Net               int64
+	// MazdBase مزد مبنا: جمع اجزای ثابت مزد کارمند (از حکم یا قرارداد). مبنای اضافه‌کاری و
+	// فوق‌العاده‌های درصدی است، پس روی فیش چاپی هم می‌آید.
+	MazdBase int64
+	// WageSourceFa منبع اجزای مزد («از حکم کارگزینی DEC-...») تا خوانندهٔ فیش بداند عدد از
+	// کدام سند آمده است.
+	WageSourceFa string
 	// Elements تفکیک اقلام حقوق؛ همان محاسبه‌ای را نشان می‌دهد که شبیه‌ساز فیش می‌دهد.
 	Elements []PayslipElement
 }
@@ -131,11 +137,17 @@ type PayslipElement struct {
 }
 
 // StructureRow یک سطر از «اجزای مزد و فوق‌العاده‌ها» در حکم کارگزینی و قرارداد کار.
+//
+// GroupFa گروه سطر است («اجزای مزد مبنا»، «فوق‌العاده‌های اقلیمی»، …) و Total یعنی این سطر
+// جمع گروه است؛ همین دو، جدول چاپی را خوانا می‌کند: خواننده می‌بیند مزد مبنا از چه ساخته
+// شده و کدام اقلام روی آن سوار می‌شوند.
 type StructureRow struct {
 	TitleFa  string
 	KindFa   string
 	DetailFa string
 	AmountFa string
+	GroupFa  string
+	Total    bool
 }
 
 // Data همهٔ دادهٔ لازم برای ساخت یک سند چاپی.
@@ -156,6 +168,10 @@ type Data struct {
 	// CustomBody یعنی متن از قالب طراحى‌شدهٔ کاربر آمده است و به‌صورت بند‌بند نمایش
 	// داده می‌شود؛ نه فهرست پیش‌فرض سامانه.
 	CustomBody bool
+	// VerifyURL نشانی صفحهٔ تأیید سند (مقصد QR کد چاپشده) و QRCodeSVG همان کد به شکل
+	// SVG درون سند. هر دو را سرور میسازد، پس ورودی کاربر نیستند.
+	VerifyURL string
+	QRCodeSVG template.HTML
 }
 
 // ApplyTemplate جای‌نگهدارهای «{{key}}» را در متن قالب با مقادیر واقعی جایگزین می‌کند و
@@ -454,6 +470,12 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
 
   {{if .Payslip}}{{if .Payslip.Elements}}
   <h2>تفکیک اقلام حقوق</h2>
+  {{if .Payslip.MazdBase}}
+  <table>
+    <tr><th>مزد مبنا (مبنای اضافه‌کاری و فوق‌العاده‌های درصدی)</th><td class="num">{{.Payslip.MazdBase}}</td>
+        <th>منبع اجزای مزد</th><td>{{if .Payslip.WageSourceFa}}{{.Payslip.WageSourceFa}}{{else}}پروندهٔ پرسنلی و پارامترهای شرکت{{end}}</td></tr>
+  </table>
+  {{end}}
   <table>
     <tr><th>قلم حقوق</th><th>نوع</th><th>مبلغ محاسبه‌شده</th><th>شرح</th></tr>
     {{range .Payslip.Elements}}<tr><td>{{.TitleFa}}</td><td>{{.CategoryFa}}</td><td class="num">{{.AmountFa}}</td><td>{{.DetailFa}}</td></tr>{{end}}
@@ -461,11 +483,12 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
   {{end}}{{end}}
 
   {{if .Structure}}
-  <h2>اجزای مزد و فوق‌العاده‌ها</h2>
+  <h2>اجزای مزد مبنا و فوق‌العاده‌ها</h2>
   <table>
-    <tr><th>جزء / فوق‌العاده</th><th>نوع</th><th>نحوهٔ محاسبه</th><th>مبلغ</th></tr>
-    {{range .Structure}}<tr><td>{{.TitleFa}}</td><td>{{.KindFa}}</td><td>{{.DetailFa}}</td><td class="num">{{.AmountFa}}</td></tr>{{end}}
+    <tr><th>جزء / فوق‌العاده</th><th>نوع</th><th>نحوهٔ محاسبه</th><th>مبلغ (ریال)</th></tr>
+    {{range .Structure}}<tr{{if .Total}} class="total"{{end}}><td>{{if .Total}}<b>{{.TitleFa}}</b>{{else}}{{.TitleFa}}{{end}}</td><td>{{.KindFa}}</td><td>{{.DetailFa}}</td><td class="num">{{.AmountFa}}</td></tr>{{end}}
   </table>
+  <p class="muted">مزد مبنا جمع اجزای ثابت است و مبنای محاسبهٔ اضافه‌کاری، شب‌کاری، نوبت‌کاری و فوق‌العاده‌های اقلیمی (که درصدی از همین مزد مبنا هستند و جداگانه پرداخت می‌شوند).</p>
   {{end}}
 
   {{if .BodyFa}}
@@ -489,6 +512,12 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
   <footer>
     <span>سامانهٔ جامع منابع انسانی — {{.Company.TitleFa}}</span>
     <span>کد رهگیری سند: {{.VerifyCode}}</span>
+    {{if .QRCodeSVG}}
+    <span class="doc-qr">
+      {{.QRCodeSVG}}
+      <small>برای بررسی اصالت سند، این کد را با دوربین تلفن بخوانید.</small>
+    </span>
+    {{end}}
   </footer>
 </div>
 <script>

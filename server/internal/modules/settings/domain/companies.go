@@ -45,6 +45,9 @@ func companyProfilesKind() recordkit.Kind {
 			"headcount|تعداد کارکنان|number|0",
 			"brandColor|رنگ برند (#RRGGBB)|text|0",
 			"logoFile|پروندهٔ نشان شرکت|text|0",
+			"logoHash|اثر انگشت نشان|text|0",
+			"logoSizeKb|حجم نشان (کیلوبایت)|number|0",
+			"logoUpdatedAt|تاریخ بارگذاری نشان|date|0",
 			"calendar|تقویم|text|0",
 			"currencyFa|واحد پول|text|0",
 			"workWeekFa|هفتهٔ کاری|text|0",
@@ -79,6 +82,10 @@ func companyProfilesKind() recordkit.Kind {
 			"restore|بازگردانی شرکت|primary|active|0|admin,hr_manager",
 		),
 		Validate: validateCompanyProfile,
+		// شرکت، دادهٔ پیکربندی است نه سند گردشکاری: اطلاعاتش (نام، هلدینگ، برند،
+		// شناسه‌های قانونی و پارامترها) در وضعیت فعال هم ویرایش می‌شود؛ فقط شرکت
+		// بایگانی‌شده دست‌نخورده می‌ماند تا سابقهٔ اسنادش تغییر نکند.
+		EditableStatuses: []string{"draft", "active"},
 	}
 }
 

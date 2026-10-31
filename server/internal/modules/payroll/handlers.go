@@ -66,13 +66,20 @@ func registerFinanceEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *reco
 
 		input := body.input()
 		result := rules.ComputePayroll(input, params)
-		env, _ := simulateEnv(body, values, params, input, result)
+		env, wages := simulateEnv(body, values, params, input, result)
 
+		lines := elementBreakdown(activeElements(r.Context(), svc), env)
 		httpx.WriteJSON(w, http.StatusOK, map[string]any{
-			"result":    result,
-			"params":    params,
-			"elements":  elementBreakdown(activeElements(r.Context(), svc), env),
-			"baseGiven": body.BaseSalary,
+			"result":        result,
+			"params":        params,
+			"elements":      lines,
+			"baseGiven":     body.BaseSalary,
+			"wages":         wages,
+			"mazdBase":      rules.RoundHalfUp(wages.Total()),
+			"mazdBreakdown": wages.Breakdown(),
+			"climate":       body.climate(values),
+			"totals":        elementTotals(lines),
+			"warningsFa":    paramWarnings(inactivePayParamCount(r.Context(), svc), lines),
 		})
 	}))
 
@@ -105,20 +112,30 @@ func registerFinanceEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *reco
 		}
 
 		params, values, _ := collectParams(r.Context(), deps, svc)
-		body := simulateInput{BaseSalary: emp.BaseSalary}
+		// اجزای مزد و فوق‌العاده‌های اقلیمی از سند کارگزینی خودِ کارمند می‌آید: ابتدا حکم
+		// ابلاغ‌شده و در نبود آن قرارداد جاری. پیش از این، فیش فقط پایهٔ پرونده را می‌خواند
+		// و در نتیجه مزد مبنا ناقص و فوق‌العاده‌های اقلیمی سازمانی می‌ماند.
+		body, wageSource := payslipInput(r.Context(), deps, emp)
 		input := body.input()
 		result := rules.ComputePayroll(input, params)
 		env, wages := simulateEnv(body, values, params, input, result)
 
+		lines := elementBreakdown(activeElements(r.Context(), svc), env)
 		httpx.WriteJSON(w, http.StatusOK, map[string]any{
 			"employee": map[string]any{
 				"id": emp.ID, "fullName": emp.FullName, "department": emp.DepartmentName,
 				"position": emp.Position, "baseSalary": emp.BaseSalary,
 			},
-			"period":   periodFa(deps),
-			"result":   result,
-			"wages":    wages,
-			"elements": elementBreakdown(activeElements(r.Context(), svc), env),
+			"period":        periodFa(deps),
+			"result":        result,
+			"wages":         wages,
+			"mazdBase":      rules.RoundHalfUp(wages.Total()),
+			"mazdBreakdown": wages.Breakdown(),
+			"climate":       body.climate(values),
+			"wageSource":    wageSource,
+			"elements":      lines,
+			"totals":        elementTotals(lines),
+			"warningsFa":    paramWarnings(inactivePayParamCount(r.Context(), svc), lines),
 		})
 	}))
 
@@ -127,8 +144,9 @@ func registerFinanceEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *reco
 }
 
 // simulateInput ورودی شبیه‌سازی فیش. افزون بر مزد شغل و اضافه‌کاری، اجزای مزد
-// (رتبه/سنوات/پست/ایثارگری)، اقلام متغیر (کارانه، مأموریت) و ساعت‌های جمعه/تعطیل‌کاری
-// هم گرفته می‌شود تا همهٔ اقلام پارامتریک قابل محاسبه باشند.
+// (رتبه/سنوات/پست/ایثارگری/ترمیم)، فوق‌العاده‌های اقلیمی همان کارمند (منطقه، مبلغ مصوب و
+// ضرایب)، اقلام متغیر (کارانه، مأموریت) و ساعت‌های جمعه/تعطیل‌کاری هم گرفته می‌شود تا
+// همهٔ اقلام پارامتریک قابل محاسبه باشند و «مزد مبنا» کامل ساخته شود.
 type simulateInput struct {
 	BaseSalary         int64             `json:"baseSalary"`
 	Children           int               `json:"children"`
@@ -139,12 +157,77 @@ type simulateInput struct {
 	SeniorityWage      int64             `json:"seniorityWage"`
 	PostAllowance      int64             `json:"postAllowance"`
 	Sacrifice          int64             `json:"sacrificeAllowance"`
+	SalaryRepair       int64             `json:"salaryRepair"`
 	KaranaAmount       int64             `json:"karanaAmount"`
 	MissionDays        int64             `json:"missionDays"`
 	MissionPerDiem     int64             `json:"missionPerDiem"`
 	FridayHours        int64             `json:"fridayHours"`
 	HolidayHours       int64             `json:"holidayHours"`
 	Overrides          map[string]string `json:"overrides"`
+
+	// فوق‌العاده‌های اقلیمی: منطقه، مبلغ مصوب ماهانه، و ضرایب همان کارمند (صفر = پارامتر شرکت).
+	ClimateRegion         string  `json:"climateRegion"`
+	ClimateAllowance      int64   `json:"climateAllowance"`
+	BadClimatePercent     float64 `json:"badClimatePercent"`
+	DeprivationPercent    float64 `json:"deprivationPercent"`
+	RegionHardshipPercent float64 `json:"regionHardshipPercent"`
+	ExtraTimePercent      float64 `json:"extraTimePercent"`
+}
+
+// ClimateVars ضرایب اقلیمی این ورودی را به کلیدهای پارامتریک اقلام تبدیل می‌کند؛ ضریب
+// صفر فرستاده نمی‌شود تا مقدار پارامتر شرکت (یا منطقهٔ اقلیمی) به کار برود.
+func (b simulateInput) ClimateVars() map[string]float64 {
+	out := map[string]float64{}
+	for key, v := range map[string]float64{
+		"allowance.badClimate":     b.BadClimatePercent,
+		"allowance.deprivation":    b.DeprivationPercent,
+		"allowance.regionHardship": b.RegionHardshipPercent,
+		"allowance.extraTime":      b.ExtraTimePercent,
+	} {
+		if v != 0 {
+			out[key] = v
+		}
+	}
+	return out
+}
+
+// climate ضرایب اقلیمی نهایی را می‌سازد (کارمند → پارامتر شرکت → منطقهٔ اقلیمی) تا فیش
+// بتواند منبع هر ضریب را نشان دهد.
+func (b simulateInput) climate(values map[string]string) rules.ClimateAllowances {
+	percent := map[string]float64{}
+	for k, v := range values {
+		if f, ok := floatOf(v); ok {
+			percent[k] = f
+		}
+	}
+	for k, v := range b.ClimateVars() {
+		percent[k] = v
+	}
+	region := rules.ClimateAllowancesFor(b.ClimateRegion)
+	pick := func(own float64, key string, fallback float64) float64 {
+		if own != 0 {
+			return own
+		}
+		if v, ok := percent[key]; ok && v != 0 {
+			return v
+		}
+		return fallback
+	}
+	out := rules.ClimateAllowances{
+		BadClimate:     pick(b.BadClimatePercent, "allowance.badClimate", region.BadClimate),
+		Deprivation:    pick(b.DeprivationPercent, "allowance.deprivation", region.Deprivation),
+		RegionHardship: pick(b.RegionHardshipPercent, "allowance.regionHardship", region.RegionHardship),
+		ExtraTime:      pick(b.ExtraTimePercent, "allowance.extraTime", region.ExtraTime),
+		RegionFa:       region.RegionFa,
+	}
+	if b.BadClimatePercent != 0 || b.DeprivationPercent != 0 || b.RegionHardshipPercent != 0 || b.ExtraTimePercent != 0 {
+		out.SourceFa = "حکم کارگزینی یا قرارداد کارمند"
+	} else if _, ok := percent["allowance.badClimate"]; ok {
+		out.SourceFa = "پارامترهای شرکت"
+	} else if region.RegionFa != "" {
+		out.SourceFa = "پیش‌فرض منطقهٔ اقلیمی"
+	}
+	return out
 }
 
 // input ورودی محاسبهٔ موتور قواعد را می‌سازد.
@@ -178,22 +261,161 @@ func simulateEnv(body simulateInput, values map[string]string, params rules.Payr
 	vars["fridayHours"] = float64(body.FridayHours)
 	vars["holidayHours"] = float64(body.HolidayHours)
 
-	// مزد مبنا از جمع اجزای مزد ساخته می‌شود؛ مزد شغل پیش‌فرض همان مزد ورودی است.
-	wages := rules.WageComponents{
-		Job:           pickWage(body.BaseSalary, vars["wage.job"]),
-		Rank:          pickWage(body.RankWage, vars["wage.rank"]),
-		Seniority:     pickWage(body.SeniorityWage, vars["wage.seniority"]),
-		PostAllowance: pickWage(body.PostAllowance, vars["allowance.post"]),
-		Sacrifice:     pickWage(body.Sacrifice, vars["allowance.sacrifice"]),
+	// مزد مبنا از سازندهٔ مشترک اجزای مزد می‌آید: مزد شغل پیش‌فرض همان مزد ورودی است،
+	// ثابت‌های شغلی درصدی از «مزد شغل و ملحقات» ساخته می‌شوند و در پایان مزد مبنا به
+	// دست می‌آید. هر جزء را ورودی کاربر می‌تواند بازنویسی کند (اولویت با کارمند).
+	wageVars := map[string]float64{}
+	for k, v := range vars {
+		wageVars[k] = v
 	}
+	wageVars["wage.job"] = pickWage(body.BaseSalary, vars["wage.job"])
+	if body.RankWage != 0 {
+		wageVars["wage.rank"] = float64(body.RankWage)
+	}
+	if body.SeniorityWage != 0 {
+		wageVars["wage.seniority"] = float64(body.SeniorityWage)
+	}
+	if body.PostAllowance != 0 {
+		wageVars["allowance.post"] = float64(body.PostAllowance)
+	}
+	if body.Sacrifice != 0 {
+		wageVars["allowance.sacrifice"] = float64(body.Sacrifice)
+	}
+	if body.ClimateAllowance != 0 {
+		wageVars["allowance.climate"] = float64(body.ClimateAllowance)
+	}
+	for k, v := range body.ClimateVars() {
+		wageVars[k] = v
+	}
+	wages := rules.WageComponentsFromVars(wageVars)
 	for k, v := range wages.Vars() {
 		vars[k] = v
 	}
+	// ضرایب اقلیمی خودِ کارمند (از حکم/قرارداد) بر پارامتر شرکت اولویت دارند؛ اینها را
+	// روی همان متغیرهایی می‌نشانیم که اقلام درصدی از آن‌ها ضریب می‌گیرند، وگرنه فیش
+	// مقدار سازمانی را حساب می‌کرد و حکم کارمند بی‌اثر می‌ماند.
+	for k, v := range body.ClimateVars() {
+		vars[k] = v
+	}
 	return rules.ElementEnv{
-		Bases:     rules.BaseElementBases(input, params, result, float64(body.KaranaAmount), wages.Total()),
+		Bases:     rules.BaseElementBases(input, params, result, float64(body.KaranaAmount), wages),
 		Vars:      vars,
 		Canonical: rules.CanonicalElementAmounts(result),
 	}, wages
+}
+
+// payslipInput ورودی فیش یک کارمند را می‌سازد.
+//
+// ترتیب منابع عمدی است: حکم ابلاغ‌شده → قرارداد جاری → پروندهٔ پرسنلی. حکم سند مبنای
+// پرداخت است؛ اگر نبود، قرارداد تعهد کارمند را می‌گوید؛ و در نهایت پایهٔ پرونده.
+// مبلغ پایهٔ سند بر پرونده مقدم است تا فیش با سندی که به کارمند ابلاغ شده یکی بماند.
+func payslipInput(ctx context.Context, deps modulekit.Deps, emp contracts.Employee) (simulateInput, string) {
+	body := simulateInput{BaseSalary: emp.BaseSalary}
+	source := "پروندهٔ پرسنلی"
+	if reader, ok := deps.Ports.SalaryDecrees(); ok {
+		if decree, found, err := reader.NotifiedDecreeOf(ctx, emp.ID); err == nil && found {
+			body.BaseSalary = firstPositive(decree.BaseSalary, emp.BaseSalary)
+			body.RankWage = decree.RankWage
+			body.SeniorityWage = decree.SeniorityWage
+			body.PostAllowance = decree.PostAllowance
+			body.Sacrifice = decree.SacrificeAllowance
+			body.SalaryRepair = decree.SalaryRepair
+			body.ClimateRegion = decree.ClimateRegion
+			body.ClimateAllowance = decree.ClimateAllowance
+			body.BadClimatePercent = decree.BadClimatePercent
+			body.DeprivationPercent = decree.DeprivationPercent
+			body.RegionHardshipPercent = decree.RegionHardshipPercent
+			body.ExtraTimePercent = decree.ExtraTimePercent
+			return body, "حکم کارگزینی " + decree.ID
+		}
+	}
+	if reader, ok := deps.Ports.ContractDocuments(); ok {
+		if c, found, err := reader.ActiveContractOf(ctx, emp.ID); err == nil && found {
+			body.BaseSalary = firstPositive(c.MonthlySalary, emp.BaseSalary)
+			body.RankWage = c.RankWage
+			body.SeniorityWage = c.SeniorityWage
+			body.PostAllowance = c.PostAllowance
+			body.Sacrifice = c.SacrificeAllowance
+			body.SalaryRepair = c.SalaryRepair
+			body.ClimateRegion = c.ClimateRegion
+			body.ClimateAllowance = c.ClimateAllowance
+			body.BadClimatePercent = c.BadClimatePercent
+			body.DeprivationPercent = c.DeprivationPercent
+			body.RegionHardshipPercent = c.RegionHardshipPercent
+			body.ExtraTimePercent = c.ExtraTimePercent
+			return body, "قرارداد کار " + c.ID
+		}
+	}
+	return body, source
+}
+
+// firstPositive مقدار اصلی را برمی‌گرداند و اگر صفر بود، جایگزین را.
+func firstPositive(primary, fallback int64) int64 {
+	if primary > 0 {
+		return primary
+	}
+	return fallback
+}
+
+// inactivePayParamCount شمار پارامترهای حقوقی را می‌شمارد که «جاری» نیستند و بنابراین در
+// محاسبه اثر ندارند. چرا لازم است: تنها پارامتر جاری اثر عملیاتی دارد و اگر سازمان
+// پارامترها را جاری نکرده باشد، اقلام درصدی «حل‌نشده» می‌مانند؛ کاربر باید دلیل را
+// ببیند، نه اینکه فکر کند فیش خراب است.
+func inactivePayParamCount(ctx context.Context, svc *recordkit.Service) int {
+	if svc == nil {
+		return 0
+	}
+	page, err := svc.List(ctx, contracts.RecordFilter{Module: "payroll", Kind: "payParams", Size: 500})
+	if err != nil {
+		return 0
+	}
+	n := 0
+	for _, rec := range page.Items {
+		if rec.Status != "active" {
+			n++
+		}
+	}
+	return n
+}
+
+// paramWarnings پیام‌های فارسی وضعیت پارامترها را می‌سازد: تعداد پارامترهای غیرجاری و
+// شمار اقلامی که به همین دلیل حل نشدند.
+func paramWarnings(inactive int, lines []rules.PayElementLine) []string {
+	out := []string{}
+	if inactive > 0 {
+		out = append(out, fmt.Sprintf("%d پارامتر حقوق در وضعیت «پیش‌نویس/غیرفعال» است و در محاسبه اثر ندارد؛ برای اثرگذاری، در صفحهٔ «پارامترهای حقوق» دکمهٔ «جاری‌سازی پارامترهای پیش‌نویس» را بزنید.", inactive))
+	}
+	unresolved := 0
+	for _, line := range lines {
+		if !line.Resolved {
+			unresolved++
+		}
+	}
+	if unresolved > 0 {
+		out = append(out, fmt.Sprintf("%d قلم حقوق محاسبه نشد؛ شرح هر سطر در جدول اقلام آمده است.", unresolved))
+	}
+	return out
+}
+
+// elementTotals جمع اقلام حل‌شدهٔ فیش را می‌سازد: مزایا، کسور و خالص.
+//
+// چرا جدا از نتیجهٔ موتور: نتیجهٔ موتور مرجع (که با هستهٔ Rust هم‌ارزی‌سنجی می‌شود) فقط
+// مزد پایه و مزایای قانونی را می‌شناسد، ولی فیش پارامتریک همهٔ اقلام تعریف‌شدهٔ سازمان را
+// نشان می‌دهد. با گزارش این جمع‌ها، رابط می‌تواند هر دو عدد را با برچسب روشن نشان دهد و
+// کاربر عدد ناهمخوان نبیند.
+func elementTotals(lines []rules.PayElementLine) map[string]float64 {
+	earning, deduction := 0.0, 0.0
+	for _, line := range lines {
+		if !line.Resolved {
+			continue
+		}
+		if strings.TrimSpace(line.Category) == "deduction" {
+			deduction += line.Amount
+			continue
+		}
+		earning += line.Amount
+	}
+	return map[string]float64{"earning": earning, "deduction": deduction, "net": earning - deduction}
 }
 
 // periodFa دورهٔ جاری را به شکل «۱۴۰۵/۰۷» برمی‌گرداند.

@@ -96,17 +96,20 @@ func ParamsVars(params PayrollParams) map[string]float64 {
 	}
 }
 
-// BaseElementBases مبناهای محاسبهٔ اقلام درصدی را می‌سازد. `mazdBase` همان مزد مبنا
-// است که فوق‌العاده‌های درصدی روی آن سوار می‌شوند.
-func BaseElementBases(input PayrollInput, params PayrollParams, result PayrollResult, karanaAmount, mazdBase float64) map[string]float64 {
+// BaseElementBases مبناهای محاسبهٔ اقلام درصدی را می‌سازد. `mazd` همان مزد مبنا است که
+// فوق‌العاده‌های درصدی (اقلیمی، نوبت‌کاری، سختی کار) روی آن سوار می‌شوند، و `jobwage`
+// «مزد شغل و ملحقات» است که ثابت‌های شغلی درصدی از آن ساخته می‌شوند. هر دو مبنا از یک
+// جا می‌آیند (`WageComponents`) تا فیش، حکم و قرارداد یک عدد ببینند.
+func BaseElementBases(input PayrollInput, params PayrollParams, result PayrollResult, karanaAmount float64, wages WageComponents) map[string]float64 {
 	return map[string]float64{
 		"base":     float64(input.BaseSalary),
 		"gross":    float64(result.Gross),
 		"housing":  float64(params.HousingAllowance),
 		"karana":   karanaAmount,
 		"constant": 0,
-		"mazd":     mazdBase,
-		"wage":     mazdBase,
+		"jobwage":  wages.JobAndAttachments(),
+		"mazd":     wages.Total(),
+		"wage":     wages.Total(),
 	}
 }
 
@@ -188,6 +191,8 @@ func BasisFa(basis string) string {
 		return "کارانه"
 	case "constant":
 		return "مقدار ثابت"
+	case "jobwage":
+		return "مزد شغل و ملحقات"
 	case "mazd", "wage":
 		return "مزد مبنا"
 	default:

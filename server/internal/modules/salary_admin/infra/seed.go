@@ -3,12 +3,16 @@
 package infra
 
 import (
+	"hrms/internal/contracts"
 	"hrms/internal/modules/salary_admin/domain"
 	"hrms/internal/platform/calendar"
 )
 
-// SeedDecrees احکام حقوق نمونه در همهٔ وضعیت‌های گردش‌کار — هم‌خوان با کارکنان نمونه.
+// SeedDecrees احکام حقوق نمونه در همهٔ وضعیت‌های گردشکار — همخوان با کارکنان نمونه.
 // تاریخ اجرا نسبت به امروز ساخته می‌شود تا نمونهٔ نمایشی همیشه معنادار بماند.
+//
+// هر حکم اجزای مزد و منطقهٔ اقلیمی خودش را دارد: نمونهٔ نمایشی باید همان چیزی را نشان
+// دهد که در عمل ثبت می‌شود (مزد مبنا از اجزای حکم + فوق‌العاده‌های اقلیمی همان منطقه).
 func SeedDecrees(today calendar.Date) []domain.SalaryDecree {
 	day := func(offset int) string {
 		d, err := today.AddDays(offset)
@@ -25,6 +29,13 @@ func SeedDecrees(today calendar.Date) []domain.SalaryDecree {
 			JobGroup: "کارشناس ارشد", BaseSalary: 318_000_000, EffectiveDate: day(-5),
 			ReasonFa: "ترفیع گروه شغلی", Status: domain.DecreeIssued,
 			CreatedBy: "hr.spec", NoteFa: "در انتظار ابلاغ به کارمند",
+			WageStructure: contracts.WageStructure{
+				ClimateRegion: "south_coast",
+				RankWage:      28_000_000, SeniorityWage: 34_000_000,
+				PostAllowance: 12_000_000, ClimateAllowance: 18_000_000,
+				BadClimatePercent: 0.25, DeprivationPercent: 0.25,
+				RegionHardshipPercent: 0.30, ExtraTimePercent: 0.15,
+			},
 		},
 		{
 			ID: "DEC-1404-0213", EmployeeID: "EMP-005", EmployeeName: "محمد احمدی",
@@ -33,6 +44,14 @@ func SeedDecrees(today calendar.Date) []domain.SalaryDecree {
 			JobGroup: "مدیریت", BaseSalary: 246_000_000, EffectiveDate: day(-40),
 			ReasonFa: "افزایش سنواتی", Status: domain.DecreeNotified,
 			CreatedBy: "hr.spec", DecidedBy: "hr.manager",
+			WageStructure: contracts.WageStructure{
+				ClimateRegion: "south_coast",
+				RankWage:      42_000_000, SeniorityWage: 31_000_000,
+				PostAllowance: 20_000_000, SacrificeAllowance: 5_000_000,
+				ClimateAllowance: 22_000_000,
+				// ضرایب اقلیمی این کارمند بالاتر از پیش‌فرض شرکت است (منطقهٔ عملیاتی).
+				BadClimatePercent: 0.30, RegionHardshipPercent: 0.35,
+			},
 		},
 		{
 			ID: "DEC-1404-0212", EmployeeID: "EMP-011", EmployeeName: "امیر قاسمی",
@@ -41,6 +60,11 @@ func SeedDecrees(today calendar.Date) []domain.SalaryDecree {
 			JobGroup: "تکنسین ارشد", BaseSalary: 198_000_000, EffectiveDate: day(-40),
 			ReasonFa: "تمدید قرارداد", Status: domain.DecreeNotified,
 			CreatedBy: "hr.spec", DecidedBy: "hr.manager",
+			WageStructure: contracts.WageStructure{
+				ClimateRegion: "central",
+				RankWage:      16_000_000, SeniorityWage: 12_000_000,
+				PostAllowance: 8_000_000,
+			},
 		},
 		{
 			ID: "DEC-1404-0211", EmployeeID: "EMP-032", EmployeeName: "سعید مرادی",
@@ -49,6 +73,11 @@ func SeedDecrees(today calendar.Date) []domain.SalaryDecree {
 			JobGroup: "کارشناس", BaseSalary: 231_000_000, EffectiveDate: day(-2),
 			ReasonFa: "اصلاح مأخذ پرداخت", Status: domain.DecreeDraft,
 			CreatedBy: "hr.spec", NoteFa: "نیازمند بازنگری گروه شغلی پیش از صدور",
+			WageStructure: contracts.WageStructure{
+				ClimateRegion: "desert",
+				RankWage:      19_000_000, SeniorityWage: 14_000_000,
+				ClimateAllowance: 15_000_000,
+			},
 		},
 		{
 			ID: "DEC-1403-0198", EmployeeID: "EMP-005", EmployeeName: "محمد احمدی",
@@ -58,11 +87,16 @@ func SeedDecrees(today calendar.Date) []domain.SalaryDecree {
 			ReasonFa: "افزایش سنواتی سالانه", Status: domain.DecreeSuperseded,
 			CreatedBy: "hr.spec", DecidedBy: "hr.manager",
 			NoteFa: "با صدور حکم DEC-1404-0213 منسوخ شد",
+			WageStructure: contracts.WageStructure{
+				ClimateRegion: "south_coast",
+				RankWage:      38_000_000, SeniorityWage: 27_000_000,
+				PostAllowance: 18_000_000, ClimateAllowance: 20_000_000,
+			},
 		},
 	}
 }
 
-// SeedCertificates گواهی‌های نمونه در همهٔ وضعیت‌های گردش‌کار.
+// SeedCertificates گواهی‌های نمونه در همهٔ وضعیت‌های گردشکار.
 func SeedCertificates(today calendar.Date) []domain.EmploymentCertificate {
 	day := func(offset int) string {
 		d, err := today.AddDays(offset)

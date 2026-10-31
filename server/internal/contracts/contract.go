@@ -30,6 +30,14 @@ type Contract struct {
 	DecidedBy        string          `json:"decidedBy,omitempty"`
 	Events           []ContractEvent `json:"events,omitempty"`
 	Version          int             `json:"version"`
+
+	WageStructure
+
+	// MazdBase مزد مبنا: از اجزای همین قرارداد ساخته می‌شود (قاعده در بستهٔ rules) تا
+	// فیش و سند چاپی همان عددی را نشان دهند که حکم و قرارداد تعهد کرده‌اند. فقط‌خواندنی.
+	MazdBase int64 `json:"mazdBase,omitempty"`
+	// ClimateRegionFa عنوان فارسی منطقهٔ اقلیمی برای نمایش.
+	ClimateRegionFa string `json:"climateRegionFa,omitempty"`
 }
 
 // ContractEvent یک رخداد در زندگی قرارداد (انعقاد، تأیید، تمدید، خاتمه).
@@ -42,6 +50,10 @@ type ContractEvent struct {
 }
 
 // ContractInput ورودی انعقاد یا ویرایش پیش‌نویس قرارداد.
+//
+// اجزای ثابت مزد و فوق‌العاده‌های اقلیمی هم بخشی از قراردادند (WageStructure): قرارداد
+// همان‌جایی است که «اقلیم محل خدمت» و ضرایب آن تعهد می‌شود، و فیش حقوق از حکم و در نبود
+// آن از همین قرارداد می‌خواند.
 type ContractInput struct {
 	EmployeeID string `json:"employeeId"`
 	Kind       string `json:"kind"`
@@ -51,6 +63,8 @@ type ContractInput struct {
 	EndDate        string `json:"endDate,omitempty"`
 	MonthlySalary  int64  `json:"monthlySalary"`
 	NoteFa         string `json:"noteFa,omitempty"`
+
+	WageStructure
 }
 
 // ContractDecision ورودی تأیید/رد یا خاتمهٔ قرارداد.
@@ -64,6 +78,8 @@ type ContractRenewInput struct {
 	EndDate       string `json:"endDate,omitempty"`
 	MonthlySalary int64  `json:"monthlySalary,omitempty"`
 	NoteFa        string `json:"noteFa,omitempty"`
+
+	WageStructure
 }
 
 // ContractFilter فیلترهای فهرست قراردادها؛ Scope محدودهٔ دادهٔ نقش را حمل می‌کند.

@@ -274,13 +274,21 @@ function pageStatsBasePayLive() {
       ${statCard({ico: '💵', tint: '#EDE9FE', accent: '#7C3AED', val: money(s.net || 0), label: 'خالص محاسبه‌شده (ریال)'})}
     </div>`;
 
-    const wageRows = [
-      ['مزد شغل', s.wageJob], ['مزد رتبه', s.wageRank], ['مزد سنوات', s.wageSeniority],
-      ['فوق‌العادهٔ پست', s.postAllowance], ['فوق‌العادهٔ ایثارگری', s.sacrifice],
-    ].map(([label, val]) => `<tr><td>${esc(label)}</td><td>${faNum(Math.round(val || 0))}</td></tr>`);
+    // شاکلهٔ مزد مبنا از خود سرور می‌آید (`breakdown`): هر جزء با عنوان و گروه، پس کارت
+    // هیچ‌وقت فهرست ثابت خودش را نمی‌سازد و با فیش و حکم یک عدد می‌دهد.
+    const parts = (s.breakdown || []).map(p => [p.titleFa, p.kindFa, p.amount]);
+    const wageRows = parts.length
+      ? parts.map(([label, kindFa, val]) => `<tr><td>${esc(label)} <span class="muted" style="font-size:.7rem">${esc(kindFa || '')}</span></td><td>${faNum(Math.round(val || 0))}</td></tr>`)
+      : [['مزد شغل', '', s.wageJob], ['مزد رتبه', '', s.wageRank], ['مزد سنوات', '', s.wageSeniority]]
+          .map(([label, kindFa, val]) => `<tr><td>${esc(label)}</td><td>${faNum(Math.round(val || 0))}</td></tr>`);
+    wageRows.push(`<tr><td><b>مزد مبنا</b></td><td><b>${faNum(Math.round(s.mazdBase || 0))}</b></td></tr>`);
     const mazd = `<div class="card card-pad" style="margin-bottom:14px">
       <div class="card-title">شاکلهٔ مزد مبنا — جمع: <span class="num">${fa(Math.round(s.mazdBase || 0))}</span> ریال</div>
-      ${liveTable(['جزء مزد', 'مبلغ (ریال)'], wageRows, wageRows.length)}
+      ${liveTable(['جزء مزد مبنا', 'مبلغ (ریال)'], wageRows, wageRows.length)}
+      <p class="muted" style="font-size:.76rem;line-height:2;margin:8px 0 0">
+        مزد مبنا جمع همهٔ اجزای ثابت است (مزد شغل و ملحقات ${fa(Math.round(s.jobAttachments || 0))} ریال + ثابت‌های شغلی ${fa(Math.round((s.special || 0) + (s.workshop || 0) + (s.attractionPublic || 0) + (s.personalBase || 0) + (s.jobSpecialty || 0)))} ریال + مبالغ مصوب و اقلیمی).
+        فوق‌العاده‌های اقلیمی، نوبت‌کاری، شب‌کاری و اضافه‌کاری درصدی از همین مزد مبنا هستند و جداگانه پرداخت می‌شوند.
+      </p>
     </div>`;
 
     const rows = (d.elements || []).map(e => `<tr>

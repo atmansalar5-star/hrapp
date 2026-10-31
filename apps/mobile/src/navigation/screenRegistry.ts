@@ -56,6 +56,9 @@ import KaranaScreen from '../features/payroll/KaranaScreen';
 import PayReportsScreen from '../features/payroll/PayReportsScreen';
 import PayParamsScreen from '../features/payroll/PayParamsScreen';
 import ServiceBonusScreen from '../features/payroll/ServiceBonusScreen';
+// فاز ۱: فایل قانونی بیمه/مالیات و فایل پرداخت بانکی (زیرکارهای ۱.۴ و ۱.۵).
+import StatutoryFilesScreen from '../features/payroll/StatutoryFilesScreen';
+import BankFilesScreen from '../features/payroll/BankFilesScreen';
 
 // جبران خدمات — احکام حقوق و گواهی اشتغال
 import SalaryDecreesScreen from '../features/salary_admin/SalaryDecreesScreen';
@@ -121,6 +124,10 @@ import RolesScreen from '../features/settings/RolesScreen';
 import OrgProfileScreen from '../features/settings/OrgProfileScreen';
 import OrgSettingsScreen from '../features/settings/OrgSettingsScreen';
 import SysParamsScreen from '../features/settings/SysParamsScreen';
+// نشان شرکت و QR کد آن: بارگذاری لوگو و QR شناسهٔ شرکت.
+import BrandingScreen from '../features/settings/BrandingScreen';
+// تبادل داده: اتصال به منابع بیرونی، ساختار داده و قالب‌های آمادهٔ بارگذاری.
+import DataExchangeScreen from '../features/settings/DataExchangeScreen';
 import AuditLogScreen from '../features/settings/AuditLogScreen';
 import DocTemplatesScreen from '../features/settings/DocTemplatesScreen';
 import CatalogsScreen from '../features/settings/CatalogsScreen';
@@ -204,6 +211,8 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   PayItemsScreen,
   PayParamsScreen,
   ServiceBonusScreen,
+  StatutoryFilesScreen,
+  BankFilesScreen,
   PayReportsScreen,
   SalaryDecreesScreen,
   EmploymentCertsScreen,
@@ -243,6 +252,8 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   RolesScreen,
   OrgSettingsScreen,
   SysParamsScreen,
+  BrandingScreen,
+  DataExchangeScreen,
   AuditLogScreen,
   DocTemplatesScreen,
   CatalogsScreen,

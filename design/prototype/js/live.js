@@ -230,8 +230,81 @@ async function liveEmployeeSelect(id, selected) {
     `<option value="${esc(e.id)}" ${e.id === selected ? 'selected' : ''}>${esc(e.fullName)} — ${esc(e.id)}</option>`).join('')}</select>`;
 }
 
+/* =====================================================================
+   اجزای مزد و فوق‌العاده‌های اقلیمی (حکم کارگزینی و قرارداد کار)
+   ---------------------------------------------------------------------
+   همین یک بلوک در فرم حکم و فرم قرارداد استفاده می‌شود و همان یک خواننده
+   (liveWagePayload) داده را به API می‌دهد؛ پس فهرست فیلدها دو جا تکرار نمی‌شود.
+   فهرست مناطق اقلیمی از سرور می‌آید (هیچ فهرست ثابتی در رابط نیست) و کاربر ضریب را
+   «درصد» وارد می‌کند (۲۵) و API نسبت می‌گیرد (۰٫۲۵) — همان قراردادی که سرور اعتبارسنجی
+   می‌کند.
+   ===================================================================== */
+let LIVE_CLIMATE_REGIONS = null;
+
+/** فهرست مناطق اقلیمی از سرور؛ یک‌بار خوانده و در حافظهٔ مرورگر نگه داشته می‌شود. */
+async function liveClimateRegions() {
+  if (LIVE_CLIMATE_REGIONS) return LIVE_CLIMATE_REGIONS;
+  const res = await apiFetch('/api/v1/salary_admin/options');
+  LIVE_CLIMATE_REGIONS = (res.ok && res.data.climateRegions) || [];
+  return LIVE_CLIMATE_REGIONS;
+}
+
+/** بلوک فیلدهای «اجزای ثابت مزد» و «فوق‌العاده‌های اقلیمی» برای فرم حکم/قرارداد. */
+function liveWageFields(prefix, v, regions) {
+  const val = x => esc(String(x === undefined || x === null || x === 0 ? '' : x));
+  const pctVal = x => (x ? esc(String(Math.round(x * 100))) : '');
+  const numField = (id, label, value) =>
+    `<div class="field"><label>${label}</label><input id="${prefix}${id}" type="number" min="0" value="${val(value)}"></div>`;
+  const pctField = (id, label, value) =>
+    `<div class="field"><label>${label} <span class="muted">(درصد)</span></label><input id="${prefix}${id}" type="number" min="0" max="100" value="${pctVal(value)}"></div>`;
+  const selected = k => (v && v.climateRegion === k ? 'selected' : '');
+  return `<div class="form-grid" style="grid-column:1/-1;margin-top:6px">
+      <div class="field" style="grid-column:1/-1"><label>منطقهٔ اقلیمی محل خدمت</label>
+        <select id="${prefix}Region">
+          <option value="">تعیین نشده (از پارامتر شرکت)</option>
+          ${regions.map(r => `<option value="${esc(r.value)}" ${selected(r.value)}>${esc(r.label)} — بدی آب و هوا ${fa(Math.round((r.badClimate || 0) * 100))}٪ / محرومیت ${fa(Math.round((r.deprivation || 0) * 100))}٪ / صعوبت ${fa(Math.round((r.regionHardship || 0) * 100))}٪</option>`).join('')}
+        </select>
+        <span class="muted" style="font-size:.72rem">انتخاب منطقه، ضرایب پیشنهادی را می‌آورد؛ اگر همان کادرها پر شوند، مقدار واردشد همان ملاک است.</span>
+      </div>
+      ${numField('Rank', 'مزد رتبه (ریال)', v && v.rankWage)}
+      ${numField('Seniority', 'مزد سنوات (ریال)', v && v.seniorityWage)}
+      ${numField('Post', 'فوق‌العادهٔ پست (ریال)', v && v.postAllowance)}
+      ${numField('Sacrifice', 'فوق‌العادهٔ ایثارگری (ریال)', v && v.sacrificeAllowance)}
+      ${numField('Climate', 'فوق‌العادهٔ اقلیمی مصوب (ریال در ماه)', v && v.climateAllowance)}
+      ${numField('Repair', 'ترمیم حقوق (ریال)', v && v.salaryRepair)}
+      ${pctField('BadClimate', 'بدی آب و هوا', v && v.badClimatePercent)}
+      ${pctField('Deprivation', 'محرومیت از تسهیلات زندگی', v && v.deprivationPercent)}
+      ${pctField('RegionHardship', 'صعوبت شرایط منطقه', v && v.regionHardshipPercent)}
+      ${pctField('ExtraTime', 'جبران صرف وقت اضافی', v && v.extraTimePercent)}
+    </div>`;
+}
+
+/** خواندن همان بلوک از فرم و ساختن بدنهٔ API (کاربر درصد می‌دهد، API نسبت می‌گیرد). */
+function liveWagePayload(prefix) {
+  const num = id => {
+    const el = $('#' + prefix + id);
+    return el ? Number(el.value) || 0 : 0;
+  };
+  const ratio = id => num(id) / 100;
+  const region = $('#' + prefix + 'Region');
+  return {
+    climateRegion: region ? region.value : '',
+    rankWage: num('Rank'),
+    seniorityWage: num('Seniority'),
+    postAllowance: num('Post'),
+    sacrificeAllowance: num('Sacrifice'),
+    climateAllowance: num('Climate'),
+    salaryRepair: num('Repair'),
+    badClimatePercent: ratio('BadClimate'),
+    deprivationPercent: ratio('Deprivation'),
+    regionHardshipPercent: ratio('RegionHardship'),
+    extraTimePercent: ratio('ExtraTime'),
+  };
+}
+
 async function liveContractForm() {
   const selectHtml = await liveEmployeeSelect('ctEmp', null);
+  const regions = await liveClimateRegions();
   if (!RB_TYPES.length) {
     const t = await apiFetch('/api/v1/employee/options');
     RB_TYPES = (t.ok && t.data.employmentTypes) || [];
@@ -251,6 +324,7 @@ async function liveContractForm() {
       <div class="field" id="ctEndField" style="display:none"><label>تاریخ پایان (شمسی)</label><input id="ctEnd" placeholder="1405/06/31"></div>
       <div class="field"><label>مبلغ پایهٔ ماهانه (ریال) <span class="req">*</span></label><input id="ctSalary" type="number" min="1"></div>
       <div class="field"><label>یادداشت</label><input id="ctNote"></div>
+      ${liveWageFields('ct', null, regions)}
     </div>`,
     foot: `<button class="btn btn-primary" onclick="liveContractSave()">ثبت پیش‌نویس</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
@@ -269,6 +343,7 @@ async function liveContractSave() {
     endDate: $('#ctKind').value === 'fixed_term' ? $('#ctEnd').value.trim() : '',
     monthlySalary: Number($('#ctSalary').value) || 0,
     noteFa: $('#ctNote').value.trim(),
+    ...liveWagePayload('ct'),
   };
   const res = await apiFetch('/api/v1/contracts/contracts', {method: 'POST', body});
   if (!res.ok) { toast(res.message, 'error'); return; }
@@ -281,6 +356,7 @@ async function liveContractEdit(id) {
   if (!res.ok) { toast(res.message, 'error'); return; }
   const c = res.data;
   const selectHtml = await liveEmployeeSelect('ctEmp', c.employeeId);
+  const regions = await liveClimateRegions();
   if (!RB_TYPES.length) {
     const t = await apiFetch('/api/v1/employee/options');
     RB_TYPES = (t.ok && t.data.employmentTypes) || [];
@@ -300,6 +376,7 @@ async function liveContractEdit(id) {
       <div class="field" id="ctEndField" style="display:${c.kind === 'fixed_term' ? '' : 'none'}"><label>تاریخ پایان (شمسی)</label><input id="ctEnd" value="${esc(c.endDate || '')}"></div>
       <div class="field"><label>مبلغ پایهٔ ماهانه (ریال) <span class="req">*</span></label><input id="ctSalary" type="number" min="1" value="${esc(String(c.monthlySalary || ''))}"></div>
       <div class="field"><label>یادداشت</label><input id="ctNote" value="${esc(c.noteFa || '')}"></div>
+      ${liveWageFields('ct', c, regions)}
     </div>`,
     foot: `<button class="btn btn-primary" onclick="liveContractUpdate('${esc(c.id)}')">ذخیره</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
@@ -314,6 +391,7 @@ async function liveContractUpdate(id) {
     endDate: $('#ctKind').value === 'fixed_term' ? $('#ctEnd').value.trim() : '',
     monthlySalary: Number($('#ctSalary').value) || 0,
     noteFa: $('#ctNote').value.trim(),
+    ...liveWagePayload('ct'),
   };
   const res = await apiFetch('/api/v1/contracts/contracts/' + encodeURIComponent(id), {method: 'PATCH', body});
   if (!res.ok) { toast(res.message, 'error'); return; }
@@ -776,6 +854,7 @@ function pageSalaryDecreesLive() {
 
 async function liveDecreeForm() {
   const selectHtml = await liveEmployeeSelect('decEmp', null);
+  const regions = await liveClimateRegions();
   openModal({
     title: 'صدور حکم حقوق',
     body: `<div class="form-grid">
@@ -785,6 +864,7 @@ async function liveDecreeForm() {
       <div class="field"><label>تاریخ اجرا (شمسی) <span class="req">*</span></label><input id="decEffective" placeholder="1404/07/01"></div>
       <div class="field"><label>علت صدور <span class="req">*</span></label><input id="decReason" placeholder="مثلاً: افزایش سنواتی"></div>
       <div class="field"><label>یادداشت</label><input id="decNote"></div>
+      ${liveWageFields('dec', null, regions)}
     </div>`,
     foot: `<button class="btn btn-primary" onclick="liveDecreeSave()">ثبت پیش‌نویس</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
@@ -798,6 +878,7 @@ async function liveDecreeSave() {
     effectiveDate: $('#decEffective').value.trim(),
     reasonFa: $('#decReason').value.trim(),
     noteFa: $('#decNote').value.trim(),
+    ...liveWagePayload('dec'),
   };
   const res = await apiFetch('/api/v1/salary_admin/decrees', {method: 'POST', body});
   if (!res.ok) { toast(res.message, 'error'); return; }
@@ -810,6 +891,7 @@ async function liveDecreeEdit(id) {
   if (!res.ok) { toast(res.message, 'error'); return; }
   const d = res.data;
   const selectHtml = await liveEmployeeSelect('decEmp', d.employeeId);
+  const regions = await liveClimateRegions();
   openModal({
     title: 'ویرایش پیش‌نویس حکم ' + d.id,
     body: `<div class="form-grid">
@@ -819,6 +901,7 @@ async function liveDecreeEdit(id) {
       <div class="field"><label>تاریخ اجرا (شمسی) <span class="req">*</span></label><input id="decEffective" value="${esc(d.effectiveDate || '')}"></div>
       <div class="field"><label>علت صدور <span class="req">*</span></label><input id="decReason" value="${esc(d.reasonFa || '')}"></div>
       <div class="field"><label>یادداشت</label><input id="decNote" value="${esc(d.noteFa || '')}"></div>
+      ${liveWageFields('dec', d, regions)}
     </div>`,
     foot: `<button class="btn btn-primary" onclick="liveDecreeUpdate('${esc(d.id)}')">ذخیره</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
@@ -832,6 +915,7 @@ async function liveDecreeUpdate(id) {
     effectiveDate: $('#decEffective').value.trim(),
     reasonFa: $('#decReason').value.trim(),
     noteFa: $('#decNote').value.trim(),
+    ...liveWagePayload('dec'),
   };
   const res = await apiFetch('/api/v1/salary_admin/decrees/' + encodeURIComponent(id), {method: 'PATCH', body});
   if (!res.ok) { toast(res.message, 'error'); return; }
@@ -932,14 +1016,31 @@ function liveDecreeNotify(id) {
     .then(ok => ok && liveReload());
 }
 async function liveDecreeRevise(id) {
-  const salaryStr = prompt('مبلغ پایهٔ جدید حکم اصلاحی (ریال، خالی = بدون تغییر):') || '';
-  const reason = prompt('علت اصلاح حکم:') || '';
-  if (!reason) return;
-  const res = await apiFetch(`/api/v1/salary_admin/decrees/${id}/revise`, {
-    method: 'POST', body: {baseSalary: Number(salaryStr) || 0, reasonFa: reason},
-  });
+  const res = await apiFetch('/api/v1/salary_admin/decrees/' + encodeURIComponent(id));
   if (!res.ok) { toast(res.message, 'error'); return; }
-  toast('پیش‌نویس حکم اصلاحی ثبت شد'); liveReload();
+  const d = res.data;
+  const regions = await liveClimateRegions();
+  openModal({
+    title: 'اصلاح حکم ' + d.id,
+    body: `<div class="form-grid">
+      <div class="field"><label>مبلغ پایهٔ جدید (ریال، خالی = بدون تغییر)</label><input id="revSalary" type="number" min="0" placeholder="${esc(String(d.baseSalary || ''))}"></div>
+      <div class="field"><label>علت اصلاح <span class="req">*</span></label><input id="revReason" placeholder="مثلاً: افزایش منطقهٔ اقلیمی محل خدمت"></div>
+      ${liveWageFields('rev', d, regions)}
+    </div>
+    <p class="muted" style="font-size:.75rem;line-height:2;margin-top:8px">حکم اصلاحی یک حکم تازهٔ پیش‌نویس می‌سازد و حکم پیشین را منسوخ می‌کند؛ کادرهایی که خالی بمانند، مقدار حکم پیشین را نگه می‌دارند.</p>`,
+    foot: `<button class="btn btn-primary" onclick="liveDecreeReviseSend('${esc(d.id)}')">ثبت پیش‌نویس اصلاحی</button>
+           <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
+  });
+}
+async function liveDecreeReviseSend(id) {
+  const reason = $('#revReason').value.trim();
+  if (!reason) { toast('علت اصلاح حکم الزامی است.', 'error'); return; }
+  const body = Object.assign(
+    {baseSalary: Number($('#revSalary').value) || 0, reasonFa: reason},
+    liveWagePayload('rev'));
+  const res = await apiFetch('/api/v1/salary_admin/decrees/' + encodeURIComponent(id) + '/revise', {method: 'POST', body});
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  closeModal(); toast('پیش‌نویس حکم اصلاحی ثبت شد'); liveReload();
 }
 
 /* =====================================================================
@@ -1107,6 +1208,16 @@ async function liveOpenDoc(kind, id) {
    ===================================================================== */
 
 /** فیش حقوقی کارمند را از سرور می‌گیرد و اجزای مزد و فوق‌العاده‌ها را نشان می‌دهد. */
+/** هشدارهای سرور (پارامتر غیرجاری، قلم حل‌نشده) به شکل جعبهٔ اطلاعات. */
+function liveWarnBox(list) {
+  const items = (list || []).filter(Boolean);
+  if (!items.length) return '';
+  return `<div class="card card-pad" style="margin-bottom:12px;border-inline-start:3px solid #D97706;font-size:.8rem;line-height:2">
+    <b>ℹ️ نکتهٔ محاسبه</b>
+    <ul style="margin:6px 0 0;padding-inline-start:18px">${items.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
+  </div>`;
+}
+
 function pagePayslipLive() {
   if (!isLive()) return offlineFallback('payslip');
   const empId = session.emp || 'EMP-001';
@@ -1116,18 +1227,26 @@ function pagePayslipLive() {
     const d = res.data || {};
     const r = d.result || {};
     const wages = d.wages || {};
-    const mazd = (wages.job || 0) + (wages.rank || 0) + (wages.seniority || 0) + (wages.postAllowance || 0) + (wages.sacrifice || 0);
+    const breakdown = d.mazdBreakdown || [];
+    const climate = d.climate || {};
+    // «مزد مبنا» را سرور حساب می‌کند (همان قاعدهٔ مشترک قواعد)؛ اگر نبود، از جمع اجزای
+    // گزارش‌شده ساخته می‌شود تا صفحه هرگز عدد ناهمخوان نشان ندهد.
+    const mazd = Number(d.mazdBase || breakdown.reduce((s, p) => s + (p.amount || 0), 0));
+    const pctFa = v => (v ? fa(Math.round(v * 100)) + '٪' : '—');
     const elements = d.elements || [];
     const earn = elements.filter(e => e.category === 'earning');
     const ded = elements.filter(e => e.category === 'deduction');
     const line = e => `<div class="slip-row"><span>${esc(e.titleFa)}${e.resolved ? '' : ' <span class="muted">(حل‌نشده)</span>'}</span><span class="num">${e.resolved ? money(Math.round(e.amount || 0)) : '—'}</span></div>`;
     const sum = arr => arr.filter(e => e.resolved).reduce((s, e) => s + (e.amount || 0), 0);
 
+    // جمع مزایا/کسور از خود اقلام پارامتریک می‌آید (سرور `totals` می‌دهد)؛ عدد موتور مرجع
+    // هم با برچسب روشن کنارش می‌ماند تا هیچ‌وقت دو عدد بی‌برچسب کنار هم نباشند.
+    const totals = d.totals || {};
     const stats = `<div class="grid-stats">
       ${statCard({ico: '🧮', tint: '#EDE9FE', accent: '#7C3AED', val: money(Math.round(mazd)), label: 'مزد مبنا'})}
-      ${statCard({ico: '💵', tint: '#EFF6FF', accent: '#2563EB', val: money(r.gross), label: 'جمع ناخالص'})}
-      ${statCard({ico: '🧾', tint: '#FEE2E2', accent: '#DC2626', val: money(r.tax), label: 'مالیات'})}
-      ${statCard({ico: '✅', tint: '#DCFCE7', accent: '#16A34A', val: money(r.net), label: 'خالص پرداختی'})}
+      ${statCard({ico: '💵', tint: '#EFF6FF', accent: '#2563EB', val: money(Math.round(totals.earning || 0)), label: 'جمع مزایای اقلام'})}
+      ${statCard({ico: '➖', tint: '#FEE2E2', accent: '#DC2626', val: money(Math.round(totals.deduction || 0)), label: 'جمع کسور اقلام'})}
+      ${statCard({ico: '✅', tint: '#DCFCE7', accent: '#16A34A', val: money(Math.round(totals.net || 0)), label: 'خالص اقلام'})}
     </div>`;
 
     const slip = `<div class="payslip card">
@@ -1146,29 +1265,35 @@ function pagePayslipLive() {
         </div>
       </div>
       <div class="slip-total" style="margin-top:14px;font-size:1.05rem">
-        <span>خالص پرداختی (ریال)</span><span class="num">${money(r.net)}</span>
+        <span>خالص اقلام (ریال)</span><span class="num">${money(Math.round(totals.net || 0))}</span>
       </div>
       <div class="muted" style="margin-top:8px;font-size:.78rem;line-height:2">
-        جمع ناخالص محاسبهٔ مرجع سامانه: <b class="num">${money(r.gross)}</b> —
-        بیمهٔ سهم کارمند: <b class="num">${money(r.insuranceEmployee)}</b> —
-        بیمهٔ کارفرما: <b class="num">${money(r.insuranceEmployer)}</b>
+        محاسبهٔ مرجع موتور قواعد (مزد پایه و مزایای قانونی، بدون اقلام پارامتریک): جمع ناخالص
+        <b class="num">${money(r.gross)}</b> — بیمهٔ سهم کارمند <b class="num">${money(r.insuranceEmployee)}</b> —
+        بیمهٔ کارفرما <b class="num">${money(r.insuranceEmployer)}</b> — مالیات <b class="num">${money(r.tax)}</b>
       </div>
     </div>`;
 
-    const wageRows = [
-      ['مزد شغل', wages.job],
-      ['مزد رتبه', wages.rank],
-      ['مزد سنوات', wages.seniority],
-      ['فوق‌العادهٔ پست', wages.postAllowance],
-      ['فوق‌العادهٔ ایثارگری', wages.sacrifice],
-    ].map(([label, v]) => `<tr><td>${label}</td><td class="num">${money(Math.round(v || 0))}</td></tr>`);
+    const wageRows = breakdown.map(p => `<tr><td>${esc(p.titleFa)} <span class="muted" style="font-size:.72rem">${esc(p.kindFa || '')}</span></td><td class="num">${money(Math.round(p.amount || 0))}</td></tr>`);
+    if (!wageRows.length) wageRows.push(`<tr><td>${esc('مزد شغل')}</td><td class="num">${money(Math.round(wages.job || 0))}</td></tr>`);
     wageRows.push(`<tr><td><b>مزد مبنا</b></td><td class="num"><b>${money(Math.round(mazd))}</b></td></tr>`);
-    const wageTable = liveTable(['جزء مزد', 'مبلغ (ریال)'], wageRows, wageRows.length);
+    const wageTable = liveTable(['جزء مزد مبنا', 'مبلغ (ریال)'], wageRows, wageRows.length);
 
-    return stats + slip + `<div class="grid-2eq" style="margin-top:14px">
-      <div class="card card-pad"><div class="card-title">شاکلهٔ مزد (مبنای فوق‌العاده‌ها)</div>${wageTable}</div>
+    const climateRows = [
+      ['منطقهٔ اقلیمی محل خدمت', esc(climate.regionFa || 'تعیین نشده')],
+      ['بدی آب و هوا', pctFa(climate.badClimate)],
+      ['محرومیت از تسهیلات زندگی', pctFa(climate.deprivation)],
+      ['صعوبت شرایط منطقه', pctFa(climate.regionHardship)],
+      ['جبران صرف وقت اضافی', pctFa(climate.extraTime)],
+      ['منبع ضرایب و اجزای مزد', esc(climate.sourceFa || d.wageSource || '—') + (d.wageSource ? ' — ' + esc(d.wageSource) : '')],
+    ].map(([label, v]) => `<tr><td>${label}</td><td class="num">${v}</td></tr>`);
+    const climateTable = liveTable(['فوق‌العادهٔ اقلیمی', 'مقدار'], climateRows, climateRows.length);
+
+    return liveWarnBox(d.warningsFa) + stats + slip + `<div class="grid-3eq" style="margin-top:14px">
+      <div class="card card-pad"><div class="card-title">شاکلهٔ مزد مبنا (مبنای فوق‌العاده‌ها)</div>${wageTable}</div>
+      <div class="card card-pad"><div class="card-title">فوق‌العاده‌های اقلیمی این کارمند</div>${climateTable}</div>
       <div class="card card-pad"><div class="card-title">توضیح</div>
-        <p class="muted" style="font-size:.8rem;line-height:2">مزد مبنا از جمع مزد شغل، مزد رتبه، مزد سنوات و فوق‌العاده‌های پست و ایثارگری ساخته می‌شود و فوق‌العاده‌های درصدی (بدی آب و هوا، محرومیت از تسهیلات زندگی، صعوبت شرایط منطقه، جبران صرف وقت اضافی، درصد فوق‌العادهٔ شغل و نوبت‌کاری) روی همین مبنا حساب می‌شوند.</p>
+        <p class="muted" style="font-size:.8rem;line-height:2">مزد مبنا جمع <b>همهٔ اجزای ثابت</b> مزد است: مزد شغل، رتبه و سنوات، ثابت‌های شغلی درصدی (ویژه، کارگاهی، جذب عمومی، جذب پایهٔ شخصی، تخصصی شغل) و مبالغ مصوب (پست، ایثارگری، ترمیم، اقلیمی). اضافه‌کاری، شب‌کاری، نوبت‌کاری، سختی کار و فوق‌العاده‌های اقلیمی درصدی از همین مزد مبنا هستند و جداگانه پرداخت می‌شوند. ضرایب اقلیمی از حکم کارگزینی یا قرارداد همین کارمند خوانده می‌شود و در نبود آن از پارامتر شرکت و منطقهٔ اقلیمی.</p>
       </div>
     </div>`;
   });
@@ -1466,17 +1591,33 @@ function pagePayReportsLive() {
    پارامترهای حقوق و شبیه‌سازی فیش (پارامتریک)
    ===================================================================== */
 
+/** پرکردن یک <select> با مناطق اقلیمی سرور (هیچ فهرست ثابتی در رابط نیست). */
+async function liveFillClimateSelect(selId) {
+  const sel = $('#' + selId);
+  if (!sel) return;
+  const regions = await liveClimateRegions();
+  sel.innerHTML = '<option value="">تعیین نشده</option>' + regions
+    .map(r => `<option value="${esc(r.value)}">${esc(r.label)}</option>`).join('');
+}
+
 /** شبیه‌سازی فیش بر پایهٔ پارامترها و اقلام فعال حقوق در سرور. */
 function openPayrollSimulator() {
   openModal({
     title: 'شبیه‌سازی فیش حقوقی بر پایهٔ پارامترها',
-    body: `<p class="muted" style="font-size:.78rem;margin-bottom:10px">مزد مبنا از جمع مزد شغل، مزد رتبه، مزد سنوات و فوق‌العاده‌های پست و ایثارگری ساخته می‌شود و فوق‌العاده‌های درصدی روی آن حساب می‌شوند.</p>
+    body: `<p class="muted" style="font-size:.78rem;margin-bottom:10px">مزد مبنا جمع <b>همهٔ اجزای ثابت</b> است: مزد شغل و ملحقات، ثابت‌های شغلی درصدی (ویژه، کارگاهی، جذب عمومی، جذب پایهٔ شخصی، تخصصی شغل) و مبالغ مصوب (پست، ایثارگری، ترمیم، اقلیمی). اضافه‌کاری، شب‌کاری، نوبت‌کاری و فوق‌العاده‌های اقلیمی درصدی از همین مزد مبنا هستند.</p>
     <div class="form-grid">
       <div class="field"><label>مزد شغل (ریال)</label><input id="simBase" type="number" value="120000000"></div>
       <div class="field"><label>مزد رتبه (ریال)</label><input id="simRank" type="number" value="0"></div>
       <div class="field"><label>مزد سنوات (ریال)</label><input id="simSeniority" type="number" value="0"></div>
       <div class="field"><label>فوق‌العادهٔ پست (ریال)</label><input id="simPost" type="number" value="0"></div>
       <div class="field"><label>فوق‌العادهٔ ایثارگری (ریال)</label><input id="simSacrifice" type="number" value="0"></div>
+      <div class="field"><label>ترمیم حقوق (ریال)</label><input id="simRepair" type="number" value="0"></div>
+      <div class="field"><label>فوق‌العادهٔ اقلیمی مصوب (ریال)</label><input id="simClimate" type="number" value="0"></div>
+      <div class="field"><label>منطقهٔ اقلیمی</label><select id="simRegion"></select></div>
+      <div class="field"><label>بدی آب و هوا (درصد)</label><input id="simBadClimate" type="number" min="0" max="100" placeholder="۲۵"></div>
+      <div class="field"><label>محرومیت از تسهیلات زندگی (درصد)</label><input id="simDeprivation" type="number" min="0" max="100" placeholder="۲۵"></div>
+      <div class="field"><label>صعوبت شرایط منطقه (درصد)</label><input id="simRegionHardship" type="number" min="0" max="100" placeholder="۳۰"></div>
+      <div class="field"><label>جبران صرف وقت اضافی (درصد)</label><input id="simExtraTime" type="number" min="0" max="100" placeholder="۱۵"></div>
       <div class="field"><label>تعداد فرزند</label><input id="simChildren" type="number" value="2"></div>
       <div class="field"><label>نرخ ساعتی (ریال)</label><input id="simOtRate" type="number" value="700000"></div>
       <div class="field"><label>ساعت اضافه‌کاری</label><input id="simOtHours" type="number" value="12"></div>
@@ -1495,12 +1636,20 @@ function openPayrollSimulator() {
 }
 
 async function runPayrollSimulator() {
+  await liveFillClimateSelect('simRegion');
   const body = {
     baseSalary: Number($('#simBase').value) || 0,
     rankWage: Number($('#simRank').value) || 0,
     seniorityWage: Number($('#simSeniority').value) || 0,
     postAllowance: Number($('#simPost').value) || 0,
     sacrificeAllowance: Number($('#simSacrifice').value) || 0,
+    salaryRepair: Number($('#simRepair').value) || 0,
+    climateAllowance: Number($('#simClimate').value) || 0,
+    climateRegion: ($('#simRegion') || {}).value || '',
+    badClimatePercent: (Number($('#simBadClimate').value) || 0) / 100,
+    deprivationPercent: (Number($('#simDeprivation').value) || 0) / 100,
+    regionHardshipPercent: (Number($('#simRegionHardship').value) || 0) / 100,
+    extraTimePercent: (Number($('#simExtraTime').value) || 0) / 100,
     children: Number($('#simChildren').value) || 0,
     overtimeHours: Number($('#simOtHours').value) || 0,
     overtimeHourlyRate: Number($('#simOtRate').value) || 0,
@@ -1518,19 +1667,37 @@ async function runPayrollSimulator() {
   if (!res.ok) { toast(res.message, 'error'); return; }
   const r = res.data.result || {};
   const elements = res.data.elements || [];
+  const totals = res.data.totals || {};
   const sum = `<div class="grid-stats">
-    ${statCard({ico: '💵', tint: '#EFF6FF', accent: '#2563EB', val: money(r.gross), label: 'جمع ناخالص'})}
-    ${statCard({ico: '🛡️', tint: '#FEF3C7', accent: '#D97706', val: money(r.insuranceEmployee), label: 'بیمهٔ سهم کارمند'})}
-    ${statCard({ico: '🧾', tint: '#FEE2E2', accent: '#DC2626', val: money(r.tax), label: 'مالیات'})}
-    ${statCard({ico: '✅', tint: '#DCFCE7', accent: '#16A34A', val: money(r.net), label: 'خالص پرداختی'})}
-  </div>`;
+    ${statCard({ico: '🧮', tint: '#EDE9FE', accent: '#7C3AED', val: money(Math.round(res.data.mazdBase || 0)), label: 'مزد مبنا'})}
+    ${statCard({ico: '💵', tint: '#EFF6FF', accent: '#2563EB', val: money(Math.round(totals.earning || 0)), label: 'جمع مزایای اقلام'})}
+    ${statCard({ico: '🧾', tint: '#FEE2E2', accent: '#DC2626', val: money(Math.round(totals.deduction || 0)), label: 'جمع کسور اقلام'})}
+    ${statCard({ico: '✅', tint: '#DCFCE7', accent: '#16A34A', val: money(Math.round(totals.net || 0)), label: 'خالص اقلام'})}
+  </div>
+  <p class="muted" style="font-size:.75rem;margin:6px 0 0">محاسبهٔ مرجع موتور قواعد: جمع ناخالص ${money(r.gross)} — بیمهٔ سهم کارمند ${money(r.insuranceEmployee)} — مالیات ${money(r.tax)} — خالص ${money(r.net)}</p>`;
   const rows = elements.map(e => `<tr>
     <td>${esc(e.titleFa)}</td>
     <td class="ltr num">${esc(e.code || '')}</td>
     <td>${e.category === 'deduction' ? pChip('c-rej', 'کسور') : pChip('c-ok', 'مزایا')}</td>
     <td class="num">${e.resolved ? money(Math.round(e.amount || 0)) : '—'}</td>
     <td class="muted" style="font-size:.75rem">${esc(e.detailFa || '')}</td></tr>`);
-  $('#simResult').innerHTML = sum + liveTable(['قلم حقوق', 'کد', 'نوع', 'مبلغ محاسبه‌شده', 'توضیح'], rows, elements.length);
+  const parts = res.data.mazdBreakdown || [];
+  const mazdRows = parts.map(p => `<tr><td>${esc(p.titleFa)} <span class="muted" style="font-size:.7rem">${esc(p.kindFa || '')}</span></td><td class="num">${money(Math.round(p.amount || 0))}</td></tr>`);
+  mazdRows.push(`<tr><td><b>مزد مبنا</b></td><td class="num"><b>${money(Math.round(res.data.mazdBase || 0))}</b></td></tr>`);
+  const climate = res.data.climate || {};
+  const climateRows = [
+    ['منطقهٔ اقلیمی', esc(climate.regionFa || 'تعیین نشده')],
+    ['بدی آب و هوا', climate.badClimate ? fa(Math.round(climate.badClimate * 100)) + '٪' : '—'],
+    ['محرومیت از تسهیلات زندگی', climate.deprivation ? fa(Math.round(climate.deprivation * 100)) + '٪' : '—'],
+    ['صعوبت شرایط منطقه', climate.regionHardship ? fa(Math.round(climate.regionHardship * 100)) + '٪' : '—'],
+    ['جبران صرف وقت اضافی', climate.extraTime ? fa(Math.round(climate.extraTime * 100)) + '٪' : '—'],
+    ['منبع ضرایب', esc(climate.sourceFa || '—')],
+  ].map(([label, val]) => `<tr><td>${label}</td><td class="num">${val}</td></tr>`);
+  const cards = `<div class="grid-2eq" style="margin-top:12px">
+    <div class="card card-pad"><div class="card-title">شاکلهٔ مزد مبنا</div>${liveTable(['جزء مزد مبنا', 'مبلغ (ریال)'], mazdRows, mazdRows.length)}</div>
+    <div class="card card-pad"><div class="card-title">فوق‌العاده‌های اقلیمی</div>${liveTable(['ضریب', 'مقدار'], climateRows, climateRows.length)}</div>
+  </div>`;
+  $('#simResult').innerHTML = sum + liveWarnBox(res.data.warningsFa) + cards + liveTable(['قلم حقوق', 'کد', 'نوع', 'مبلغ محاسبه‌شده', 'توضیح'], rows, elements.length);
 }
 
 /* =====================================================================
@@ -2003,9 +2170,34 @@ const LIVE_PAGES = {
 
 /* دکمه‌های افزودهٔ صفحه‌های رکوردی (پارامتر حقوق، قالب‌ها). */
 const RK_EXTRA = {
-  payParams: '<button class="btn btn-ghost" onclick="openPayrollSimulator()">🧮 شبیه‌سازی فیش</button>',
+  payParams: '<button class="btn btn-ghost" onclick="openPayrollSimulator()">🧮 شبیه‌سازی فیش</button>' +
+    '<button class="btn btn-primary" onclick="liveActivateDraftPayParams()">✅ جاری‌سازی پارامترهای پیش‌نویس</button>',
   docTemplates: '<button class="btn btn-ghost" onclick="openTemplatePreview()">👁️ پیش‌نمایش قالب</button>',
 };
+
+/**
+ * جاری‌سازی همهٔ پارامترهای پیش‌نویس حقوق.
+ *
+ * چرا: تنها پارامتر «جاری» در محاسبهٔ حقوق اثر دارد (پیش‌نویس صرفاً دادهٔ نمایشی است).
+ * در استقراری که پارامترها هنوز جاری نشده‌اند، فیش حقوق فوق‌العاده‌های درصدی را حل‌نشده
+ * نشان می‌دهد؛ این دکمه همان گردش استاندارد «جاری‌سازی» را روی همهٔ پیش‌نویس‌ها اجرا می‌کند
+ * (قاعده و دسترسی نقش در سرور اعمال می‌شود، نه اینجا).
+ */
+async function liveActivateDraftPayParams() {
+  const res = await apiFetch('/api/v1/payroll/records?kind=payParams&status=draft&size=500');
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  const drafts = res.data.items || [];
+  if (!drafts.length) { toast('همهٔ پارامترهای حقوق جاری‌اند.'); return; }
+  if (!confirm(`${fa(drafts.length)} پارامتر پیش‌نویس جاری شود؟ از این پس در محاسبهٔ حقوق اثر می‌گذارند.`)) return;
+  let ok = 0, failed = 0;
+  for (const rec of drafts) {
+    const r = await apiFetch('/api/v1/payroll/records/' + encodeURIComponent(rec.id) + '/action',
+      {method: 'POST', body: {action: 'activate'}});
+    if (r.ok) ok++; else failed++;
+  }
+  toast(`${fa(ok)} پارامتر جاری شد${failed ? ' — ناموفق: ' + fa(failed) : ''}`, failed ? 'error' : 'success');
+  liveReload();
+}
 
 // آرگومان‌های مسیر (مثل کد کارمند در پروندهٔ کارمند) به همان صفحهٔ زنده پاس می‌شود.
 function livePage(page, ...args) { return LIVE_PAGES[page](...args); }

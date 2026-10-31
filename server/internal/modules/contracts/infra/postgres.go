@@ -31,9 +31,14 @@ func NewPostgresStore(db *sql.DB, clock func() time.Time) *PostgresStore {
 	return &PostgresStore{db: db, clock: clock}
 }
 
+// contractColumns ستون‌های قرارداد. ستون‌های wage_* / climate_* اجزای ثابت مزد و ضرایب
+// اقلیمی همان قراردادند (مهاجرت ۰۰۰۲) و employment_type نوع استخدام است؛ هر سه در
+// مهاجرت نخست جا افتاده بودند و قرارداد روی Postgres آن‌ها را از دست می‌داد.
 const contractColumns = `id, employee_id, employee_name, department_name, position_title, kind,
 	start_date, end_date, monthly_salary, status, supersedes_id, renew_count, note_fa,
-	created_by, decided_by, version`
+	created_by, decided_by, version, employment_type,
+	climate_region, rank_wage, seniority_wage, post_allowance, sacrifice_allowance, climate_allowance,
+	bad_climate_percent, deprivation_percent, region_hardship_percent, extra_time_percent, salary_repair`
 
 // Get خواندن قرارداد همراه با سابقهٔ رخدادها.
 func (s *PostgresStore) Get(ctx context.Context, id string) (domain.Contract, bool, error) {
@@ -183,8 +188,12 @@ func (s *PostgresStore) Save(ctx context.Context, c domain.Contract) (domain.Con
 	if _, err := tx.ExecContext(ctx, `
 		insert into hr_contracts.contract
 			(id, employee_id, employee_name, department_name, position_title, kind, start_date, end_date,
-			 monthly_salary, status, supersedes_id, renew_count, note_fa, created_by, decided_by, version, updated_at)
-		values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16, now())
+			 monthly_salary, status, supersedes_id, renew_count, note_fa, created_by, decided_by, version,
+			 employment_type, climate_region, rank_wage, seniority_wage, post_allowance, sacrifice_allowance,
+			 climate_allowance, bad_climate_percent, deprivation_percent, region_hardship_percent,
+			 extra_time_percent, salary_repair, updated_at)
+		values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,
+			$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28, now())
 		on conflict (id) do update set
 			employee_id = excluded.employee_id, employee_name = excluded.employee_name,
 			department_name = excluded.department_name, position_title = excluded.position_title,
@@ -192,9 +201,20 @@ func (s *PostgresStore) Save(ctx context.Context, c domain.Contract) (domain.Con
 			monthly_salary = excluded.monthly_salary, status = excluded.status,
 			supersedes_id = excluded.supersedes_id, renew_count = excluded.renew_count,
 			note_fa = excluded.note_fa, created_by = excluded.created_by,
-			decided_by = excluded.decided_by, version = excluded.version, updated_at = now()`,
+			decided_by = excluded.decided_by, version = excluded.version,
+			employment_type = excluded.employment_type, climate_region = excluded.climate_region,
+			rank_wage = excluded.rank_wage, seniority_wage = excluded.seniority_wage,
+			post_allowance = excluded.post_allowance, sacrifice_allowance = excluded.sacrifice_allowance,
+			climate_allowance = excluded.climate_allowance, bad_climate_percent = excluded.bad_climate_percent,
+			deprivation_percent = excluded.deprivation_percent,
+			region_hardship_percent = excluded.region_hardship_percent,
+			extra_time_percent = excluded.extra_time_percent, salary_repair = excluded.salary_repair,
+			updated_at = now()`,
 		c.ID, c.EmployeeID, c.EmployeeName, c.DepartmentName, c.Position, c.Kind, c.StartDate, c.EndDate,
 		c.MonthlySalary, c.Status, c.SupersedesID, c.RenewCount, c.NoteFa, c.CreatedBy, c.DecidedBy, c.Version,
+		c.EmploymentType, c.ClimateRegion, c.RankWage, c.SeniorityWage, c.PostAllowance, c.SacrificeAllowance,
+		c.ClimateAllowance, c.BadClimatePercent, c.DeprivationPercent, c.RegionHardshipPercent,
+		c.ExtraTimePercent, c.SalaryRepair,
 	); err != nil {
 		return domain.Contract{}, err
 	}
@@ -272,7 +292,10 @@ func scanContract(row scanner) (domain.Contract, error) {
 	var c domain.Contract
 	err := row.Scan(&c.ID, &c.EmployeeID, &c.EmployeeName, &c.DepartmentName, &c.Position, &c.Kind,
 		&c.StartDate, &c.EndDate, &c.MonthlySalary, &c.Status, &c.SupersedesID, &c.RenewCount,
-		&c.NoteFa, &c.CreatedBy, &c.DecidedBy, &c.Version)
+		&c.NoteFa, &c.CreatedBy, &c.DecidedBy, &c.Version, &c.EmploymentType,
+		&c.ClimateRegion, &c.RankWage, &c.SeniorityWage, &c.PostAllowance, &c.SacrificeAllowance,
+		&c.ClimateAllowance, &c.BadClimatePercent, &c.DeprivationPercent, &c.RegionHardshipPercent,
+		&c.ExtraTimePercent, &c.SalaryRepair)
 	return c, err
 }
 

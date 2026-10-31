@@ -5,6 +5,7 @@ package documents
 import (
 	"context"
 	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
@@ -15,6 +16,7 @@ import (
 	"hrms/internal/platform/calendar"
 	"hrms/internal/platform/httpx"
 	"hrms/internal/platform/modulekit"
+	"hrms/internal/platform/qr"
 	"hrms/internal/rules"
 )
 
@@ -49,8 +51,31 @@ func Handler(deps modulekit.Deps) http.HandlerFunc {
 		}
 
 		deps.Audit.Append(user.Username, moduleID, "document-print", data.Serial, TitleFa(kind)+" — "+data.Employee.FullName)
+		attachVerifyQR(deps, r, kind, data.Serial, &data)
 		writeDoc(w, data)
 	}
+}
+
+// attachVerifyQR نشانی تأیید سند و QR کد آن را به سند میچسباند.
+//
+// چرا: سند کاغذی بدون راه بررسی، قابل جعل است؛ QR کد نشانی صفحهٔ تأیید همین سرور را
+// می‌گیرد که با امضای HMAC سنجیده میشود. ساخت QR کد سمت سرور است تا اگر کتابخانه
+// خطا داد، سند بدون کد چاپ شود (نه اینکه چاپ سند شکست بخورد).
+func attachVerifyQR(deps modulekit.Deps, r *http.Request, kind Kind, serial string, data *Data) {
+	base := "http://" + r.Host
+	if r.TLS != nil {
+		base = "https://" + r.Host
+	}
+	token := qr.Sign(deps.VerifyKey, "document", string(kind), data.Employee.ID, serial)
+	data.VerifyURL = qr.VerifyLink(base, "employee", data.Employee.ID, map[string]string{
+		"kind": string(kind), "serial": serial, "t": token,
+	})
+	svg, err := qr.SVG(data.VerifyURL, 120)
+	if err != nil {
+		return
+	}
+	// محتوای SVG ساختهٔ همین سرور است (نه ورودی کاربر)، پس درج بیپردهاش امن است.
+	data.QRCodeSVG = template.HTML(svg)
 }
 
 // writeDoc سند را به‌صورت HTML چاپی می‌نویسد (با سرصفحه‌های امنیتی مناسب).
@@ -273,7 +298,12 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 // یک عدد نشان دهند.
 func computePayslip(ctx context.Context, deps modulekit.Deps, employee contracts.Employee, today calendar.Date) PayslipInfo {
 	params := rules.DefaultPayrollParams()
-	input := rules.PayrollInput{BaseSalary: employee.BaseSalary}
+	structure, sourceFa := wageDocOf(ctx, deps, employee)
+	base := employee.BaseSalary
+	if structure.BaseSalary > 0 {
+		base = structure.BaseSalary
+	}
+	input := rules.PayrollInput{BaseSalary: base}
 	result := rules.ComputePayroll(input, params)
 	info := PayslipInfo{
 		Period:            fmt.Sprintf("%04d/%02d", today.Year, today.Month),
@@ -282,9 +312,11 @@ func computePayslip(ctx context.Context, deps modulekit.Deps, employee contracts
 		InsuranceEmployer: result.InsuranceEmployer,
 		Tax:               result.Tax,
 		Net:               result.Net,
+		WageSourceFa:      sourceFa,
 	}
 	if provider, ok := deps.Ports.PayElements(); ok {
-		env := elementEnvFor(ctx, deps, params, input, result)
+		env, wages := elementEnvFor(ctx, deps, params, input, result, structure)
+		info.MazdBase = rules.RoundHalfUp(wages.Total())
 		for _, line := range rules.ComputeElements(provider.PayElements(ctx), env) {
 			info.Elements = append(info.Elements, PayslipElement{
 				TitleFa:    line.TitleFa,
@@ -297,21 +329,54 @@ func computePayslip(ctx context.Context, deps modulekit.Deps, employee contracts
 	return info
 }
 
-// wageStructure اجزای مزد و فوق‌العاده‌ها را برای حکم کارگزینی و قرارداد کار می‌سازد.
-// فقط اقلام مزایا می‌آید (کسور مثل مالیات و بیمه در این اسناد نیست) و محاسبه با همان
-// موتور مشترک شبیه‌ساز انجام می‌گیرد.
+// wageStructure «اجزای مزد مبنا و فوق‌العاده‌ها» را برای حکم کارگزینی و قرارداد کار می‌سازد.
+//
+// ساختار دو بخشی است و همین خوانایی سند را می‌سازد:
+//  1. اجزای مزد مبنا — همان اجزایی که مزد مبنا از جمع آن‌ها ساخته می‌شود (با سطر جمع).
+//  2. فوق‌العاده‌ها و پرداخت‌های دوره — اقلامی که روی مزد مبنا سوار می‌شوند یا به کارکرد
+//     دوره وابسته‌اند (اقلیمی درصدی، نوبت‌کاری، اضافه‌کاری، حق مسکن، بن، ...).
+//
+// منبع اجزا، سند کارگزینی خودِ کارمند است (حکم ابلاغ‌شده و در نبود آن قرارداد جاری)؛ پس
+// سندی که به او ابلاغ می‌شود با فیش حقوقش یک عدد می‌دهد. محاسبه با همان موتور مشترک
+// شبیه‌ساز انجام می‌گیرد و هیچ عددی در این فایل سخت نشده است.
 func wageStructure(ctx context.Context, deps modulekit.Deps, employee contracts.Employee) []StructureRow {
 	provider, ok := deps.Ports.PayElements()
 	if !ok {
 		return nil
 	}
+	structure, sourceFa := wageDocOf(ctx, deps, employee)
+	base := employee.BaseSalary
+	if structure.BaseSalary > 0 {
+		base = structure.BaseSalary
+	}
 	params := rules.DefaultPayrollParams()
-	input := rules.PayrollInput{BaseSalary: employee.BaseSalary}
+	input := rules.PayrollInput{BaseSalary: base}
 	result := rules.ComputePayroll(input, params)
-	env := elementEnvFor(ctx, deps, params, input, result)
+	env, wages := elementEnvFor(ctx, deps, params, input, result, structure)
+
 	rows := []StructureRow{}
+	inBase := map[string]bool{}
+	for _, part := range wages.Breakdown() {
+		inBase[part.Code] = true
+		rows = append(rows, StructureRow{
+			TitleFa:  part.TitleFa,
+			KindFa:   part.KindFa,
+			DetailFa: "جزء ثابت مزد مبنا",
+			AmountFa: money(rules.RoundHalfUp(part.Amount)),
+			GroupFa:  "اجزای مزد مبنا",
+		})
+	}
+	rows = append(rows, StructureRow{
+		TitleFa: "مزد مبنا", KindFa: "جمع اجزای ثابت",
+		DetailFa: "مبنای اضافه‌کاری، شب‌کاری، نوبت‌کاری و فوق‌العاده‌های اقلیمی",
+		AmountFa: money(rules.RoundHalfUp(wages.Total())),
+		GroupFa:  "اجزای مزد مبنا", Total: true,
+	})
+	if sourceFa != "" {
+		rows[0].DetailFa = rows[0].DetailFa + " — " + sourceFa
+	}
 	for _, line := range rules.ComputeElements(provider.PayElements(ctx), env) {
-		if strings.TrimSpace(line.Category) != "earning" {
+		if strings.TrimSpace(line.Category) != "earning" || inBase[line.Code] {
 			continue
 		}
 		amount := "—"
@@ -323,46 +388,80 @@ func wageStructure(ctx context.Context, deps modulekit.Deps, employee contracts.
 			KindFa:   categoryFa(line.Category),
 			DetailFa: line.DetailFa,
 			AmountFa: amount,
+			GroupFa:  "فوق‌العاده‌ها و پرداخت‌های دوره",
 		})
 	}
 	return rows
 }
 
-// elementEnvFor محیط محاسبهٔ اقلام یک کارمند را می‌سازد: پارامترهای پیش‌فرض موتور قواعد،
-// پارامترهای شرکت فعال، مقادیر پارامترهای حقوق از ماژول حقوق، و اجزای مزد. مزد شغل
-// همان مزد پایهٔ کارمند است تا حکم، قرارداد و فیش با پروندهٔ او هم‌خوان بمانند.
-func elementEnvFor(ctx context.Context, deps modulekit.Deps, params rules.PayrollParams, input rules.PayrollInput, result rules.PayrollResult) rules.ElementEnv {
+// wageDoc اجزای مزد یک کارمند در سند کارگزینی، همراه با منبع آن.
+type wageDoc struct {
+	BaseSalary int64
+	contracts.WageStructure
+	SourceFa string
+}
+
+// wageDocOf اجزای مزد کارمند را می‌خواند: ابتدا حکم ابلاغ‌شده و در نبود آن قرارداد جاری.
+// هیچ‌کدام نبود، صفر برمی‌گردد و سند با پایهٔ پرونده و پارامترهای شرکت ساخته می‌شود.
+func wageDocOf(ctx context.Context, deps modulekit.Deps, employee contracts.Employee) (wageDoc, string) {
+	if reader, ok := deps.Ports.SalaryDecrees(); ok {
+		if d, found, err := reader.NotifiedDecreeOf(ctx, employee.ID); err == nil && found {
+			return wageDoc{BaseSalary: d.BaseSalary, WageStructure: d.WageStructure}, "از حکم کارگزینی " + d.ID
+		}
+	}
+	if reader, ok := deps.Ports.ContractDocuments(); ok {
+		if c, found, err := reader.ActiveContractOf(ctx, employee.ID); err == nil && found {
+			return wageDoc{BaseSalary: c.MonthlySalary, WageStructure: c.WageStructure}, "از قرارداد کار " + c.ID
+		}
+	}
+	return wageDoc{}, ""
+}
+
+// elementEnvFor محیط محاسبهٔ اقلام یک کارمند را می‌سازد: پارامترهای پیشفرض موتور قواعد،
+// پارامترهای شرکت فعال، مقادیر پارامترهای حقوق از ماژول حقوق، اجزای مزد کارمند از سند
+// کارگزینی، و ضرایب اقلیمی همان کارمند. مزد شغل همان پایهٔ سند است تا حکم، قرارداد و فیش
+// با پروندهٔ او همخوان بمانند.
+func elementEnvFor(ctx context.Context, deps modulekit.Deps, params rules.PayrollParams, input rules.PayrollInput, result rules.PayrollResult, structure wageDoc) (rules.ElementEnv, rules.WageComponents) {
 	vars := rules.BaseElementVars(input, result)
 	for k, v := range rules.ParamsVars(params) {
 		vars[k] = v
 	}
+	companyPercent := companyWageVars(ctx, deps)
+	for k, v := range companyPercent {
+		vars[k] = v
+	}
+	// ضرایب اقلیمی خودِ کارمند بر پارامتر شرکت مقدم است.
+	for k, v := range structure.Climate(companyPercent).Vars() {
+		vars[k] = v
+	}
+	wages := structure.Components(input.BaseSalary, companyPercent)
+	for k, v := range wages.Vars() {
+		vars[k] = v
+	}
+	return rules.ElementEnv{
+		Bases:     rules.BaseElementBases(input, params, result, 0, wages),
+		Vars:      vars,
+		Canonical: rules.CanonicalElementAmounts(result),
+	}, wages
+}
+
+// companyWageVars ضرایب درصدی سازمانی (ثابت‌های شغلی و اقلیمی) را از پارامترهای شرکت و
+// رکوردهای «پارامتر حقوق» می‌خواند. نبود ماژول حقوق، محاسبه را متوقف نمی‌کند.
+func companyWageVars(ctx context.Context, deps modulekit.Deps) map[string]float64 {
+	out := map[string]float64{}
 	for _, p := range deps.Org.Params {
 		if f, err := strconv.ParseFloat(strings.TrimSpace(p.Value), 64); err == nil {
-			vars[p.Key] = f
+			out[p.Key] = f
 		}
 	}
 	if provider, ok := deps.Ports.PayElements(); ok {
 		for k, v := range provider.PayParamValues(ctx) {
 			if f, err := strconv.ParseFloat(strings.TrimSpace(v), 64); err == nil {
-				vars[k] = f
+				out[k] = f
 			}
 		}
 	}
-	wages := rules.WageComponents{
-		Job:           float64(input.BaseSalary),
-		Rank:          vars["wage.rank"],
-		Seniority:     vars["wage.seniority"],
-		PostAllowance: vars["allowance.post"],
-		Sacrifice:     vars["allowance.sacrifice"],
-	}
-	for k, v := range wages.Vars() {
-		vars[k] = v
-	}
-	return rules.ElementEnv{
-		Bases:     rules.BaseElementBases(input, params, result, 0, wages.Total()),
-		Vars:      vars,
-		Canonical: rules.CanonicalElementAmounts(result),
-	}
+	return out
 }
 
 // categoryFa برچسب فارسی دستهٔ قلم حقوق (مزایا / کسور).

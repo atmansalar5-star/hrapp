@@ -25,8 +25,16 @@ func (m *Module) ID() string { return "settings" }
 // Register مسیرهای پارامترها و فهرست‌های سیستمی را ثبت می‌کند.
 func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	svc := recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/settings")
+	// پورت فقطخواندنی رکوردهای تنظیمات: پروفایل شرکت‌ها (نشان شرکت فعال) و پارامترها.
+	// سرصفحهٔ سامانه و صفحهٔ نشان از همین راه می‌خوانند، نه با import بین ماژول‌ها.
+	deps.Ports.SetRecordList(m.ID(), svc)
 	registerAdminEndpoints(mux, deps)
 	registerAccessEndpoints(mux, deps)
+	// نشان (لوگوی) هر شرکت: بارگذاری، خواندن و حذف — فایل در پوشهٔ داده می‌ماند.
+	registerLogoEndpoints(mux, deps, svc)
+	// تبادل داده: اتصال به منابع بیرونی (اکسل، CSV، SQL Server، Oracle، MySQL، Postgres)،
+	// ساختار داده و قالب‌های آمادهٔ بارگذاری.
+	registerDataSourceEndpoints(mux, deps)
 	// تقویم کاری: تعطیل هفتگی/رسمی استقرار و پارامترهای حضور و مرخصی شرکت فعال.
 	registerCalendarEndpoint(mux, deps)
 	// پورت قالب‌های متن اسناد: موتور اسناد چاپی و ماژول قراردادها از همین‌جا قالب فعال

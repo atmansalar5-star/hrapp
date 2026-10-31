@@ -97,14 +97,45 @@ type Service struct {
 	audit     *audit.Log
 	sync      *synclog.Log
 	clock     func() time.Time
+	// wagePercent ضرایب درصدی سازمانی (ثابت‌های شغلی و اقلیمی) را از ماژول حقوق
+	// می‌خواند تا «مزد مبنا»ی حکم با همان عددی ساخته شود که فیش حقوق می‌سازد. تزریق
+	// تابعی است تا این ماژول به داخلی‌های ماژول حقوق وابسته نشود.
+	wagePercent func(ctx context.Context) map[string]float64
 }
 
-// New سرویس می‌سازد.
-func New(repo Repository, employees EmployeeLookup, auditLog *audit.Log, syncLog *synclog.Log, clock func() time.Time) *Service {
+// New سرویس می‌سازد. wagePercent می‌تواند nil باشد (بدون ماژول حقوق، فقط اجزای ثبت‌شدهٔ
+// حکم محاسبه می‌شود و مزد مبنا همان جمع آن‌هاست).
+func New(repo Repository, employees EmployeeLookup, auditLog *audit.Log, syncLog *synclog.Log, clock func() time.Time,
+	wagePercent func(ctx context.Context) map[string]float64) *Service {
 	if clock == nil {
 		clock = time.Now
 	}
-	return &Service{repo: repo, employees: employees, audit: auditLog, sync: syncLog, clock: clock}
+	return &Service{repo: repo, employees: employees, audit: auditLog, sync: syncLog, clock: clock, wagePercent: wagePercent}
+}
+
+// percent ضرایب سازمانی جاری را می‌خواند (هر فراخوان تازه، تا تغییر پارامترها بیدرنگ دیده شود).
+func (s *Service) percent(ctx context.Context) map[string]float64 {
+	if s.wagePercent == nil {
+		return nil
+	}
+	return s.wagePercent(ctx)
+}
+
+// view حکم را با «مزد مبنا» و عنوان منطقهٔ اقلیمی برمی‌گرداند؛ تنها نقطهٔ ساخت پاسخ حکم
+// است تا هیچ مسیری بدون مزد مبنا به رابط نرود.
+func (s *Service) view(ctx context.Context, d domain.SalaryDecree) contracts.SalaryDecree {
+	return d.WithWage(s.percent(ctx))
+}
+
+// viewPage همان کار را برای صفحهٔ فهرست انجام می‌دهد.
+func (s *Service) viewPage(ctx context.Context, p contracts.SalaryDecreePage) contracts.SalaryDecreePage {
+	percent := s.percent(ctx)
+	items := make([]contracts.SalaryDecree, 0, len(p.Items))
+	for _, d := range p.Items {
+		items = append(items, d.WithWageView(percent))
+	}
+	p.Items = items
+	return p
 }
 
 func (s *Service) today() string {
@@ -119,7 +150,11 @@ func (s *Service) today() string {
 
 // ListDecrees فهرست احکام با محدودهٔ دسترسی نقش.
 func (s *Service) ListDecrees(ctx context.Context, f contracts.SalaryDecreeFilter) (contracts.SalaryDecreePage, error) {
-	return s.repo.ListDecrees(ctx, f)
+	page, err := s.repo.ListDecrees(ctx, f)
+	if err != nil {
+		return page, err
+	}
+	return s.viewPage(ctx, page), nil
 }
 
 // NotifiedDecrees حکم‌های ابلاغ‌شدهٔ یک کارمند را برمی‌گرداند.
@@ -133,8 +168,9 @@ func (s *Service) NotifiedDecrees(ctx context.Context, employeeID string) ([]con
 		return nil, err
 	}
 	out := make([]contracts.SalaryDecree, 0, len(items))
+	percent := s.percent(ctx)
 	for _, d := range items {
-		out = append(out, d.ToSalaryDecree())
+		out = append(out, d.WithWage(percent))
 	}
 	return out, nil
 }
@@ -148,7 +184,7 @@ func (s *Service) GetDecree(ctx context.Context, f contracts.SalaryDecreeFilter,
 	if !withinScope(d.EmployeeID, d.DepartmentName, f.Scope, f.ActorEmployeeID, f.ActorDepartment) {
 		return contracts.SalaryDecree{}, false, nil
 	}
-	return d.ToSalaryDecree(), true, nil
+	return s.view(ctx, d), true, nil
 }
 
 // CreateDecree صدور پیش‌نویس حکم حقوق.
@@ -181,13 +217,14 @@ func (s *Service) CreateDecree(ctx context.Context, in contracts.SalaryDecreeInp
 		Status:         domain.DecreeDraft,
 		NoteFa:         in.NoteFa,
 		CreatedBy:      actor,
+		WageStructure:  in.WageStructure,
 	}
 	saved, err := s.repo.SaveDecree(ctx, draft)
 	if err != nil {
 		return contracts.SalaryDecree{}, err
 	}
 	s.record(actor, domain.ActionCreate, saved, "صدور پیش‌نویس حکم حقوق")
-	return saved.ToSalaryDecree(), nil
+	return s.view(ctx, saved), nil
 }
 
 // UpdateDecree ویرایش حکم پیش‌نویس.
@@ -221,25 +258,32 @@ func (s *Service) UpdateDecree(ctx context.Context, id string, in contracts.Sala
 	current.EffectiveDate = in.EffectiveDate
 	current.ReasonFa = in.ReasonFa
 	current.NoteFa = in.NoteFa
+	current.WageStructure = in.WageStructure
 	saved, err := s.repo.SaveDecree(ctx, current)
 	if err != nil {
 		return contracts.SalaryDecree{}, err
 	}
 	s.record(actor, domain.ActionUpdate, saved, "ویرایش پیش‌نویس حکم حقوق")
-	return saved.ToSalaryDecree(), nil
+	return s.view(ctx, saved), nil
 }
 
 // IssueDecree صدور حکم از پیش‌نویس.
 func (s *Service) IssueDecree(ctx context.Context, id, actor string) (contracts.SalaryDecree, error) {
 	d, err := s.decreeTransition(ctx, id, actor, domain.DecreeIssued, domain.ActionIssue, "صدور حکم حقوق")
-	return d.ToSalaryDecree(), err
+	if err != nil {
+		return contracts.SalaryDecree{}, err
+	}
+	return s.view(ctx, d), nil
 }
 
 // NotifyDecree ابلاغ حکم صادرشده؛ در صورت جانشینی، حکم پیشین منسوخ می‌شود
 // (منسوخ‌سازی داخل decreeTransition انجام می‌گیرد تا یک‌جا و اتمی بماند).
 func (s *Service) NotifyDecree(ctx context.Context, id, actor string) (contracts.SalaryDecree, error) {
 	d, err := s.decreeTransition(ctx, id, actor, domain.DecreeNotified, domain.ActionNotify, "ابلاغ حکم حقوق")
-	return d.ToSalaryDecree(), err
+	if err != nil {
+		return contracts.SalaryDecree{}, err
+	}
+	return s.view(ctx, d), nil
 }
 
 // ReviseDecree اصلاح حکم ابلاغ‌شده: حکم تازهٔ پیش‌نویس که جانشین حکم پیشین می‌شود.
@@ -273,12 +317,17 @@ func (s *Service) ReviseDecree(ctx context.Context, id string, in contracts.Sala
 	revised.CreatedBy = actor
 	revised.DecidedBy = ""
 	revised.EffectiveDate = s.today()
+	// اجزای مزد و ضرایب اقلیمی: هر مقدار داده‌شده جای مقدار حکم پیشین را می‌گیرد و
+	// مقدار صفر یعنی «همان قبلی بماند» تا اصلاح فقط پایه، اقلیمی‌ها را پاک نکند.
+	if in.HasWageComponents() || in.ClimateAllowance != 0 {
+		revised.WageStructure.ApplyOverride(in.WageStructure)
+	}
 	saved, err := s.repo.SaveDecree(ctx, revised)
 	if err != nil {
 		return contracts.SalaryDecree{}, err
 	}
 	s.record(actor, domain.ActionRevise, saved, "اصلاح حکم حقوق "+current.ID)
-	return saved.ToSalaryDecree(), nil
+	return s.view(ctx, saved), nil
 }
 
 // DeleteDecree حذف حکم پیش‌نویس.

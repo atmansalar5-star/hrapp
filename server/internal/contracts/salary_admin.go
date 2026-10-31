@@ -4,8 +4,10 @@ package contracts
 //
 // حکم حقوق سند مبنای پرداخت است، پس هر تغییر یک حکم تازه می‌سازد و حکم پیشین را
 // منسوخ می‌کند؛ احکام گذشته بازنویسی نمی‌شوند تا سابقهٔ پرداخت قابل ردیابی بماند.
-// مبالغ و ضرایب فوق‌العاده در همین حکم نگه داشته می‌شوند و تا زمانی که ضرایب قانونی
-// اعلام نشود، مبنای محاسبه از پارامترهای شرکت فعال می‌آید.
+//
+// اجزای ثابت مزد و فوق‌العاده‌های اقلیمی همین‌جا ثبت می‌شوند (WageStructure): فیش حقوق
+// مزد مبنا را از این اجزا می‌سازد و ضرایب اقلیمی را از همین حکم می‌خواند. هر فیلد صفر
+// یعنی ثبت نشده و پارامتر شرکت به کار می‌رود.
 type SalaryDecree struct {
 	ID               string `json:"id"`
 	EmployeeID       string `json:"employeeId"`
@@ -25,6 +27,14 @@ type SalaryDecree struct {
 	CreatedBy        string `json:"createdBy,omitempty"`
 	DecidedBy        string `json:"decidedBy,omitempty"`
 	Version          int    `json:"version"`
+
+	WageStructure
+
+	// MazdBase مزد مبنا: از اجزای همین حکم ساخته می‌شود (قاعده در بستهٔ rules) تا رابط
+	// کاربری همان عددی را نشان دهد که فیش و سند چاپی حساب می‌کنند. فقط‌خواندنی است.
+	MazdBase int64 `json:"mazdBase,omitempty"`
+	// ClimateRegionFa عنوان فارسی منطقهٔ اقلیمی برای نمایش.
+	ClimateRegionFa string `json:"climateRegionFa,omitempty"`
 }
 
 // SalaryDecreeInput ورودی صدور یا ویرایش پیش‌نویس حکم حقوق.
@@ -36,6 +46,8 @@ type SalaryDecreeInput struct {
 	EffectiveDate  string `json:"effectiveDate"`
 	ReasonFa       string `json:"reasonFa"`
 	NoteFa         string `json:"noteFa,omitempty"`
+
+	WageStructure
 }
 
 // SalaryDecreeGroupInput ورودی صدور گروهی حکم کارگزینی.
@@ -103,10 +115,15 @@ type SalaryDecreeGroupResult struct {
 }
 
 // SalaryDecreeDecision ورودی اصلاح حکم (نسخهٔ تازه) با مبلغ و علت.
+//
+// اجزای مزد و ضرایب اقلیمی هم قابل اصلاح‌اند: افزایش منطقهٔ اقلیمی یا افزودن فوق‌العادهٔ
+// اقلیمی، حکم تازه می‌سازد و همان لحظه در فیش حقوق دیده می‌شود.
 type SalaryDecreeDecision struct {
 	BaseSalary int64  `json:"baseSalary,omitempty"`
 	ReasonFa   string `json:"reasonFa,omitempty"`
 	NoteFa     string `json:"noteFa,omitempty"`
+
+	WageStructure
 }
 
 // SalaryDecreePage صفحهٔ احکام حقوق.

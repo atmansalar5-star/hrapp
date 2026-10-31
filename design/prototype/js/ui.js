@@ -187,6 +187,9 @@ function startSession(sess) {
   $('#ubAvatar').textContent = initial(sess.name);
   $('#notifDot').textContent = fa(notifs.filter(n=>n.unread).length);
   go('dashboard');
+  // نشان بارگذاری‌شدهٔ شرکت فعال را بعد از ورود هم می‌خوانیم؛ هنگام بالا آمدن صفحه
+  // هنوز توکنی وجود ندارد، پس بدون این فراخوانی سرصفحه با نشان پیش‌فرض می‌ماند.
+  syncUploadedLogo();
 }
 
 /**
@@ -370,6 +373,23 @@ function applyOrgBranding() {
   if (loginLogo) {
     loginLogo.classList.toggle('has-img', hasImg);
     loginLogo.innerHTML = brandMark(184, 64, 14);
+  }
+}
+
+/**
+ * خواندن نشان بارگذاری‌شدهٔ شرکت فعال از سرور.
+ *
+ * نشان هر شرکت در سرور ذخیره می‌شود (`/api/v1/branding/active`)؛ اگر برای شرکت فعال
+ * نمایی بارگذاری شده باشد، همان جای نشان فهرست استقرارها را می‌گیرد. نبود سرور یا نبود
+ * نشان بارگذاری‌شده، رفتار را عوض نمی‌کند (نشان پیش‌فرض فهرست می‌ماند).
+ */
+async function syncUploadedLogo() {
+  if (typeof isLive !== 'function' || !isLive()) return;
+  const res = await apiFetch('/api/v1/branding/active');
+  if (!res.ok || !res.data || !res.data.hasUploadedLogo) return;
+  if (activeOrg && res.data.org === activeOrg.id && res.data.logoUrl) {
+    activeOrg = Object.assign({}, activeOrg, {logoFile: res.data.logoUrl});
+    applyOrgBranding();
   }
 }
 
@@ -655,6 +675,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initFaDigits();
   loadAppearance();
   applyAppearance();
+  syncUploadedLogo();
   const ap = $('#appearPanel');
   if (ap) ap.addEventListener('click', e => e.stopPropagation());
   applyOrgBranding();

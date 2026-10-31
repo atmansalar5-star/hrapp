@@ -24,6 +24,31 @@ import (
 // Module ثبت ماژول احکام حقوق و گواهی اشتغال.
 type Module struct{}
 
+// wagePercentOf ضرایب درصدی سازمانی (ثابت‌های شغلی و اقلیمی) را از پارامترهای شرکت و
+// رکوردهای «پارامتر حقوق» می‌خواند و به سرویس می‌دهد.
+//
+// چرا اینجا و با تزریق تابع: حکم کارگزینی باید «مزد مبنا» را با همان اعدادى نشان دهد که
+// فیش حقوق حساب می‌کند، ولی نباید به داخلی‌های ماژول حقوق import بزند؛ پس فقط عدد
+// می‌گیرد. اگر ماژول حقوق در این استقرار نباشد، پارامترهای شرکت تنها منبع‌اند.
+func wagePercentOf(deps modulekit.Deps) func(ctx context.Context) map[string]float64 {
+	return func(ctx context.Context) map[string]float64 {
+		out := map[string]float64{}
+		for _, p := range deps.Org.Params {
+			if f, err := strconv.ParseFloat(strings.TrimSpace(p.Value), 64); err == nil {
+				out[p.Key] = f
+			}
+		}
+		if provider, ok := deps.Ports.PayElements(); ok {
+			for k, v := range provider.PayParamValues(ctx) {
+				if f, err := strconv.ParseFloat(strings.TrimSpace(v), 64); err == nil {
+					out[k] = f
+				}
+			}
+		}
+		return out
+	}
+}
+
 // New ماژول می‌سازد.
 func New() *Module { return &Module{} }
 
@@ -65,7 +90,7 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 		employees = app.LookupFromReader(reader)
 	}
 
-	svc := app.New(repo, employees, deps.Audit, deps.Sync, clock)
+	svc := app.New(repo, employees, deps.Audit, deps.Sync, clock, wagePercentOf(deps))
 	// پورت خواندن حکم ابلاغ‌شده: مصرف‌کنندهٔ اصلی محاسبهٔ پاداش پایان خدمت است که پایه و
 	// نوع استخدام را از حکم برمی‌دارد. این‌گونه آن ماژول به داخلی‌های این ماژول دست
 	// نمی‌زند و مرز ماژول شکسته نمی‌شود.

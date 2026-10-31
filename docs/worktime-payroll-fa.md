@@ -69,6 +69,10 @@ OtherDeductions    = روز کسری × (مزد ماهانه ÷ ۳۰)
 | `GET /api/v1/attendance/device-import/template` | قالب نمونهٔ فایل تردد برای دادن به بهره‌بردار دستگاه |
 | `GET /api/v1/attendance/shift-plan?from=&to=` | برنامهٔ نوبت هر روز از چرخهٔ مصوب + پوشش هر شیفت و کمبود آن |
 | `GET /api/v1/payroll/worktime-reconciliation?period=YYYY/MM` | تطبیق کارکرد با حقوق: کارکرد، مبلغ محاسبه‌شده، مبلغ نوشته‌شده روی دوره و فهرست مغایرت‌ها |
+| `GET /api/v1/payroll/statutory/insurance?period=` | لیست بیمهٔ تأمین اجتماعی از همان کارکرد + مهلت و جریمهٔ برآوردی |
+| `GET /api/v1/payroll/statutory/tax?period=` | لیست مالیات حقوق (درآمد مشمول و مالیات هر کارمند) |
+| `GET /api/v1/payroll/statutory/{kind}/file` | خروجی CSV فایل قانونی |
+| `GET /api/v1/payroll/bank-file?period=&bank=` | فایل پرداخت بانکی با گرد کردن و جمع کنترلی |
 
 تغییر وضعیت گردش‌کار (پیش‌نویس ← محاسبه‌شده ← تأییدشده ← قفل ← پرداخت) همچنان کار
 اقدام روی رکورد است؛ محاسبه و گردش‌کار از هم جدا مانده‌اند.

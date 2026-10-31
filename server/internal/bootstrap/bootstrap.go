@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -134,6 +135,9 @@ type Config struct {
 	DatabaseURL string
 	// ServerRoot ریشهٔ پوشهٔ سرور برای یافتن migrations؛ خالی یعنی پوشهٔ جاری.
 	ServerRoot string
+	// DataDir پوشهٔ دادهٔ سرور برای فایل‌های بارگذاری‌شده (نشان شرکت)؛ خالی یعنی «data»
+	// کنار ریشهٔ سرور.
+	DataDir string
 	// Migrate اجرای مهاجرت‌های اعمال‌نشده در زمان راه‌اندازی (پیش‌فرض: اگر پایگاه‌داده تنظیم شده باشد).
 	Migrate bool
 	// SeedDemo بذرکاری دادهٔ نمونه روی پایگاه‌دادهٔ واقعی (نصب تازهٔ خالی).
@@ -142,6 +146,23 @@ type Config struct {
 	// دادهٔ آزمایشی احکام، فیش/دوره‌های حقوق، قراردادها و بقیهٔ ماژول‌ها در
 	// پایگاه‌داده ساخته می‌شود — فقط برای جدول‌های خالی.
 	SeedDemo bool
+}
+
+// Modules همهٔ ماژول‌های شناخته‌شده به ترتیب منو: حوزه به حوزه، اداره به اداره،
+// زیرواحد به زیرواحد و ماژول به ماژول — همان ترتیبی که در منو دیده می‌شود.// dataDirOf پوشهٔ دادهٔ سرور را مطلق می‌کند: مقدار صریح، وگرنه «data» کنار ریشهٔ سرور.
+func dataDirOf(cfg Config) string {
+	dir := strings.TrimSpace(cfg.DataDir)
+	if dir == "" {
+		root := strings.TrimSpace(cfg.ServerRoot)
+		if root == "" {
+			root = "."
+		}
+		dir = filepath.Join(root, "data")
+	}
+	if abs, err := filepath.Abs(dir); err == nil {
+		return abs
+	}
+	return dir
 }
 
 // Modules همهٔ ماژول‌های شناخته‌شده به ترتیب منو: حوزه به حوزه، اداره به اداره،
@@ -279,6 +300,10 @@ func NewDeps(cfg Config) (modulekit.Deps, error) {
 		Clock:    clock,
 		Org:      org,
 		SeedDemo: cfg.SeedDemo,
+		// پوشهٔ داده (:نشان شرکت و فایل‌های بارگذاری‌شده) و کلید امضای نشانی تأیید سند.
+		// مسیر مطلق می‌شود تا مستقل از پوشهٔ جاری فرمان، همه‌جا یکی باشد.
+		DataDir:   dataDirOf(cfg),
+		VerifyKey: cfg.JWTSecret,
 	}
 
 	// پایگاه‌داده و مهاجرت: تنها جایی که سامانه به Postgres وصل می‌شود. اگر نشانی
@@ -332,6 +357,8 @@ func NewHandler(deps modulekit.Deps) (http.Handler, []string, error) {
 
 	// مسیرهای پلتفرم (بیرون از ماژول‌ها، چون به خود سامانه مربوط‌اند نه به یک دامنه).
 	registerPlatformRoutes(mux, deps)
+	// نشان شرکت، QR کد و صفحهٔ تأیید سند (بخشی عمومی و بخشی نیازمند ورود).
+	registerPublicRoutes(mux, deps)
 
 	registered := Wire(mux, deps)
 

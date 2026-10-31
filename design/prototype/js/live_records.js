@@ -85,6 +85,10 @@ const RK_PAGES = {
   docTemplates: {kind: 'docTemplates'},
   // شرکت‌ها و استقرارهای هلدینگ: فرم ورود شرکت تازه و ویرایش شرکت‌های موجود
   companies: {kind: 'companyProfiles'},
+  // فاز ۱ — فایل قانونی بیمه/مالیات و فایل پرداخت بانکی: اسناد فایل با گردش ارسال/پرداخت.
+  // (ساخت فایل و خروجی CSV از مسیرهای /api/v1/payroll/statutory/... و /bank-file انجام می‌گیرد.)
+  statutoryFiles: {kind: 'statutoryFiles'},
+  bankPayments: {kind: 'bankFiles'},
   // مددکاری اجتماعی
   socialWorkCases: {kind: 'socialWorkCases'},
   aidRequests: {kind: 'aidRequests'},
@@ -1763,3 +1767,356 @@ for (const page of Object.keys(RK_PAGES)) {
 
 /* پنل کاتالوگ‌های مرجع: یک صفحهٔ اختصاصی با سه کاتالوگ. */
 LIVE_PAGES.catalogs = () => pageCatalogsLive();
+
+/* نشان شرکت و QR کد آن (لوگو). */
+LIVE_PAGES.branding = () => pageBrandingLive();
+
+/* تبادل داده: اتصال به منابع بیرونی، ساختار داده و قالب‌های بارگذاری. */
+LIVE_PAGES.dataExchange = () => pageDataExchangeLive();
+
+/* =====================================================================
+   نشان شرکت و QR کد (لوگو)
+   ===================================================================== */
+
+/** صفحهٔ «نشان و QR کد شرکت‌ها»: بارگذاری لوگو، پیش‌نمایش نشان و QR شناسهٔ شرکت. */
+function pageBrandingLive() {
+  if (!isLive()) return offlineFallback('branding');
+  const mod = rkFindModule('branding');
+  if (!mod) return liveErrorBox('این صفحه به ماژول زنده وصل نیست.');
+
+  liveLoad(async () => {
+    const res = await apiFetch(mod.prefix + '/records?size=200&kind=companyProfiles');
+    if (!res.ok) return liveErrorBox(res.message);
+    const items = (res.data && res.data.items) || [];
+    if (!items.length) return liveErrorBox('هیچ شرکتی ثبت نشده است؛ اول از صفحهٔ «شرکت‌ها و استقرارها» شرکت بسازید.');
+
+    const cards = items.map(company => {
+      const code = esc((company.fields && company.fields.code) || '');
+      const logoUrl = esc((company.fields && company.fields.logoFile) || '');
+      const qrUrl = '/api/v1/qr/company/' + encodeURIComponent(code);
+      const thumb = logoUrl
+        ? `<img src="${logoUrl}" alt="نشان ${esc(company.title)}" style="max-width:150px;max-height:64px;object-fit:contain;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:4px">`
+        : `<span class="muted">نشانی برای این شرکت ثبت نشده است.</span>`;
+      return `<div class="card card-pad" style="margin-bottom:12px">
+        <div class="card-title">🏢 ${esc(company.title)} <span class="muted" style="font-weight:400;font-size:.8rem">— کد ${code}</span></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:8px">
+          <div>${thumb}</div>
+          <div style="flex:1;min-width:260px">
+            <div class="muted" style="font-size:.8rem;line-height:2">فایل نشان را انتخاب کنید (PNG، JPEG، WEBP، GIF یا SVG تا ۲ مگابایت).
+            نشان در پوشهٔ دادهٔ سرور ذخیره می‌شود و بی‌درنگ در سرصفحه، صفحهٔ ورود و سندهای چاپی همین شرکت دیده می‌شود.</div>
+            <input id="logoFile-${esc(company.id)}" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="margin:6px 0">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="brandingUpload('${esc(company.id)}')">⬆ بارگذاری نشان</button>
+              <button class="btn" onclick="brandingDelete('${esc(company.id)}')">🗑 حذف نشان</button>
+              <a class="btn" href="/verify/company/${encodeURIComponent(code)}" target="_blank" rel="noopener">صفحهٔ تأیید شرکت</a>
+            </div>
+          </div>
+          <div style="text-align:center">
+            <img src="${qrUrl}" alt="QR شناسهٔ شرکت ${code}" style="width:132px;height:132px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:4px">
+            <div class="muted" style="font-size:.75rem;margin-top:4px">QR کد شناسهٔ شرکت</div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    const note = `<div class="card card-pad" style="margin-bottom:12px;font-size:.82rem;line-height:2">
+      📌 QR کد در سه جا ساخته می‌شود: <b>شناسهٔ شرکت</b> (همین صفحه، برای سرصفحهٔ فرم‌ها و مکاتبات)،
+      <b>کارت و گواهی کارمند</b> با نشانی <code>/api/v1/qr/employee/&lt;کد پرسنلی&gt;</code>، و
+      <b>سندهای چاپی</b> (قرارداد، حکم، گواهی، فیش) که خودِ سند، QR تأیید را در پاصفحه می‌گذارد.
+      صفحهٔ تأیید عمومی است و فقط اطلاعات کمینه را نشان می‌دهد (نه مبالغ).
+    </div>`;
+    return note + cards.join('');
+  });
+
+  return liveShell('نشان و QR کد شرکت‌ها', 'بارگذاری لوگوی هر شرکت، پیش‌نمایش نشان و QR کد شناسهٔ شرکت');
+}
+
+/** بارگذاری فایل نشان انتخاب‌شدهٔ یک شرکت (multipart با هدر احراز هویت). */
+async function brandingUpload(companyId) {
+  const input = document.getElementById('logoFile-' + companyId);
+  if (!input || !input.files || !input.files.length) {
+    toast('اول یک فایل نشان انتخاب کنید.', 'error');
+    return;
+  }
+  const body = new FormData();
+  body.append('file', input.files[0]);
+  const headers = {};
+  if (serverSession && serverSession.accessToken) headers['Authorization'] = 'Bearer ' + serverSession.accessToken;
+  try {
+    const res = await fetch('/api/v1/settings/companies/' + companyId + '/logo', {method: 'POST', headers, body});
+    const data = await res.json().catch(() => null);
+    if (!res.ok) { toast(jsonMessage(res.status, data), 'error'); return; }
+    toast('نشان شرکت ذخیره شد.');
+    liveReload();
+  } catch (_) {
+    toast('ارتباط با سرور برقرار نشد.', 'error');
+  }
+}
+
+/** حذف نشان یک شرکت. */
+async function brandingDelete(companyId) {
+  const res = await apiFetch('/api/v1/settings/companies/' + companyId + '/logo', {method: 'DELETE'});
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  toast('نشان شرکت حذف شد.');
+  liveReload();
+}
+
+/* =====================================================================
+   تبادل داده: اتصال به منابع بیرونی، ساختار داده و قالب‌های بارگذاری
+   ===================================================================== */
+
+/** وضعیت صفحهٔ تبادل داده (نوع‌های منبع، جدول‌ها و مسیر فایل بارگذاری‌شده). */
+const DE_STATE = {kinds: [], entities: [], uploadPath: ''};
+
+/** صفحهٔ «تبادل داده و قالب‌های بارگذاری». */
+function pageDataExchangeLive() {
+  if (!isLive()) return offlineFallback('dataExchange');
+  const mod = rkFindModule('dataExchange') || {prefix: '/api/v1/settings'};
+
+  liveLoad(async () => {
+    const [kindsRes, manifestRes] = await Promise.all([
+      apiFetch(mod.prefix + '/data-sources/kinds'),
+      apiFetch(mod.prefix + '/data-sources/manifest'),
+    ]);
+    if (!manifestRes.ok) return liveErrorBox(manifestRes.message);
+    const entities = (manifestRes.data && manifestRes.data.entities) || [];
+    DE_STATE.entities = entities;
+
+    const kinds = (kindsRes.ok && kindsRes.data && kindsRes.data.kinds) || [];
+    DE_STATE.kinds = kinds;
+    const kindOptions = kinds.map(k => `<option value="${esc(k.kind)}">${esc(k.titleFa)} â€” ${esc(k.categoryFa)}</option>`).join('');
+
+    const rows = entities.map(entity => `<tr>
+        <td class="num">${fa(entity.order || 0)}</td>
+        <td>${esc(entity.titleFa)}</td>
+        <td>${esc(entity.groupFa || '')}</td>
+        <td class="ltr">${esc(entity.module || '')}${entity.kind ? '.' + esc(entity.kind) : ''}</td>
+        <td>${fa((entity.fields || []).length)}</td>
+        <td class="ltr">${esc(entity.key)}</td>
+        <td><button class="btn" onclick="deDownloadTemplate('csv','${esc(entity.key)}')">CSV</button></td>
+      </tr>`).join('');
+
+    const groups = [...new Set(entities.map(e => e.groupFa || ''))];
+    const note = `<div class="card card-pad" style="margin-bottom:12px;font-size:.84rem;line-height:2">
+      🧩 <b>ساختار داده</b> از شناسهٔ خودِ ماژول‌های فعال ساخته می‌شود؛ پس با افزودن هر ماژول یا فیلد، فهرست
+      جدول‌ها، قالب اکسل و راهنما خودبه‌خود تازه می‌شوند. ترتیب فهرست، ترتیب توصیه‌شدهٔ بارگذاری است
+      (اول سازمان و ساختار، سپس کارکنان، سپس داده‌های وابسته).<br>
+      ${fa(entities.length)} جدول در ${fa(groups.length)} گروه ·
+      <button class="btn btn-primary" onclick="deDownloadTemplate('xlsx','')">⬇ قالب کامل اکسل</button>
+      <button class="btn" onclick="deShowGuide()">📘 راهنمای آماده‌سازی داده</button>
+    </div>`;
+
+    const connectCard = `<div class="card card-pad" style="margin-bottom:12px">
+      <div class="card-title">🔌 اتصال به منبع دادهٔ بیرونی</div>
+      <div class="muted" style="font-size:.82rem;line-height:2;margin:6px 0">
+        اکسل، CSV، SQL Server، Oracle، MySQL یا Postgres. اتصال همیشه <b>فقط‌خواندنی</b> است و رمز در سامانه
+        ذخیره نمی‌شود (نام متغیر محیطی رمز را بدهید). برای فایل، اول آن را بارگذاری کنید.
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select id="deKind" onchange="deRenderFields()">${kindOptions}</select>
+        <input id="deFile" type="file" accept=".csv,.txt,.xlsx">
+        <button class="btn btn-primary" onclick="deUpload()">⬆ بارگذاری فایل</button>
+      </div>
+      <div id="deUploadInfo" class="muted" style="font-size:.8rem;margin-top:6px"></div>
+      <div id="deFields" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"></div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn" onclick="deTest()">🔍 آزمون اتصال</button>
+        <input id="deSheet" placeholder="نام برگه (برای اکسل)" style="width:170px">
+        <input id="deRowLimit" type="number" min="1" max="20000" value="20" style="width:110px" title="سقف ردیف پیش‌نمایش">
+        <button class="btn" onclick="dePreview()">👁 پیش‌نمایش داده</button>
+      </div>
+      <div id="deResult" style="margin-top:10px"></div>
+    </div>`;
+
+    return note + connectCard + `<div class="card card-pad">
+      <div class="card-title">📋 جدول‌های هدف آماده‌سازی</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ردیف</th><th>جدول</th><th>گروه</th><th>جای بارگذاری</th><th>ستون</th><th>کلید</th><th>قالب</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+    </div>`;
+  });
+
+  // فیلدهای پیکربندی پس از رندر شدن صفحه رسم می‌شوند.
+  setTimeout(deRenderFields, 80);
+  return liveShell('تبادل داده و قالب‌های بارگذاری',
+    'اتصال به منابع داده (اکسل، CSV، SQL Server، Oracle، MySQL، Postgres) · ساختار داده · قالب آمادهٔ بارگذاری');
+}
+
+/** رسم فیلدهای پیکربندی بر پایهٔ نوع منبع انتخابی (فیلدها از سرور می‌آید). */
+function deRenderFields() {
+  const select = document.getElementById('deKind');
+  const box = document.getElementById('deFields');
+  if (!select || !box) return;
+  const kind = DE_STATE.kinds.find(k => k.kind === select.value);
+  if (!kind) { box.innerHTML = ''; return; }
+  if (['csv', 'xlsx'].includes(kind.kind)) {
+    box.innerHTML = `<div class="muted" style="font-size:.82rem">این نوع فایلی است: فایل را بارگذاری کنید و مسیر ذخیره‌شده خودکار در پیکربندی می‌نشیند.</div>`;
+    return;
+  }
+  box.innerHTML = (kind.fields || []).map(field => `
+    <label style="display:flex;flex-direction:column;font-size:.78rem;gap:4px">
+      ${esc(field.titleFa)}${field.required ? ' *' : ''}
+      <input id="deF_${esc(field.key)}" placeholder="${esc(field.example || '')}" style="min-width:150px">
+    </label>`).join('');
+}
+
+/** ساخت پیکربندی از فرم جاری. */
+function deConfig() {
+  const kind = (document.getElementById('deKind') || {}).value || 'csv';
+  const config = {kind: kind, name: kind, readOnly: true};
+  if (kind === 'csv' || kind === 'xlsx') {
+    config.filePath = DE_STATE.uploadPath;
+    const sheet = document.getElementById('deSheet');
+    if (kind === 'xlsx' && sheet && sheet.value.trim()) config.sheet = sheet.value.trim();
+    return config;
+  }
+  const kindDef = DE_STATE.kinds.find(k => k.kind === kind) || {fields: []};
+  (kindDef.fields || []).forEach(field => {
+    const input = document.getElementById('deF_' + field.key);
+    if (!input) return;
+    const value = (input.value || '').trim();
+    if (field.key === 'database') config.database = value;
+    else config[field.key] = value;
+  });
+  return config;
+}
+
+/** بارگذاری فایل داده در سرور. */
+async function deUpload() {
+  const input = document.getElementById('deFile');
+  const info = document.getElementById('deUploadInfo');
+  if (!input || !input.files || !input.files.length) { toast('اول یک فایل CSV یا XLSX انتخاب کنید.', 'error'); return; }
+  const body = new FormData();
+  body.append('file', input.files[0]);
+  const headers = {};
+  if (serverSession && serverSession.accessToken) headers['Authorization'] = 'Bearer ' + serverSession.accessToken;
+  try {
+    const res = await fetch('/api/v1/settings/data-sources/upload', {method: 'POST', headers, body});
+    const data = await res.json().catch(() => null);
+    if (!res.ok) { toast(jsonMessage(res.status, data), 'error'); return; }
+    DE_STATE.uploadPath = data.upload.path;
+    if (info) info.innerHTML = `✅ ${esc(data.upload.kindFa)} «${esc(data.upload.name)}» ذخیره شد (${fa(data.upload.sizeBytes)} بایت).`;
+    toast('فایل بارگذاری شد؛ حالا «آزمون اتصال» یا «پیش‌نمایش داده» را بزنید.');
+  } catch (_) { toast('ارتباط با سرور برقرار نشد.', 'error'); }
+}
+
+/** آزمون اتصال منبع انتخاب‌شده. */
+async function deTest() {
+  const box = document.getElementById('deResult');
+  if (box) box.innerHTML = '<div class="muted">در حال آزمون اتصال…</div>';
+  const res = await apiFetch('/api/v1/settings/data-sources/test', {method: 'POST', body: {config: deConfig()}});
+  if (!res.ok) { if (box) box.innerHTML = `<div style="color:#b91c1c">â›” ${esc(res.message)}</div>`; return; }
+  const data = res.data || {};
+  const tables = (data.tables || []).map(t => `<span class="chip">${esc(t)}</span>`).join(' ');
+  if (box) box.innerHTML = `
+    <div style="color:${data.ok === true ? '#166534' : '#b91c1c'};font-weight:600">${data.ok === true ? 'âœ…' : 'â›”'} ${esc(data.messageFa || '')}</div>
+    ${data.versionFa ? `<div class="muted ltr" style="font-size:.78rem">${esc(data.versionFa)}</div>` : ''}
+    ${tables ? `<div style="margin-top:6px;font-size:.8rem">جدول‌ها: ${tables}</div>` : ''}
+    ${(data.warningsFa || []).map(w => `<div class="muted" style="font-size:.78rem">â€¢ ${esc(w)}</div>`).join('')}`;
+}
+
+/** پیش‌نمایش ردیف‌های منبع. */
+async function dePreview() {
+  const box = document.getElementById('deResult');
+  const limit = parseInt((document.getElementById('deRowLimit') || {}).value || '20', 10) || 20;
+  if (box) box.innerHTML = '<div class="muted">در حال خواندن داده…</div>';
+  const res = await apiFetch('/api/v1/settings/data-sources/preview', {method: 'POST', body: {config: deConfig(), rowLimit: limit}});
+  if (!res.ok) { if (box) box.innerHTML = `<div style="color:#b91c1c">â›” ${esc(res.message)}</div>`; return; }
+  const data = res.data || {};
+  const head = (data.columns || []).map(c => `<th class="ltr">${esc(c)}</th>`).join('');
+  const rows = (data.rows || []).map(row => `<tr>${row.map(v => `<td>${esc(v)}</td>`).join('')}</tr>`).join('');
+  if (box) box.innerHTML = `
+    <div class="muted" style="font-size:.8rem;margin-bottom:6px">${fa(data.rowCount || 0)} ردیف از «${esc(data.sourceFa || '')}»${data.truncated ? ' (سقف ردیف اعمال شد)' : ''}</div>
+    <div class="table-wrap" style="max-height:320px;overflow:auto"><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/** دریافت قالب: اکسل برای همه یا چند جدول، CSV برای یک جدول. */
+async function deDownloadTemplate(format, entityKey) {
+  const headers = {};
+  if (serverSession && serverSession.accessToken) headers['Authorization'] = 'Bearer ' + serverSession.accessToken;
+  const query = format === 'xlsx'
+    ? (entityKey ? '?entities=' + encodeURIComponent(entityKey) : '')
+    : '?entity=' + encodeURIComponent(entityKey);
+  const url = '/api/v1/settings/data-sources/template.' + format + query;
+  try {
+    const res = await fetch(url, {headers});
+    if (!res.ok) { toast('دریافت قالب ممکن نشد (' + res.status + ').', 'error'); return; }
+    const blob = await res.blob();
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = format === 'xlsx' ? 'hrms-data-template.xlsx' : ('hrms-' + entityKey + '.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  } catch (_) { toast('ارتباط با سرور برقرار نشد.', 'error'); }
+}
+
+/** نمایش راهنمای آماده‌سازی داده (متن ساختهٔ سرور از همان ساختار داده). */
+async function deShowGuide() {
+  const box = document.getElementById('deResult');
+  if (box) box.innerHTML = '<div class="muted">در حال خواندن راهنما…</div>';
+  const headers = {};
+  if (serverSession && serverSession.accessToken) headers['Authorization'] = 'Bearer ' + serverSession.accessToken;
+  try {
+    const res = await fetch('/api/v1/settings/data-sources/guide', {headers});
+    const text = await res.text();
+    if (!res.ok) { if (box) box.innerHTML = '<div style="color:#b91c1c">⛔ دریافت راهنما ممکن نشد.</div>'; return; }
+    if (box) box.innerHTML = deRenderGuide(text);
+  } catch (_) { toast('ارتباط با سرور برقرار نشد.', 'error'); }
+}
+
+/**
+ * تبدیل راهنمای Markdown سرور به HTML خوانا.
+ *
+ * چرا: راهنما متن Markdown است و نشان‌دادن خامش («#»، «|» و ستاره‌ها وسط متن) برای کاربر
+ * فارسی ناخوانا است. این تابع سرتیترها، فهرست‌ها، جدول‌ها و پررنگ‌ها را به HTML راست‌چین
+ * تبدیل می‌کند. متن از خودِ سرور می‌آید و پیش از درج escape می‌شود، پس هیچ ورودی کاربر
+ * تفسیر نمی‌شود.
+ */
+function deRenderGuide(markdown) {
+  const lines = String(markdown || '').split('\n');
+  const out = [];
+  let inTable = false;
+  let tableHeaderDone = false;
+  const closeTable = () => {
+    if (inTable) { out.push('</tbody></table></div>'); inTable = false; tableHeaderDone = false; }
+  };
+  const inline = text => esc(text)
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/`(.+?)`/g, '<code class="ltr">$1</code>');
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed) { closeTable(); return; }
+    if (/^\|/.test(trimmed)) {
+      const cells = trimmed.replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+      if (cells.length && cells.every(c => /^:?-{2,}:?$/.test(c))) return; // ردیف جداکنندهٔ جدول
+      if (!inTable) { out.push('<div class="table-wrap" style="max-height:260px;overflow:auto"><table><tbody>'); inTable = true; tableHeaderDone = false; }
+      const cellTag = tableHeaderDone ? 'td' : 'th';
+      out.push('<tr>' + cells.map(c => `<${cellTag}>${inline(c)}</${cellTag}>`).join('') + '</tr>');
+      tableHeaderDone = true;
+      return;
+    }
+    closeTable();
+    const heading = trimmed.match(/^(#{1,4})\s+(.*)$/);
+    if (heading) {
+      const size = heading[1].length <= 2 ? '1.05rem' : '0.95rem';
+      out.push(`<h3 style="margin:14px 0 6px;font-size:${size};color:#0f172a">${inline(heading[2])}</h3>`);
+      return;
+    }
+    const bullet = trimmed.match(/^[-*]\s+(.*)$/);
+    if (bullet) { out.push(`<div style="padding-right:14px;margin:3px 0">• ${inline(bullet[1])}</div>`); return; }
+    const numbered = trimmed.match(/^(\d+)[.)]\s+(.*)$/);
+    if (numbered) { out.push(`<div style="padding-right:14px;margin:3px 0">${fa(numbered[1])}) ${inline(numbered[2])}</div>`); return; }
+    const quote = trimmed.match(/^>\s*(.*)$/);
+    if (quote) {
+      out.push(`<div style="border-right:3px solid #e2e8f0;padding-right:10px;margin:6px 0;color:#475569">${inline(quote[1])}</div>`);
+      return;
+    }
+    out.push(`<p style="margin:6px 0;line-height:2">${inline(trimmed)}</p>`);
+  });
+  closeTable();
+  return `<div style="max-height:460px;overflow:auto;line-height:2;font-size:.84rem">${out.join('')}</div>`;
+}

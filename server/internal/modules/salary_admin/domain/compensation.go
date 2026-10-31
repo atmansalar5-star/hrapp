@@ -10,9 +10,13 @@ import (
 
 	"hrms/internal/contracts"
 	"hrms/internal/platform/calendar"
+	"hrms/internal/rules"
 )
 
 // SalaryDecree حکم حقوق در حافظهٔ سامانه.
+//
+// WageStructure اجزای ثابت مزد و فوق‌العاده‌های اقلیمی همین حکم را نگه می‌دارد؛ فیش حقوق و
+// اسناد چاپی مزد مبنا را از همین اجزا می‌سازند.
 type SalaryDecree struct {
 	ID             string
 	EmployeeID     string
@@ -30,6 +34,8 @@ type SalaryDecree struct {
 	CreatedBy      string
 	DecidedBy      string
 	Version        int
+
+	contracts.WageStructure
 }
 
 // EmploymentCertificate گواهی اشتغال در حافظهٔ سامانه.
@@ -141,7 +147,28 @@ func (d SalaryDecree) ToSalaryDecree() contracts.SalaryDecree {
 		CreatedBy:        d.CreatedBy,
 		DecidedBy:        d.DecidedBy,
 		Version:          d.Version,
+		WageStructure:    d.WageStructure,
 	}
+}
+
+// WithWage مزد مبنا و عنوان منطقهٔ اقلیمی را روی شکل انتقالی حکم می‌گذارد.
+//
+// چرا اینجا و نه در رابط: کاربر باید همان عددی را ببیند که فیش و سند چاپی حساب می‌کنند؛
+// پس مزد مبنا یک‌بار با همان قاعدهٔ مشترک (بستهٔ rules) ساخته می‌شود و در پاسخ می‌آید.
+func (d SalaryDecree) WithWage(companyPercent map[string]float64) contracts.SalaryDecree {
+	return d.ToSalaryDecree().WithWageView(companyPercent)
+}
+
+// Wage اجزای مزد این حکم را با پیش‌فرض‌های سازمانی می‌سازد (همان تابعی که نمایش می‌دهد).
+func (d SalaryDecree) Wage(companyPercent map[string]float64) rules.WageComponents {
+	return d.WageStructure.Components(d.BaseSalary, companyPercent)
+}
+
+// Climate ضرایب اقلیمی این حکم؛ ضریب ثبت‌نشده از پارامتر شرکت و بعد از منطقه می‌آید.
+func (d SalaryDecree) Climate(companyPercent map[string]float64) rules.ClimateAllowances {
+	c := d.WageStructure.Climate(companyPercent)
+	c.SourceFa = "حکم کارگزینی " + d.ID
+	return c
 }
 
 // نحوهٔ صدور گواهی اشتغال.
@@ -246,6 +273,46 @@ func ValidateSalaryDecree(in contracts.SalaryDecreeInput) map[string]string {
 	if strings.TrimSpace(in.ReasonFa) == "" {
 		errs["reasonFa"] = "علت صدور حکم الزامی است."
 	}
+	for k, v := range ValidateWageStructure(in.WageStructure) {
+		errs[k] = v
+	}
+	return errs
+}
+
+// ValidateWageStructure اعتبارسنجی اجزای مزد و ضرایب اقلیمی سند کارگزینی (حکم/قرارداد).
+//
+// قاعده: ضریب نسبتی است (۰٫۲۵ = ۲۵٪) و بیرون بازهٔ صفر تا یک معنا ندارد؛ مقدار صفر
+// «ثبت نشده» است و به پیش‌فرض سازمانی می‌رسد، پس خطا شمرده نمی‌شود. مبلغ ریالی هم
+// منفی نمی‌تواند باشد. منطقهٔ اقلیمی باید در فهرست مناطق باشد تا ضرایبش قابل استخراج بماند.
+func ValidateWageStructure(w contracts.WageStructure) map[string]string {
+	errs := map[string]string{}
+	if region := strings.TrimSpace(w.ClimateRegion); region != "" {
+		if _, ok := rules.ClimateRegionByKey(region); !ok {
+			errs["climateRegion"] = "منطقهٔ اقلیمی انتخابی در فهرست مناطق اقلیمی نیست."
+		}
+	}
+	for key, p := range map[string]float64{
+		"badClimatePercent":     w.BadClimatePercent,
+		"deprivationPercent":    w.DeprivationPercent,
+		"regionHardshipPercent": w.RegionHardshipPercent,
+		"extraTimePercent":      w.ExtraTimePercent,
+	} {
+		if p < 0 || p > 1 {
+			errs[key] = "ضریب فوق‌العاده‌های اقلیمی باید نسبتی بین ۰ و ۱ باشد (۰٫۲۵ یعنی ۲۵٪)."
+		}
+	}
+	for key, amount := range map[string]int64{
+		"rankWage":           w.RankWage,
+		"seniorityWage":      w.SeniorityWage,
+		"postAllowance":      w.PostAllowance,
+		"sacrificeAllowance": w.SacrificeAllowance,
+		"climateAllowance":   w.ClimateAllowance,
+		"salaryRepair":       w.SalaryRepair,
+	} {
+		if amount < 0 {
+			errs[key] = "مبلغ این جزء نمی‌تواند منفی باشد."
+		}
+	}
 	return errs
 }
 
@@ -260,6 +327,9 @@ func ValidateRevise(current SalaryDecree, in contracts.SalaryDecreeDecision) map
 	}
 	if strings.TrimSpace(in.ReasonFa) == "" {
 		errs["reasonFa"] = "علت اصلاح حکم الزامی است."
+	}
+	for k, v := range ValidateWageStructure(in.WageStructure) {
+		errs[k] = v
 	}
 	return errs
 }

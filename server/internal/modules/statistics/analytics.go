@@ -71,21 +71,20 @@ func payElementStats(ctx context.Context, deps modulekit.Deps) map[string]any {
 			vars[k] = f
 		}
 	}
-	wages := rules.WageComponents{
-		Job:           float64(input.BaseSalary),
-		Rank:          vars["wage.rank"],
-		Seniority:     vars["wage.seniority"],
-		PostAllowance: vars["wage.post"],
-		Sacrifice:     vars["allowance.sacrifice"],
+	// اجزای مزد از همان سازندهٔ مشترک می‌آید: مزد شغل همان پایهٔ سازمان و بقیهٔ اجزا
+	// (رتبه، سنوات، پست، ایثارگری، ثابت‌های شغلی و اقلیمی) از پارامترهای فعال.
+	wageVars := map[string]float64{"wage.job": float64(input.BaseSalary)}
+	for k, v := range vars {
+		if _, ok := wageVars[k]; !ok {
+			wageVars[k] = v
+		}
 	}
-	if v, ok := vars["allowance.post"]; ok {
-		wages.PostAllowance = v
-	}
+	wages := rules.WageComponentsFromVars(wageVars)
 	for k, v := range wages.Vars() {
 		vars[k] = v
 	}
 	env := rules.ElementEnv{
-		Bases:     rules.BaseElementBases(input, params, result, 0, wages.Total()),
+		Bases:     rules.BaseElementBases(input, params, result, 0, wages),
 		Vars:      vars,
 		Canonical: rules.CanonicalElementAmounts(result),
 	}
@@ -147,8 +146,19 @@ func payElementStats(ctx context.Context, deps modulekit.Deps) map[string]any {
 			"wageSeniority":  wages.Seniority,
 			"postAllowance":  wages.PostAllowance,
 			"sacrifice":      wages.Sacrifice,
-			"gross":          result.Gross,
-			"net":            result.Net,
+			// اجزای ثابت شغلی و مبالغ مصوبی که مزد مبنا را کامل می‌کنند؛ بدون اینها جمع
+			// سطرهای کارت با «مزد مبنا» نمی‌خواند.
+			"jobAttachments":   wages.JobAndAttachments(),
+			"special":          wages.Special,
+			"workshop":         wages.Workshop,
+			"attractionPublic": wages.AttractionPublic,
+			"personalBase":     wages.PersonalBase,
+			"jobSpecialty":     wages.JobSpecialty,
+			"salaryRepair":     wages.SalaryRepair,
+			"climate":          wages.Climate,
+			"breakdown":        wages.Breakdown(),
+			"gross":            result.Gross,
+			"net":              result.Net,
 		},
 		"noteFa": "مبالغ با موتور مشترک قواعد و برای کارمند نمونه محاسبه شده است؛ مبلغ قطعی هر کارمند در فیش او مرجع است.",
 	}

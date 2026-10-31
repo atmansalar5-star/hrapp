@@ -37,6 +37,10 @@ func Descriptor() recordkit.Descriptor {
 			payrollRunsKind(),
 			karanaKind(),
 			serviceBonusKind(),
+			// فاز ۱: فایل قانونی بیمه/مالیات، حساب بانکی کارمند و فایل پرداخت بانکی.
+			statutoryFilesKind(),
+			bankAccountsKind(),
+			bankFilesKind(),
 		},
 	}
 }

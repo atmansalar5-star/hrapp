@@ -87,7 +87,7 @@ func TestComputeElementsResolvesFormula(t *testing.T) {
 	vars["fridayHours"] = 4
 
 	env := ElementEnv{
-		Bases:     BaseElementBases(input, params, result, 0, wages.Total()),
+		Bases:     BaseElementBases(input, params, result, 0, wages),
 		Vars:      vars,
 		Canonical: CanonicalElementAmounts(result),
 	}

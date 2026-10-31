@@ -182,6 +182,8 @@ var All = []Module{
 			{Key: "payReports", Order: 5, Icon: "bar-chart", TitleFa: "گزارش‌های مالی حقوق", Component: "PayReportsScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "serviceBonus", Order: 6, Icon: "calculator", TitleFa: "پاداش پایان خدمت (سنوات)", Component: "ServiceBonusScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "payParams", Order: 7, Icon: "percent", TitleFa: "پارامترها و ضرائب حقوق", Component: "PayParamsScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "statutoryFiles", Order: 8, Icon: "file-check", TitleFa: "فایل قانونی بیمه و مالیات", Component: "StatutoryFilesScreen", Roles: []string{"admin", "hr_manager"}},
+			{Key: "bankPayments", Order: 9, Icon: "banknote", TitleFa: "فایل پرداخت بانکی", Component: "BankFilesScreen", Roles: []string{"admin", "hr_manager"}},
 		},
 	},
 	{
@@ -658,6 +660,8 @@ var All = []Module{
 			{Key: "docTemplates", Order: 7, Icon: "file-text", TitleFa: "قالب‌های متن اسناد", Component: "DocTemplatesScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "catalogs", Order: 8, Icon: "database", TitleFa: "کاتالوگ‌های مرجع", Component: "CatalogsScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "companies", Order: 9, Icon: "building", TitleFa: "شرکت‌ها و استقرارها", Component: "CompaniesScreen", Roles: []string{"admin", "hr_manager"}},
+			{Key: "branding", Order: 10, Icon: "image", TitleFa: "نشان و QR کد شرکت‌ها", Component: "BrandingScreen", Roles: []string{"admin", "hr_manager"}},
+			{Key: "dataExchange", Order: 11, Icon: "database", TitleFa: "تبادل داده و قالب‌های بارگذاری", Component: "DataExchangeScreen", Roles: []string{"admin", "hr_manager"}},
 		},
 	},
 	{
