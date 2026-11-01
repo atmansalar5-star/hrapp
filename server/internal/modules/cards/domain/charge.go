@@ -113,6 +113,14 @@ type Beneficiary struct {
 	Relation     string
 	Excellent    bool
 	Allocated    map[string]bool
+	// Self یعنی این سطر خودِ کارمند است (نه فرد تحت تکفل)؛ خودِ کارمند همیشه مشمول
+	// است، چون «تعلق» برای افراد تحت تکفل معنا دارد.
+	Self bool
+	// Eligible وضعیت تعلق به خدمات (کلید خدمت → تعلق دارد). اگر nil باشد یعنی وضعیت
+	// تعلق این فرد در دسترس نیست و قاعدهٔ تعلق اعمال نمی‌شود (سازگاری با دادهٔ قدیمی).
+	Eligible map[string]bool
+	// EligibleKnown یعنی وضعیت تعلق برای این فرد ثبت شده است.
+	EligibleKnown bool
 }
 
 // OccasionCharge مناسبت تقویمی با مبلغ شارژ مناسبتی.
@@ -132,6 +140,14 @@ type ChargeInput struct {
 	Beneficiaries []Beneficiary
 	Occasion      *OccasionCharge
 	Period        string
+	// MaxHeads سقف «سر»های شارژ برای هر کارمند (خود کارمند + افراد تحت تکفل). صفر
+	// یعنی بی‌سقف.
+	MaxHeads int
+	// ServiceKey کلید خدمتی که تعلقش برای شارژ لازم است (مثل petrokart/naftcard) و
+	// ServiceKeyFa عنوان فارسی همان خدمت. از کاتالوگ مشترک توسط لایهٔ API پر می‌شود تا
+	// دامنه وابسته به قراردادها نشود و نگاشت کارت→خدمت در یک جا بماند.
+	ServiceKey   string
+	ServiceKeyFa string
 }
 
 // ChargeLine یک ردیف شارژ برای یک ذی‌نفع در یک بخش.
@@ -206,10 +222,48 @@ func Build(in ChargeInput) ([]ChargeLine, []string) {
 	}
 
 	lines := make([]ChargeLine, 0, len(in.Beneficiaries)*len(chosen))
+	// سقف سرهای شارژ برای هر کارمند: خود کارمند یک سر، و افراد تحت تکفل پس از او.
+	// افراد بیش از سقف شارژ نمی‌شوند و در هشدار گزارش می‌شوند.
+	headsUsed := map[string]int{}
+	if in.MaxHeads > 0 {
+		// خودِ کارمند همیشه یک سر از سقف را می‌گیرد، حتی اگر سطر او دیرتر از افراد
+		// تحت تکفل بیاید؛ وگرنه ممکن بود سهم کارمند به فرزند برسد و خودش از سقف بیفتد.
+		for _, b := range in.Beneficiaries {
+			if b.Self && headsUsed[b.EmployeeID] == 0 {
+				headsUsed[b.EmployeeID] = 1
+			}
+		}
+	}
 	for _, b := range in.Beneficiaries {
 		name := strings.TrimSpace(b.Name)
 		if name == "" {
 			name = b.EmployeeName
+		}
+		// سقف: خودِ کارمند همیشه شارژ می‌شود و سقف فقط به افراد تحت تکفل بسته می‌شود؛
+		// وگرنه ممکن بود سهم کارمند به فرزند برسد و خودش از فایل شارژ بیفتد.
+		if in.MaxHeads > 0 && !b.Self {
+			used := headsUsed[b.EmployeeID]
+			if used >= in.MaxHeads {
+				warnings = append(warnings, "شارژ «"+name+"» انجام نشد: سقف سرهای شارژ این کارمند ("+
+					persianInt(in.MaxHeads)+") پر شده است.")
+				continue
+			}
+			headsUsed[b.EmployeeID] = used + 1
+		}
+		// تعلق: فرد تحت تکفل تنها برای خدماتی شارژ می‌شود که در فرم تکفل «تعلق» ثبت شده
+		// باشد. اگر فرم تکفل او پیدا نشود یا تعلق ثبت نشده باشد، شارژ نمی‌شود و هشدار
+		// می‌آید؛ چون پرداخت پول به فرد نامشخص، خطای سنگین‌تری از نپرداختن است.
+		if !b.Self && in.ServiceKey != "" {
+			switch {
+			case !b.EligibleKnown:
+				warnings = append(warnings, "شارژ «"+name+"» انجام نشد: فرم افراد تحت تکفل این فرد "+
+					"(یا وضعیت تعلق) در پرونده ثبت نشده است؛ ابتدا تعلق «"+in.ServiceKeyFa+"» را ثبت کنید.")
+				continue
+			case !b.Eligible[in.ServiceKey]:
+				warnings = append(warnings, "شارژ «"+name+"» انجام نشد: در فرم تکفل، تعلق «"+
+					in.ServiceKeyFa+"» برای این فرد ثبت نشده است.")
+				continue
+			}
 		}
 		for _, sec := range chosen {
 			if field := AllocationField(sec.Key); field != "" && !b.Allocated[field] {
@@ -272,4 +326,25 @@ func SumLines(lines []ChargeLine) (int64, map[string]int64, map[string]int) {
 		count[l.Section]++
 	}
 	return total, bySection, count
+}
+
+// persianInt عدد را با ارقام فارسی برمی‌گرداند (عدد داخل پیام فارسی کاربر).
+func persianInt(n int) string {
+	if n == 0 {
+		return "۰"
+	}
+	digits := []rune("۰۱۲۳۴۵۶۷۸۹")
+	negative := n < 0
+	if negative {
+		n = -n
+	}
+	out := []rune{}
+	for n > 0 {
+		out = append([]rune{digits[n%10]}, out...)
+		n /= 10
+	}
+	if negative {
+		out = append([]rune{'-'}, out...)
+	}
+	return string(out)
 }

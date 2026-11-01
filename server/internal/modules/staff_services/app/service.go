@@ -284,6 +284,33 @@ func (s *Service) ensureNoDuplicateDependent(ctx context.Context, employeeID, na
 
 // ---------- فرم درخواست پرواز ----------
 
+// ApprovedDependents تکفل‌های تأییدشدهٔ یک کارمند را برمی‌گرداند (پورت قرارداد).
+//
+// مصرف‌کننده: ماژول کارت‌های رفاهی که برای شارژ باید بداند هر فرد تحت تکفل به کدام
+// خدمات تعلق دارد. فقط تکفل «تأییدشده» برگردانده می‌شود تا فرد در انتظار بررسی مشمول
+// شارژ یا پوشش نشود؛ خودِ تکفل و خدماتش در réponds می‌آید.
+func (s *Service) ApprovedDependents(ctx context.Context, employeeID string) ([]contracts.Dependent, error) {
+	id := strings.TrimSpace(employeeID)
+	if id == "" {
+		return nil, nil
+	}
+	page, err := s.repo.ListDependents(ctx, contracts.DependentFilter{
+		EmployeeID: id, Status: domain.DependentApproved, Page: 1, Size: 200,
+		Today: s.today().String(), Scope: "all",
+	})
+	if err != nil {
+		return nil, err
+	}
+	out := make([]contracts.Dependent, 0, len(page.Items))
+	for _, item := range page.Items {
+		if item.EmployeeID != id || item.Status != domain.DependentApproved {
+			continue
+		}
+		out = append(out, item)
+	}
+	return out, nil
+}
+
 // ListFlights فهرست درخواست‌های پرواز.
 func (s *Service) ListFlights(ctx context.Context, f contracts.FlightRequestFilter) (contracts.FlightRequestPage, error) {
 	return s.repo.ListFlights(ctx, f)

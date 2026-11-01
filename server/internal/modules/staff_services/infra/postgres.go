@@ -29,7 +29,7 @@ func NewPostgresStore(db *sql.DB, clock func() time.Time) *PostgresStore {
 }
 
 const dependentColumns = `id, employee_id, employee_name, department_name, full_name, relation,
-	national_id, birth_date, coverage_start, insurance, documents_fa, status, note_fa, decided_by, version`
+	national_id, birth_date, coverage_start, insurance, services, documents_fa, status, note_fa, decided_by, version`
 
 const flightColumns = `id, employee_id, employee_name, department_name, origin_fa, destination_fa,
 	depart_date, return_date, purpose, passengers, companions_fa, estimated_cost, status, note_fa,
@@ -131,18 +131,18 @@ func (s *PostgresStore) SaveDependent(ctx context.Context, d domain.Dependent) (
 	if _, err := tx.ExecContext(ctx, `
 		insert into hr_personnel.dependent
 			(id, employee_id, employee_name, department_name, full_name, relation, national_id,
-			 birth_date, coverage_start, insurance, documents_fa, status, note_fa, decided_by, version, updated_at)
-		values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15, now())
+			 birth_date, coverage_start, insurance, services, documents_fa, status, note_fa, decided_by, version, updated_at)
+		values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16, now())
 		on conflict (id) do update set
 			employee_id = excluded.employee_id, employee_name = excluded.employee_name,
 			department_name = excluded.department_name, full_name = excluded.full_name,
 			relation = excluded.relation, national_id = excluded.national_id,
 			birth_date = excluded.birth_date, coverage_start = excluded.coverage_start,
-			insurance = excluded.insurance, documents_fa = excluded.documents_fa,
+			insurance = excluded.insurance, services = excluded.services, documents_fa = excluded.documents_fa,
 			status = excluded.status, note_fa = excluded.note_fa,
 			decided_by = excluded.decided_by, version = excluded.version, updated_at = now()`,
 		d.ID, d.EmployeeID, d.EmployeeName, d.DepartmentName, d.FullName, d.Relation, d.NationalID,
-		d.BirthDate, d.CoverageStart, d.Insurance, d.DocumentsFa, d.Status, d.NoteFa, d.DecidedBy, d.Version,
+		d.BirthDate, d.CoverageStart, d.Insurance, joinServices(d.Services), d.DocumentsFa, d.Status, d.NoteFa, d.DecidedBy, d.Version,
 	); err != nil {
 		return domain.Dependent{}, err
 	}
@@ -306,11 +306,16 @@ func (s *PostgresStore) NextFlightID() (string, error) {
 }
 
 func scanDependent(row scanner) (domain.Dependent, error) {
+	var servicesCSV string
 	var d domain.Dependent
 	err := row.Scan(&d.ID, &d.EmployeeID, &d.EmployeeName, &d.DepartmentName, &d.FullName, &d.Relation,
-		&d.NationalID, &d.BirthDate, &d.CoverageStart, &d.Insurance, &d.DocumentsFa, &d.Status,
+		&d.NationalID, &d.BirthDate, &d.CoverageStart, &d.Insurance, &servicesCSV, &d.DocumentsFa, &d.Status,
 		&d.NoteFa, &d.DecidedBy, &d.Version)
-	return d, err
+	if err != nil {
+		return d, err
+	}
+	d.Services = splitServices(servicesCSV)
+	return d, nil
 }
 
 func scanFlight(row scanner) (domain.FlightRequest, error) {
@@ -322,3 +327,16 @@ func scanFlight(row scanner) (domain.FlightRequest, error) {
 }
 
 type scanner interface{ Scan(dest ...any) error }
+
+// joinServices فهرست کلیدهای خدمت را به متن جدا‌شده با کاما تبدیل می‌کند (شکل ذخیره).
+func joinServices(services []string) string {
+	return strings.Join(contracts.NormalizeDependentServices(services), ",")
+}
+
+// splitServices متن ذخیره‌شده را به کلیدهای معتبر برمی‌گرداند.
+func splitServices(value string) []string {
+	if strings.TrimSpace(value) == "" {
+		return []string{}
+	}
+	return contracts.NormalizeDependentServices(strings.Split(value, ","))
+}

@@ -152,3 +152,25 @@ func TestDependentToContractComputesCoverage(t *testing.T) {
 		t.Fatal("عنوان پوشش بیمه پر نشده است")
 	}
 }
+
+// TestValidateDependentServices: کلید خدمت نامعتبر رد می‌شود و کلید معتبر می‌گذرد.
+func TestValidateDependentServices(t *testing.T) {
+	base := contracts.DependentInput{
+		EmployeeID: "EMP-001", FullName: "فرزند نمونه", Relation: RelationChild,
+		NationalID: "0084512326", BirthDate: "1395/06/31", CoverageStart: "1404/01/01",
+	}
+	bad := base
+	bad.Services = []string{"petrokart", "service_unknown"}
+	if errs := ValidateDependent(bad); errs["services"] == "" {
+		t.Fatal("کلید خدمت ناشناخته باید رد شود")
+	}
+	good := base
+	good.Services = []string{"medical", "petrokart", "naftcard"}
+	if errs := ValidateDependent(good); len(errs) != 0 {
+		t.Fatalf("خدمات معتبر نباید خطا بدهد: %v", errs)
+	}
+	dependent := FromDependentInput("DEP-9001", good, "کارمند نمونه", "منابع انسانی")
+	if len(dependent.Services) != 3 {
+		t.Fatalf("کلیدهای خدمت باید روی رکورد بنشینند: %v", dependent.Services)
+	}
+}

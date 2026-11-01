@@ -13,6 +13,10 @@ type CardChargeRequest struct {
 	OccasionID  string   `json:"occasionId"`
 	EmployeeIDs []string `json:"employeeIds"`
 	TrialRun    bool     `json:"trialRun"`
+	// MaxHeads سقف «سر» های شارژ برای هر کارمند: خودِ کارمند یک سر و هر فرد تحت تکفل
+	// یک سر. صفر یعنی بی‌سقف (رفتار پیش از این). افراد بیش از سقف شارژ نمی‌شوند و در
+	// هشدارهای نتیجه با عدد فارسی گزارش می‌شوند.
+	MaxHeads int `json:"maxHeads,omitempty"`
 }
 
 // CardChargeRow یک ردیف شارژ برای یک ذی‌نفع (کارمند یا فرد تحت تکفل) در یک بخش.

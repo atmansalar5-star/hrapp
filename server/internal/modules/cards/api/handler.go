@@ -9,6 +9,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"sort"
 	"strings"
 	"time"
 
@@ -122,6 +123,7 @@ func (h *Handler) CreateChargeFile(w http.ResponseWriter, r *http.Request) {
 			"sectionsCsv":  strings.Join(req.Sections, ","),
 			"employeesCsv": strings.Join(req.EmployeeIDs, ","),
 			"occasionId":   req.OccasionID,
+			"maxHeads":     fmt.Sprint(req.MaxHeads),
 		},
 		NoteFa: "ساخته‌شده از پنل فایل‌های شارژ برای ارسال به مالی",
 	}, user.Username)
@@ -152,25 +154,74 @@ func (h *Handler) ExportChargeFile(w http.ResponseWriter, r *http.Request) {
 		OccasionID:  rec.Fields["occasionId"],
 		Sections:    splitCSV(rec.Fields["sectionsCsv"]),
 		EmployeeIDs: splitCSV(rec.Fields["employeesCsv"]),
+		MaxHeads:    int(parseInt(rec.Fields["maxHeads"])),
 	}
 	result, buildErr := h.build(r.Context(), req)
 	if buildErr != nil {
 		writeRuleError(w, buildErr)
 		return
 	}
+	// شناسهٔ فایل در سرصفحهٔ خروجی میآید تا مالی بتواند خروجی را به همان پرونده
+	// بازبگرداند.
+	result.FileID = rec.ID
+	result.FileNoFa = rec.ID
 
 	w.Header().Set("Content-Type", "text/csv; charset=utf-8")
 	w.Header().Set("Content-Disposition", `attachment; filename="`+rec.ID+`.csv"`)
 	w.Header().Set("Cache-Control", "no-store")
-	// BOM لازم است وگرنه Excel فارسی را نامفهوم نشان می‌دهد.
+	// BOM لازم است وگرنه Excel فارسی را نامفهوم نشان می‌دهد و CRLF می‌گذاریم تا
+	// Excel ویندوز همهٔ ردیف‌ها را جدا ببیند.
 	fmt.Fprint(w, "\ufeff")
-	fmt.Fprint(w, csvHeader())
+	fmt.Fprint(w, csvEscapeLineEndings(csvHeader()))
 	for _, row := range result.Rows {
-		fmt.Fprint(w, csvRow(row))
+		fmt.Fprint(w, csvEscapeLineEndings(csvRow(row)))
 	}
-	fmt.Fprint(w, csvFooter(result))
+	fmt.Fprint(w, csvEscapeLineEndings(csvFooter(result)))
 	h.deps.Audit.Append(user.Username, "cards", "charge-file-export", rec.ID,
 		"خروجی فایل شارژ برای مالی — "+fmt.Sprint(result.Count)+" ردیف")
+}
+
+// ExportChargeFileXLSX خروجی اکسل فایل شارژ (برای واحد مالی و کارگزینی).
+//
+// چرا در کنار CSV: فایل CSV فارسی در Excel وابسته به تنظیم ناحیه‌ای رایانه است؛ فایل
+// xlsx خودش قلم، کدگذاری و راست‌به‌چپ را حمل می‌کند. معیارهای شارژ همان است که در پرونده
+// ذخیره شده، پس خروجی با پیش‌نمایش کاربر یکی است.
+func (h *Handler) ExportChargeFileXLSX(w http.ResponseWriter, r *http.Request) {
+	user, _ := auth.UserFrom(r.Context())
+	rec, ok, err := h.svc.Get(r.Context(), contracts.RecordFilter{Module: "cards", Scope: "all"}, r.PathValue("id"))
+	if err != nil || !ok {
+		httpx.WriteError(w, http.StatusNotFound, contracts.CodeNotFound, nil)
+		return
+	}
+	req := contracts.CardChargeRequest{
+		Card:        rec.Fields["card"],
+		Period:      rec.Fields["period"],
+		Scope:       rec.Fields["scopeKey"],
+		OccasionID:  rec.Fields["occasionId"],
+		Sections:    splitCSV(rec.Fields["sectionsCsv"]),
+		EmployeeIDs: splitCSV(rec.Fields["employeesCsv"]),
+		MaxHeads:    int(parseInt(rec.Fields["maxHeads"])),
+	}
+	result, buildErr := h.build(r.Context(), req)
+	if buildErr != nil {
+		writeRuleError(w, buildErr)
+		return
+	}
+	// شمارهٔ فایل در سرصفحهٔ اکسل هم میآید (همان قاعدهٔ خروجی CSV).
+	result.FileID = rec.ID
+	result.FileNoFa = rec.ID
+	content, err := chargeWorkbook(result)
+	if err != nil {
+		httpx.WriteErrorMsg(w, http.StatusInternalServerError, contracts.CodeInternal, err.Error(), nil)
+		return
+	}
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Header().Set("Content-Disposition", `attachment; filename="`+rec.ID+`.xlsx"`)
+	w.Header().Set("Cache-Control", "no-store")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(content)
+	h.deps.Audit.Append(user.Username, "cards", "charge-file-export-xlsx", rec.ID,
+		"خروجی اکسل فایل شارژ — "+fmt.Sprint(result.Count)+" ردیف")
 }
 
 /* ------------------------------ درون ماژول ------------------------------ */
@@ -205,6 +256,7 @@ func (h *Handler) build(ctx context.Context, req contracts.CardChargeRequest) (c
 		}
 	}
 
+	serviceKey := contracts.ServiceForCard(card)
 	lines, warnings := domain.Build(domain.ChargeInput{
 		Card:          card,
 		Sections:      req.Sections,
@@ -212,6 +264,9 @@ func (h *Handler) build(ctx context.Context, req contracts.CardChargeRequest) (c
 		Beneficiaries: beneficiaries,
 		Occasion:      occasion,
 		Period:        period,
+		MaxHeads:      req.MaxHeads,
+		ServiceKey:    serviceKey,
+		ServiceKeyFa:  contracts.DependentServiceTitleFa(serviceKey),
 	})
 
 	total, bySection, count := domain.SumLines(lines)
@@ -257,27 +312,98 @@ func (h *Handler) beneficiaries(ctx context.Context, req contracts.CardChargeReq
 		return nil, &recordkit.RuleError{Message: "در شارژ انفرادی باید دست‌کم یک کارمند انتخاب شود."}
 	}
 
+	// وضعیت تعلق افراد تحت تکفل از پورت ماژول امور کارکنان خوانده می‌شود و برای هر
+	// کارمند یک بار (با حافظهٔ کوچک) تا با N فرد، N بار پرس‌وجو نشود.
+	dependentCache := map[string][]contracts.Dependent{}
+	dependentsOf := func(employeeID string) []contracts.Dependent {
+		if list, ok := dependentCache[employeeID]; ok {
+			return list
+		}
+		list := []contracts.Dependent{}
+		if reader, ok := h.deps.Ports.Dependents(); ok {
+			if items, err := reader.ApprovedDependents(ctx, employeeID); err == nil {
+				list = items
+			}
+		}
+		dependentCache[employeeID] = list
+		return list
+	}
+
 	out := make([]domain.Beneficiary, 0, len(records))
 	for _, rec := range records {
 		if individual && !want[rec.EmployeeID] {
 			continue
 		}
-		out = append(out, domain.Beneficiary{
+		relation := strings.TrimSpace(rec.Fields["relation"])
+		self := strings.Contains(relation, "خود")
+		item := domain.Beneficiary{
 			RecordID:     rec.ID,
 			EmployeeID:   rec.EmployeeID,
 			EmployeeName: rec.EmployeeName,
 			Name:         rec.Title,
-			Relation:     rec.Fields["relation"],
+			Relation:     relation,
 			Excellent:    isFlag(rec.Fields["excellent"]),
+			Self:         self,
 			Allocated: map[string]bool{
 				"petrokartCultural":   isFlag(rec.Fields["petrokartCultural"]),
 				"petrokartRestaurant": isFlag(rec.Fields["petrokartRestaurant"]),
 				"educationBonus":      isFlag(rec.Fields["educationBonus"]),
 				"naftmart":            isFlag(rec.Fields["naftmart"]),
 			},
-		})
+		}
+		// تعلق فقط برای فرد تحت تکفل معنا دارد؛ خودِ کارمند مشمول است.
+		if !self {
+			if dependent, ok := matchDependent(dependentsOf(rec.EmployeeID), rec); ok {
+				item.EligibleKnown = true
+				item.Eligible = map[string]bool{}
+				for _, key := range dependent.Services {
+					item.Eligible[key] = true
+				}
+			}
+		}
+		out = append(out, item)
 	}
+	// ترتیب پایدار: خود کارمند نخست، سپس افراد تحت تکفل به ترتیب نام. سقف سرها به همین
+	// ترتیب بسته می‌شود، پس «چه کسی از سقف افتاد» تکرارپذیر و قابل توضیح است.
+	sort.SliceStable(out, func(i, j int) bool {
+		if out[i].EmployeeID != out[j].EmployeeID {
+			return out[i].EmployeeID < out[j].EmployeeID
+		}
+		if out[i].Self != out[j].Self {
+			return out[i].Self
+		}
+		return out[i].Name < out[j].Name
+	})
 	return out, nil
+}
+
+// matchDependent فرد تحت تکفل متناظر یک رکورد «فرد مشمول» را پیدا می‌کند.
+//
+// ترتیب تطبیق: کد ملی (دقیق‌ترین) و سپس نام و نام خانوادگی. کد ملی اگر در رکورد مشمول
+// ثبت شده باشد مقدم است؛ وگرنه نام‌ها مقایسه می‌شوند تا دادهٔ قدیمی که کد ملی ندارد هم
+// از فرم تکفل بهره ببرد.
+func matchDependent(dependents []contracts.Dependent, rec contracts.Record) (contracts.Dependent, bool) {
+	nationalID := calendar.NormalizeDigits(strings.TrimSpace(rec.Fields["nationalId"]))
+	if nationalID != "" {
+		for _, dependent := range dependents {
+			if calendar.NormalizeDigits(strings.TrimSpace(dependent.NationalID)) == nationalID {
+				return dependent, true
+			}
+		}
+	}
+	name := normalizeName(rec.Title)
+	for _, dependent := range dependents {
+		if normalizeName(dependent.FullName) == name {
+			return dependent, true
+		}
+	}
+	return contracts.Dependent{}, false
+}
+
+// normalizeName نام را برای مقایسه یکدست می‌کند (فاصله‌های اضافی و نیم‌فاصله).
+func normalizeName(value string) string {
+	value = strings.ReplaceAll(strings.TrimSpace(value), "\u200c", " ")
+	return strings.Join(strings.Fields(value), " ")
 }
 
 // ratesBySection نرخ جاری هر بخش از رکوردهای فعال؛ اگر نرخی ثبت نشده باشد، رابط و
@@ -324,7 +450,7 @@ func scopeKey(req contracts.CardChargeRequest) string {
 
 func scopeFa(req contracts.CardChargeRequest) string {
 	if scopeKey(req) == "individual" {
-		return "انفرادی — " + fmt.Sprint(len(req.EmployeeIDs)) + " کارمند انتخاب‌شده"
+		return "انفرادی — " + calendar.ToPersianDigits(fmt.Sprint(len(req.EmployeeIDs))) + " کارمند انتخاب‌شده"
 	}
 	return "گروهی — همهٔ مشمولان فعال"
 }

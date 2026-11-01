@@ -98,11 +98,27 @@ type Ports struct {
 	recordLists   map[string]contracts.RecordListPort
 	workTime      contracts.WorkTimeProvider
 	catalogs      contracts.CatalogReader
+	dependents    contracts.DependentReader
 	historySrcs   []contracts.HistorySource
 }
 
 // NewPorts مجموعهٔ خالی portها.
 func NewPorts() *Ports { return &Ports{} }
+
+// SetDependentReader ثبت پورت افراد تحت تکفل (توسط ماژول امور کارکنان) تا ماژول کارت‌های
+// رفاهی بداند چه کسی مشمول کدام خدمت است و فقط افراد با تعلق ثبت‌شده را شارژ کند.
+func (p *Ports) SetDependentReader(r contracts.DependentReader) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.dependents = r
+}
+
+// Dependents خواندن پورت افراد تحت تکفل؛ اگر ماژول ثبت نکرده باشد false برمی‌گردد.
+func (p *Ports) Dependents() (contracts.DependentReader, bool) {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	return p.dependents, p.dependents != nil
+}
 
 // SetCatalogReader ثبت پورت کاتالوگ‌های مرجع (توسط ماژول تنظیمات) تا ماژول‌های وام و
 // پاداش فهرست مدیریت‌ها، بانک‌ها و واحدها را از مرجع قابل ویرایش بخوانند.

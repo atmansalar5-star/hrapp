@@ -532,6 +532,7 @@ function pageDependentsLive() {
       ${statCard({ico: '✅', tint: '#DCFCE7', accent: '#16A34A', val: fa(items.filter(d => d.status === 'approved').length), label: 'تکفل تأییدشده'})}
       ${statCard({ico: '🩺', tint: '#FEF3C7', accent: '#D97706', val: fa(items.filter(d => d.insurance).length), label: 'دارای پوشش بیمه'})}
       ${statCard({ico: '⏳', tint: '#EDE9FE', accent: '#7C3AED', val: fa(items.filter(d => d.status === 'pending').length), label: 'در انتظار بررسی'})}
+      ${statCard({ico: '🎫', tint: '#E0F2FE', accent: '#0369A1', val: fa(items.filter(d => (d.services || []).length).length), label: 'تعلق خدمات ثبت‌شده'})}
     </div>`;
 
     const rows = items.map(d => `<tr>
@@ -541,6 +542,7 @@ function pageDependentsLive() {
       <td>${esc(d.relationFa || RELATION_FA[d.relation] || d.relation)}</td>
       <td>${faDate(d.coverageStart)}</td>
       <td>${d.insurance ? pChip('c-ok', d.insuranceFa || 'دارد') : pChip('c-wait', 'ندارد')}</td>
+      <td style="font-size:.7rem;line-height:1.9">${depServicesCell(d)}</td>
       <td>${statusChip(d.status, d.statusFa)}</td>
       <td><div class="row-actions">
         ${d.status !== 'removed' ? `<button class="btn btn-sm btn-ghost" onclick="liveDependentEdit('${d.id}')">✏️ ویرایش</button>` : ''}
@@ -555,13 +557,58 @@ function pageDependentsLive() {
     </div>`;
 
     return stats + note + liveTable(
-      ['کد پرسنلی', 'کارمند', 'فرد تحت تکفل', 'نسبت', 'تاریخ تکفل', 'پوشش بیمه', 'وضعیت', 'عملیات'],
+      ['کد پرسنلی', 'کارمند', 'فرد تحت تکفل', 'نسبت', 'تاریخ تکفل', 'پوشش بیمه', 'تعلق خدمات', 'وضعیت', 'عملیات'],
       rows, items.length);
   });
   return liveShell('افراد تحت تکفل',
-    'ثبت همسر و فرزندان کارکنان، مدارک تکفل و پوشش بیمه و خدمات درمانی',
+    'ثبت همسر و فرزندان کارکنان، مدارک تکفل، پوشش بیمه و وضعیت تعلق به خدمات (درمانی، تکمیلی، سفر کارت، کارت‌های رفاهی)',
     liveSearchBar('dependents', '🔍 جستجوی نام فرد تحت تکفل، کد پرسنلی، کارمند یا نسبت…') +
     `<button class="btn btn-primary" onclick="liveDependentForm()">➕ ثبت فرد تحت تکفل</button>`);
+}
+
+/* =====================================================================
+   افراد تحت تکفل — وضعیت تعلق به خدمات (درمانی، بیمهٔ تکمیلی، سفر کارت، کارت‌ها)
+   =====================================================================
+
+   خدمات از خود سرور می‌آید (`/api/v1/personnel/options`) و اینجا فقط تیک می‌خورند؛
+   همین تعلق است که موتور شارژ کارت‌های رفاهی را تعیین می‌کند چه کسی شارژ شود.
+   --------------------------------------------------------------------- */
+
+/** فهرست خدمات تعلق از سرور (یک بار خوانده و نگه داشته می‌شود). */
+var DEP_SERVICES = [];
+
+async function depLoadServices() {
+  if (DEP_SERVICES.length) return DEP_SERVICES;
+  const res = await apiFetch('/api/v1/personnel/options');
+  DEP_SERVICES = (res.ok && res.data && res.data.services) || [];
+  return DEP_SERVICES;
+}
+
+/** جعبه‌های تیک وضعیت تعلق؛ selected فهرست کلیدهای تیک‌خورده است. */
+function depServicesHTML(services, selected) {
+  const chosen = {};
+  for (const key of (selected || [])) chosen[String(key).trim()] = true;
+  if (!services.length) return '<div class="muted">فهرست خدمات از سرور در دسترس نیست.</div>';
+  return services.map(item => {
+    const value = item.value || item.key;
+    const label = item.label || item.titleFa || value;
+    return `<label style="display:flex;align-items:center;gap:6px;font-size:.82rem;margin:2px 0">
+      <input type="checkbox" class="depSvc" value="${esc(value)}" ${chosen[value] ? 'checked' : ''}>
+      <span>${esc(label)}${item.group ? ` <span class="muted" style="font-size:.72rem">— ${esc(item.group)}</span>` : ''}</span>
+    </label>`;
+  }).join('');
+}
+
+/** کلیدهای تیک‌خوردهٔ فرم تعلق. */
+function depSelectedServices() {
+  return [...document.querySelectorAll('.depSvc')].filter(el => el.checked).map(el => el.value);
+}
+
+/** خلاصهٔ فارسی خدمات یک فرد برای نمایش در جدول. */
+function depServicesCell(d) {
+  const list = d.servicesFa || [];
+  if (!list.length) return '<span class="muted">تعلق ثبت نشده</span>';
+  return list.map(label => `<span class="chip" style="font-size:.68rem">${esc(label)}</span>`).join(' ');
 }
 
 async function liveDependentForm() {
@@ -580,6 +627,10 @@ async function liveDependentForm() {
       <div class="field"><label>تاریخ تکفل (شمسی)</label><input id="depStart" placeholder="1404/07/01"></div>
       <div class="field"><label>پوشش بیمه</label><select id="depIns"><option value="1">دارد</option><option value="0">ندارد</option></select></div>
       <div class="field"><label>مدارک تکفل</label><input id="depDocs" placeholder="مثلاً: شناسنامه، عقدنامه"></div>
+      <div class="field" style="grid-column:1/-1">
+        <label>وضعیت تعلق به خدمات (همین تعلق، مبنای شارژ کارت‌های رفاهی و پوشش‌ها است)</label>
+        <div id="depServices" style="border:1px solid var(--border);border-radius:10px;padding:8px 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:2px">${depServicesHTML(await depLoadServices(), [])}</div>
+      </div>
     </div>`,
     foot: `<button class="btn btn-primary" onclick="liveDependentSave()">ثبت</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
@@ -593,6 +644,7 @@ async function liveDependentSave() {
     nationalId: $('#depNid').value.trim(),
     coverageStart: $('#depStart').value.trim(),
     insurance: $('#depIns').value === '1',
+    services: depSelectedServices(),
     documentsFa: $('#depDocs').value.trim(),
   };
   const res = await apiFetch('/api/v1/personnel/dependents', {method: 'POST', body});
@@ -618,6 +670,10 @@ async function liveDependentEdit(id) {
       <div class="field"><label>تاریخ تکفل (شمسی)</label><input id="depStart" value="${esc(d.coverageStart || '')}"></div>
       <div class="field"><label>پوشش بیمه</label><select id="depIns"><option value="1" ${d.insurance ? 'selected' : ''}>دارد</option><option value="0" ${d.insurance ? '' : 'selected'}>ندارد</option></select></div>
       <div class="field"><label>مدارک تکفل</label><input id="depDocs" value="${esc(d.documentsFa || '')}"></div>
+      <div class="field" style="grid-column:1/-1">
+        <label>وضعیت تعلق به خدمات (همین تعلق، مبنای شارژ کارت‌های رفاهی و پوشش‌ها است)</label>
+        <div id="depServices" style="border:1px solid var(--border);border-radius:10px;padding:8px 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:2px">${depServicesHTML(await depLoadServices(), d.services)}</div>
+      </div>
     </div>`,
     foot: `<button class="btn btn-primary" onclick="liveDependentUpdate('${esc(d.id)}')">ذخیره</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,

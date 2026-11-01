@@ -143,13 +143,14 @@ func (h *Handler) ExportBonusFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/csv; charset=utf-8")
 	w.Header().Set("Content-Disposition", `attachment; filename="`+rec.ID+`.csv"`)
 	w.Header().Set("Cache-Control", "no-store")
-	// BOM لازم است وگرنه Excel فارسی را نامفهوم نشان می‌دهد.
+	// BOM لازم است وگرنه Excel فارسی را نامفهوم نشان می‌دهد و CRLF می‌گذاریم تا Excel
+	// ویندوز همهٔ ردیف‌ها را جدا ببیند (هم‌خوان با فایل شارژ کارت‌های رفاهی).
 	fmt.Fprint(w, "\ufeff")
-	fmt.Fprint(w, csvHeader())
+	fmt.Fprint(w, csvWithCRLF(csvHeader()))
 	for _, row := range result.Rows {
-		fmt.Fprint(w, csvRow(row))
+		fmt.Fprint(w, csvWithCRLF(csvRow(row)))
 	}
-	fmt.Fprint(w, csvFooter(result))
+	fmt.Fprint(w, csvWithCRLF(csvFooter(result)))
 	h.deps.Audit.Append(user.Username, "education_bonus", "bonus-file-export", rec.ID,
 		"خروجی فایل پاداش تحصیلی برای مالی — "+fmt.Sprint(result.Count)+" ردیف")
 }
@@ -315,4 +316,9 @@ func writeRuleError(w http.ResponseWriter, err error) {
 		return
 	}
 	httpx.WriteErrorMsg(w, http.StatusInternalServerError, contracts.CodeInternal, err.Error(), nil)
+}
+
+// csvWithCRLF پایان‌خط‌ها را به CRLF برمی‌گرداند تا Excel ویندوز هر ردیف را جدا نشان دهد.
+func csvWithCRLF(body string) string {
+	return strings.ReplaceAll(strings.ReplaceAll(body, "\r\n", "\n"), "\n", "\r\n")
 }

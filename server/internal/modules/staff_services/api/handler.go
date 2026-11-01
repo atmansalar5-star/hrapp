@@ -249,7 +249,19 @@ func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {
 	for _, s := range []string{domain.FlightPending, domain.FlightApproved, domain.FlightIssued, domain.FlightSettled, domain.FlightRejected, domain.FlightCancelled} {
 		flightStatuses = append(flightStatuses, map[string]string{"value": s, "label": domain.FlightStatusFa[s]})
 	}
+	services := []map[string]string{}
+	for _, service := range contracts.DependentServices() {
+		row := map[string]string{"value": service.Key, "label": service.TitleFa}
+		if service.GroupFa != "" {
+			row["group"] = service.GroupFa
+		}
+		if service.CardKey != "" {
+			row["card"] = service.CardKey
+		}
+		services = append(services, row)
+	}
 	httpx.WriteJSON(w, http.StatusOK, map[string]any{
+		"services":       services,
 		"relations":      relations,
 		"purposes":       purposes,
 		"statuses":       statuses,

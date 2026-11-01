@@ -5,24 +5,30 @@ package contracts
 // تکفل پایهٔ پوشش بیمهٔ درمانی است؛ پس هر تغییر وضعیت یک رخداد با تصمیم‌گیرنده
 // دارد و از «در انتظار بررسی» شروع می‌شود، نه اینکه مستقیم تأییدشده ثبت شود.
 type Dependent struct {
-	ID             string `json:"id"`
-	EmployeeID     string `json:"employeeId"`
-	EmployeeName   string `json:"employeeName"`
-	FullName       string `json:"fullName"`
-	Relation       string `json:"relation"`
-	RelationFa     string `json:"relationFa"`
-	NationalID     string `json:"nationalId,omitempty"`
-	BirthDate      string `json:"birthDate,omitempty"`
-	CoverageStart  string `json:"coverageStart,omitempty"`
-	Insurance      bool   `json:"insurance"`
-	InsuranceFa    string `json:"insuranceFa,omitempty"`
-	DocumentsFa    string `json:"documentsFa,omitempty"`
-	Status         string `json:"status"`
-	StatusFa       string `json:"statusFa"`
-	NoteFa         string `json:"noteFa,omitempty"`
-	DecidedBy      string `json:"decidedBy,omitempty"`
-	CoverageMonths int    `json:"coverageMonths"`
-	Version        int    `json:"version"`
+	ID            string `json:"id"`
+	EmployeeID    string `json:"employeeId"`
+	EmployeeName  string `json:"employeeName"`
+	FullName      string `json:"fullName"`
+	Relation      string `json:"relation"`
+	RelationFa    string `json:"relationFa"`
+	NationalID    string `json:"nationalId,omitempty"`
+	BirthDate     string `json:"birthDate,omitempty"`
+	CoverageStart string `json:"coverageStart,omitempty"`
+	Insurance     bool   `json:"insurance"`
+	InsuranceFa   string `json:"insuranceFa,omitempty"`
+	DocumentsFa   string `json:"documentsFa,omitempty"`
+	// Services کلیدهای خدماتی که این فرد مشمول آن‌هاست (خدمات درمانی، بیمهٔ تکمیلی،
+	// سفر کارت، پتروکارت، نفت‌کارت). کلیدها ماشین‌خوان‌اند و برچسب فارسی از کاتالوگ
+	// مشترک می‌آید؛ فایل شارژ کارت‌ها فقط افراد با تعلق ثبت‌شده را شارژ می‌کند.
+	Services []string `json:"services,omitempty"`
+	// ServicesFa عنوان‌های فارسی همان خدمات برای نمایش در جدول و سند.
+	ServicesFa     []string `json:"servicesFa,omitempty"`
+	Status         string   `json:"status"`
+	StatusFa       string   `json:"statusFa"`
+	NoteFa         string   `json:"noteFa,omitempty"`
+	DecidedBy      string   `json:"decidedBy,omitempty"`
+	CoverageMonths int      `json:"coverageMonths"`
+	Version        int      `json:"version"`
 }
 
 // DependentInput ورودی ثبت یا ویرایش فرد تحت تکفل.
@@ -34,8 +40,10 @@ type DependentInput struct {
 	BirthDate     string `json:"birthDate,omitempty"`
 	CoverageStart string `json:"coverageStart,omitempty"`
 	Insurance     bool   `json:"insurance"`
-	DocumentsFa   string `json:"documentsFa,omitempty"`
-	NoteFa        string `json:"noteFa,omitempty"`
+	// Services فهرست خدمات تعلق‌دار؛ کلید ناشناخته در دامنه حذف می‌شود.
+	Services    []string `json:"services,omitempty"`
+	DocumentsFa string   `json:"documentsFa,omitempty"`
+	NoteFa      string   `json:"noteFa,omitempty"`
 }
 
 // DependentPage صفحهٔ افراد تحت تکفل.

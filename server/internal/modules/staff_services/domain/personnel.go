@@ -135,11 +135,15 @@ type Dependent struct {
 	BirthDate      string
 	CoverageStart  string
 	Insurance      bool
-	DocumentsFa    string
-	Status         string
-	NoteFa         string
-	DecidedBy      string
-	Version        int
+	// Services کلیدهای خدماتی که این فرد مشمول آن‌هاست (خدمات درمانی، بیمهٔ تکمیلی،
+	// سفر کارت، پتروکارت، نفت‌کارت). همین فهرست است که موتور شارژ کارت‌های رفاهی را
+	// تعیین می‌کند چه کسی شارژ شود.
+	Services    []string
+	DocumentsFa string
+	Status      string
+	NoteFa      string
+	DecidedBy   string
+	Version     int
 }
 
 // ToContract تبدیل به شکل انتقالی قرارداد API.
@@ -162,6 +166,8 @@ func (d Dependent) ToContract(today calendar.Date) contracts.Dependent {
 		CoverageStart:  d.CoverageStart,
 		Insurance:      d.Insurance,
 		InsuranceFa:    insuranceFa(d.Insurance),
+		Services:       append([]string{}, d.Services...),
+		ServicesFa:     contracts.ServiceLabelsFa(d.Services),
 		DocumentsFa:    d.DocumentsFa,
 		Status:         d.Status,
 		StatusFa:       DependentStatusFa[d.Status],
@@ -192,6 +198,7 @@ func FromDependentInput(id string, in contracts.DependentInput, employeeName, de
 		BirthDate:      strings.TrimSpace(in.BirthDate),
 		CoverageStart:  strings.TrimSpace(in.CoverageStart),
 		Insurance:      in.Insurance,
+		Services:       contracts.NormalizeDependentServices(in.Services),
 		DocumentsFa:    strings.TrimSpace(in.DocumentsFa),
 		Status:         DependentPending,
 		NoteFa:         strings.TrimSpace(in.NoteFa),
@@ -215,6 +222,7 @@ func ApplyDependentInput(d Dependent, in contracts.DependentInput, employeeName,
 	d.BirthDate = strings.TrimSpace(in.BirthDate)
 	d.CoverageStart = strings.TrimSpace(in.CoverageStart)
 	d.Insurance = in.Insurance
+	d.Services = contracts.NormalizeDependentServices(in.Services)
 	d.DocumentsFa = strings.TrimSpace(in.DocumentsFa)
 	d.NoteFa = strings.TrimSpace(in.NoteFa)
 	d.EmployeeName = employeeName
@@ -244,6 +252,12 @@ func ValidateDependent(in contracts.DependentInput) map[string]string {
 	if in.CoverageStart != "" {
 		if _, err := calendar.Parse(in.CoverageStart); err != nil {
 			errs["coverageStart"] = "تاریخ آغاز پوشش باید به قالب شمسی YYYY/MM/DD باشد."
+		}
+	}
+	for _, key := range in.Services {
+		if !contracts.ValidDependentService(key) {
+			errs["services"] = "خدمت انتخابی برای فرد تحت تکفل نامعتبر است."
+			break
 		}
 	}
 	return errs

@@ -370,7 +370,8 @@ function pageRecordkitLive(page) {
         : '';
       // فایل شارژ و فایل پاداش تحصیلی برای تحویل به مالی ساخته می‌شوند؛ خروجی CSV همان ردیف‌ها را می‌دهد.
       const exportBtn = kind.key === 'chargeFiles'
-        ? `<button class="btn btn-sm btn-ghost" title="خروجی CSV برای مالی" onclick="cardsExport('${esc(r.id)}')">⬇️</button>`
+        ? `<button class="btn btn-sm btn-ghost" title="خروجی CSV برای مالی" onclick="cardsExport('${esc(r.id)}')">⬇️</button>
+           <button class="btn btn-sm btn-ghost" title="خروجی اکسل برای مالی (قالب فارسی و راستبهچپ)" onclick="cardsExportXlsx('${esc(r.id)}')">📊</button>`
         : kind.key === 'bonusFiles'
         ? `<button class="btn btn-sm btn-ghost" title="خروجی CSV برای مالی" onclick="bonusExport('${esc(r.id)}')">⬇️</button>` : '';
       const cells = [
@@ -680,6 +681,11 @@ function cardsPanelHTML(page, options) {
       </select></div>
       <div class="field"><label>کد کارکنان برای شارژ انفرادی (با کاما)</label><input id="cupEmps" placeholder="EMP-005, EMP-010"></div>
       <div class="field"><label>مناسبت تقویمی</label><select id="cupOccasion">${occOpts}</select></div>
+      <div class="field"><label>سقف افراد تحت تکفل برای شارژ (نفر)</label>
+        <input id="cupMaxHeads" type="text" inputmode="numeric" autocomplete="off" value="${fa(5)}"
+          title="خود کارمند یک نفر شمرده می‌شود و بقیه تا این سقف از افراد تحت تکفل شارژ می‌شوند؛ صفر یعنی بی‌سقف">
+        <div class="muted" style="font-size:.72rem">خود کارمند یک نفر از سقف است؛ افراد بیش از سقف شارژ نمی‌شوند و در هشدارها گزارش می‌شوند (۰ = بی‌سقف).</div>
+      </div>
     </div>
     <div style="margin:6px 0 10px">
       <div class="muted" style="margin-bottom:4px">بخش‌های شارژ — نرخ جاری هر بخش کنارش آمده است</div>
@@ -707,6 +713,14 @@ function cardsSyncSections() {
 }
 
 /** درخواست شارژ از روی فرم پنل. */
+/** ارقام فارسی/عربی یک ورودی را به رقم لاتین برمی‌گرداند (سقف سرها ممکن است فارسی وارد شود). */
+function digitsOf(value) {
+  return String(value == null ? '' : value)
+    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+    .replace(/[^0-9]/g, '');
+}
+
 function cardsRequest() {
   return {
     card: $('#cupCard').value,
@@ -715,6 +729,8 @@ function cardsRequest() {
     period: ($('#cupPeriod').value || '').trim(),
     occasionId: $('#cupOccasion').value,
     employeeIds: ($('#cupEmps').value || '').split(',').map(s => s.trim()).filter(Boolean),
+    // سقف سرهای شارژ (خود کارمند + افراد تحت تکفل)؛ ۰ یعنی بی‌سقف.
+    maxHeads: Number(digitsOf(($('#cupMaxHeads') || {}).value)) || 0,
   };
 }
 
@@ -764,7 +780,8 @@ function cardsRenderResult(r, trial) {
   const warnings = (r.warnings || []).length
     ? `<div class="login-err show" style="text-align:right">⚠️ ${r.warnings.map(esc).join(' — ')}</div>` : '';
   const exportBtn = r.fileId
-    ? `<button class="btn btn-primary" onclick="cardsExport('${esc(r.fileId)}')">⬇️ خروجی CSV برای مالی</button>` : '';
+    ? `<button class="btn btn-primary" onclick="cardsExport('${esc(r.fileId)}')">⬇️ خروجی CSV برای مالی</button>
+       <button class="btn btn-primary" onclick="cardsExportXlsx('${esc(r.fileId)}')">📊 خروجی اکسل (قالب فارسی و راستبهچپ)</button>` : '';
   const head = ['کارمند', 'ذی‌نفع', 'نسبت', 'بخش', 'مناسبت', 'مبلغ (ریال)'];
   const rows = (r.rows || []).slice(0, 60).map(x => `<tr>
     <td>${personCell(x.employeeId, x.employeeName)}</td>
@@ -788,19 +805,35 @@ function cardsClearResult() {
 }
 
 /** دانلود CSV فایل شارژ برای واحد مالی (با هدر احراز هویت، پس Blob لازم است). */
-async function cardsExport(id) {
-  const res = await apiRaw('/api/v1/cards/charge-files/' + encodeURIComponent(id) + '/export');
+/**
+ * دانلود خروجی فایل شارژ برای واحد مالی.
+ *
+ * چرا Blob خام و نه متن: بایت‌های فایل (از جمله BOM یونیکد) باید بدون هیچ تبدیل
+ * کاراکتری به دیسک بروند؛ وگرنه Excel فارسی را نامفهوم نشان می‌دهد. برای اکسل هم فایل
+ * xlsx خودش قلم، کدگذاری و راست‌به‌چپ را حمل می‌کند.
+ */
+async function cardsDownload(id, suffix, ext, mime) {
+  const res = await apiRaw('/api/v1/cards/charge-files/' + encodeURIComponent(id) + '/' + suffix);
   if (!res.ok) { toast('خروجی گرفتن ناموفق بود', 'error'); return; }
-  const text = await res.text();
-  const url = URL.createObjectURL(new Blob([text], {type: 'text/csv;charset=utf-8'}));
+  const blob = await res.blob();
+  const url = URL.createObjectURL(new Blob([blob], {type: mime}));
   const a = document.createElement('a');
   a.href = url;
-  a.download = id + '.csv';
+  a.download = id + '.' + ext;
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
-  toast('فایل شارژ آمادهٔ ارسال به مالی دانلود شد');
+  toast('فایل شارژ (' + ext + ') آمادهٔ ارسال به مالی دانلود شد');
+}
+
+async function cardsExport(id) {
+  return cardsDownload(id, 'export', 'csv', 'text/csv;charset=utf-8');
+}
+
+async function cardsExportXlsx(id) {
+  return cardsDownload(id, 'xlsx', 'xlsx',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 
 /* =====================================================================
@@ -934,8 +967,10 @@ function bonusClearResult() {
 async function bonusExport(id) {
   const res = await apiRaw('/api/v1/education_bonus/bonus-files/' + encodeURIComponent(id) + '/export');
   if (!res.ok) { toast('خروجی گرفتن ناموفق بود', 'error'); return; }
-  const text = await res.text();
-  const url = URL.createObjectURL(new Blob([text], {type: 'text/csv;charset=utf-8'}));
+  // Blob خام: بایت‌ها (از جمله BOM یونیکد) بدون تبدیل کاراکتری به دیسک می‌روند تا Excel
+  // فارسی را درست نشان دهد.
+  const blob = await res.blob();
+  const url = URL.createObjectURL(new Blob([blob], {type: 'text/csv;charset=utf-8'}));
   const a = document.createElement('a');
   a.href = url;
   a.download = id + '.csv';

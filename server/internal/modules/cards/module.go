@@ -42,6 +42,7 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	mux.HandleFunc("POST /api/v1/cards/charge-files", r("write", h.CreateChargeFile))
 	// خروجی CSV همان فایل برای واحد مالی.
 	mux.HandleFunc("GET /api/v1/cards/charge-files/{id}/export", r("read", h.ExportChargeFile))
+	mux.HandleFunc("GET /api/v1/cards/charge-files/{id}/xlsx", r("read", h.ExportChargeFileXLSX))
 
 	deps.Logger(m.ID()).Info("ماژول کارت‌های رفاهی و شارژ ثبت شد", "routes", 11)
 }

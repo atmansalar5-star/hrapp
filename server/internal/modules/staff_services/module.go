@@ -68,6 +68,10 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// پورت سابقه: افراد تحت تکفل و وضعیت پوشش هرکدام (شامل حذف‌شده‌ها) در صفحهٔ سوابق
 	// پروندهٔ کارمند می‌آید؛ مبنای بیمهٔ درمانی کارمند در طول زمان قابل ردیابی می‌ماند.
 	deps.Ports.RegisterHistorySource(dependentsHistory{svc: svc, titleFa: deps.ModuleTitle(m.ID()), audit: deps.Audit})
+	// ثبت پورت: تنها راه ماژول‌های دیگر (کارت‌های رفاهی) برای دانستن تعلق
+	// افراد تحت تکفل به خدمات.
+	deps.Ports.SetDependentReader(svc)
+
 	h := api.New(svc, deps)
 	r := func(action string, fn http.HandlerFunc) http.HandlerFunc { return deps.Require(m.ID(), action, fn) }
 
