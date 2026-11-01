@@ -47,8 +47,17 @@ async function apiFetch(path, opts = {}) {
   }
 }
 
-/** پیام فارسی از پاسخ خطای سرور (CONTRACT-API: {error:{code,message,details}}). */
+/** پیام فارسی از پاسخ خطای سرور (CONTRACT-API: {code,message,details}). */
 function jsonMessage(status, data) {
+  // پیام خودِ سرور مقدم است: قاعده‌های دامنه (مثل «انتصاب بدون احراز شرایط مجاز نیست»)
+  // پیام فارسی دقیق دارند و نباید با پیام عمومی وضعیت جایگزین شوند.
+  if (data && typeof data.message === 'string' && data.message) {
+    if (data.details && typeof data.details === 'object') {
+      const first = Object.values(data.details)[0];
+      if (first) return first;
+    }
+    return data.message;
+  }
   if (data && data.error && data.error.message) {
     const det = data.error.details;
     if (det && typeof det === 'object') {
@@ -66,8 +75,13 @@ function jsonMessage(status, data) {
   return map[status] || ('خطای سرور (' + status + ')');
 }
 
-/** بازخوانی صفحهٔ جاری (پس از هر اکشن موفق). */
-function liveReload() { renderPage(currentPage); }
+/**
+ * بازخوانی صفحهٔ جاری (پس از هر اکشن موفق).
+ *
+ * آرگومان‌های صفحه هم بازگردانده می‌شوند: صفحه‌هایی مثل پروندهٔ کارمند شناسه را
+ * به‌عنوان آرگومان می‌گیرند و بدون آن، پرونده پس از هر عمل خالی می‌شد.
+ */
+function liveReload() { renderPage(currentPage, ...(window.currentPageArgs || [])); }
 
 /** پیام‌ها را از پاسخ سرور به توست نشان می‌دهد؛ در موفقیت صفحه را بازخوانی می‌کند. */
 async function liveSend(path, opts, okMsg) {

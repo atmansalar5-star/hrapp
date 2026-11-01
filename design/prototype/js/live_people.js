@@ -21,6 +21,22 @@ function employmentTypeOptions(options) {
   return (options && options.employmentTypes) || [];
 }
 
+/**
+ * سلول کارمند با عکس کارگزینی در فهرست کارکنان.
+ *
+ * اگر عکس بارگذاری نشده باشد، همان آواتار حرف اول نام می‌ماند؛ هیچ تصویر ساختگی
+ * ساخته نمی‌شود. نشانی عکس از سرور می‌آید (امضاشده) و با <img> دیده می‌شود.
+ */
+function photoPersonCell(employee) {
+  const id = employee.id || '';
+  const name = employee.fullName || '—';
+  const photo = employee.photoUrl;
+  const img = photo
+    ? `<img class="photo sm" src="${esc(photo)}" alt="عکس کارگزینی ${esc(name)}" loading="lazy">`
+    : `<div class="avatar sq">${esc(initial(name === '—' ? '؟' : name))}</div>`;
+  return `<div class="emp-cell">${img}<div>${esc(name)}<div class="muted ltr" style="font-size:.66rem">${esc(id)}</div></div></div>`;
+}
+
 /* ======================= فهرست کارکنان ======================= */
 
 function pageEmployeesLive() {
@@ -66,7 +82,7 @@ function pageEmployeesLive() {
     </div>`;
 
     const rows = items.map(e => `<tr>
-      <td>${personCell(e.id, e.fullName)}</td>
+      <td>${photoPersonCell(e)}</td>
       <td>${esc(e.departmentName || '—')}</td>
       <td>${esc(e.position || '—')}</td>
       <td>${e.employmentTypeFa ? `<span class="chip" style="font-size:.72rem">${esc(e.employmentTypeFa)}</span>` : esc(e.contractType || '—')}</td>
@@ -124,15 +140,19 @@ function pageProfileLive(id) {
   }
 
   liveLoad(async () => {
-    const [empRes, conRes, attRes, attSchemaRes, histRes] = await Promise.all([
+    const [empRes, conRes, attRes, attSchemaRes, histRes, photoRes] = await Promise.all([
       apiFetch('/api/v1/employee/employees/' + encodeURIComponent(id)),
       apiFetch('/api/v1/contracts/contracts?size=100&employeeId=' + encodeURIComponent(id)),
       apiFetch('/api/v1/attendance/records?size=100&employeeId=' + encodeURIComponent(id)),
       apiFetch('/api/v1/attendance/schema'),
       apiFetch('/api/v1/history?employeeId=' + encodeURIComponent(id)),
+      apiFetch('/api/v1/employee/employees/' + encodeURIComponent(id) + '/photo'),
     ]);
     if (!empRes.ok) return liveErrorBox(empRes.message);
     const e = empRes.data || {};
+    // وضعیت عکس کارگزینی از مسیر اختصاصی خودش می‌آید (تاریخ، حجم، اثر انگشت)؛ اگر آن
+    // مسیر در دسترس نباشد، همان نشانی عکسِ پرونده مبنای نمایش است.
+    const photoState = photoRes.ok && photoRes.data ? photoRes.data : {hasPhoto: !!e.photoUrl, url: e.photoUrl || ''};
     const contracts = (conRes.ok && (conRes.data.items || [])) || [];
     const attItems = (attRes.ok && (attRes.data.items || [])) || [];
     // برچسب فارسی فیلدها از شناسهٔ سرور می‌آید؛ هیچ برچسبی در رابط ساخته نمی‌شود.
@@ -142,13 +162,17 @@ function pageProfileLive(id) {
       for (const f of kind.fields || []) fieldLabels[kind.key][f.key] = f.labelFa || f.key;
     }
 
-    const tabs = [['personal', 'مشخصات شخصی'], ['job', 'مشخصات شغلی'], ['docs', 'قرارداد و اسناد'], ['time', 'حضور و کارکرد'], ['history', 'سوابق تغییرات']];
+    const tabs = [['personal', 'مشخصات شخصی'], ['job', 'مشخصات شغلی'], ['photo', 'عکس پرسنلی'], ['docs', 'قرارداد و اسناد'], ['time', 'حضور و کارکرد'], ['history', 'سوابق تغییرات']];
     const tabBar = `<div class="tabs">${tabs.map(([k, l]) =>
       `<button class="tab ${profileLiveTab === k ? 'active' : ''}" onclick="profileLiveTab='${k}';go('profile','${esc(id)}')">${l}</button>`).join('')}</div>`;
 
+    // سرصفحهٔ پرونده: عکس کارگزینی واقعی اگر بارگذاری شده باشد، وگرنه حرف اول نام.
+    const headAvatar = e.photoUrl
+      ? `<img class="photo lg" src="${esc(e.photoUrl)}" alt="عکس کارگزینی ${esc(e.fullName || '')}">`
+      : `<div class="avatar lg">${esc(initial(e.fullName || '؟'))}</div>`;
     const head = `<div class="card card-pad" style="margin-bottom:12px">
       <div class="profile-head">
-        <div class="avatar lg">${esc(initial(e.fullName || '؟'))}</div>
+        ${headAvatar}
         <div>
           <div class="profile-name">${esc(e.fullName || '—')}</div>
           <div class="profile-job">${esc(e.position || '—')} — ${esc(e.departmentName || '—')}</div>
@@ -157,6 +181,7 @@ function pageProfileLive(id) {
             <span class="chip contract">${esc(e.contractType || '—')}</span>
             ${e.employmentTypeFa ? `<span class="chip">${esc(e.employmentTypeFa)}</span>` : ''}
             <span class="chip c-done num">${esc(e.id)}</span>
+            ${photoState.hasPhoto ? `<span class="chip">🖼️ عکس کارگزینی ثبت شده</span>` : `<span class="chip c-wait">بدون عکس کارگزینی</span>`}
           </div>
         </div>
       </div>
@@ -172,7 +197,43 @@ function pageProfileLive(id) {
       ['تلفن همراه', e.phone ? `<span class="ltr num">${esc(e.phone)}</span>` : '—'],
       ['ایمیل', e.email ? `<span class="ltr">${esc(e.email)}</span>` : '—'],
       ['مدیر مستقیم', esc(e.managerName || '—')],
+      ['عکس کارگزینی', photoState.hasPhoto
+        ? `ثبت‌شده ${photoState.updatedAt ? '— ' + fa(photoState.updatedAt) : ''} <button class="btn btn-sm btn-ghost" onclick="profileLiveTab='photo';go('profile','${esc(id)}')">نمایش و تغییر</button>`
+        : `ثبت نشده — <button class="btn btn-sm btn-primary" onclick="profileLiveTab='photo';go('profile','${esc(id)}')">بارگذاری عکس</button>`],
     ]) + statNote('سایر مشخصات هویتی و مدارک (شناسنامه، مدارک تحصیلی، آدرس) در ماژول «بایگانی و شناسایی کارکنان» ثبت می‌شود؛ اینجا فقط فیلدهایی نشان داده می‌شود که سرور کارکنان دارد.');
+
+    // تب عکس پرسنلی: نمایش «عکس کارگزینی» و بارگذاری/حذف آن. فایل در پوشهٔ دادهٔ سرور
+    // می‌ماند و نشانی نمایش آن امضاشده است؛ قاعدهٔ نوع و حجم فایل در سرور سنجیده می‌شود.
+    const photoPreview = photoState.hasPhoto && photoState.url
+      ? `<img class="photo-xl" src="${esc(photoState.url)}" alt="عکس کارگزینی ${esc(e.fullName || '')}">`
+      : `<div class="empty-state" style="border:1px dashed var(--border);border-radius:12px;padding:24px 12px">
+           <div class="big">🖼️</div>برای این کارمند عکس کارگزینی بارگذاری نشده است</div>`;
+    const photoInfo = kv([
+      ['وضعیت عکس', photoState.hasPhoto ? 'بارگذاری‌شده' : 'ثبت‌نشده'],
+      ['تاریخ بارگذاری', photoState.updatedAt ? fa(photoState.updatedAt) : '—'],
+      ['حجم فایل', photoState.sizeKb ? `${fa(photoState.sizeKb)} کیلوبایت` : '—'],
+      ['نوع فایل', esc(photoState.contentType || '—')],
+      ['نام فایل اصلی', photoState.originalName ? `<span class="ltr">${esc(photoState.originalName)}</span>` : '—'],
+      ['بارگذاری‌کننده', esc(photoState.updatedBy || '—')],
+    ]);
+    const photo = `<div class="grid-2eq">
+      <div style="text-align:center">
+        ${photoPreview}
+        <div class="muted" style="font-size:.78rem;margin-top:8px">عکس کارگزینی — همان عکسی که در ساختار سازمانی و کارت پرسنلی دیده می‌شود.</div>
+      </div>
+      <div>
+        ${photoInfo}
+        <div class="field" style="margin-top:14px">
+          <label>بارگذاری عکس تازه (PNG، JPEG یا WEBP تا ۴ مگابایت)</label>
+          <input id="empPhotoFile" type="file" accept="image/png,image/jpeg,image/webp">
+        </div>
+        <div class="row-actions" style="margin-top:8px">
+          <button class="btn btn-primary" onclick="empPhotoUpload('${esc(e.id)}')">⬆️ بارگذاری عکس</button>
+          <button class="btn btn-ghost" onclick="empPhotoDelete('${esc(e.id)}')">🗑 حذف عکس</button>
+        </div>
+        <div class="muted" style="font-size:.76rem;line-height:2;margin-top:10px">${esc(photoState.noteFa || '')}</div>
+      </div>
+    </div>` + statNote('عکس در پوشهٔ دادهٔ سرور نگه داشته می‌شود (نه در باینری برنامه) و با بازآوری نسخه یا به‌روزرسانی سامانه پاک نمی‌شود. اگر عکس بارگذاری نشود، به‌جای آن حرف اول نام نمایش داده می‌شود.');
 
     const job = kv([
       ['واحد سازمانی', esc(e.departmentName || '—')],
@@ -246,14 +307,52 @@ function pageProfileLive(id) {
         statNote(hist.noteFa || 'سوابق از ماژول‌هایی خوانده می‌شود که نقش شما اجازهٔ خواندنشان را دارد.');
     }
 
-    const bodies = {personal, job, docs, time, history};
+    const bodies = {personal, job, photo, docs, time, history};
     const body = `<div class="card"><div class="card-pad">${tabBar}${bodies[profileLiveTab] || personal}</div></div>`;
 
     return head + body;
   });
 
-  return liveShell('پرونده کارمند', 'پروندهٔ تبیندی: مشخصات شخصی، مشخصات شغلی، قرارداد و اسناد، حضور و کارکرد، سوابق تغییرات',
+  return liveShell('پرونده کارمند', 'پروندهٔ تبیندی: مشخصات، عکس پرسنلی، قرارداد و اسناد، حضور و کارکرد، سوابق تغییرات',
     `<button class="btn btn-ghost" onclick="go('employees')">‹ فهرست کارکنان</button>`);
+}
+
+/* ------------------------- عکس کارگزینی پرونده ------------------------- */
+
+/**
+ * بارگذاری عکس کارگزینی از فرم پرونده (multipart با هدر احراز هویت).
+ *
+ * چرا fetch خام: FormData نباید Content-Type دستی بگیرد و هدر Authorization لازم است.
+ * سنجش نوع/حجم فایل در سرور انجام می‌شود و پیام فارسی همان‌جا ساخته می‌شود.
+ */
+async function empPhotoUpload(employeeId) {
+  const input = document.getElementById('empPhotoFile');
+  if (!input || !input.files || !input.files.length) {
+    toast('اول یک فایل عکس انتخاب کنید.', 'error');
+    return;
+  }
+  const body = new FormData();
+  body.append('file', input.files[0]);
+  const headers = {};
+  if (serverSession && serverSession.accessToken) headers['Authorization'] = 'Bearer ' + serverSession.accessToken;
+  try {
+    const res = await fetch('/api/v1/employee/employees/' + encodeURIComponent(employeeId) + '/photo', {method: 'POST', headers, body});
+    const data = await res.json().catch(() => null);
+    if (!res.ok) { toast(jsonMessage(res.status, data), 'error'); return; }
+    toast('عکس کارگزینی ذخیره شد و در پرونده و ساختار سازمانی دیده می‌شود.');
+    liveReload();
+  } catch (_) {
+    toast('ارتباط با سرور برقرار نشد.', 'error');
+  }
+}
+
+/** حذف عکس کارگزینی کارمند. */
+async function empPhotoDelete(employeeId) {
+  if (!confirm('عکس کارگزینی این کارمند حذف شود؟')) return;
+  const res = await apiFetch('/api/v1/employee/employees/' + encodeURIComponent(employeeId) + '/photo', {method: 'DELETE'});
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  toast('عکس کارگزینی حذف شد.');
+  liveReload();
 }
 
 LIVE_PAGES.employees = pageEmployeesLive;

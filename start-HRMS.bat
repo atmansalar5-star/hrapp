@@ -43,6 +43,7 @@ rem --- Data folder for uploaded logos and imported files. ---------------------
 if not exist "%DATADIR%" mkdir "%DATADIR%" 2>nul
 if not exist "%DATADIR%\branding" mkdir "%DATADIR%\branding" 2>nul
 if not exist "%DATADIR%\uploads" mkdir "%DATADIR%\uploads" 2>nul
+if not exist "%DATADIR%\photos" mkdir "%DATADIR%\photos" 2>nul
 
 rem --- Start the local PostgreSQL cluster if installed and not running. -------
 if exist "%PGROOT%\bin\pg_ctl.exe" if exist "%PGDATA%\postgresql.conf" (

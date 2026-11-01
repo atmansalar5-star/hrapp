@@ -23,6 +23,7 @@ import (
 	"hrms/internal/platform/httpx"
 	"hrms/internal/platform/modulekit"
 	"hrms/internal/platform/orgs"
+	"hrms/internal/platform/photos"
 	"hrms/internal/platform/qr"
 )
 
@@ -32,8 +33,45 @@ const verifyTokenLen = 16
 // registerPublicRoutes مسیرهای نشان، QR و تأیید را سوار می‌کند.
 func registerPublicRoutes(mux *http.ServeMux, deps modulekit.Deps) {
 	registerBrandingRoutes(mux, deps)
+	registerPhotoRoutes(mux, deps)
 	registerQRRoutes(mux, deps)
 	registerVerifyRoutes(mux, deps)
+}
+
+// registerPhotoRoutes سرو عکس کارگزینی کارکنان با نشانی امضاشده.
+//
+// چرا امضا و نه احراز هویت: برچسب <img> نمی‌تواند هدر Authorization بفرستد، ولی عکس
+// پرسنلی دادهٔ حساس است. پس نشانی عکس را خودِ سرور با HMAC (کلید VerifyKey) امضا
+// می‌کند و امضا هم به نام فایل و هم به کد پرسنلی گره می‌خورد؛ حدس نام فایل بدون امضای
+// همان کارمند عکس را باز نمی‌کند و امضای یک کارمند برای دیگری کار نمی‌کند.
+func registerPhotoRoutes(mux *http.ServeMux, deps modulekit.Deps) {
+	store, err := photos.New(deps.DataDir)
+	if err != nil {
+		deps.Logger("bootstrap").Warn("انبار عکس کارگزینی برای سرو آماده نشد", "error", err.Error())
+		return
+	}
+	mux.HandleFunc("GET /api/v1/photos/{file}", func(w http.ResponseWriter, r *http.Request) {
+		file := r.PathValue("file")
+		employeeID := strings.TrimSpace(r.URL.Query().Get("e"))
+		token := strings.TrimSpace(r.URL.Query().Get("t"))
+		if !photos.Check(deps.VerifyKey, file, employeeID, token) {
+			httpx.WriteErrorMsg(w, http.StatusForbidden, contracts.CodeForbidden,
+				"نشانی این عکس معتبر نیست؛ از داخل پروندهٔ کارمند آن را باز کنید.", nil)
+			return
+		}
+		handle, contentType, err := store.Open(file)
+		if err != nil {
+			httpx.WriteError(w, http.StatusNotFound, contracts.CodeNotFound, nil)
+			return
+		}
+		defer handle.Close()
+		w.Header().Set("Content-Type", contentType)
+		// عکس پرسنلی شخصی است؛ مرورگر نباید آن را در کش مشترک نگه دارد.
+		w.Header().Set("Cache-Control", "private, max-age=300")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.WriteHeader(http.StatusOK)
+		_, _ = io.Copy(w, handle)
+	})
 }
 
 // registerBrandingRoutes سرو عمومی فایل نشان شرکت.

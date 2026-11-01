@@ -371,8 +371,8 @@ export const MODULES: ModuleSpec[] = [
     apiPrefix: "/api/v1/orgstructure",
     featureFlag: "module.orgstructure",
     screens: [
-      { key: "org", order: 1, icon: "sitemap", titleFa: "ساختار سازمانی", purposeFa: "نمودار درختی واحدها و پست‌ها با امکان افزودن و ویرایش واحد و مشاهده سرپرست و تعداد نیرو هر واحد.", component: "OrgChartScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager"] },
-      { key: "positions", order: 2, icon: "id-badge", titleFa: "شناسنامهٔ پست‌ها", purposeFa: "تعریف پست سازمانی با شرح شغل، شرط‌های احراز، گروه شغلی و مهارت‌های مورد نیاز به‌عنوان مرجع انتصاب، ترفیع و نیازسنجی آموزشی.", component: "PositionsScreen", roles: ["admin", "hr_manager", "hr_spec"] },
+      { key: "org", order: 1, icon: "sitemap", titleFa: "ساختار سازمانی", purposeFa: "نمودار درختی واحدها و پست‌ها؛ برای هر پست، متصدی جاری با عکس کارگزینی، نتیجهٔ بررسی شرط‌های احراز و سابقهٔ انتصاب‌ها (جاری و پیشین) همراه با تاریخچهٔ تغییرات سمت.", component: "OrgChartScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager"] },
+      { key: "positions", order: 2, icon: "id-badge", titleFa: "شناسنامهٔ پست‌ها", purposeFa: "تعریف پست سازمانی با شرح شغل، شرط‌های احراز، گروه شغلی و مهارت‌های مورد نیاز به‌عنوان مرجع انتصاب، ترفیع و نیازسنجی آموزشی؛ همراه با پنل متصدیان: عکس کارگزینی، احراز شرایط و شواهد آن، و گردشکار انتصاب/پایان تصدی.", component: "PositionsScreen", roles: ["admin", "hr_manager", "hr_spec"] },
     ],
   },
   {

@@ -4,11 +4,13 @@ package app
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"hrms/internal/contracts"
 	"hrms/internal/modules/employee/domain"
 	"hrms/internal/modules/employee/infra"
 	"hrms/internal/platform/audit"
+	"hrms/internal/platform/photos"
 	"hrms/internal/platform/synclog"
 )
 
@@ -35,22 +37,55 @@ func (e *ValidationError) Error() string {
 
 // Service خدمات ماژول کارکنان.
 type Service struct {
-	repo  Repository
-	audit *audit.Log
-	sync  *synclog.Log
+	repo     Repository
+	audit    *audit.Log
+	sync     *synclog.Log
+	photos   *photos.Store
+	photoKey []byte
 }
 
 // New سرویس می‌سازد؛ آدیت و سینک اختیاری‌اند تا آزمون‌ها ساده بمانند.
+//
+// photoStore انبار «عکس کارگزینی» است؛ اگر nil باشد (اجرای آزمون بدون پوشهٔ داده)
+// مسیرهای عکس با خطای روشن پاسخ می‌دهند و بقیهٔ ماژول دست‌نخورده کار می‌کند.
+// photoKey کلید امضای نشانی عکس است تا نشانی یک کارمند برای کارمند دیگر کار نکند.
 func New(repo Repository, auditLog *audit.Log, syncLog *synclog.Log) *Service {
 	return &Service{repo: repo, audit: auditLog, sync: syncLog}
 }
 
-// List فهرست کارکنان با اعمال محدودهٔ دسترسی.
-func (s *Service) List(ctx context.Context, f contracts.EmployeeFilter) (contracts.EmployeePage, error) {
-	return s.repo.List(ctx, f)
+// WithPhotos انبار عکس و کلید امضا را به سرویس می‌دهد (زنجیره‌ای، تا امضای New عوض نشود
+// و آزمون‌های موجود بی‌تغییر بمانند).
+func (s *Service) WithPhotos(store *photos.Store, key []byte) *Service {
+	s.photos = store
+	s.photoKey = key
+	return s
 }
 
-// Get پروندهٔ کارمند با اعمال محدودهٔ دسترسی؛ در صورت خارج بودن از محدوده، یافت‌نشده برمی‌گردد.
+// now زمان جاری (تاریخ بارگذاری عکس به تقویم شمسی از همین گرفته می‌شود).
+func (s *Service) now() time.Time { return time.Now() }
+
+// List فهرست کارکنان با اعمال محدودهٔ دسترسی.
+//
+// عکس کارگزینی از انبار فایل خوانده و به هر سطر چسبانده می‌شود؛ اگر انبار عکس در
+// دسترس نباشد، فهرست بدون عکس برمی‌گردد و کار ماژول نمی‌ایستد.
+func (s *Service) List(ctx context.Context, f contracts.EmployeeFilter) (contracts.EmployeePage, error) {
+	page, err := s.repo.List(ctx, f)
+	if err != nil {
+		return page, err
+	}
+	index, err := s.photoIndex()
+	if err != nil {
+		return page, nil
+	}
+	for i := range page.Items {
+		if photo, ok := index[page.Items[i].ID]; ok {
+			s.attachPhoto(&page.Items[i], photo)
+		}
+	}
+	return page, nil
+}
+
+// Get پروندهٔ کارمند با اعمال محدودهٔ دسترسی؛ در صورت خارج بودن از محدوده، یافتنشده برمی‌گردد.
 func (s *Service) Get(ctx context.Context, f contracts.EmployeeFilter, id string) (contracts.Employee, bool, error) {
 	e, ok, err := s.repo.Get(ctx, id)
 	if err != nil || !ok {
@@ -60,7 +95,13 @@ func (s *Service) Get(ctx context.Context, f contracts.EmployeeFilter, id string
 		// عمداً «یافت نشد» برمی‌گردانیم تا وجود کارمند در واحدهای دیگر لو نرود.
 		return contracts.Employee{}, false, nil
 	}
-	return e.ToContract(), true, nil
+	dto := e.ToContract()
+	if index, err := s.photoIndex(); err == nil {
+		if photo, ok := index[dto.ID]; ok {
+			s.attachPhoto(&dto, photo)
+		}
+	}
+	return dto, true, nil
 }
 
 // CountByStatus شمارش بر پایهٔ وضعیت (مصرف‌کنندهٔ پورت: داشبورد).
@@ -84,7 +125,13 @@ func (s *Service) Create(ctx context.Context, in contracts.EmployeeInput, actor 
 		return contracts.Employee{}, err
 	}
 	s.record(actor, "create", saved)
-	return saved.ToContract(), nil
+	dto := saved.ToContract()
+	if index, err := s.photoIndex(); err == nil {
+		if photo, ok := index[dto.ID]; ok {
+			s.attachPhoto(&dto, photo)
+		}
+	}
+	return dto, nil
 }
 
 // Update ویرایش کارمند.
@@ -109,7 +156,13 @@ func (s *Service) Update(ctx context.Context, id string, in contracts.EmployeeIn
 		return contracts.Employee{}, err
 	}
 	s.record(actor, "update", saved)
-	return saved.ToContract(), nil
+	dto := saved.ToContract()
+	if index, err := s.photoIndex(); err == nil {
+		if photo, ok := index[dto.ID]; ok {
+			s.attachPhoto(&dto, photo)
+		}
+	}
+	return dto, nil
 }
 
 // Delete حذف کارمند.
@@ -135,6 +188,135 @@ func (s *Service) Delete(ctx context.Context, id string, actor string) error {
 
 // Departments واحدهای سازمانی برای فیلتر و نمودار درختی.
 func (s *Service) Departments() []contracts.Department { return infra.Departments() }
+
+/* --------------------------- عکس کارگزینی --------------------------- */
+
+// ErrPhotoStoreUnavailable انبار فایل عکس در این اجرا آماده نیست.
+var ErrPhotoStoreUnavailable = fmt.Errorf("انبار عکس کارگزینی در دسترس نیست")
+
+// PhotoState وضعیت عکس کارگزینی یک کارمند را برای رابط می‌سازد.
+func (s *Service) PhotoState(ctx context.Context, f contracts.EmployeeFilter, id string) (contracts.EmployeePhoto, error) {
+	// وجود کارمند و محدودهٔ دسترسی همان‌جا سنجیده می‌شود؛ عکس کارمند خارج از محدوده
+	// نقش نباید خوانده شود.
+	if _, ok, err := s.Get(ctx, f, id); err != nil {
+		return contracts.EmployeePhoto{}, err
+	} else if !ok {
+		return contracts.EmployeePhoto{}, infra.ErrNotFound
+	}
+	if s.photos == nil {
+		return contracts.EmployeePhoto{}, ErrPhotoStoreUnavailable
+	}
+	photo, ok, err := s.photos.Get(id)
+	if err != nil {
+		return contracts.EmployeePhoto{}, err
+	}
+	state := contracts.EmployeePhoto{EmployeeID: id, HasPhoto: ok}
+	if ok {
+		state.URL = photos.URL(photo.Name, photo.EmployeeID, s.photoKey)
+		state.UpdatedAt = photo.UpdatedAt
+		state.UpdatedBy = photo.UpdatedBy
+		state.SizeKb = (photo.SizeBytes + 1023) / 1024
+		state.ContentType = photo.ContentType
+		state.SHA256 = photo.SHA256
+		state.OriginalName = photo.OriginalName
+		state.NoteFa = "عکس کارگزینی این کارمند بارگذاری شده است و در پرونده و ساختار سازمانی نمایش داده می‌شود."
+		return state, nil
+	}
+	state.NoteFa = "برای این کارمند عکس کارگزینی بارگذاری نشده است؛ می‌توانید عکس رسمی پرونده را اینجا اضافه کنید."
+	return state, nil
+}
+
+// SavePhoto عکس کارگزینی کارمند را ذخیره می‌کند (فایل + نگاشت + رخداد حسابرسی).
+func (s *Service) SavePhoto(ctx context.Context, id, filename string, data []byte, actor string) (contracts.EmployeePhoto, error) {
+	employee, ok, err := s.repo.Get(ctx, id)
+	if err != nil {
+		return contracts.EmployeePhoto{}, err
+	}
+	if !ok {
+		return contracts.EmployeePhoto{}, infra.ErrNotFound
+	}
+	if s.photos == nil {
+		return contracts.EmployeePhoto{}, ErrPhotoStoreUnavailable
+	}
+	photo, err := s.photos.Save(employee.ID, filename, data, actor, s.now())
+	if err != nil {
+		return contracts.EmployeePhoto{}, err
+	}
+	if s.audit != nil {
+		s.audit.Append(actor, "employee", "photo", employee.ID, "بارگذاری عکس کارگزینی — "+employee.FullName)
+	}
+	if s.sync != nil {
+		s.sync.Record("EmployeePhoto", synclog.OpUpsert, employee.ID, 0, map[string]any{
+			"employeeId": employee.ID, "name": photo.Name, "sha256": photo.SHA256,
+		})
+	}
+	return contracts.EmployeePhoto{
+		EmployeeID: employee.ID, HasPhoto: true,
+		URL: photos.URL(photo.Name, employee.ID, s.photoKey), UpdatedAt: photo.UpdatedAt,
+		UpdatedBy: photo.UpdatedBy, SizeKb: (photo.SizeBytes + 1023) / 1024,
+		ContentType: photo.ContentType, SHA256: photo.SHA256, OriginalName: photo.OriginalName,
+		NoteFa: "عکس کارگزینی ذخیره شد؛ از همین حالا در پروندهٔ پرسنلی و ساختار سازمانی دیده می‌شود.",
+	}, nil
+}
+
+// DeletePhoto عکس کارگزینی کارمند را پاک می‌کند.
+func (s *Service) DeletePhoto(ctx context.Context, id, actor string) error {
+	employee, ok, err := s.repo.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return infra.ErrNotFound
+	}
+	if s.photos == nil {
+		return ErrPhotoStoreUnavailable
+	}
+	if err := s.photos.Remove(employee.ID); err != nil {
+		return err
+	}
+	if s.audit != nil {
+		s.audit.Append(actor, "employee", "photo_delete", employee.ID, "حذف عکس کارگزینی — "+employee.FullName)
+	}
+	if s.sync != nil {
+		s.sync.Record("EmployeePhoto", synclog.OpDelete, employee.ID, 0, nil)
+	}
+	return nil
+}
+
+// PhotoIndex نگاشت «کد پرسنلی → عکس» برای غنی‌سازی فهرست‌های بیرونی (ساختار سازمانی).
+func (s *Service) PhotoIndex() (map[string]contracts.EmployeePhoto, error) {
+	all, err := s.photoIndex()
+	if err != nil {
+		return nil, err
+	}
+	out := make(map[string]contracts.EmployeePhoto, len(all))
+	for id, photo := range all {
+		out[id] = contracts.EmployeePhoto{
+			EmployeeID: id, HasPhoto: true,
+			URL: photos.URL(photo.Name, id, s.photoKey), UpdatedAt: photo.UpdatedAt,
+			SizeKb: (photo.SizeBytes + 1023) / 1024, ContentType: photo.ContentType,
+		}
+	}
+	return out, nil
+}
+
+// photoIndex نگاشت خام عکس‌ها از انبار فایل؛ انبار نبود یعنی نگاشت خالی.
+func (s *Service) photoIndex() (map[string]photos.Photo, error) {
+	if s.photos == nil {
+		return map[string]photos.Photo{}, nil
+	}
+	return s.photos.All()
+}
+
+// attachPhoto نشانی و تاریخ عکس را روی سطر کارمند می‌نشاند.
+func (s *Service) attachPhoto(dto *contracts.Employee, photo photos.Photo) {
+	if dto == nil || photo.Name == "" {
+		return
+	}
+	dto.PhotoURL = photos.URL(photo.Name, photo.EmployeeID, s.photoKey)
+	dto.PhotoUpdatedAt = photo.UpdatedAt
+	dto.PhotoSizeKb = (photo.SizeBytes + 1023) / 1024
+}
 
 func (s *Service) record(actor, action string, e domain.Employee) {
 	if s.audit != nil {

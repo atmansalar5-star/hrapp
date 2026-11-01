@@ -56,8 +56,9 @@ const RK_PAGES = {
   // امور ورزش
   sportsPrograms: {kind: 'sportsPrograms'},
   sportsEvents: {kind: 'sportsEvents'},
-  // ساختار سازمانی — شناسنامهٔ پست‌ها (نمودار درختی صفحهٔ جدا دارد)
-  positions: {kind: 'positions'},
+  // ساختار سازمانی — شناسنامهٔ پست‌ها (نمودار درختی صفحهٔ جدا دارد). پنل «roster» متصدی
+  // هر پست را با عکس کارگزینی، نتیجهٔ احراز شرایط و سابقهٔ انتصاب‌ها نشان می‌دهد.
+  positions: {kind: 'positions', panel: 'roster'},
   // برون‌سپاری
   contractors: {kind: 'contractors'},
   thirdPartyPayroll: {kind: 'outsourcePayRuns'},
@@ -324,6 +325,24 @@ function pageRecordkitLive(page) {
       surveysView = anRes.ok ? anRes.data : null;
     }
 
+    // پنل ساختار سازمانی: متصدی هر پست، عکس کارگزینی، نتیجهٔ احراز شرایط و سابقهٔ
+    // انتصاب‌ها. همه از مسیر ترکیبی خودِ ماژول می‌آید و گزینه‌های فرم انتصاب هم از
+    // /options همان ماژول (هیچ گزینه‌ای در رابط ساخته نمی‌شود).
+    let rosterView = null;
+    let rosterOptions = null;
+    if (cfg.panel === 'roster') {
+      const [rosterRes, rosterOptRes] = await Promise.all([
+        apiFetch(mod.prefix + '/roster'),
+        apiFetch(mod.prefix + '/options'),
+      ]);
+      if (!rosterRes.ok) return liveErrorBox(rosterRes.message);
+      rosterView = rosterRes.data;
+      rosterOptions = rosterOptRes.ok ? rosterOptRes.data : null;
+      // نوع رکورد انتصاب از همان شناسهٔ سرور؛ فرم و اقدام‌های آن با کلید صفحهٔ جدا کار می‌کند.
+      rkBindKind(page + '#assignments', mod, (schema.kinds || []).find(k => k.key === 'assignments'));
+      rkBindRosterOptions(rosterOptions);
+    }
+
     // شمارش هر وضعیت برای کارت‌های آماری.
     const byStatus = {};
     for (const it of items) byStatus[it.status] = (byStatus[it.status] || 0) + 1;
@@ -375,7 +394,9 @@ function pageRecordkitLive(page) {
       : cfg.panel === 'bonusPay' ? bonusAllocPanelHTML(bonusOpts)
       // صفحهٔ وام: اول فرم تخصیص وام (ساخت رکورد درخواست وام با کارمزد محاسبه‌شده)،
       // بعد پنل امتیازبندی و رتبه‌بندی تخصیص.
-      : cfg.panel === 'loans' ? loanGrantPanelHTML(loanOptions) + loansPanelHTML(page, loanOptions) : '';
+      : cfg.panel === 'loans' ? loanGrantPanelHTML(loanOptions) + loansPanelHTML(page, loanOptions)
+      // پنل ساختار سازمانی: متصدی، عکس کارگزینی، احراز شرایط و سابقهٔ انتصاب‌ها.
+      : cfg.panel === 'roster' ? rosterPanelHTML(rosterView, page + '#assignments', mod.prefix) : '';
     // داشبورد گرافیکی وام: بالای پنل امتیازبندی می‌آید تا ترکیب و روند وام‌ها دیده شود.
     // داشبورد پاداش هم نمودارها و جدول «مبلغ هر نفر در هر مدیریت» را بالای رکوردها می‌آورد.
     const chart = cfg.panel === 'loans'
@@ -402,10 +423,22 @@ function pageRecordkitLive(page) {
 
 /* ------------------------- فرم ایجاد و ویرایش ------------------------- */
 
-function rkCreate(page) {
+function rkCreate(page, prefill) {
   const st = RK_STATE[page];
   if (!st) { toast('شناسهٔ ماژول هنوز بارگذاری نشده است', 'error'); return; }
-  rkOpenForm(page, st.kind, null);
+  rkOpenForm(page, st.kind, null, prefill);
+}
+
+/**
+ * ثبت وضعیت یک «نوع رکورد اضافی» روی یک صفحه.
+ *
+ * چرا لازم است: صفحه‌ای مثل ساختار سازمانی، دو نوع رکورد دارد (شناسنامهٔ پست و انتصاب)؛
+ * فرم و اقدام‌های انتصاب از همان موتور عمومی استفاده می‌کنند، فقط با کلید صفحهٔ جدا
+ * (`positions#assignments`) تا شناسهٔ نوع در فرم گم نشود.
+ */
+function rkBindKind(page, mod, kind) {
+  if (!mod || !kind) return;
+  RK_STATE[page] = {mod, kind};
 }
 
 /** جستجو: عبارت را از کادر می‌خواند، در سرور اعمال می‌کند و صفحه را بازخوانی می‌کند.
@@ -423,17 +456,24 @@ function rkEdit(page, id) {
     rkOpenForm(page, st.kind, res.data);
   });
 }
-async function rkOpenForm(page, kind, existing) {
+async function rkOpenForm(page, kind, existing, prefill) {
   const isEdit = !!existing;
+  // مقدار آغازین هر فیلد: در ویرایش از خود رکورد و در ثبت تازه از پیش‌پرکردن صفحه
+  // (مثل کد پستی که از سطر ساختار سازمانی آمده است).
+  const initial = key => {
+    if (existing && existing.fields) return existing.fields[key] == null ? '' : existing.fields[key];
+    if (prefill && prefill[key] != null) return prefill[key];
+    return '';
+  };
   const empField = kind.employeeScoped
     ? `<div class="field"><label>کارمند <span class="req">*</span></label>${await liveEmployeeSelect('rkEmp', existing && existing.employeeId)}</div>`
     : '';
   const fields = (kind.fields || []).map(f =>
-    `<div class="field"><label>${esc(f.labelFa)}${f.required ? ' <span class="req">*</span>' : ''}</label>${rkInput('rkF_' + f.key, f, existing && existing.fields ? existing.fields[f.key] : '')}</div>`).join('');
+    `<div class="field"><label>${esc(f.labelFa)}${f.required ? ' <span class="req">*</span>' : ''}</label>${rkInput('rkF_' + f.key, f, initial(f.key))}</div>`).join('');
   openModal({
     title: (isEdit ? 'ویرایش ' : 'ثبت ') + kind.titleFa,
     body: `<div class="form-grid">
-      <div class="field"><label>عنوان <span class="req">*</span></label><input id="rkTitle" value="${esc(existing ? existing.title : '')}"></div>
+      <div class="field"><label>عنوان <span class="req">*</span></label><input id="rkTitle" value="${esc(existing ? existing.title : (prefill && prefill.__title) || '')}"></div>
       ${empField}
       ${fields}
       <div class="field" style="grid-column:1/-1"><label>یادداشت</label><input id="rkNote" value="${esc(existing ? existing.noteFa || '' : '')}"></div>

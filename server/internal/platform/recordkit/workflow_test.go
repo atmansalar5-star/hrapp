@@ -3,6 +3,9 @@
 package recordkit
 
 import (
+	"context"
+	"errors"
+	"strings"
 	"testing"
 
 	"hrms/internal/contracts"
@@ -129,5 +132,65 @@ func TestRolesParsedAndValidated(t *testing.T) {
 	}
 	if a.Roles[0] != contracts.RoleHRManager || a.Roles[1] != contracts.RoleLineManager {
 		t.Fatalf("نقش‌ها نادرست تجزیه شدند: %+v", a.Roles)
+	}
+}
+
+// TestActRuleBlocksAction قاعدهٔ اختصاصی نوع رکورد پیش از انجام اقدام سنجیده می‌شود و
+// متن فارسی همان قاعده به فراخوان برگردانده می‌شود (نمونهٔ واقعی: انتصاب پست سازمانی
+// بدون احراز شرایط مجاز نیست).
+func TestActRuleBlocksAction(t *testing.T) {
+	kind := Kind{
+		Key: "assignments", TitleFa: "انتصاب پست سازمانی", IDPrefix: "ASG",
+		Fields:   Fields("qualification|احراز شرایط|select|1", "evidence|شواهد احراز|text|0"),
+		Statuses: Statuses("draft|پیش‌نویس", "active|در حال تصدی"),
+		Initial:  "draft", Transitions: Steps("draft|active"),
+		Actions: Actions("appoint|انتصاب و آغاز تصدی|primary|active|0"),
+	}
+	kind.ActRule = func(rec Record, action string) error {
+		if action != "appoint" {
+			return nil
+		}
+		if rec.Fields["qualification"] != "met" {
+			return &RuleError{Message: "انتصاب به تصدی پست تنها با نتیجهٔ «احرازشده» ممکن است."}
+		}
+		return nil
+	}
+	svc := New(Descriptor{Module: "orgstructure", TitleFa: "ساختار سازمانی", Kinds: []Kind{kind}},
+		NewMemoryStore(), nil, nil, nil, nil)
+
+	// رکورد در وضعیت آغازین با نتیجهٔ «احرازنشده».
+	created, err := svc.Create(context.Background(), contracts.RecordInput{
+		Kind: "assignments", Title: "انتصاب آزمایشی",
+		Fields: map[string]string{"qualification": "not_met", "evidence": "پروندهٔ ناقص"},
+	}, "hr.spec")
+	if err != nil {
+		t.Fatalf("ثبت رکورد انتصاب باید ممکن باشد: %v", err)
+	}
+	_, err = svc.Act(context.Background(), created.ID, contracts.RecordAction{Action: "appoint"}, "hr.spec")
+	if err == nil {
+		t.Fatal("اقدام «انتصاب» با احرازنشده باید رد شود")
+	}
+	var rule *RuleError
+	if !errors.As(err, &rule) || !strings.Contains(rule.Message, "احرازشده") {
+		t.Fatalf("پیام قاعدهٔ دامنه انتظار می‌رفت، این آمد: %v", err)
+	}
+
+	// همان رکورد با «احرازشده» و شواهد، به وضعیت تصدی می‌رود.
+	if _, err := svc.Update(context.Background(), created.ID, contracts.RecordInput{
+		Kind: "assignments", Title: "انتصاب آزمایشی",
+		Fields: map[string]string{"qualification": "met", "evidence": "مدرک تحصیلی و سابقهٔ کار"},
+	}, "hr.spec"); err != nil {
+		t.Fatalf("ویرایش رکورد در وضعیت پیش‌نویس باید ممکن باشد: %v", err)
+	}
+	appointed, err := svc.Act(context.Background(), created.ID, contracts.RecordAction{Action: "appoint"}, "hr.spec")
+	if err != nil {
+		t.Fatalf("با احرازشده و شواهد، اقدام باید انجام شود: %v", err)
+	}
+	if appointed.Status != "active" || appointed.StatusFa != "در حال تصدی" {
+		t.Fatalf("وضعیت پس از اقدام نادرست است: %+v", appointed)
+	}
+	// رخداد اقدام هم ثبت می‌شود تا سابقهٔ تغییرات کامل بماند.
+	if len(appointed.Events) < 3 {
+		t.Fatalf("رخدادهای ثبت/ویرایش/اقدام باید ثبت شوند: %+v", appointed.Events)
 	}
 }

@@ -27,6 +27,30 @@ type Employee struct {
 	Email            string `json:"email"`
 	ManagerName      string `json:"managerName"`
 	Version          int    `json:"version"`
+	// PhotoURL نشانی سرو «عکس کارگزینی» این کارمند (امضاشده)؛ خالی یعنی عکس
+	// بارگذاری نشده است. عکس در پوشهٔ دادهٔ سرور نگه داشته می‌شود و این نشانی از
+	// خودِ همان فایل ساخته می‌شود، پس با بازآوری باینری از دست نمی‌رود.
+	PhotoURL string `json:"photoUrl,omitempty"`
+	// PhotoUpdatedAt تاریخ شمسی آخرین بارگذاری عکس (برای نمایش در پرونده).
+	PhotoUpdatedAt string `json:"photoUpdatedAt,omitempty"`
+	// PhotoSizeKb حجم عکس به کیلوبایت.
+	PhotoSizeKb int `json:"photoSizeKb,omitempty"`
+}
+
+// EmployeePhoto وضعیت «عکس کارگزینی» یک کارمند؛ پاسخ مسیرهای بارگذاری، خواندن و
+// حذف عکس. NoteFa توضیح فارسی وضعیت است تا متن در رابط ساخته نشود.
+type EmployeePhoto struct {
+	EmployeeID  string `json:"employeeId"`
+	HasPhoto    bool   `json:"hasPhoto"`
+	URL         string `json:"url,omitempty"`
+	UpdatedAt   string `json:"updatedAt,omitempty"`
+	UpdatedBy   string `json:"updatedBy,omitempty"`
+	SizeKb      int    `json:"sizeKb,omitempty"`
+	ContentType string `json:"contentType,omitempty"`
+	SHA256      string `json:"sha256,omitempty"`
+	// OriginalName نام فایل اصلی که کاربر بارگذاری کرده است (برای پیگیری کارگزینی).
+	OriginalName string `json:"originalName,omitempty"`
+	NoteFa       string `json:"noteFa,omitempty"`
 }
 
 // EmployeeInput ورودی ایجاد/ویرایش کارمند (فیلدهای اجباری در domain اعتبارسنجی می‌شوند).

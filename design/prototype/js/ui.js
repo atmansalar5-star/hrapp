@@ -246,6 +246,17 @@ function logout() {
 }
 
 /* ------------------- مسیریابی ------------------- */
+
+/**
+ * آرگومان‌های آخرین بازشدن صفحه.
+ *
+ * چرا لازم است: صفحه‌هایی مثل پروندهٔ کارمند شناسه را به‌عنوان آرگومان می‌گیرند و
+ * بازخوانی صفحه (`liveReload`) با `renderPage(currentPage)` آن شناسه را از دست
+ * می‌داد؛ نتیجه این بود که بعد از هر عمل (مثل بارگذاری عکس یا ذخیره) صفحه به حالت
+ * «کارمندی انتخاب نشده است» برمی‌گشت. اینجا همان آرگومان‌ها نگه داشته می‌شوند.
+ */
+window.currentPageArgs = [];
+
 function go(page, ...args) {
   if (!session) return;
   if (!PAGE_ACCESS[page] || !PAGE_ACCESS[page].includes(session.role)) {
@@ -253,6 +264,7 @@ function go(page, ...args) {
     return;
     }
   currentPage = page;
+  window.currentPageArgs = args;
   closeOverlays();
   renderSidebar();
   renderPage(page, ...args);

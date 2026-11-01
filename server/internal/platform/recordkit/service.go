@@ -218,6 +218,13 @@ func (s *Service) Act(ctx context.Context, id string, in contracts.RecordAction,
 	if !scopeAllows(action.Scope, workflowActor, current.EmployeeID, current.DepartmentName) {
 		return contracts.Record{}, &RuleError{Message: "محدودهٔ سازمانی شما برای این اقدام کافی نیست."}
 	}
+	// قاعدهٔ اختصاصی خودِ نوع رکورد برای همین اقدام (مثلاً «انتصاب بدون احراز شرایط
+	// مجاز نیست»). متن خطا فارسی و از دامنهٔ همان ماژول می‌آید.
+	if kind.ActRule != nil {
+		if err := kind.ActRule(current, action.Value); err != nil {
+			return contracts.Record{}, err
+		}
+	}
 	if action.To != "" {
 		current.Status = action.To
 		current.DecidedBy = actor

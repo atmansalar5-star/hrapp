@@ -23,5 +23,8 @@ func (m *Module) ID() string { return "orgstructure" }
 
 // Register مسیرهای استاندارد رکوردهای پست‌های سازمانی را ثبت می‌کند.
 func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
-	recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/orgstructure")
+	svc := recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/orgstructure")
+	// مسیرهای ترکیبی «ساختار سازمانی»: متصدی هر پست با عکس کارگزینی و نتیجهٔ احراز
+	// شرایط، سابقهٔ انتصاب‌ها و تاریخچهٔ تغییرات هر سمت.
+	registerRosterEndpoints(mux, deps, svc)
 }
