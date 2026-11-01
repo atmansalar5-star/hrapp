@@ -28,6 +28,9 @@ const (
 	KindSalaryDecree          Kind = "salary_decree"
 	KindEmploymentCertificate Kind = "employment_certificate"
 	KindPayslip               Kind = "payslip"
+	// KindDegreeBasis فرم اداری «تعیین مدرک ملاک حقوق»: کدام مدرک، با چه ارتباطی و به
+	// استناد کدام صورت‌جلسهٔ شورای تعدیل مدرک مبنای گروه شغلی و پرداخت است.
+	KindDegreeBasis Kind = "degree_basis"
 )
 
 // ModuleOf ماژول مالک سند؛ دسترسی نقش روی همان ماژول سنجیده می‌شود.
@@ -41,6 +44,8 @@ func ModuleOf(kind Kind) (string, bool) {
 		return "employee", true
 	case KindPayslip:
 		return "payroll", true
+	case KindDegreeBasis:
+		return "archive", true
 	default:
 		return "", false
 	}
@@ -57,6 +62,8 @@ func TitleFa(kind Kind) string {
 		return "گواهی اشتغال به کار"
 	case KindPayslip:
 		return "فیش حقوقی"
+	case KindDegreeBasis:
+		return "فرم تعیین مدرک ملاک حقوق"
 	default:
 		return string(kind)
 	}
@@ -150,6 +157,24 @@ type StructureRow struct {
 	Total    bool
 }
 
+// FormField یک سطر «فرم اداری» روی کاغذ: برچسب و مقدار.
+//
+// چرا سازوکار عمومی: سازمان فرم‌های اداری گوناگونی دارد (تعیین مدرک ملاک حقوق، تعدیل
+// مدرک ایثارگران، صورت‌جلسهٔ شورا) و افزودن یک قالب HTML تازه برای هر فرم، نگهداشت را
+// سنگین می‌کند. با این ساختار، هر ماژول فرم کاغذی خودش را از دادهٔ خودش می‌سازد.
+type FormField struct {
+	LabelFa string
+	ValueFa string
+}
+
+// FormTable یک جدول «فرم اداری» روی کاغذ (سرستون‌ها و سطرها).
+type FormTable struct {
+	TitleFa string
+	Head    []string
+	Rows    [][]string
+	NoteFa  string
+}
+
 // Data همهٔ دادهٔ لازم برای ساخت یک سند چاپی.
 type Data struct {
 	Kind     Kind
@@ -165,6 +190,12 @@ type Data struct {
 	Params    []Param
 	BodyFa    []string
 	NoteFa    string
+	// FormTitleFa/FormFields/FormTables فرم اداری سند (مثل «تعیین مدرک ملاک حقوق»).
+	FormTitleFa string
+	FormFields  []FormField
+	FormTables  []FormTable
+	// Signatures امضاهای پای سند؛ خالی یعنی سه امضای پیش‌فرض کارگزینی/کارمند/منابع انسانی.
+	Signatures []string
 	// CustomBody یعنی متن از قالب طراحى‌شدهٔ کاربر آمده است و به‌صورت بند‌بند نمایش
 	// داده می‌شود؛ نه فهرست پیش‌فرض سامانه.
 	CustomBody bool
@@ -491,6 +522,22 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
   <p class="muted">مزد مبنا جمع اجزای ثابت است و مبنای محاسبهٔ اضافه‌کاری، شب‌کاری، نوبت‌کاری و فوق‌العاده‌های اقلیمی (که درصدی از همین مزد مبنا هستند و جداگانه پرداخت می‌شوند).</p>
   {{end}}
 
+  {{if .FormFields}}
+  <h2>{{if .FormTitleFa}}{{.FormTitleFa}}{{else}}مشخصات فرم{{end}}</h2>
+  <table>
+    {{range .FormFields}}<tr><th>{{.LabelFa}}</th><td>{{.ValueFa}}</td></tr>{{end}}
+  </table>
+  {{end}}
+
+  {{range .FormTables}}
+  <h2>{{.TitleFa}}</h2>
+  <table>
+    {{if .Head}}<tr>{{range .Head}}<th>{{.}}</th>{{end}}</tr>{{end}}
+    {{range .Rows}}<tr>{{range .}}<td>{{.}}</td>{{end}}</tr>{{end}}
+  </table>
+  {{if .NoteFa}}<p class="muted">{{.NoteFa}}</p>{{end}}
+  {{end}}
+
   {{if .BodyFa}}
   {{if .CustomBody}}
   <h2>متن سند</h2>
@@ -504,9 +551,11 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
   {{if .NoteFa}}<div class="subtitle">📌 {{.NoteFa}}</div>{{end}}
 
   <div class="sign">
+    {{if .Signatures}}{{range .Signatures}}<div>{{.}}</div>{{end}}{{else}}
     <div>مهر و امضای واحد کارگزینی</div>
     <div>امضای کارمند</div>
     <div>تأیید مدیر منابع انسانی</div>
+    {{end}}
   </div>
 
   <footer>

@@ -23,5 +23,8 @@ func (m *Module) ID() string { return "archive" }
 
 // Register مسیرهای استاندارد رکوردهای بایگانی را ثبت می‌کند.
 func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
-	recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/archive")
+	svc := recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/archive")
+	// مسیرهای تحصیلی: گزینه‌های فرم (مقطع، ارتباط تحصیلات، شورای تعدیل مدرک) و خلاصهٔ
+	// پروندهٔ تحصیلی هر کارمند (آخرین مدرک، مدرک ملاک حقوق و وضعیت ایثارگری).
+	registerEducationEndpoints(mux, deps, svc)
 }

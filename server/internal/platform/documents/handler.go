@@ -167,6 +167,8 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 		employeeID  string
 		contractRef *ContractInfo
 		contractID  string
+		// basisRec تصمیم «مدرک ملاک حقوق» برای ساخت فرم چاپی همان تصمیم.
+		basisRec *contracts.Record
 	)
 
 	if kind == KindContract {
@@ -184,6 +186,18 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 			StartDate: c.StartDate, EndDate: c.EndDate,
 			MonthlySalary: c.MonthlySalary, ServiceDays: c.ServiceDays, ServiceYears: c.ServiceDays / 365,
 		}
+	} else if kind == KindDegreeBasis {
+		// فرم «مدرک ملاک حقوق» با شناسهٔ خودِ رکورد تصمیم باز می‌شود (نه کد کارمند)؛
+		// کارمند از همان رکورد خوانده می‌شود تا سند به تصمیم شورا گره بخورد.
+		basis, found, err := degreeBasisRecord(ctx, deps, id)
+		if err != nil {
+			return Data{}, err
+		}
+		if !found {
+			return Data{}, fmt.Errorf("تصمیم «مدرک ملاک حقوق» با این شناسه یافت نشد")
+		}
+		employeeID = basis.EmployeeID
+		basisRec = &basis
 	} else {
 		employeeID = id
 	}
@@ -273,6 +287,8 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 			"این گواهی بنا به درخواست نامبرده و برای ارائه به مراجع ذی‌ربط صادر شده است.",
 			"اعتبار این سند با کد رهگیری درج‌شده در پایین صفحه در سامانه قابل بررسی است.",
 		}
+	case KindDegreeBasis:
+		buildDegreeBasisForm(ctx, deps, &data, basisRec)
 	}
 
 	// اگر برای این نوع سند، قالب طراحى‌شدهٔ فعال وجود داشته باشد، متن آن با دادهٔ واقعی
@@ -513,6 +529,8 @@ func serialOf(kind Kind, employeeID, contractID string, today calendar.Date) str
 		return fmt.Sprintf("DEC-%d-%s", today.Year, strings.TrimPrefix(employeeID, "EMP-"))
 	case KindPayslip:
 		return fmt.Sprintf("PAY-%d-%s", today.Year, strings.TrimPrefix(employeeID, "EMP-"))
+	case KindDegreeBasis:
+		return fmt.Sprintf("DBAS-%d-%s", today.Year, strings.TrimPrefix(employeeID, "EMP-"))
 	default:
 		return fmt.Sprintf("CRT-%d-%s", today.Year, strings.TrimPrefix(employeeID, "EMP-"))
 	}

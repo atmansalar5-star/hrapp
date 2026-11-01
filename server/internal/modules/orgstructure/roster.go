@@ -29,7 +29,66 @@ import (
 	"hrms/internal/platform/recordkit"
 )
 
-// rosterHolder متصدی یک پست همراه عکس کارگزینی و نتیجهٔ احراز شرایط.
+// holderEducation اطلاعات تحصیلی متصدی (آخرین مدرک) برای نمایش در ساختار سازمانی.
+type holderEducation struct {
+	RecordID       string `json:"recordId,omitempty"`
+	Level          string `json:"level,omitempty"`
+	LevelFa        string `json:"levelFa,omitempty"`
+	Field          string `json:"field,omitempty"`
+	Orientation    string `json:"orientation,omitempty"`
+	University     string `json:"university,omitempty"`
+	GraduationDate string `json:"graduationDate,omitempty"`
+	// RelevanceFa نتیجهٔ بررسی «مرتبط یا غیرمرتبط بودن تحصیلات» و درصد ارتباط.
+	RelevanceFa      string `json:"relevanceFa,omitempty"`
+	Relevance        string `json:"relevance,omitempty"`
+	RelevancePercent string `json:"relevancePercent,omitempty"`
+	CouncilStatusFa  string `json:"councilStatusFa,omitempty"`
+	CouncilNo        string `json:"councilNo,omitempty"`
+	CouncilDate      string `json:"councilDate,omitempty"`
+	StatusFa         string `json:"statusFa,omitempty"`
+}
+
+// holderDegreeBasis «مدرک ملاک حقوق» متصدی: کدام مدرک، با چه صورت‌جلسه‌ای و با چه مقطعی
+// مبنای گروه شغلی و پرداخت است (برای ایثارگران یک مقطع بالاتر).
+type holderDegreeBasis struct {
+	RecordID         string `json:"recordId,omitempty"`
+	LevelFa          string `json:"levelFa,omitempty"`
+	EffectiveLevelFa string `json:"effectiveLevelFa,omitempty"`
+	Field            string `json:"field,omitempty"`
+	Relevance        string `json:"relevance,omitempty"`
+	RelevanceFa      string `json:"relevanceFa,omitempty"`
+	RelevancePct     string `json:"relevancePercent,omitempty"`
+	CouncilNo        string `json:"councilNo,omitempty"`
+	CouncilDate      string `json:"councilDate,omitempty"`
+	EffectiveDate    string `json:"effectiveDate,omitempty"`
+	SalaryGroup      string `json:"salaryGroup,omitempty"`
+	VeteranUpgrade   bool   `json:"veteranUpgrade"`
+	UpgradedLevelFa  string `json:"upgradedLevelFa,omitempty"`
+	StatusFa         string `json:"statusFa,omitempty"`
+}
+
+// holderPersonalBase پایهٔ شخصی متصدی: از حکم ابلاغ‌شدهٔ خودِ کارمند خوانده می‌شود
+// (گروه شغلی حکم و حقوق پایه)، نه از فیلدی که ساختار سازمانی نگه دارد.
+type holderPersonalBase struct {
+	DecreeID      string `json:"decreeId,omitempty"`
+	JobGroup      string `json:"jobGroup,omitempty"`
+	BaseSalary    int64  `json:"baseSalary,omitempty"`
+	MazdBase      int64  `json:"mazdBase,omitempty"`
+	EffectiveDate string `json:"effectiveDate,omitempty"`
+	StatusFa      string `json:"statusFa,omitempty"`
+	NoteFa        string `json:"noteFa,omitempty"`
+}
+
+// holderOrgBase پایهٔ سازمانی سمت: از شناسنامهٔ خودِ پست سازمانی.
+type holderOrgBase struct {
+	Grade     string `json:"grade,omitempty"`
+	JobFamily string `json:"jobFamily,omitempty"`
+	Headcount string `json:"headcount,omitempty"`
+	// Requirements شرط‌های احراز پست (مقطع و رشتهٔ مورد نیاز).
+	Requirements string `json:"requirements,omitempty"`
+}
+
+// rosterHolder متصدی یک پست همراه عکس کارگزینی، اطلاع کسب‌وکار و نتیجهٔ احراز شرایط.
 type rosterHolder struct {
 	AssignmentID    string `json:"assignmentId"`
 	AssignmentTitle string `json:"assignmentTitle,omitempty"`
@@ -49,6 +108,17 @@ type rosterHolder struct {
 	DecreeNo        string `json:"decreeNo,omitempty"`
 	Status          string `json:"status"`
 	StatusFa        string `json:"statusFa"`
+	// Education آخرین مدرک تحصیلی متصدی (مقطع، رشته، گرایش و ارتباط با شغل).
+	Education *holderEducation `json:"education,omitempty"`
+	// DegreeBasis مدرک ملاک حقوق متصدی (اگر شورای تعدیل مدرک تعیین کرده باشد).
+	DegreeBasis *holderDegreeBasis `json:"degreeBasis,omitempty"`
+	// PersonalBase پایهٔ شخصی فرد از حکم جاری، و OrgBase پایهٔ سازمانی سمت از پست.
+	PersonalBase *holderPersonalBase `json:"personalBase,omitempty"`
+	OrgBase      *holderOrgBase      `json:"orgBase,omitempty"`
+	// Veteran وضعیت ایثارگری متصدی (مبنای معادل‌سازی یک مقطع بالاتر).
+	Veteran       bool   `json:"veteran"`
+	VeteranTypeFa string `json:"veteranTypeFa,omitempty"`
+	VeteranNoteFa string `json:"veteranNoteFa,omitempty"`
 }
 
 // rosterPosition یک پست سازمانی با متصدی جاری و شمار انتصاب‌هایش.
@@ -64,6 +134,8 @@ type rosterPosition struct {
 	Status       string        `json:"status"`
 	StatusFa     string        `json:"statusFa"`
 	Holder       *rosterHolder `json:"holder,omitempty"`
+	// OrgBase پایهٔ سازمانی خودِ سمت (گروه شغلی، خانوادهٔ شغلی و شرط‌های احراز پست).
+	OrgBase *holderOrgBase `json:"orgBase,omitempty"`
 	// HolderCount شمار متصدیان فعال (بیش از یک یعنی دادهٔ ناسازگار و هشدار).
 	HolderCount int `json:"holderCount"`
 	// AssignmentCount شمار همهٔ انتصاب‌های این پست (جاری + پیشین).
@@ -95,12 +167,37 @@ type rosterSummary struct {
 	Historical   int `json:"historical"`
 }
 
+// treeUnit یک گرهٔ درخت سازمانی: واحد، سرپرست، شمار نیرو و پست‌های همان واحد با متصدی.
+type treeUnit struct {
+	ID        string           `json:"id"`
+	Name      string           `json:"name"`
+	Head      string           `json:"head,omitempty"`
+	ParentID  string           `json:"parentId,omitempty"`
+	Headcount int              `json:"headcount"`
+	Positions []rosterPosition `json:"positions"`
+	Filled    int              `json:"filled"`
+	Vacant    int              `json:"vacant"`
+	// EmployeeCount شمار کارکنان همان واحد از پروندهٔ کارکنان (برای درخت).
+	EmployeeCount int `json:"employeeCount"`
+}
+
+// treeView دادهٔ «درخت سازمانی»: ریشهٔ هلدینگ/سازمان، واحدهای سلسله‌مراتبی و پست‌های هر
+// واحد همراه متصدی (با عکس و تحصیلات)، و در پایان پست‌های بدون واحد مشخص.
+type treeView struct {
+	Root       string           `json:"root"`
+	Units      []treeUnit       `json:"units"`
+	Unassigned []rosterPosition `json:"unassigned,omitempty"`
+	Totals     map[string]int   `json:"totals"`
+	NoteFa     string           `json:"noteFa"`
+}
+
 // rosterView پاسخ صفحهٔ ساختار سازمانی.
 type rosterView struct {
 	Module      string             `json:"module"`
 	TitleFa     string             `json:"moduleTitleFa"`
 	Positions   []rosterPosition   `json:"positions"`
 	Units       []rosterUnit       `json:"units"`
+	Tree        treeView           `json:"tree"`
 	Assignments []contracts.Record `json:"assignments"`
 	Summary     rosterSummary      `json:"summary"`
 	// QualificationOptions فهرست نتیجه‌های احراز (برچسب فارسی از دامنه).
@@ -201,8 +298,10 @@ func buildRoster(r *http.Request, deps modulekit.Deps, svc *recordkit.Service) (
 		}
 	}
 
-	// عکس و مشخصات کارمند از پورت قرارداد خوانده می‌شود.
+	// عکس و مشخصات کارمند از پورت قرارداد خوانده می‌شود؛ تحصیلات، مدرک ملاک، حکم جاری
+	// و پروندهٔ ایثارگری هم از پورت‌های خودِ ماژول‌های مالک (یک گذر برای همهٔ متصدیان).
 	employees := employeeLookup{r: r, reader: deps.Ports}
+	facts := collectHolderFacts(r, deps, activeEmployees(assignments))
 	byUnit := map[string]*rosterUnit{}
 	for _, p := range positions {
 		code := strings.TrimSpace(p.Fields["code"])
@@ -212,6 +311,13 @@ func buildRoster(r *http.Request, deps modulekit.Deps, svc *recordkit.Service) (
 			JobFamily: p.Fields["jobFamily"], Grade: p.Fields["grade"],
 			Requirements: p.Fields["requirements"], Headcount: p.Fields["headcount"],
 			Status: p.Status, StatusFa: p.StatusFa,
+			// پایهٔ سازمانی خودِ سمت از شناسنامهٔ پست (مستقل از متصدی).
+			OrgBase: &holderOrgBase{
+				Grade:        strings.TrimSpace(p.Fields["grade"]),
+				JobFamily:    strings.TrimSpace(p.Fields["jobFamily"]),
+				Headcount:    strings.TrimSpace(p.Fields["headcount"]),
+				Requirements: strings.TrimSpace(p.Fields["requirements"]),
+			},
 		}
 
 		holders := []contracts.Record{}
@@ -224,7 +330,7 @@ func buildRoster(r *http.Request, deps modulekit.Deps, svc *recordkit.Service) (
 		item.HolderCount = len(holders)
 		item.AssignmentCount = countAssignments(assignments, p)
 		if len(holders) > 0 {
-			holder := toHolder(holders[0], &employees)
+			holder := toHolder(holders[0], &employees, facts, p)
 			item.Holder = &holder
 			item.HasPhoto = holder.HasPhoto
 			item.RequirementsMet = holder.Qualification == domain.QualificationMet
@@ -252,9 +358,154 @@ func buildRoster(r *http.Request, deps modulekit.Deps, svc *recordkit.Service) (
 	}
 
 	view.Units = sortedUnits(byUnit)
+	view.Tree = buildTree(r, deps, view.Positions)
 	view.Summary = summarize(positions, assignments, view.Positions)
 	view.Warnings = rosterWarnings(view)
 	return view, nil
+}
+
+// activeEmployees شناسهٔ کارمندانی که انتصاب «در حال تصدی» دارند (بدون تکرار).
+func activeEmployees(assignments []contracts.Record) []string {
+	seen := map[string]bool{}
+	out := []string{}
+	for _, a := range assignments {
+		if a.Status != domain.AssignmentActive {
+			continue
+		}
+		id := strings.TrimSpace(a.EmployeeID)
+		if id == "" || seen[id] {
+			continue
+		}
+		seen[id] = true
+		out = append(out, id)
+	}
+	return out
+}
+
+// buildTree درخت سازمانی را می‌سازد: ریشهٔ سازمان، واحدهای سلسله‌مراتبی و پست‌های هر
+// واحد همراه متصدی (با عکس، تحصیلات، پایهٔ شخصی و پایهٔ سازمانی سمت).
+//
+// منبع واحدها پورت خودِ ماژول کارکنان است (`EmployeeReader.Departments`) تا فهرست واحد
+// در ساختار سازمانی تکرار نشود. تطبیق پست با واحد با نام واحد انجام می‌شود و اگر پستی به
+// هیچ واحدی نخورد، در «بدون واحد سازمانی» می‌آید تا از درخت نیفتد.
+func buildTree(r *http.Request, deps modulekit.Deps, positions []rosterPosition) treeView {
+	root := deps.Org.TitleFa
+	if root == "" {
+		root = "سازمان"
+	}
+	view := treeView{
+		Root:       root,
+		Units:      []treeUnit{},
+		Unassigned: []rosterPosition{},
+		Totals:     map[string]int{},
+		NoteFa: "درخت از واحدهای سازمانی پروندهٔ کارکنان ساخته می‌شود و پست‌های هر واحد — با " +
+			"متصدی، عکس کارگزینی، آخرین مدرک تحصیلی، پایهٔ شخصی فرد و پایهٔ سازمانی سمت — زیر " +
+			"همان واحد می‌آیند. جدول تفصیلی هر واحد در ادامهٔ همین صفحه است.",
+	}
+
+	departments := []contracts.Department{}
+	if reader, ok := deps.Ports.Employees(); ok {
+		if list, err := reader.Departments(r.Context()); err == nil {
+			departments = list
+		}
+	}
+	byID := map[string]*treeUnit{}
+	order := []string{}
+	for _, dept := range departments {
+		// هر گره روی heap ساخته می‌شود و در پایان داخل فهرست کپی می‌شود: اگر اشاره‌گر
+		// داخل فهرست گرفته شود، با رشد فهرست باطل می‌شود و پست‌ها به واحد درست نمی‌چسبند.
+		byID[dept.ID] = &treeUnit{
+			ID: dept.ID, Name: dept.Name, Head: dept.Head, ParentID: dept.ParentID,
+			EmployeeCount: dept.Headcount, Positions: []rosterPosition{},
+		}
+		order = append(order, dept.ID)
+	}
+
+	// پست‌ها به واحد خود می‌چسبند؛ اول با نام واحد پست و در نبود تطبیق، با واحد متصدی.
+	for _, position := range positions {
+		target := matchUnit(byID, position.Unit)
+		if target == nil && position.Holder != nil {
+			target = matchUnit(byID, position.Holder.DepartmentName)
+		}
+		if target == nil {
+			view.Unassigned = append(view.Unassigned, position)
+			continue
+		}
+		target.Positions = append(target.Positions, position)
+		if position.Holder != nil {
+			target.Filled++
+		} else {
+			target.Vacant++
+		}
+	}
+
+	// فهرست نهایی واحدها با ترتیب پروندهٔ کارکنان ساخته می‌شود.
+	for _, id := range order {
+		view.Units = append(view.Units, *byID[id])
+	}
+	// شمارش جمع‌بندی درخت.
+	for _, unit := range view.Units {
+		view.Totals["positions"] += len(unit.Positions)
+		view.Totals["filled"] += unit.Filled
+		view.Totals["vacant"] += unit.Vacant
+	}
+	view.Totals["unassigned"] = len(view.Unassigned)
+	view.Totals["units"] = len(view.Units)
+	return view
+}
+
+// matchUnit واحد متناظر یک نام را در درخت پیدا می‌کند.
+//
+// چرا تطبیق نسبی: نام واحد در شناسنامهٔ پست دستی نوشته می‌شود («امور مالی») و نام واحد
+// سازمانی از پروندهٔ کارکنان می‌آید («مالی و حسابداری»)؛ تطبیق دقیق، پست‌ها را از درخت
+// می‌انداخت. پس اول تطبیق دقیق، سپس هم‌ریشگی واژه‌ای سنجیده می‌شود و هیچ واحد تازه‌ای
+// ساخته نمی‌شود.
+func matchUnit(units map[string]*treeUnit, name string) *treeUnit {
+	value := normalizeUnitName(name)
+	if value == "" {
+		return nil
+	}
+	for _, unit := range units {
+		if normalizeUnitName(unit.Name) == value {
+			return unit
+		}
+	}
+	for _, unit := range units {
+		if strings.Contains(normalizeUnitName(unit.Name), value) || strings.Contains(value, normalizeUnitName(unit.Name)) {
+			return unit
+		}
+	}
+	// هم‌ریشگی واژه‌ای: «امور مالی» و «مالی و حسابداری» واژهٔ «مالی» را share می‌کنند.
+	for _, unit := range units {
+		for _, word := range unitWords(value) {
+			for _, other := range unitWords(normalizeUnitName(unit.Name)) {
+				if word == other {
+					return unit
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// normalizeUnitName نام واحد را برای مقایسه یکدست می‌کند.
+func normalizeUnitName(name string) string {
+	value := strings.ReplaceAll(strings.TrimSpace(name), "\u200c", " ")
+	value = strings.ReplaceAll(value, "ي", "ی")
+	value = strings.ReplaceAll(value, "ك", "ک")
+	return strings.ToLower(strings.Join(strings.Fields(value), " "))
+}
+
+// unitWords واژه‌های معنادار یک نام واحد (واژه‌های کوتاه و «و» حذف می‌شوند).
+func unitWords(name string) []string {
+	out := []string{}
+	for _, word := range strings.Fields(name) {
+		if len([]rune(word)) < 3 || word == "و" {
+			continue
+		}
+		out = append(out, word)
+	}
+	return out
 }
 
 // buildPositionHistory سابقهٔ انتصاب‌های یک پست و تاریخچهٔ تغییرات آن را می‌سازد.
@@ -300,7 +551,15 @@ func buildPositionHistory(r *http.Request, deps modulekit.Deps, svc *recordkit.S
 			history.Position.HolderCount++
 		}
 	}
-	history.Position.Holder = firstActiveHolder(mine, &employees)
+	// اطلاعات پایهٔ متصدی این پست (تحصیلات، مدرک ملاک، پایهٔ شخصی، ایثارگری).
+	facts := collectHolderFacts(r, deps, activeEmployees(mine))
+	history.Position.OrgBase = &holderOrgBase{
+		Grade:        rec.Fields["grade"],
+		JobFamily:    rec.Fields["jobFamily"],
+		Headcount:    rec.Fields["headcount"],
+		Requirements: rec.Fields["requirements"],
+	}
+	history.Position.Holder = firstActiveHolder(mine, &employees, facts)
 	if history.Position.Holder != nil {
 		history.Position.HasPhoto = history.Position.Holder.HasPhoto
 		history.Position.RequirementsMet = history.Position.Holder.Qualification == domain.QualificationMet
@@ -419,8 +678,11 @@ func countAssignments(assignments []contracts.Record, p contracts.Record) int {
 	return n
 }
 
-// toHolder تبدیل یک انتصاب به «متصدی» با عکس و نتیجهٔ احراز.
-func toHolder(a contracts.Record, employees *employeeLookup) rosterHolder {
+// toHolder تبدیل یک انتصاب به «متصدی» با عکس، اطلاع تحصیلی، مدرک ملاک و پایه‌ها.
+//
+// position شناسنامهٔ پستی است که این متصدی روی آن نشسته؛ «پایهٔ سازمانی» از خودِ پست
+// خوانده می‌شود تا با گروه شغلی شخصی اشتباه نشود.
+func toHolder(a contracts.Record, employees *employeeLookup, facts holderFacts, position contracts.Record) rosterHolder {
 	holder := rosterHolder{
 		AssignmentID:    a.ID,
 		AssignmentTitle: a.Title,
@@ -447,11 +709,26 @@ func toHolder(a contracts.Record, employees *employeeLookup) rosterHolder {
 		holder.PhotoUpdatedAt = employee.PhotoUpdatedAt
 		holder.HasPhoto = employee.PhotoURL != ""
 	}
+	// پایهٔ سازمانی سمت از شناسنامهٔ پست.
+	holder.OrgBase = &holderOrgBase{
+		Grade:        strings.TrimSpace(position.Fields["grade"]),
+		JobFamily:    strings.TrimSpace(position.Fields["jobFamily"]),
+		Headcount:    strings.TrimSpace(position.Fields["headcount"]),
+		Requirements: strings.TrimSpace(position.Fields["requirements"]),
+	}
+	// تحصیلات، مدرک ملاک، حکم جاری و ایثارگری از ماژول‌های مالک داده.
+	holder.Education = facts.educationOf(a.EmployeeID)
+	holder.DegreeBasis = facts.basisOf(a.EmployeeID)
+	holder.PersonalBase = facts.personalBaseOf(a.EmployeeID)
+	veteran := facts.veteranOf(a.EmployeeID)
+	holder.Veteran = veteran.IsVeteran
+	holder.VeteranTypeFa = veteran.TypeFa
+	holder.VeteranNoteFa = veteran.NoteFa
 	return holder
 }
 
 // firstActiveHolder نوترین انتصاب «در حال تصدی» یک پست را به «متصدی» تبدیل می‌کند.
-func firstActiveHolder(assignments []contracts.Record, employees *employeeLookup) *rosterHolder {
+func firstActiveHolder(assignments []contracts.Record, employees *employeeLookup, facts holderFacts) *rosterHolder {
 	var best *contracts.Record
 	for i := range assignments {
 		a := assignments[i]
@@ -465,8 +742,199 @@ func firstActiveHolder(assignments []contracts.Record, employees *employeeLookup
 	if best == nil {
 		return nil
 	}
-	holder := toHolder(*best, employees)
+	holder := toHolder(*best, employees, facts, contracts.Record{})
 	return &holder
+}
+
+/* ------------------- اطلاعات پایهٔ متصدیان از ماژول‌های مالک ------------------- */
+
+// veteranFact وضعیت ایثارگری یک کارمند.
+type veteranFact struct {
+	IsVeteran bool
+	TypeFa    string
+	StatusFa  string
+	NoteFa    string
+}
+
+// holderFacts اطلاعات پایهٔ متصدیان: تحصیلات، مدرک ملاک حقوق، حکم جاری و ایثارگری.
+//
+// چرا یک‌جا جمع می‌شود: ساختار سازمانی برای هر پست متصدی را نشان می‌دهد و اگر برای هر
+// متصدی جداگانه از ماژول‌های دیگر خوانده شود، با N پست N بار رفت‌وبرگشت می‌شود. اینجا
+// هر منبع یک بار خوانده و بر پایهٔ کد پرسنلی گروه می‌شود.
+type holderFacts struct {
+	educations map[string][]contracts.Record
+	bases      map[string]contracts.Record
+	decrees    map[string]contracts.SalaryDecree
+	veterans   map[string]veteranFact
+}
+
+// collectHolderFacts دادهٔ پایهٔ متصدیان را از پورت‌های قرارداد می‌خواند.
+func collectHolderFacts(r *http.Request, deps modulekit.Deps, employeeIDs []string) holderFacts {
+	facts := holderFacts{
+		educations: map[string][]contracts.Record{},
+		bases:      map[string]contracts.Record{},
+		decrees:    map[string]contracts.SalaryDecree{},
+		veterans:   map[string]veteranFact{},
+	}
+	if len(employeeIDs) == 0 {
+		return facts
+	}
+	wanted := map[string]bool{}
+	for _, id := range employeeIDs {
+		wanted[id] = true
+	}
+
+	// سابقه‌های تحصیلی و تصمیم‌های ملاک حقوق از ماژول بایگانی.
+	if port, ok := deps.Ports.RecordList("archive"); ok {
+		if page, err := port.List(r.Context(), contracts.RecordFilter{
+			Module: "archive", Kind: "educations", Scope: "all", Size: 500,
+		}); err == nil {
+			for _, rec := range page.Items {
+				if wanted[rec.EmployeeID] {
+					facts.educations[rec.EmployeeID] = append(facts.educations[rec.EmployeeID], rec)
+				}
+			}
+		}
+		if page, err := port.List(r.Context(), contracts.RecordFilter{
+			Module: "archive", Kind: "degreeBases", Scope: "all", Size: 500,
+		}); err == nil {
+			for _, rec := range page.Items {
+				if !wanted[rec.EmployeeID] || rec.Status != "active" {
+					continue
+				}
+				facts.bases[rec.EmployeeID] = rec
+			}
+		}
+	}
+
+	// پروندهٔ ایثارگری از ماژول امور ایثارگران.
+	//
+	// دو وضعیت پذیرفته می‌شود: «تأییدشده» (قطعی) و «بررسی‌شده» (مدارک بررسی شده و در
+	// انتظار تأیید نهایی). معادل‌سازی «یک مقطع بالاتر» تصمیم شورای تعدیل مدرک است، ولی
+	// نمایش وضعیت ایثارگری به کارشناس کمک می‌کند تصمیم را با مستندات بگیرد.
+	if port, ok := deps.Ports.RecordList("grievances"); ok {
+		if page, err := port.List(r.Context(), contracts.RecordFilter{
+			Module: "grievances", Kind: "veteranRecords", Scope: "all", Size: 500,
+		}); err == nil {
+			for _, rec := range page.Items {
+				if !wanted[rec.EmployeeID] {
+					continue
+				}
+				if rec.Status != "approved" && rec.Status != "verified" {
+					continue
+				}
+				note := "پروندهٔ ایثارگری تأییدشده؛ معادل‌سازی «یک مقطع بالاتر» برای مدرک ملاک حقوق مجاز است."
+				if rec.Status == "verified" {
+					note = "پروندهٔ ایثارگری بررسی‌شده و در انتظار تأیید نهایی؛ معادل‌سازی «یک مقطع بالاتر» پس از تأیید پرونده ثبت می‌شود."
+				}
+				facts.veterans[rec.EmployeeID] = veteranFact{
+					IsVeteran: true,
+					TypeFa:    rec.Fields["veteranType"],
+					StatusFa:  rec.StatusFa,
+					NoteFa:    note,
+				}
+			}
+		}
+	}
+
+	// پایهٔ شخصی فرد از حکم ابلاغ‌شدهٔ خودش.
+	if reader, ok := deps.Ports.SalaryDecrees(); ok {
+		for _, id := range employeeIDs {
+			if decree, found, err := reader.NotifiedDecreeOf(r.Context(), id); err == nil && found {
+				facts.decrees[id] = decree
+			}
+		}
+	}
+	return facts
+}
+
+// educationOf آخرین مدرک تحصیلی یک کارمند (بالاترین مقطع).
+func (f holderFacts) educationOf(employeeID string) *holderEducation {
+	items := f.educations[employeeID]
+	if len(items) == 0 {
+		return nil
+	}
+	best := items[0]
+	bestOrder := contracts.DegreeLevelOrder(best.Fields["level"])
+	for _, item := range items[1:] {
+		order := contracts.DegreeLevelOrder(item.Fields["level"])
+		if order > bestOrder || (order == bestOrder && item.Fields["graduationDate"] > best.Fields["graduationDate"]) {
+			best, bestOrder = item, order
+		}
+	}
+	return &holderEducation{
+		RecordID:         best.ID,
+		Level:            best.Fields["level"],
+		LevelFa:          contracts.DegreeLevelTitleFa(best.Fields["level"]),
+		Field:            best.Fields["field"],
+		Orientation:      best.Fields["orientation"],
+		University:       best.Fields["university"],
+		GraduationDate:   best.Fields["graduationDate"],
+		Relevance:        best.Fields["relevance"],
+		RelevanceFa:      contracts.DegreeRelevanceTitleFa(best.Fields["relevance"]),
+		RelevancePercent: best.Fields["relevancePercent"],
+		CouncilStatusFa:  contracts.DegreeCouncilStatusTitleFa(best.Fields["councilStatus"]),
+		CouncilNo:        best.Fields["councilNo"],
+		CouncilDate:      best.Fields["councilDate"],
+		StatusFa:         best.StatusFa,
+	}
+}
+
+// basisOf مدرک ملاک حقوق فعال یک کارمند.
+func (f holderFacts) basisOf(employeeID string) *holderDegreeBasis {
+	rec, ok := f.bases[employeeID]
+	if !ok {
+		return nil
+	}
+	basis := &holderDegreeBasis{
+		RecordID:         rec.ID,
+		LevelFa:          contracts.DegreeLevelTitleFa(rec.Fields["level"]),
+		EffectiveLevelFa: contracts.DegreeLevelTitleFa(rec.Fields["level"]),
+		Field:            rec.Fields["field"],
+		Relevance:        rec.Fields["relevance"],
+		RelevanceFa:      contracts.DegreeRelevanceTitleFa(rec.Fields["relevance"]),
+		RelevancePct:     rec.Fields["relevancePercent"],
+		CouncilNo:        rec.Fields["councilNo"],
+		CouncilDate:      rec.Fields["councilDate"],
+		EffectiveDate:    rec.Fields["effectiveDate"],
+		SalaryGroup:      rec.Fields["salaryGroup"],
+		VeteranUpgrade:   rec.Fields["veteranUpgrade"] == "yes",
+		StatusFa:         rec.StatusFa,
+	}
+	if basis.VeteranUpgrade {
+		basis.UpgradedLevelFa = contracts.DegreeLevelTitleFa(rec.Fields["upgradedLevel"])
+		if basis.UpgradedLevelFa != "" {
+			// همان قاعده‌ای که فرم ثبت ملاک حقوق اجرا می‌کند: برای ایثارگران، مقطع
+			// معادل‌سازی‌شده یک پله بالاتر، مبنای واقعی گروه شغلی است.
+			basis.EffectiveLevelFa = basis.UpgradedLevelFa
+		}
+	}
+	return basis
+}
+
+// personalBaseOf پایهٔ شخصی فرد از حکم ابلاغ‌شده.
+func (f holderFacts) personalBaseOf(employeeID string) *holderPersonalBase {
+	decree, ok := f.decrees[employeeID]
+	if !ok {
+		return nil
+	}
+	return &holderPersonalBase{
+		DecreeID:      decree.ID,
+		JobGroup:      decree.JobGroup,
+		BaseSalary:    decree.BaseSalary,
+		MazdBase:      decree.MazdBase,
+		EffectiveDate: decree.EffectiveDate,
+		StatusFa:      decree.StatusFa,
+		NoteFa:        "از حکم ابلاغ‌شدهٔ خودِ کارمند خوانده می‌شود (پایهٔ شخصی فرد).",
+	}
+}
+
+// veteranOf وضعیت ایثارگری یک کارمند.
+func (f holderFacts) veteranOf(employeeID string) veteranFact {
+	if fact, ok := f.veterans[employeeID]; ok {
+		return fact
+	}
+	return veteranFact{}
 }
 
 // employeeLookup خواندن کارمند از پورت قرارداد (با حافظهٔ کوچک برای پرهیز از تکرار).

@@ -20,6 +20,9 @@
 /** نگاشت نتیجهٔ احراز شرایط به چیپ رنگی (برچسب فارسی از سرور می‌آید). */
 const ROSTER_QUAL_CLS = {met: 'c-ok', partial: 'c-wait', not_met: 'c-rej'};
 
+/** نگاشت نتیجهٔ «ارتباط تحصیلات با شغل» به چیپ رنگی. */
+const ROSTER_RELEVANCE_CLS = {related: 'c-ok', partially_related: 'c-wait', not_related: 'c-rej'};
+
 /**
  * ثبت گزینه‌های فیلدهای «احراز شرایط» و «کد پست» از پاسخ /options سرور.
  *
@@ -86,6 +89,8 @@ function rosterTableHTML(view, assignPage, prefix) {
       <td>${esc(p.unit || '—')}${p.grade ? `<div class="muted" style="font-size:.68rem">${esc(p.grade)}</div>` : ''}</td>
       <td style="font-size:.74rem;line-height:1.9;max-width:240px">${esc(p.requirements || '—')}</td>
       <td>${holderCell}</td>
+      <td>${holder ? holderEducationHTML(holder) : '—'}</td>
+      <td>${holder ? holderBasisHTML(holder) : '—'}</td>
       <td>${qualificationChip(holder)}</td>
       <td class="num">${holder && holder.startDate ? fa(holder.startDate) : '—'}
         ${holder && holder.decreeNo ? `<div class="muted" style="font-size:.66rem">${esc(holder.decreeNo)}</div>` : ''}</td>
@@ -93,7 +98,7 @@ function rosterTableHTML(view, assignPage, prefix) {
       <td>${rowActions}</td>
     </tr>`;
   });
-  return liveTable(['پست سازمانی', 'واحد', 'شرط‌های احراز', 'متصدی (عکس کارگزینی)', 'احراز شرایط', 'شروع تصدی', 'سابقه', 'عملیات'],
+  return liveTable(['پست سازمانی', 'واحد', 'شرط‌های احراز', 'متصدی (عکس کارگزینی)', 'تحصیلات متصدی', 'مدرک ملاک حقوق', 'احراز شرایط', 'شروع تصدی', 'سابقه', 'عملیات'],
     rows, rows.length);
 }
 
@@ -281,7 +286,133 @@ function rosterHistory(prefix, positionId, titleFa) {
 /** وضعیت صفحهٔ ساختار سازمانی: کد پست و واحد برای فرم انتصاب. */
 const ORG_STATE = {view: null, options: null, prefix: '/api/v1/orgstructure', assignPage: 'org#assignments'};
 
-/** کارت یک واحد سازمانی با پست‌ها و متصدیانش. */
+/* ------------------- کارت‌های نمایشی متصدی و پایه‌های او ------------------- */
+
+/** خلاصهٔ تحصیلات متصدی: آخرین مدرک، رشته/گرایش و ارتباط آن با شغل. */
+function holderEducationHTML(holder) {
+  const edu = holder && holder.education;
+  if (!edu) return '<span class="muted">مدرک تحصیلی ثبت نشده</span>';
+  return `<b>${esc(edu.levelFa || '—')}</b>
+    <div class="muted" style="font-size:.68rem">${esc(edu.field || '—')}${edu.orientation ? ' — ' + esc(edu.orientation) : ''}</div>
+    <div style="font-size:.68rem">${pChip(ROSTER_RELEVANCE_CLS[edu.relevance] || 'c-wait',
+      esc(edu.relevanceFa || '—') + (edu.relevancePercent ? ` (${fa(edu.relevancePercent)}٪)` : ''))}</div>`;
+}
+
+/** تصمیم مدرک ملاک حقوق متصدی (و معادل‌سازی ایثارگری، اگر باشد). */
+function holderBasisHTML(holder) {
+  const basis = holder && holder.degreeBasis;
+  if (!basis) return '<span class="muted">ملاک حقوق تعیین نشده</span>';
+  const upgrade = basis.veteranUpgrade
+    ? `<div class="muted" style="font-size:.66rem">ایثارگری: + یک مقطع (${esc(basis.upgradedLevelFa || '—')})</div>`
+    : '';
+  return `<b>${esc(basis.effectiveLevelFa || basis.levelFa || '—')}</b>
+    <div class="muted" style="font-size:.68rem">مدرک: ${esc(basis.levelFa || '—')} — ${esc(basis.field || '')}</div>
+    <div style="font-size:.68rem">${pChip(ROSTER_RELEVANCE_CLS[basis.relevance] || 'c-wait',
+      esc(basis.relevanceFa || '—') + (basis.relevancePct ? ` (${fa(basis.relevancePct)}٪)` : ''))}</div>
+    <div class="muted ltr" style="font-size:.64rem">${esc(basis.councilNo || '')}${basis.councilDate ? ' — ' + esc(basis.councilDate) : ''}</div>
+    ${upgrade}`;
+}
+
+/** پایهٔ شخصی فرد (از حکم جاری) و پایهٔ سازمانی سمت (از شناسنامهٔ پست). */
+function holderBasesHTML(holder, position) {
+  const personal = holder && holder.personalBase;
+  const org = (position && position.orgBase) || (holder && holder.orgBase);
+  const personText = personal
+    ? `<b>${esc(personal.jobGroup || '—')}</b>
+       <div class="muted" style="font-size:.66rem">پایهٔ شخصی — حکم ${esc(personal.decreeId || '—')}</div>`
+    : '<span class="muted">حکم ابلاغ‌شده ثبت نشده</span>';
+  const orgText = org
+    ? `<b>${esc(org.grade || '—')}</b>
+       <div class="muted" style="font-size:.66rem">پایهٔ سازمانی سمت${org.jobFamily ? ' — ' + esc(org.jobFamily) : ''}</div>`
+    : '<span class="muted">گروه شغلی پست ثبت نشده</span>';
+  return `<div style="font-size:.72rem;line-height:1.9">${personText}</div>
+    <div style="font-size:.72rem;line-height:1.9;margin-top:4px">${orgText}</div>`;
+}
+
+/** چیپ ایثارگری متصدی (مبنای معادل‌سازی یک مقطع بالاتر). */
+function holderVeteranChip(holder) {
+  if (!holder || !holder.veteran) return '';
+  return pChip('c-wait', 'ایثارگر') +
+    (holder.veteranTypeFa ? `<div class="muted" style="font-size:.66rem">${esc(holder.veteranTypeFa)}</div>` : '');
+}
+
+/**
+ * درخت سازمانی: واحدها به‌صورت سلسله‌مراتبی و زیر هر واحد، پست‌های آن با متصدی.
+ *
+ * قالب همان درخت‌وارهٔ آشنای کارگزینی است (`ul.org-tree` و `.org-node`)، ولی گره‌ها دادهٔ
+ * واقعی دارند: نام واحد، سرپرست، شمار نیرو و برای هر پست، متصدی با عکس کارگزینی، آخرین
+ * مدرک تحصیلی، مدرک ملاک حقوق، پایهٔ شخصی فرد و پایهٔ سازمانی سمت.
+ */
+function orgTreeHTML(tree) {
+  if (!tree || !tree.units) return '';
+  const byId = {};
+  for (const unit of tree.units) byId[unit.id] = unit;
+  const children = {};
+  for (const unit of tree.units) {
+    const parent = unit.parentId && byId[unit.parentId] ? unit.parentId : '__root__';
+    (children[parent] = children[parent] || []).push(unit);
+  }
+
+  const positionNode = (position, unit) => {
+    const holder = position.holder;
+    const body = holder
+      ? `<div style="display:flex;gap:8px;align-items:flex-start;text-align:right">
+           ${personPhotoCell(holder.employeeId, holder.fullName, holder.photoUrl, 'sm')}
+           <div style="font-size:.7rem;line-height:1.9">
+             <div>${holderEducationHTML(holder)}</div>
+             <div>${holderBasisHTML(holder)}</div>
+             <div>${holderBasesHTML(holder, position)}</div>
+             ${holderVeteranChip(holder)}
+           </div>
+         </div>`
+      : '<span class="muted" style="font-size:.72rem">بلا تصدی</span>';
+    return `<li>
+      <div class="org-node" style="min-width:230px;text-align:right;border-color:var(--border)">
+        <div class="o-name">${esc(position.title || '—')}
+          <span class="muted ltr" style="font-weight:400;font-size:.66rem">${esc(position.code || '')}</span></div>
+        ${body}
+        <div style="margin-top:6px;display:flex;gap:4px;justify-content:flex-end">
+          <button class="btn btn-sm btn-ghost" title="سابقه و تاریخچه" onclick="rosterHistory('${esc(ORG_STATE.prefix)}','${esc(position.id)}','${esc(position.title || '')}')">🕘</button>
+          <button class="btn btn-sm btn-ghost" title="انتصاب تازه" onclick="rosterAppoint('${esc(ORG_STATE.assignPage)}','${esc(position.code || '')}','${esc(position.title || '')}','${esc(unit || '')}')">➕</button>
+          ${holder ? `<button class="btn btn-sm btn-ghost" title="پایان تصدی" onclick="rosterEnd('${esc(ORG_STATE.prefix)}','${esc(holder.assignmentId)}')">⏹</button>` : ''}
+        </div>
+      </div>
+    </li>`;
+  };
+
+  const renderUnit = unit => `<li>
+    <div class="org-node ${(children[unit.id] || []).length ? '' : 'leaf'}">
+      <div class="o-name">${esc(unit.name)}</div>
+      <div class="o-head">${unit.head ? 'سرپرست: ' + esc(unit.head) : `${fa(unit.headcount)} نفر در واحد`}</div>
+      <div class="o-count num">${fa(unit.positions.length)} پست · ${fa(unit.filled)} دارای متصدی${unit.vacant ? ' · ' + fa(unit.vacant) + ' بلا تصدی' : ''}</div>
+    </div>
+    ${unit.positions.length ? `<ul>${unit.positions.map(p => positionNode(p, unit.name)).join('')}</ul>` : ''}
+    ${(children[unit.id] || []).length ? `<ul>${(children[unit.id] || []).map(renderUnit).join('')}</ul>` : ''}
+  </li>`;
+
+  const roots = children['__root__'] || [];
+  const unassigned = (tree.unassigned || []).length
+    ? `<div class="card card-pad" style="margin-top:12px">
+         <div class="card-title">🧷 پست‌های بدون واحد سازمانی مشخص (${fa((tree.unassigned || []).length)})</div>
+         <ul class="org-tree"><ul>${(tree.unassigned || []).map(p => positionNode(p, '')).join('')}</ul></ul>
+       </div>`
+    : '';
+
+  return `<div class="card org-wrap" style="margin-bottom:12px"><ul class="org-tree">
+      <li>
+        <div class="org-node root">
+          <div class="o-name">${esc(tree.root || 'سازمان')}</div>
+          <div class="o-count num">${fa(tree.totals.positions || 0)} پست در ${fa(tree.totals.units || 0)} واحد</div>
+          <div class="o-head">${fa(tree.totals.filled || 0)} دارای متصدی · ${fa(tree.totals.vacant || 0)} بلا تصدی</div>
+        </div>
+        <ul>${roots.map(renderUnit).join('')}</ul>
+      </li>
+    </ul>
+    <div class="muted" style="padding:0 18px 14px;font-size:.76rem;line-height:2">${esc(tree.noteFa || '')}</div>
+  </div>` + unassigned;
+}
+
+/** کارت یک واحد سازمانی با پست‌ها و متصدیانش (جدول تفصیلی زیر درخت). */
 function orgUnitCardHTML(unit, positions) {
   const rows = positions.map(p => {
     const holder = p.holder;
@@ -291,6 +422,9 @@ function orgUnitCardHTML(unit, positions) {
     return `<tr>
       <td><b>${esc(p.title || '—')}</b><div class="muted ltr" style="font-size:.64rem">${esc(p.code || '')}</div></td>
       <td>${holderCell}</td>
+      <td>${holder ? holderEducationHTML(holder) : '—'}</td>
+      <td>${holder ? holderBasisHTML(holder) : '—'}</td>
+      <td>${holder ? holderBasesHTML(holder, p) : '—'}</td>
       <td>${holder ? pChip(ROSTER_QUAL_CLS[holder.qualification] || 'c-wait', esc(holder.qualificationFa || '—')) : '—'}</td>
       <td class="num">${holder && holder.startDate ? fa(holder.startDate) : '—'}</td>
       <td><div class="row-actions">
@@ -304,7 +438,7 @@ function orgUnitCardHTML(unit, positions) {
   return `<div class="card card-pad" style="margin-bottom:12px">
     <div class="card-title">🏢 ${esc(unit)} <span class="muted" style="font-weight:400;font-size:.8rem">
       — ${fa(positions.length)} پست · ${fa(filled)} دارای متصدی · ${fa(positions.length - filled)} بلا تصدی</span></div>
-    ${liveTable(['پست سازمانی', 'متصدی (عکس کارگزینی)', 'احراز شرایط', 'شروع تصدی', 'عملیات'], rows, rows.length)}
+    ${liveTable(['پست سازمانی', 'متصدی (عکس کارگزینی)', 'تحصیلات متصدی', 'مدرک ملاک حقوق', 'پایهٔ شخصی / سازمانی', 'احراز شرایط', 'شروع تصدی', 'عملیات'], rows, rows.length)}
   </div>`;
 }
 
@@ -336,13 +470,17 @@ function pageOrgLive() {
       const key = p.unit || 'بدون واحد';
       (byUnit[key] = byUnit[key] || []).push(p);
     }
+    // ۱) درخت‌وارهٔ سازمانی (سلسله‌مراتب واحدها و پست‌های هر واحد با متصدی).
+    const tree = orgTreeHTML(view.tree);
+    // ۲) دیتیل چارت زیر درخت: جدول تفصیلی هر واحد با تحصیلات، مدرک ملاک و پایه‌های متصدی.
     const unitCards = Object.keys(byUnit).sort().map(unit => orgUnitCardHTML(unit, byUnit[unit])).join('');
 
     const warnings = (view.warnings || []).length ? liveWarnBox(view.warnings) : '';
     const note = `<div class="card card-pad" style="margin-bottom:12px;font-size:.82rem;line-height:2">
-      🧭 این نمودار روی دادهٔ واقعی سرور کار می‌کند. برای هر پست، <b>متصدی جاری</b>، <b>عکس کارگزینی</b>،
-      <b>نتیجهٔ احراز شرایط</b> و <b>تاریخ شروع تصدی</b> نشان داده می‌شود؛ «تاریخچه» سابقهٔ همهٔ انتصاب‌های
-      آن سمت (جاری و پیشین) و رخدادهای تغییر را می‌آورد. عکس هر کارمند از پروندهٔ پرسنلی خودش خوانده می‌شود.
+      🧭 این صفحه دو بخش دارد: <b>درخت‌وارهٔ سازمانی</b> (سلسله‌مراتب واحدها و زیر هر واحد، پست‌ها با متصدی)
+      و <b>جدول تفصیلی هر واحد</b> در ادامه. برای هر متصدی، عکس کارگزینی، آخرین مدرک تحصیلی (مقطع، رشته و
+      ارتباط با شغل)، مدرک ملاک حقوق، پایهٔ شخصی فرد (از حکم جاری) و پایهٔ سازمانی سمت (از شناسنامهٔ پست)
+      نشان داده می‌شود؛ برای ایثارگران، معادل‌سازی «یک مقطع بالاتر» هم روی مدرک ملاک دیده می‌شود.
       ${esc(view.noteFa || '')}
     </div>`;
 
@@ -354,11 +492,13 @@ function pageOrgLive() {
         برای دیدن رخدادهای یک سمت (ثبت، ویرایش، آغاز و پایان تصدی) از دکمهٔ «🕘» هر پست استفاده کنید.
       </div>`;
 
-    return rosterStatsHTML(view) + warnings + note + unitCards + historyCard;
+    return rosterStatsHTML(view) + warnings + note + tree +
+      `<div class="card-title" style="margin:16px 0 6px">📋 جدول تفصیلی واحدها (دیتیل چارت)</div>` +
+      unitCards + historyCard;
   });
 
   return liveShell('ساختار سازمانی',
-    'نمودار پست‌ها با متصدی، عکس کارگزینی، شرایط احراز و سابقهٔ انتصاب‌ها',
+    'درخت‌وارهٔ سازمانی با متصدی هر پست، تحصیلات، مدرک ملاک حقوق، پایه‌ها و عکس کارگزینی',
     `<button class="btn btn-primary" onclick="rosterAppoint('${esc(ORG_STATE.assignPage)}','','','')">➕ ثبت انتصاب</button>`);
 }
 

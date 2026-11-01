@@ -173,6 +173,47 @@ func (s *StaffStore) CountByStatus(ctx context.Context, f contracts.EmployeeFilt
 	return out, nil
 }
 
+// Departments واحدهای سازمانی از همین فایل کارکنان ساخته می‌شود.
+//
+// چرا از خود فایل و نه فهرست دستی: در اجرای مستقل یک‌رایانه‌ای، دادهٔ کارکنان در CSV است
+// و واحدها هم همان ستون «واحد سازمانی» هر سطر است؛ پس درخت واحدها با دادهٔ واقعی هم‌خوان
+// می‌ماند و فهرست دوم و ناسازگاری ساخته نمی‌شود.
+func (s *StaffStore) Departments(_ context.Context) ([]contracts.Department, error) {
+	if err := s.refreshIfChanged(); err != nil {
+		return nil, err
+	}
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	counts := map[string]int{}
+	heads := map[string]string{}
+	order := []string{}
+	for _, e := range s.items {
+		name := strings.TrimSpace(e.DepartmentName)
+		if name == "" {
+			name = "بدون واحد"
+		}
+		if _, seen := counts[name]; !seen {
+			order = append(order, name)
+		}
+		counts[name]++
+		if heads[name] == "" && strings.TrimSpace(e.ManagerName) != "" {
+			heads[name] = strings.TrimSpace(e.ManagerName)
+		}
+	}
+	sort.Strings(order)
+	out := make([]contracts.Department, 0, len(order))
+	for i, name := range order {
+		out = append(out, contracts.Department{
+			ID:        fmt.Sprintf("D%d", i+1),
+			Name:      name,
+			Head:      heads[name],
+			Headcount: counts[name],
+		})
+	}
+	return out, nil
+}
+
 /* ------------------------------ خواندن فایل ------------------------------ */
 
 // refreshIfChanged اگر فایل روی دیسک تازه‌تر شده باشد، دوباره بارگذاری می‌کند.

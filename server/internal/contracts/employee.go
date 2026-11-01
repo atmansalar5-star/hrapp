@@ -162,4 +162,8 @@ type EmployeeReader interface {
 	// مصرف‌کننده نتواند کارمند خارج از محدودهٔ دسترسی نقش را بخواند.
 	Get(ctx context.Context, f EmployeeFilter, id string) (Employee, bool, error)
 	CountByStatus(ctx context.Context, f EmployeeFilter) (map[string]int, error)
+	// Departments واحدهای سازمانی به‌همراه والد هر واحد (نمودار درختی). مصرف‌کننده:
+	// ساختار سازمانی — تا درخت واحدها از مالکِ داده خوانده شود و فهرست واحدها در
+	// مصرف‌کننده تکرار نشود.
+	Departments(ctx context.Context) ([]Department, error)
 }

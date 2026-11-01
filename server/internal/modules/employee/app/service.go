@@ -186,8 +186,13 @@ func (s *Service) Delete(ctx context.Context, id string, actor string) error {
 	return nil
 }
 
-// Departments واحدهای سازمانی برای فیلتر و نمودار درختی.
-func (s *Service) Departments() []contracts.Department { return infra.Departments() }
+// Departments واحدهای سازمانی برای فیلتر، نمودار درختی و ساختار سازمانی ماژول‌های دیگر.
+//
+// امضای این متد همان چیزی است که پورت `contracts.EmployeeReader` وعده می‌دهد (زمینهٔ
+// درخواست + فهرست) تا مصرف‌کننده‌ها بدون پوستهٔ اضافه از همان پورت واحدها را بخوانند.
+func (s *Service) Departments(context.Context) ([]contracts.Department, error) {
+	return infra.Departments(), nil
+}
 
 /* --------------------------- عکس کارگزینی --------------------------- */
 

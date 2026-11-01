@@ -168,7 +168,7 @@ export const MODULES: ModuleSpec[] = [
     apiPrefix: "/api/v1/archive",
     featureFlag: "module.archive",
     screens: [
-      { key: "personnelFiles", order: 1, icon: "folder-open", titleFa: "پرونده‌های پرسنلی", purposeFa: "نگهداری، بازیابی و کنترل کامل بودن پروندهٔ پرسنلی هر کارمند: مدارک استخدام، احکام، مدرک تحصیلی و سابقهٔ بیمه.", component: "PersonnelFilesScreen", roles: ["admin", "hr_manager", "hr_spec"] },
+      { key: "personnelFiles", order: 1, icon: "folder-open", titleFa: "پرونده‌های پرسنلی", purposeFa: "نگهداری، بازیابی و کنترل کامل بودن پروندهٔ پرسنلی هر کارمند: مدارک استخدام، احکام، سابقهٔ تحصیلی (مقطع، رشته، گرایش و مرتبط یا غیرمرتبط بودن تحصیلات) و تعیین «مدرک ملاک حقوق» با تأیید شورای تعدیل مدرک و معادل‌سازی یک مقطع بالاتر برای ایثارگران.", component: "PersonnelFilesScreen", roles: ["admin", "hr_manager", "hr_spec"] },
       { key: "employeeIdentity", order: 2, icon: "id-badge", titleFa: "شناسایی و مدارک کارکنان", purposeFa: "ثبت و تطبیق مشخصات هویتی کارکنان (کد ملی، شناسنامه، تاریخ تولد و وضعیت تأهل)، صدور و تمدید کارت شناسایی و کنترل انطباق با سامانه‌های بیرونی.", component: "EmployeeIdentityScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager"] },
       { key: "archiveDocuments", order: 3, icon: "scroll", titleFa: "بایگانی اسناد و امانت", purposeFa: "بایگانی الکترونیکی اسناد پرسنلی، امانت و بازگشت مدارک کاغذی و پیگیری نسخه‌های فیزیکی خارج‌شده از بایگانی.", component: "ArchiveDocumentsScreen", roles: ["admin", "hr_manager", "hr_spec"] },
     ],

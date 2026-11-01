@@ -128,7 +128,21 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 
 // Departments واحدهای سازمانی برای فیلتر و نمودار درختی.
 func (h *Handler) Departments(w http.ResponseWriter, r *http.Request) {
-	httpx.WriteJSON(w, http.StatusOK, h.svc.Departments())
+	list, err := h.svc.Departments(r.Context())
+	if err != nil {
+		httpx.WriteErrorMsg(w, http.StatusInternalServerError, contracts.CodeInternal, err.Error(), nil)
+		return
+	}
+	httpx.WriteJSON(w, http.StatusOK, list)
+}
+
+// departmentList واحدهای سازمانی برای فرم‌ها؛ در خطا فهرست خالی برمی‌گردد تا فرم از کار نیفتد.
+func (h *Handler) departmentList(r *http.Request) []contracts.Department {
+	list, err := h.svc.Departments(r.Context())
+	if err != nil {
+		return []contracts.Department{}
+	}
+	return list
 }
 
 // Options فهرست‌های کمکی برای فرم (وضعیت‌ها و انواع قرارداد) تا کلاینت این فهرست‌ها
@@ -140,7 +154,7 @@ func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {
 		"contractTypes":    []string{"تمام‌وقت", "پیمانکاری", "پاره‌وقت"},
 		"employmentTypes":  contracts.EmploymentTypes(),
 		"employmentGroups": contracts.EmploymentGroups(),
-		"departments":      h.svc.Departments(),
+		"departments":      h.departmentList(r),
 	})
 }
 

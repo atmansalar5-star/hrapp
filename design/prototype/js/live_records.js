@@ -465,8 +465,11 @@ async function rkOpenForm(page, kind, existing, prefill) {
     if (prefill && prefill[key] != null) return prefill[key];
     return '';
   };
+  // کارمند پیش‌انتخاب‌شده: در ویرایش از خود رکورد و در ثبت تازه از پیش‌پرکردن صفحه
+  // (مثل پروندهٔ کارمندی که فرم تحصیلات از آن باز شده است).
+  const empValue = (existing && existing.employeeId) || (prefill && prefill.__employeeId) || '';
   const empField = kind.employeeScoped
-    ? `<div class="field"><label>کارمند <span class="req">*</span></label>${await liveEmployeeSelect('rkEmp', existing && existing.employeeId)}</div>`
+    ? `<div class="field"><label>کارمند <span class="req">*</span></label>${await liveEmployeeSelect('rkEmp', empValue)}</div>`
     : '';
   const fields = (kind.fields || []).map(f =>
     `<div class="field"><label>${esc(f.labelFa)}${f.required ? ' <span class="req">*</span>' : ''}</label>${rkInput('rkF_' + f.key, f, initial(f.key))}</div>`).join('');

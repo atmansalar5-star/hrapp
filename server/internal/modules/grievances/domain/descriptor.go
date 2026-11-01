@@ -65,7 +65,8 @@ func Seed() []contracts.RecordInput {
 		{Kind: "complaints", Title: "شکایت — شرایط محیط کار", EmployeeID: "EMP-004",
 			Fields: map[string]string{"subject": "نبود تهویهٔ مناسب در کارگاه", "filedDate": "1404/06/18", "resolution": "رفع نقص و نصب سیستم تهویه"}},
 		{Kind: "veteranRecords", Title: "پروندهٔ ایثارگری — کارمند جانباز", EmployeeID: "EMP-009",
-			Fields: map[string]string{"veteranType": "جانباز", "percent": "25", "benefits": "معافیت مالیاتی و مرخصی تشویقی"},
-			NoteFa: "بررسی‌شده؛ در انتظار تأیید"},
+			Fields:     map[string]string{"veteranType": "جانباز", "percent": "25", "benefits": "معافیت مالیاتی و مرخصی تشویقی"},
+			SeedStatus: "verified",
+			NoteFa:     "مدارک بررسی شده؛ در انتظار تأیید نهایی کارگزینی"},
 	}
 }

@@ -162,7 +162,7 @@ function pageProfileLive(id) {
       for (const f of kind.fields || []) fieldLabels[kind.key][f.key] = f.labelFa || f.key;
     }
 
-    const tabs = [['personal', 'مشخصات شخصی'], ['job', 'مشخصات شغلی'], ['photo', 'عکس پرسنلی'], ['docs', 'قرارداد و اسناد'], ['time', 'حضور و کارکرد'], ['history', 'سوابق تغییرات']];
+    const tabs = [['personal', 'مشخصات شخصی'], ['job', 'مشخصات شغلی'], ['education', 'تحصیلات و مدرک ملاک'], ['photo', 'عکس پرسنلی'], ['docs', 'قرارداد و اسناد'], ['time', 'حضور و کارکرد'], ['history', 'سوابق تغییرات']];
     const tabBar = `<div class="tabs">${tabs.map(([k, l]) =>
       `<button class="tab ${profileLiveTab === k ? 'active' : ''}" onclick="profileLiveTab='${k}';go('profile','${esc(id)}')">${l}</button>`).join('')}</div>`;
 
@@ -307,7 +307,13 @@ function pageProfileLive(id) {
         statNote(hist.noteFa || 'سوابق از ماژول‌هایی خوانده می‌شود که نقش شما اجازهٔ خواندنشان را دارد.');
     }
 
-    const bodies = {personal, job, photo, docs, time, history};
+    // تب تحصیلات فقط وقتی ساخته می‌شود که کاربر روی آن باشد (خواندن جداگانه از سرور).
+    var education = '';
+    if (profileLiveTab === 'education') {
+      education = await educationTabHTML(e, id);
+    }
+
+    const bodies = {personal, job, education, photo, docs, time, history};
     const body = `<div class="card"><div class="card-pad">${tabBar}${bodies[profileLiveTab] || personal}</div></div>`;
 
     return head + body;
