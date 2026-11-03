@@ -323,6 +323,17 @@ func Seed() []contracts.RecordInput {
 				"body":    "فیش حقوقی {{employee.fullName}} — کد پرسنلی {{employee.id}}.\nجمع ناخالص: {{payslip.gross}} {{company.currency}}.\nبیمهٔ سهم کارمند: {{payslip.insuranceEmployee}}.\nمالیات: {{payslip.tax}}.\nخالص پرداختی: {{payslip.net}} {{company.currency}}.",
 			},
 			NoteFa: "قالب متن فیش را می‌توانید ویرایش کنید؛ محاسبه از پارامترهای حقوق می‌آید."},
+		// پارامتر نمونهٔ پنل پارامتریک: ستون‌های پیش‌فرض گزارش کارکنان. یک نمونهٔ
+		// «جاری» تا پنل از ابتدا پر باشد و کاربر با دیدن یک نمونه، الگوی ساخت پارامتر
+		// تازه را بداند؛ با یک کلیک هم غیرفعال می‌شود و گزارش به همهٔ ستون‌ها برمی‌گردد.
+		{Kind: KindFormParams, Title: "ستون‌های گزارش کارکنان", SeedStatus: "active",
+			Fields: map[string]string{
+				"scope":   "report",
+				"target":  "employees",
+				"columns": "id,fullName,nationalId,departmentName,position,status",
+				"note":    "نمونهٔ پارامتر گزارش — از پنل پارامتریک قابل ویرایش و غیرفعال‌سازی است",
+			},
+			NoteFa: "ستون‌های پیش‌فرض گزارش کارکنان؛ در پنل پارامتریک کم و زیاد می‌شود."},
 	}
 	// شرکت‌های همین استقرار از فهرست استقرارها بذر می‌شوند تا فرم ویرایش از ابتدا پر
 	// باشد و افزودن شرکت تازه کنار دادهٔ موجود بنشیند.

@@ -7,6 +7,7 @@
 package employee
 
 import (
+	"context"
 	"net/http"
 
 	"hrms/internal/modules/employee/api"
@@ -29,7 +30,27 @@ func (m *Module) ID() string { return "employee" }
 func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	log := deps.Logger(m.ID())
 
-	repo := infra.NewSeededStore()
+	// انتخاب انبار: روی استقرار واقعی (اتصال پایگاه‌داده) کارکنان در
+	// `hr_employee.employee` ذخیره می‌شوند و ویرایش اطلاعات پایه پس از راه‌اندازی
+	// دوبارهٔ سرور می‌ماند؛ در اجرای بدون پایگاه‌داده (توسعه/مستقل) همان انبار
+	// درون‌حافظه‌ای با دادهٔ نمونه بالا می‌آید. هیچ لایهٔ بالاتر این تفاوت را نمی‌بیند،
+	// چون هر دو همان قرارداد app.Repository را برمی‌آورند.
+	var repo app.Repository = infra.NewSeededStore()
+	if deps.DB != nil {
+		store := infra.NewPgStore(deps.DB, nil)
+		departments, employees, err := store.SeedIfEmpty(context.Background())
+		if err != nil {
+			// شکست بذرکاری نباید سامانه را بخواباند: انبار Postgres در هر حال
+			// کار می‌کند و بذرکاری اجرای بعدی تکرار می‌شود.
+			log.Warn("بذرکاری کارکنان در پایگاه‌داده انجام نشد", "error", err.Error())
+		} else if employees > 0 {
+			log.Info("دادهٔ نمونهٔ کارکنان در پایگاه‌داده بذرکاری شد",
+				"employees", employees, "departments", departments)
+		}
+		repo = store
+		log.Info("انبار کارکنان روی پایگاه‌داده فعال است", "schema", "hr_employee")
+	}
+
 	svc := app.New(repo, deps.Audit, deps.Sync)
 
 	// انبار «عکس کارگزینی»: فایل‌ها در پوشهٔ دادهٔ سرور می‌مانند (نه در درخت کد) و
