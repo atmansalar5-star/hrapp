@@ -22,6 +22,12 @@
 - برای اجرای Go در این ماشین، در هر فرمان `export PATH="$HOME/tools/go/bin:$PATH"` لازم است.
 - عناوین صفحه و مستندات تولیدشده از `tools/gen/gen.mjs` می‌آیند و **دستی ویرایش نمی‌شوند**؛ منبع حقیقت `contracts/departments.json` و مانیفست ماژول‌ها است.
 - پیش از هر تغییر ساختاری: `node tools/gen/gen.mjs --check` و `node tools/check/verify.mjs` و `go test ./...` باید سبز بمانند.
+- **راه‌اندازی خودکار این ماشین:** دو «Scheduled Task» ویندوزی پس از ورود به سیستم بالا می‌آیند —
+  `HRMS PostgreSQL` (خودِ `postgres.exe` روی `127.0.0.1:5432`) و `HRMS Server` (خودِ
+  `server\bin\hrmsd.exe` روی `127.0.0.1:8099`). هر تسک **همان فرایند** است، چون تسکی که
+  فرایند را «فرزند» خودش بسازد با پایانش آن را می‌بندد. برای کار توسعه (ساخت از سورس) اول
+  `Stop-ScheduledTask -TaskName 'HRMS Server'` سپس `start-HRMS.bat`. ابزار دستی/گزارش وضعیت:
+  `powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\tools\hrms-stack-start.ps1" -Status`.
 
 ## ۳. قواعد کاری که همیشه برقرار است
 
