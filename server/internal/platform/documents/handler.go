@@ -247,9 +247,22 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 			HireDate:       employee.HireDate,
 			ContractType:   employee.ContractType,
 			BaseSalary:     employee.BaseSalary,
+			// اطلاعات پایهٔ پرونده: همان مقادیری که فرم‌های قرارداد و حکم نشان می‌دهند.
+			Mobile:     employee.Mobile,
+			HomePhone:  employee.HomePhone,
+			Phone:      employee.Phone,
+			PostalCode: employee.PostalCode,
+			Address:    employee.Address,
+			Email:      employee.Email,
 		},
 		Contract: contractRef,
+		// چیدمان پیش‌فرض همین سند؛ سپس سفارشی‌سازی پنل تنظیمات روی آن می‌نشیند.
+		Layout: DefaultLayout(kind),
 	}
+	// مشخصات تحصیلی از پروندهٔ بایگانی خوانده می‌شود (بالاترین مدرک و مدرک ملاک حقوق).
+	applyEducation(ctx, deps, employeeID, &data)
+	// بلوک‌هایی که مدیر سامانه در پنل پارامتریک روشن/خاموش یا بازعنوان کرده است.
+	applyLayout(ctx, deps, kind, &data)
 
 	switch kind {
 	case KindContract:
@@ -257,6 +270,7 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 		data.Structure = wageStructure(ctx, deps, employee)
 		data.BodyFa = contractClauses(deps, employee, contractRef)
 		data.NoteFa = "این قرارداد در دو نسخه تنظیم و پس از امضای طرفین، هر نسخه حکم واحد خود را دارد."
+		addBaseInfoForm(&data)
 	case KindSalaryDecree:
 		data.Params = payrollParams(deps)
 		data.Structure = wageStructure(ctx, deps, employee)
@@ -266,6 +280,7 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 			"هر تغییر در مصوبات، حکم جدید با تاریخ اجرای مشخص تولید می‌کند؛ احکام گذشته بازنویسی نمی‌شوند.",
 		}
 		data.NoteFa = "پرداخت‌های متغیر مانند کارانه و اضافه‌کاری در دورهٔ حقوق همان ماه محاسبه و پرداخت می‌شود."
+		addBaseInfoForm(&data)
 	case KindPayslip:
 		data.Params = payrollParams(deps)
 		info := computePayslip(ctx, deps, employee, today)
@@ -287,6 +302,7 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 			"این گواهی بنا به درخواست نامبرده و برای ارائه به مراجع ذی‌ربط صادر شده است.",
 			"اعتبار این سند با کد رهگیری درج‌شده در پایین صفحه در سامانه قابل بررسی است.",
 		}
+		addBaseInfoForm(&data)
 	case KindDegreeBasis:
 		buildDegreeBasisForm(ctx, deps, &data, basisRec)
 	}
@@ -306,6 +322,169 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 	}
 
 	return data, nil
+}
+
+// applyLayout سفارشی‌سازی «بلوک‌های سند چاپی» را از پنل پارامتریک (تنظیمات) می‌خواند.
+//
+// قاعده: بلوک‌های ممکن همان فهرست پشتیبانی‌شدهٔ همین سند است؛ اگر پارامتر «جاری» برای
+// این نوع سند ثبت شده باشد، فقط بلوک‌های فهرست‌شده روشن می‌مانند و عنوان‌های سفارشی
+// جای پیش‌فرض را می‌گیرند. پارامتر غیرفعال یا نبودش یعنی چیدمان پیش‌فرض سامانه.
+func applyLayout(ctx context.Context, deps modulekit.Deps, kind Kind, data *Data) {
+	port, ok := deps.Ports.RecordList("settings")
+	if !ok {
+		return
+	}
+	page, err := port.List(ctx, contracts.RecordFilter{
+		Module: "settings", Kind: "formParams", Scope: "all", Page: 1, Size: 200,
+	})
+	if err != nil {
+		return
+	}
+	supported := map[string]bool{}
+	for _, key := range KindBlocks(kind) {
+		supported[key] = true
+	}
+	for _, rec := range page.Items {
+		if strings.TrimSpace(rec.Fields["scope"]) != "document" {
+			continue
+		}
+		if strings.TrimSpace(rec.Fields["target"]) != string(kind) {
+			continue
+		}
+		if strings.TrimSpace(rec.Status) == "inactive" {
+			continue // پارامتر غیرفعال: چیدمان پیش‌فرض
+		}
+		if raw := strings.TrimSpace(rec.Fields["visibleFields"]); raw != "" {
+			visible := map[string]bool{}
+			for _, key := range splitCSV(raw) {
+				if supported[key] {
+					visible[key] = true
+				}
+			}
+			// اگر فهرست پارامتر هیچ بلوک معتبری نداشت، چیدمان پیش‌فرض می‌ماند تا سند
+			// ناخواسته خالی چاپ نشود.
+			if len(visible) > 0 {
+				data.Layout.Visible = visible
+			}
+		}
+		if labels := strings.TrimSpace(rec.Fields["labels"]); labels != "" {
+			overrides := map[string]string{}
+			for _, pair := range splitCSV(labels) {
+				parts := strings.SplitN(pair, "=", 2)
+				if len(parts) != 2 {
+					continue
+				}
+				key := strings.TrimSpace(parts[0])
+				title := strings.TrimSpace(parts[1])
+				if supported[key] && title != "" {
+					overrides[key] = title
+				}
+			}
+			if len(overrides) > 0 {
+				data.Layout.Titles = overrides
+			}
+		}
+		return
+	}
+}
+
+// splitCSV رشتهٔ جداشده با کاما/ویرگول فارسی را به فهرست تمیز تبدیل می‌کند.
+func splitCSV(value string) []string {
+	replacer := strings.NewReplacer("،", ",", "؛", ",", "|", ",")
+	out := []string{}
+	for _, part := range strings.Split(replacer.Replace(value), ",") {
+		if item := strings.TrimSpace(part); item != "" {
+			out = append(out, item)
+		}
+	}
+	return out
+}
+
+// applyEducation مشخصات تحصیلی کارمند را از پروندهٔ بایگانی روی سند می‌نشاند.
+//
+// چرا از پورت رکوردها و نه کپی در قرارداد/حکم: «آخرین مدرک» یک تصمیم پروندهٔ تحصیلی
+// است (تأیید مدارک، شورای تعدیل مدرک، ایثارگران) و اگر روی سند کپی شود، با تغییر پرونده
+// از آن جدا می‌ماند. بالاترین مقطع مبناست و در تساوی، مدرک با تاریخ فراغت تازه‌تر.
+func applyEducation(ctx context.Context, deps modulekit.Deps, employeeID string, data *Data) {
+	educations := educationRecords(ctx, deps, employeeID)
+	best := contracts.Record{}
+	bestOrder := -1
+	for _, rec := range educations {
+		// فقط مدارک تأییدشده (یا بایگانی‌شده) سند را تزئین نمی‌کنند؛ پیش‌نویس روی
+		// گواهی رسمی نمی‌آید.
+		if status := strings.TrimSpace(rec.Status); status != "" && status != "verified" && status != "archived" {
+			continue
+		}
+		order := contracts.DegreeLevelOrder(rec.Fields["level"])
+		if order > bestOrder || (order == bestOrder && rec.Fields["graduationDate"] > best.Fields["graduationDate"]) {
+			best, bestOrder = rec, order
+		}
+	}
+	if bestOrder > 0 {
+		data.Employee.EducationLevelFa = contracts.DegreeLevelTitleFa(best.Fields["level"])
+		data.Employee.EducationField = strings.TrimSpace(best.Fields["field"])
+		data.Employee.EducationOrient = strings.TrimSpace(best.Fields["orientation"])
+		data.Employee.EducationUniver = strings.TrimSpace(best.Fields["university"])
+		data.Employee.EducationDate = strings.TrimSpace(best.Fields["graduationDate"])
+		data.Employee.EducationText = joinNonEmpty(" — ", data.Employee.EducationLevelFa, data.Employee.EducationField)
+		data.Employee.HasEducationInfo = true
+	}
+
+	// مدرک ملاک حقوق: اگر شورای تعدیل مدرک تصمیم فعالی ثبت کرده باشد.
+	if base := activeDegreeBasis(ctx, deps, employeeID); base != nil {
+		levelFa := contracts.DegreeLevelTitleFa(base.Fields["level"])
+		if upgraded := contracts.DegreeLevelTitleFa(base.Fields["upgradedLevel"]); strings.TrimSpace(base.Fields["upgradedLevel"]) != "" {
+			levelFa = upgraded
+		}
+		data.Employee.DegreeBasisFa = joinNonEmpty(" — ", levelFa, strings.TrimSpace(base.Fields["field"]))
+		data.Employee.HasEducationInfo = true
+	}
+}
+
+// activeDegreeBasis مدرک ملاک جاری حقوق کارمند را برمی‌گرداند (یا nil).
+func activeDegreeBasis(ctx context.Context, deps modulekit.Deps, employeeID string) *contracts.Record {
+	port, ok := deps.Ports.RecordList("archive")
+	if !ok {
+		return nil
+	}
+	page, err := port.List(ctx, contracts.RecordFilter{
+		Module: "archive", Kind: "degreeBases", Status: "active", EmployeeID: employeeID, Scope: "all", Size: 10,
+	})
+	if err != nil {
+		return nil
+	}
+	for i := range page.Items {
+		rec := page.Items[i]
+		if rec.EmployeeID != employeeID || strings.TrimSpace(rec.Fields["level"]) == "" {
+			continue
+		}
+		return &page.Items[i]
+	}
+	return nil
+}
+
+// addBaseInfoForm بلوک «مشخصات پایهٔ کارمند» را روی سند می‌نشاند: شماره‌های تماس،
+// کد پستی، نشانی و مدرک تحصیلی. هر ردیف فقط وقتی می‌آید که مقدارش در پرونده ثبت شده باشد،
+// پس سندی با پروندهٔ ناقص ردیف خالی نشان نمی‌دهد.
+func addBaseInfoForm(data *Data) {
+	rows := []FormField{}
+	add := func(label, value string) {
+		if v := strings.TrimSpace(value); v != "" {
+			rows = append(rows, FormField{LabelFa: label, ValueFa: v})
+		}
+	}
+	add("شمارهٔ همراه", data.Employee.Mobile)
+	add("تلفن منزل", data.Employee.HomePhone)
+	add("تلفن تماس دیگر", data.Employee.Phone)
+	add("کد پستی", data.Employee.PostalCode)
+	add("نشانی محل سکونت", data.Employee.Address)
+	add("مدرک تحصیلی", data.Employee.EducationText)
+	add("مدرک ملاک حقوق", data.Employee.DegreeBasisFa)
+	if len(rows) == 0 {
+		return
+	}
+	data.BaseInfoTitleFa = "مشخصات پایهٔ کارمند"
+	data.BaseInfoFields = append(data.BaseInfoFields, rows...)
 }
 
 // computePayslip فیش حقوقی نمونهٔ کارمند را از پارامترهای فعال محاسبه می‌کند.

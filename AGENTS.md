@@ -22,12 +22,19 @@
 - برای اجرای Go در این ماشین، در هر فرمان `export PATH="$HOME/tools/go/bin:$PATH"` لازم است.
 - عناوین صفحه و مستندات تولیدشده از `tools/gen/gen.mjs` می‌آیند و **دستی ویرایش نمی‌شوند**؛ منبع حقیقت `contracts/departments.json` و مانیفست ماژول‌ها است.
 - پیش از هر تغییر ساختاری: `node tools/gen/gen.mjs --check` و `node tools/check/verify.mjs` و `go test ./...` باید سبز بمانند.
-- **راه‌اندازی خودکار این ماشین:** دو «Scheduled Task» ویندوزی پس از ورود به سیستم بالا می‌آیند —
-  `HRMS PostgreSQL` (خودِ `postgres.exe` روی `127.0.0.1:5432`) و `HRMS Server` (خودِ
-  `server\bin\hrmsd.exe` روی `127.0.0.1:8099`). هر تسک **همان فرایند** است، چون تسکی که
-  فرایند را «فرزند» خودش بسازد با پایانش آن را می‌بندد. برای کار توسعه (ساخت از سورس) اول
-  `Stop-ScheduledTask -TaskName 'HRMS Server'` سپس `start-HRMS.bat`. ابزار دستی/گزارش وضعیت:
-  `powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\tools\hrms-stack-start.ps1" -Status`.
+- **راه‌اندازی خودکار این ماشین (بدون نیاز به ورود کاربر):**
+  - **سرویس ویندوزی `HRMS-PostgreSQL`** (شروع خودکار هنگام بوت، حساب `NT AUTHORITY\NetworkService`،
+    با سیاست «راه‌اندازی دوباره پس از خطا») خوشهٔ محلی را روی `127.0.0.1:5432` بالا می‌آورد.
+    کنترلش (شروع/توقف) دسترسی مدیر می‌خواهد؛ ثبت/حذف با `pg_ctl register|unregister`.
+  - **تسک زمان‌بندی‌شدهٔ `HRMS Server`** با محرکِ شروع سیستم، حساب `SYSTEM` و تأخیر ۴۰ ثانیه‌ای،
+    `server\bin\hrmsd.exe` را روی `127.0.0.1:8099` اجرا می‌کند؛ خروجی در `server\server.log`
+    است. برای کار توسعه: `Stop-ScheduledTask -TaskName 'HRMS Server'` سپس `start-HRMS.bat`
+    (ساخت از سورس) و در پایان `Start-ScheduledTask -TaskName 'HRMS Server'`.
+  - ابزار دستی و گزارش وضعیت (بیرون از مخزن):
+    `powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\tools\hrms-stack-start.ps1" -Status`
+    و اسکریپت‌های نصب/آزمون سرویس‌ها با پیشوند `install-/finalize-/test-hrms-` در همان پوشه.
+  - پیش‌نیاز این طرح: `hrmsd.exe` باید وجود داشته باشد؛ پس بعد از هر تغییر کد یا یک‌بار
+    `start-HRMS.bat` اجرا شود یا باینری با `go build` تازه شود.
 
 ## ۳. قواعد کاری که همیشه برقرار است
 

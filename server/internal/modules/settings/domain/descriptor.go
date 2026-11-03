@@ -257,15 +257,21 @@ func formParamsKind() recordkit.Kind {
 // validateFormParams قاعدهٔ پارامتر فرم/گزارش.
 func validateFormParams(in contracts.RecordInput) error {
 	scope := strings.TrimSpace(in.Fields["scope"])
-	if scope != "form" && scope != "report" {
+	// form: فیلدهای فرم رکوردی، report: ستون‌های گزارش، document: بلوک‌های سند چاپی.
+	if scope != "form" && scope != "report" && scope != "document" {
 		return &recordkit.ValidationError{Details: map[string]string{
-			"fields.scope": "نوع هدف باید form (فرم) یا report (گزارش) باشد.",
+			"fields.scope": "نوع هدف باید form (فرم)، report (گزارش) یا document (سند چاپی) باشد.",
 		}}
 	}
 	target := strings.TrimSpace(in.Fields["target"])
 	if target == "" {
 		return &recordkit.ValidationError{Details: map[string]string{
 			"fields.target": "هدف (ماژول|نوع رکورد یا کلید منبع گزارش) الزامی است.",
+		}}
+	}
+	if scope == "document" && strings.Contains(target, "|") {
+		return &recordkit.ValidationError{Details: map[string]string{
+			"fields.target": "هدف سند چاپی کلید نوع سند است (مثل contract یا salary_decree) و خط جداکننده ندارد.",
 		}}
 	}
 	if scope == "form" && !strings.Contains(target, "|") {
@@ -290,7 +296,7 @@ func Seed() []contracts.RecordInput {
 		{Kind: "docTemplates", Title: "قالب قرارداد کار",
 			Fields: map[string]string{
 				"docType": "contract",
-				"body":    "طرف اول: {{company.title}} ({{company.holding}}).\nطرف دوم: {{employee.fullName}} به کد پرسنلی {{employee.id}}.\nعنوان شغل: {{employee.position}} در واحد {{employee.department}}.\nتاریخ شروع همکاری: {{contract.startDate}}.\nساعت کار موظفی ماهانه: {{params.payroll.monthlyHours}}.\nمرخصی استحقاقی سالانه: {{params.leave.annualDays}}.\nمبلغ پایهٔ ماهانه: {{contract.monthlySalary}} {{company.currency}}.",
+				"body":    "طرف اول: {{company.title}} ({{company.holding}}).\nطرف دوم: {{employee.fullName}} به کد پرسنلی {{employee.id}}.\nعنوان شغل: {{employee.position}} در واحد {{employee.department}}.\nکد ملی: {{employee.nationalId}} — شمارهٔ همراه: {{employee.mobile}} — تلفن منزل: {{employee.homePhone}}.\nنشانی محل سکونت: {{employee.address}} — کد پستی: {{employee.postalCode}}.\nمدرک تحصیلی: {{employee.education}} ({{employee.educationUniver}}، {{employee.educationDate}}).\nتاریخ شروع همکاری: {{contract.startDate}}.\nساعت کار موظفی ماهانه: {{params.payroll.monthlyHours}}.\nمرخصی استحقاقی سالانه: {{params.leave.annualDays}}.\nمبلغ پایهٔ ماهانه: {{contract.monthlySalary}} {{company.currency}}.",
 			},
 			NoteFa: "جای‌نگهدارها هنگام چاپ با دادهٔ واقعی کارمند جایگزین می‌شوند."},
 		// — کاتالوگ مرجع مدیریت‌ها (هشت مدیریت بندر امام) —

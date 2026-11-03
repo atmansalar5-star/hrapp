@@ -84,6 +84,11 @@ type Company struct {
 }
 
 // Employee اطلاعات کارمند در سند.
+//
+// چرا اطلاعات پایه و تحصیلی هم اینجاست: حکم کارگزینی، گواهی اشتغال و قرارداد کار،
+// اسنادی هستند که مراجع بیرونی (بیمه، مالیات، بانک، سفارت) از آن‌ها نشانی، شمارهٔ تماس
+// و مدرک تحصیلی را می‌خواهند. این مقادیر از پروندهٔ کارمند و پروندهٔ تحصیلی خوانده
+// می‌شوند، نه با تایپ دوباره در هر سند.
 type Employee struct {
 	ID             string
 	FullName       string
@@ -93,6 +98,24 @@ type Employee struct {
 	HireDate       string
 	ContractType   string
 	BaseSalary     int64
+
+	// اطلاعات پایهٔ پرونده (خالی یعنی در پرونده ثبت نشده و روی سند چاپ نمی‌شود).
+	Mobile     string
+	HomePhone  string
+	Phone      string
+	PostalCode string
+	Address    string
+	Email      string
+
+	// مشخصات تحصیلی از پروندهٔ تحصیلی بایگانی: بالاترین مدرک و رشتهٔ آن.
+	EducationLevelFa string
+	EducationField   string
+	EducationOrient  string
+	EducationUniver  string
+	EducationDate    string
+	EducationText    string // «کارشناسی ارشد — حسابداری» برای نمایش یک‌خطی
+	DegreeBasisFa    string // مدرک ملاک حقوق (اگر شورای تعدیل مدرک تصویب کرده باشد)
+	HasEducationInfo bool
 }
 
 // ContractInfo خلاصهٔ قرارداد مرجع سند.
@@ -175,6 +198,151 @@ type FormTable struct {
 	NoteFa  string
 }
 
+// Block یک بلوک نمایشی سند چاپی (جدول مشخصات، سابقهٔ تحصیلی، امضاها و...).
+//
+// چرا بلوک‌بندی: هر سازمان نسخهٔ خودش از حکم و گواهی را می‌خواهد؛ بعضی بلوک‌ها را لازم
+// ندارد (مثلاً نشانی روی گواهی اشتغال) و بعضی را با عنوان دیگری می‌خواهد. با این کاتالوگ،
+// پنل تنظیمات می‌تواند بلوک‌ها را روشن/خاموش و عنوانشان را عوض کند، بدون تغییر کد و
+// بدون قالب HTML جدا برای هر سند.
+type Block struct {
+	Key     string `json:"key"`
+	TitleFa string `json:"titleFa"`
+	// Default یعنی این بلوک در چیدمان پیش‌فرض همهٔ اسنادی که آن را پشتیبانی می‌کنند
+	// روشن است.
+	Default bool `json:"default"`
+}
+
+// blockCatalog فهرست بلوک‌های شناخته‌شدهٔ سند چاپی.
+var blockCatalog = []Block{
+	{Key: "employeeCard", TitleFa: "کارت مشخصات کارمند (نام، کد پرسنلی، واحد، پست)", Default: true},
+	{Key: "employeeInfo", TitleFa: "جدول مشخصات کارمند (کد ملی، تاریخ استخدام، نوع همکاری)", Default: true},
+	{Key: "contactInfo", TitleFa: "شماره‌های تماس، کد پستی و نشانی محل سکونت", Default: true},
+	{Key: "education", TitleFa: "سابقهٔ تحصیلی (مدرک، رشته، دانشگاه، مدرک ملاک حقوق)", Default: true},
+	{Key: "contract", TitleFa: "مشخصات قرارداد کار", Default: true},
+	{Key: "params", TitleFa: "مبنای محاسبهٔ سامانه", Default: true},
+	{Key: "payslipElements", TitleFa: "تفکیک اقلام حقوق", Default: true},
+	{Key: "structure", TitleFa: "اجزای مزد مبنا و فوق‌العاده‌ها", Default: true},
+	{Key: "baseInfoForm", TitleFa: "مشخصات پایهٔ کارمند (بلوک فرم)", Default: true},
+	{Key: "form", TitleFa: "فرم اداری سند (فیلدها و جدول‌های اختصاصی)", Default: true},
+	{Key: "body", TitleFa: "شرح / متن سند", Default: true},
+	{Key: "note", TitleFa: "یادداشت پای سند", Default: true},
+	{Key: "signatures", TitleFa: "محل امضاها", Default: true},
+	{Key: "verify", TitleFa: "کد رهگیری و QR اصالت در پاورقی", Default: true},
+}
+
+// Blocks کاتالوگ بلوک‌ها (کپی، تا مصرف‌کننده اصل را تغییر ندهد).
+func Blocks() []Block {
+	out := make([]Block, len(blockCatalog))
+	copy(out, blockCatalog)
+	return out
+}
+
+// BlockByKey یافتن بلوک با کلید.
+func BlockByKey(key string) (Block, bool) {
+	value := strings.TrimSpace(key)
+	for _, block := range blockCatalog {
+		if block.Key == value {
+			return block, true
+		}
+	}
+	return Block{}, false
+}
+
+// BlockKeys کلیدهای مجاز بلوک (برای اعتبارسنجی پارامتر تنظیمات).
+func BlockKeys() []string {
+	out := make([]string, 0, len(blockCatalog))
+	for _, block := range blockCatalog {
+		out = append(out, block.Key)
+	}
+	return out
+}
+
+// DocCatalog یک نوع سند چاپی به‌همراه بلوک‌های پشتیبانی‌شده‌اش (برای پنل تنظیمات).
+type DocCatalog struct {
+	Kind    Kind    `json:"kind"`
+	TitleFa string  `json:"titleFa"`
+	Blocks  []Block `json:"blocks"`
+}
+
+// docKindOrder ترتیب نمایش اسناد در پنل تنظیمات.
+var docKindOrder = []Kind{KindContract, KindSalaryDecree, KindEmploymentCertificate, KindPayslip, KindDegreeBasis}
+
+// Catalog فهرست اسناد چاپی و بلوک‌های هر کدام.
+//
+// چرا اینجا و نه در ماژول تنظیمات: بلوک‌ها دارایی موتور اسناد است؛ پنل تنظیمات فقط
+// همین کاتالوگ را نمایش می‌دهد و پارامتر ذخیره می‌کند، پس با افزودن بلوک تازه در موتور،
+// پنل خودکار آن را می‌بیند.
+func Catalog() []DocCatalog {
+	out := make([]DocCatalog, 0, len(docKindOrder))
+	for _, kind := range docKindOrder {
+		blocks := make([]Block, 0)
+		for _, key := range KindBlocks(kind) {
+			if block, ok := BlockByKey(key); ok {
+				blocks = append(blocks, block)
+			}
+		}
+		out = append(out, DocCatalog{Kind: kind, TitleFa: TitleFa(kind), Blocks: blocks})
+	}
+	return out
+}
+
+// KindBlocks بلوک‌هایی که هر نوع سند پشتیبانی می‌کند؛ کلیدهایی که اینجا نیستند در آن سند
+// معنا ندارند (مثلاً «تفکیک اقلام حقوق» در قرارداد).
+var kindBlocks = map[Kind][]string{
+	KindContract:              {"employeeCard", "employeeInfo", "contactInfo", "education", "contract", "params", "structure", "baseInfoForm", "body", "note", "signatures", "verify"},
+	KindSalaryDecree:          {"employeeCard", "employeeInfo", "contactInfo", "education", "contract", "params", "structure", "baseInfoForm", "body", "note", "signatures", "verify"},
+	KindEmploymentCertificate: {"employeeCard", "employeeInfo", "contactInfo", "education", "contract", "baseInfoForm", "body", "note", "signatures", "verify"},
+	// فیش حقوقی: اطلاعات تماس، نشانی و تحصیلات روی فیش نمی‌آید (تصمیم کارفرما)؛ فقط
+	// مشخصات پایهٔ شغلی و اقلام حقوق.
+	KindPayslip:     {"employeeCard", "employeeInfo", "payslipElements", "body", "note", "signatures", "verify"},
+	KindDegreeBasis: {"employeeCard", "employeeInfo", "form", "body", "note", "signatures", "verify"},
+}
+
+// KindBlocks کلیدهای بلوک پشتیبانی‌شدهٔ یک سند به ترتیب کاتالوگ.
+func KindBlocks(kind Kind) []string {
+	supported := map[string]bool{}
+	for _, key := range kindBlocks[kind] {
+		supported[key] = true
+	}
+	out := []string{}
+	for _, block := range blockCatalog {
+		if supported[block.Key] {
+			out = append(out, block.Key)
+		}
+	}
+	return out
+}
+
+// Layout چیدمان مؤثر یک سند: بلوک‌های روشن و عنوان سفارشی هر بلوک.
+type Layout struct {
+	// Visible نگاشت بلوک → روشن/خاموش. همیشه از چیدمان پیش‌فرض پر می‌شود.
+	Visible map[string]bool
+	// Titles عنوان سفارشی بلوک‌ها (کلید → عنوان).
+	Titles map[string]string
+}
+
+// Shows آیا بلوک در این سند نمایش داده شود.
+func (l Layout) Shows(key string) bool { return l.Visible[key] }
+
+// Title عنوان بلوک: اگر پنل تنظیمات عنوان سفارشی گذاشته باشد همان، وگرنه پیش‌فرض.
+func (l Layout) Title(key, fallback string) string {
+	if l.Titles != nil {
+		if custom := strings.TrimSpace(l.Titles[key]); custom != "" {
+			return custom
+		}
+	}
+	return fallback
+}
+
+// DefaultLayout چیدمان پیش‌فرض یک سند: همهٔ بلوک‌های پشتیبانی‌شده روشن.
+func DefaultLayout(kind Kind) Layout {
+	visible := map[string]bool{}
+	for _, key := range KindBlocks(kind) {
+		visible[key] = true
+	}
+	return Layout{Visible: visible}
+}
+
 // Data همهٔ دادهٔ لازم برای ساخت یک سند چاپی.
 type Data struct {
 	Kind     Kind
@@ -194,6 +362,12 @@ type Data struct {
 	FormTitleFa string
 	FormFields  []FormField
 	FormTables  []FormTable
+	// BaseInfoTitleFa/BaseInfoFields بلوک «مشخصات پایهٔ کارمند» (شماره‌ها، نشانی، مدرک).
+	// جدا از فرم اداری است تا هر بلوک در پنل تنظیمات مستقل روشن/خاموش شود.
+	BaseInfoTitleFa string
+	BaseInfoFields  []FormField
+	// Layout بلوک‌های نمایش‌داده‌شدهٔ این سند و عنوان سفارشی‌شان.
+	Layout Layout
 	// Signatures امضاهای پای سند؛ خالی یعنی سه امضای پیش‌فرض کارگزینی/کارمند/منابع انسانی.
 	Signatures []string
 	// CustomBody یعنی متن از قالب طراحى‌شدهٔ کاربر آمده است و به‌صورت بند‌بند نمایش
@@ -240,6 +414,20 @@ func PlaceholderVars(d Data) map[string]string {
 		"employee.position":     d.Employee.Position,
 		"employee.hireDate":     d.Employee.HireDate,
 		"employee.contractType": d.Employee.ContractType,
+		// اطلاعات پایهٔ پرونده: در نامه‌های اداری، قرارداد و گواهی‌ها لازم می‌شود.
+		"employee.mobile":     d.Employee.Mobile,
+		"employee.homePhone":  d.Employee.HomePhone,
+		"employee.phone":      d.Employee.Phone,
+		"employee.postalCode": d.Employee.PostalCode,
+		"employee.address":    d.Employee.Address,
+		"employee.email":      d.Employee.Email,
+		// تحصیلات: متن یک‌خطی و اجزای آن، تا هر قالب متن دلخواه خودش را بسازد.
+		"employee.education":       d.Employee.EducationText,
+		"employee.educationLevel":  d.Employee.EducationLevelFa,
+		"employee.educationField":  d.Employee.EducationField,
+		"employee.educationUniver": d.Employee.EducationUniver,
+		"employee.educationDate":   d.Employee.EducationDate,
+		"employee.degreeBasis":     d.Employee.DegreeBasisFa,
 	}
 	if d.Contract != nil {
 		vars["contract.id"] = d.Contract.ID
@@ -289,6 +477,11 @@ func VerifyCode(serial, employeeID string) string {
 func Render(data Data) (string, error) {
 	if _, ok := ModuleOf(data.Kind); !ok {
 		return "", fmt.Errorf("نوع سند ناشناخته: %s", data.Kind)
+	}
+	// چیدمان خالی یعنی «پیش‌فرض همین سند»: هر سازندهٔ داده که Layout را پر نکند (آزمون،
+	// پیش‌نمایش) نباید سند خالی بگیرد.
+	if data.Layout.Visible == nil {
+		data.Layout = DefaultLayout(data.Kind)
 	}
 	view := struct {
 		Data
@@ -468,21 +661,51 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
   <h1>{{.Title}}</h1>
   <div class="subtitle">این سند از سامانهٔ جامع منابع انسانی صادر شده است.</div>
 
+  {{if .Layout.Shows "employeeCard"}}
   <div class="grid-stats">
     <div class="stat"><b>{{.Employee.FullName}}</b><span>نام و نام خانوادگی</span></div>
     <div class="stat"><b class="num">{{.Employee.ID}}</b><span>کد پرسنلی</span></div>
     <div class="stat"><b>{{.Employee.DepartmentName}}</b><span>واحد سازمانی</span></div>
     <div class="stat"><b>{{.Employee.Position}}</b><span>پست سازمانی</span></div>
   </div>
+  {{end}}
 
-  <h2>مشخصات کارمند</h2>
+  {{if .Layout.Shows "employeeInfo"}}
+  <h2>{{.Layout.Title "employeeInfo" "مشخصات کارمند"}}</h2>
   <table>
     <tr><th>کد ملی</th><td class="num">{{.Employee.NationalID}}</td><th>تاریخ استخدام</th><td class="num">{{.Employee.HireDate}}</td></tr>
     <tr><th>نوع همکاری</th><td>{{.Employee.ContractType}}</td><th>هفتهٔ کاری شرکت</th><td>{{.Company.WorkWeekFa}}</td></tr>
   </table>
+  {{end}}
 
+  {{if .Layout.Shows "contactInfo"}}
+  {{if or .Employee.Mobile .Employee.HomePhone .Employee.Phone .Employee.PostalCode .Employee.Address}}
+  <h2>{{.Layout.Title "contactInfo" "اطلاعات تماس و نشانی"}}</h2>
+  <table>
+    {{if or .Employee.Mobile .Employee.HomePhone .Employee.Phone}}
+    <tr><th>شمارهٔ همراه</th><td class="num">{{if .Employee.Mobile}}{{.Employee.Mobile}}{{else}}—{{end}}</td><th>تلفن منزل</th><td class="num">{{if .Employee.HomePhone}}{{.Employee.HomePhone}}{{else}}—{{end}}</td></tr>
+    {{end}}
+    {{if or .Employee.PostalCode .Employee.Address}}
+    <tr><th>کد پستی</th><td class="num">{{if .Employee.PostalCode}}{{.Employee.PostalCode}}{{else}}—{{end}}</td><th>نشانی محل سکونت</th><td>{{if .Employee.Address}}{{.Employee.Address}}{{else}}—{{end}}</td></tr>
+    {{end}}
+  </table>
+  {{end}}
+  {{end}}
+
+  {{if .Layout.Shows "education"}}
+  {{if .Employee.HasEducationInfo}}
+  <h2>{{.Layout.Title "education" "سابقهٔ تحصیلی"}}</h2>
+  <table>
+    <tr><th>مدرک تحصیلی</th><td>{{if .Employee.EducationLevelFa}}{{.Employee.EducationLevelFa}}{{else}}—{{end}}</td><th>رشته</th><td>{{if .Employee.EducationField}}{{.Employee.EducationField}}{{else}}—{{end}}</td></tr>
+    <tr><th>گرایش</th><td>{{if .Employee.EducationOrient}}{{.Employee.EducationOrient}}{{else}}—{{end}}</td><th>دانشگاه / مؤسسه</th><td>{{if .Employee.EducationUniver}}{{.Employee.EducationUniver}}{{else}}—{{end}}</td></tr>
+    <tr><th>تاریخ فراغت از تحصیل</th><td class="num">{{if .Employee.EducationDate}}{{.Employee.EducationDate}}{{else}}—{{end}}</td><th>مدرک ملاک حقوق</th><td>{{if .Employee.DegreeBasisFa}}{{.Employee.DegreeBasisFa}}{{else}}—{{end}}</td></tr>
+  </table>
+  {{end}}
+  {{end}}
+
+  {{if .Layout.Shows "contract"}}
   {{if .Contract}}
-  <h2>مشخصات قرارداد کار</h2>
+  <h2>{{.Layout.Title "contract" "مشخصات قرارداد کار"}}</h2>
   <table>
     <tr><th>شمارهٔ قرارداد</th><td class="num">{{.Contract.ID}}</td><th>نوع قرارداد</th><td>{{.Contract.KindFa}}</td></tr>
     <tr><th>تاریخ شروع</th><td class="num">{{.Contract.StartDate}}</td><th>تاریخ پایان</th><td class="num">{{if .Contract.EndDate}}{{.Contract.EndDate}}{{else}}— (مدت دائم){{end}}</td></tr>
@@ -490,17 +713,21 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
     <tr><th>مبلغ پایهٔ ماهانه</th><td class="num">{{.Contract.MonthlySalary}} {{.Company.CurrencyFa}}</td><th>سال مالی شرکت</th><td class="num">{{.Company.FiscalYearStartFa}}</td></tr>
   </table>
   {{end}}
+  {{end}}
 
+  {{if .Layout.Shows "params"}}
   {{if .Params}}
-  <h2>مبنای محاسبهٔ سامانه</h2>
+  <h2>{{.Layout.Title "params" "مبنای محاسبهٔ سامانه"}}</h2>
   <table>
     <tr><th>پارامتر</th><th>مقدار</th><th>واحد</th><th>گروه</th></tr>
     {{range .Params}}<tr><td>{{.TitleFa}}</td><td class="num">{{.Value}}</td><td>{{.UnitFa}}</td><td>{{.GroupFa}}</td></tr>{{end}}
   </table>
   {{end}}
+  {{end}}
 
+  {{if .Layout.Shows "payslipElements"}}
   {{if .Payslip}}{{if .Payslip.Elements}}
-  <h2>تفکیک اقلام حقوق</h2>
+  <h2>{{.Layout.Title "payslipElements" "تفکیک اقلام حقوق"}}</h2>
   {{if .Payslip.MazdBase}}
   <table>
     <tr><th>مزد مبنا (مبنای اضافه‌کاری و فوق‌العاده‌های درصدی)</th><td class="num">{{.Payslip.MazdBase}}</td>
@@ -512,16 +739,29 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
     {{range .Payslip.Elements}}<tr><td>{{.TitleFa}}</td><td>{{.CategoryFa}}</td><td class="num">{{.AmountFa}}</td><td>{{.DetailFa}}</td></tr>{{end}}
   </table>
   {{end}}{{end}}
+  {{end}}
 
+  {{if .Layout.Shows "structure"}}
   {{if .Structure}}
-  <h2>اجزای مزد مبنا و فوق‌العاده‌ها</h2>
+  <h2>{{.Layout.Title "structure" "اجزای مزد مبنا و فوق‌العاده‌ها"}}</h2>
   <table>
     <tr><th>جزء / فوق‌العاده</th><th>نوع</th><th>نحوهٔ محاسبه</th><th>مبلغ (ریال)</th></tr>
     {{range .Structure}}<tr{{if .Total}} class="total"{{end}}><td>{{if .Total}}<b>{{.TitleFa}}</b>{{else}}{{.TitleFa}}{{end}}</td><td>{{.KindFa}}</td><td>{{.DetailFa}}</td><td class="num">{{.AmountFa}}</td></tr>{{end}}
   </table>
   <p class="muted">مزد مبنا جمع اجزای ثابت است و مبنای محاسبهٔ اضافه‌کاری، شب‌کاری، نوبت‌کاری و فوق‌العاده‌های اقلیمی (که درصدی از همین مزد مبنا هستند و جداگانه پرداخت می‌شوند).</p>
   {{end}}
+  {{end}}
 
+  {{if .Layout.Shows "baseInfoForm"}}
+  {{if .BaseInfoFields}}
+  <h2>{{if .BaseInfoTitleFa}}{{.BaseInfoTitleFa}}{{else}}مشخصات پایهٔ کارمند{{end}}</h2>
+  <table>
+    {{range .BaseInfoFields}}<tr><th>{{.LabelFa}}</th><td>{{.ValueFa}}</td></tr>{{end}}
+  </table>
+  {{end}}
+  {{end}}
+
+  {{if .Layout.Shows "form"}}
   {{if .FormFields}}
   <h2>{{if .FormTitleFa}}{{.FormTitleFa}}{{else}}مشخصات فرم{{end}}</h2>
   <table>
@@ -537,19 +777,25 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
   </table>
   {{if .NoteFa}}<p class="muted">{{.NoteFa}}</p>{{end}}
   {{end}}
+  {{end}}
 
+  {{if .Layout.Shows "body"}}
   {{if .BodyFa}}
   {{if .CustomBody}}
-  <h2>متن سند</h2>
+  <h2>{{.Layout.Title "body" "متن سند"}}</h2>
   <div class="doc-body">{{range .BodyFa}}<p>{{.}}</p>{{end}}</div>
   {{else}}
-  <h2>شرح</h2>
+  <h2>{{.Layout.Title "body" "شرح"}}</h2>
   <ul>{{range .BodyFa}}<li>{{.}}</li>{{end}}</ul>
   {{end}}
   {{end}}
+  {{end}}
 
+  {{if .Layout.Shows "note"}}
   {{if .NoteFa}}<div class="subtitle">📌 {{.NoteFa}}</div>{{end}}
+  {{end}}
 
+  {{if .Layout.Shows "signatures"}}
   <div class="sign">
     {{if .Signatures}}{{range .Signatures}}<div>{{.}}</div>{{end}}{{else}}
     <div>مهر و امضای واحد کارگزینی</div>
@@ -557,15 +803,18 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
     <div>تأیید مدیر منابع انسانی</div>
     {{end}}
   </div>
+  {{end}}
 
   <footer>
     <span>سامانهٔ جامع منابع انسانی — {{.Company.TitleFa}}</span>
+    {{if .Layout.Shows "verify"}}
     <span>کد رهگیری سند: {{.VerifyCode}}</span>
     {{if .QRCodeSVG}}
     <span class="doc-qr">
       {{.QRCodeSVG}}
       <small>برای بررسی اصالت سند، این کد را با دوربین تلفن بخوانید.</small>
     </span>
+    {{end}}
     {{end}}
   </footer>
 </div>

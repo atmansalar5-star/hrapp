@@ -14,6 +14,7 @@ import (
 
 	"hrms/internal/contracts"
 	"hrms/internal/modules/settings/domain"
+	"hrms/internal/platform/documents"
 	"hrms/internal/platform/httpx"
 	"hrms/internal/platform/modulekit"
 	"hrms/internal/platform/recordkit"
@@ -81,6 +82,14 @@ func registerFormParamEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *re
 	mux.HandleFunc("GET /api/v1/settings/reports", read(func(w http.ResponseWriter, r *http.Request) {
 		reports := buildReportCatalog(r, deps, svc)
 		httpx.WriteJSON(w, http.StatusOK, map[string]any{"reports": reports, "total": len(reports)})
+	}))
+
+	// بلوک‌های اسناد چاپی: کدام بخش‌های حکم/قرارداد/گواهی/فیش روی کاغذ بیاید و با چه
+	// عنوانی. کاتالوگ از خود موتور اسناد می‌آید و پارامتر (scope=document) در همین ماژول
+	// ذخیره می‌شود؛ موتور اسناد آن را در زمان چاپ می‌خواند.
+	mux.HandleFunc("GET /api/v1/settings/documents", read(func(w http.ResponseWriter, r *http.Request) {
+		documents := buildDocumentCatalog(r, svc)
+		httpx.WriteJSON(w, http.StatusOK, map[string]any{"documents": documents, "total": len(documents)})
 	}))
 }
 
@@ -277,6 +286,66 @@ func buildReportCatalog(r *http.Request, deps modulekit.Deps, svc *recordkit.Ser
 		if hasParams {
 			view.ParamsID = record.ID
 			view.Status = record.Status
+		}
+		out = append(out, view)
+	}
+	return out
+}
+
+// documentBlockView یک بلوک سند با وضعیت نمایش پس از اعمال پارامتر.
+type documentBlockView struct {
+	Key     string `json:"key"`
+	TitleFa string `json:"titleFa"`
+	Visible bool   `json:"visible"`
+	// TitleFaOverridden عنوان سفارشی (خالی = عنوان پیش‌فرض موتور اسناد).
+	TitleFaOverridden string `json:"customTitle,omitempty"`
+}
+
+// documentView یک نوع سند چاپی با بلوک‌هایش.
+type documentView struct {
+	Kind      string              `json:"kind"`
+	TitleFa   string              `json:"titleFa"`
+	Blocks    []documentBlockView `json:"blocks"`
+	ParamsID  string              `json:"paramsId,omitempty"`
+	Status    string              `json:"status,omitempty"`
+	StatusFa  string              `json:"statusFa,omitempty"`
+	VisibleNo int                 `json:"visibleCount"`
+}
+
+// buildDocumentCatalog کاتالوگ اسناد چاپی به‌همراه پارامتر ذخیره‌شدهٔ هر سند.
+func buildDocumentCatalog(r *http.Request, svc *recordkit.Service) []documentView {
+	params := savedParams(r, svc, "document")
+	out := []documentView{}
+	for _, doc := range documents.Catalog() {
+		record, hasParams := params[normalizeTarget(string(doc.Kind))]
+		visible := map[string]bool{}
+		custom := map[string]string{}
+		if hasParams {
+			for _, key := range csvList(record.Fields["visibleFields"]) {
+				visible[key] = true
+			}
+			custom = labelOverrides(record.Fields["labels"])
+		}
+		blocks := make([]documentBlockView, 0, len(doc.Blocks))
+		visibleCount := 0
+		for _, block := range doc.Blocks {
+			// پارامتر ثبت‌نشده یعنی همهٔ بلوک‌های پشتیبانی‌شده روشن‌اند.
+			isVisible := len(visible) == 0 || visible[block.Key]
+			if isVisible {
+				visibleCount++
+			}
+			blocks = append(blocks, documentBlockView{
+				Key: block.Key, TitleFa: block.TitleFa, Visible: isVisible,
+				TitleFaOverridden: custom[block.Key],
+			})
+		}
+		view := documentView{
+			Kind: string(doc.Kind), TitleFa: doc.TitleFa, Blocks: blocks, VisibleNo: visibleCount,
+		}
+		if hasParams {
+			view.ParamsID = record.ID
+			view.Status = record.Status
+			view.StatusFa = record.StatusFa
 		}
 		out = append(out, view)
 	}

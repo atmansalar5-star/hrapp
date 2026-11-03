@@ -12,6 +12,7 @@
 var PARAM_TAB = 'forms';
 var PARAM_FORMS = null;
 var PARAM_REPORTS = null;
+var PARAM_DOCUMENTS = null;
 
 /** صفحهٔ پنل پارامتریک.
  *
@@ -23,27 +24,32 @@ function pageFormParamsLive() {
   // محتوای صفحه در liveLoad بارگذاری می‌شود و داخل #liveRegion می‌نشیند؛ پوسته همین‌جا
   // برگردانده می‌شود (همان الگوی صفحه‌های زندهٔ دیگر).
   liveLoad(async () => {
-    const [formsRes, reportsRes] = await Promise.all([
+    const [formsRes, reportsRes, docsRes] = await Promise.all([
       apiFetch('/api/v1/settings/forms'),
       apiFetch('/api/v1/settings/reports'),
+      apiFetch('/api/v1/settings/documents'),
     ]);
     if (!formsRes.ok) return liveErrorBox(formsRes.message);
     PARAM_FORMS = (formsRes.data && formsRes.data.forms) || [];
     PARAM_REPORTS = (reportsRes.ok && reportsRes.data && reportsRes.data.reports) || [];
+      PARAM_DOCUMENTS = (docsRes.ok && docsRes.data && docsRes.data.documents) || [];
 
     const tabBar = `<div class="tabs">
       <button class="tab ${PARAM_TAB === 'forms' ? 'active' : ''}" onclick="PARAM_TAB='forms';liveReload()">🧾 فیلدهای فرم‌ها (${fa(PARAM_FORMS.length)})</button>
       <button class="tab ${PARAM_TAB === 'reports' ? 'active' : ''}" onclick="PARAM_TAB='reports';liveReload()">📊 ستون‌های گزارش‌ها (${fa(PARAM_REPORTS.length)})</button>
+      <button class="tab ${PARAM_TAB === 'documents' ? 'active' : ''}" onclick="PARAM_TAB='documents';liveReload()">🖨️ بلوک‌های اسناد چاپی (${fa((PARAM_DOCUMENTS || []).length)})</button>
     </div>`;
 
-      const body = PARAM_TAB === 'forms' ? paramsFormsTable(PARAM_FORMS) : paramsReportsCards(PARAM_REPORTS);
+      const body = PARAM_TAB === 'forms' ? paramsFormsTable(PARAM_FORMS)
+        : PARAM_TAB === 'reports' ? paramsReportsCards(PARAM_REPORTS)
+        : paramsDocumentsCards(PARAM_DOCUMENTS || []);
     return tabBar +
       statNote('فهرست فرم‌ها و فیلدهای هر فرم از شناسهٔ خودِ ماژول‌ها خوانده می‌شود؛ پس با افزودن فیلد تازه در دامنه، همین‌جا خودکار دیده می‌شود. پارامتری که «غیرفعال» شود داده‌اش می‌ماند ولی در فرم اثر نمی‌گذارد.') +
       body;
   });
   return liveShell('پنل پارامتریک فرم‌ها و گزارش‌ها',
     'کم و زیاد کردن فیلدهای فرم‌ها و ستون‌های گزارش‌ها به‌صورت پارامتریک — بدون تغییر نرم‌افزار',
-    `<button class="btn btn-ghost" onclick="PARAM_FORMS=null;PARAM_REPORTS=null;liveReload()">↻ تازه‌سازی کاتالوگ</button>`);
+    `<button class="btn btn-ghost" onclick="PARAM_FORMS=null;PARAM_REPORTS=null;PARAM_DOCUMENTS=null;liveReload()">↻ تازه‌سازی کاتالوگ</button>`);
 }
 
 /** جدول فرم‌ها با شمار فیلدهای مؤثر. */
@@ -82,6 +88,69 @@ function paramsReportsCards(reports) {
       <div id="repResult_${esc(r.source)}" style="margin-top:10px"></div>
     </div>`;
   }).join('');
+}
+
+/** کارت هر سند چاپی: تیک بلوک‌ها و عنوان دلخواه هر بلوک. */
+function paramsDocumentsCards(docs) {
+  if (!docs.length) return statNote('کاتالوگ اسناد چاپی در دسترس نیست.');
+  return docs.map(d => {
+    const rows = d.blocks.map(b => `<tr>
+      <td><label style="display:inline-flex;align-items:center;gap:6px">
+        <input type="checkbox" class="docBlock" data-doc="${esc(d.kind)}" data-key="${esc(b.key)}" ${b.visible ? 'checked' : ''}>
+        <span>${esc(b.titleFa)}</span></label></td>
+      <td><input class="docBlockTitle" data-doc="${esc(d.kind)}" data-key="${esc(b.key)}"
+            value="${esc(b.customTitle || '')}" placeholder="${esc(b.titleFa)}" style="font-size:.78rem"></td>
+    </tr>`);
+    return `<div class="card card-pad" style="margin-bottom:10px">
+      <div class="card-title">🖨️ ${esc(d.titleFa)} <span class="muted" style="font-size:.75rem">— ${esc(d.kind)} — ${fa(d.visibleCount)} از ${fa(d.blocks.length)} بلوک روشن</span>
+        ${d.paramsId ? `<span class="chip">${esc(statusFaText(d.status))}</span>` : ''}</div>
+      <div class="muted" style="font-size:.75rem;margin-bottom:6px">هر بلوک را می‌توانید از سند حذف کنید (تیک را بردارید) یا عنوانش را فارسی‌تر کنید؛ خالی‌بودن عنوان یعنی همان عنوان پیش‌فرض سامانه.</div>
+      ${liveTable(['بلوک روی سند', 'عنوان سفارشی (اختیاری)'], rows, d.blocks.length)}
+      <div class="row-actions" style="margin-top:8px">
+        <button class="btn btn-primary" onclick="paramSaveDocument('${esc(d.kind)}')">💾 ذخیرهٔ بلوک‌های سند</button>
+        ${d.paramsId ? `<button class="btn btn-ghost" onclick="paramToggle('${esc(d.paramsId)}','${d.status === 'inactive' ? 'activate' : 'deactivate'}')">${d.status === 'inactive' ? '↩️ بازفعال' : '⏸ غیرفعال'}</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/** بلوک‌های تیک‌خورده و عنوان‌های سفارشی یک سند. */
+function paramSelectedDocBlocks(kind) {
+  const visible = [];
+  const labels = [];
+  for (const el of document.querySelectorAll(`.docBlock[data-doc="${cssEscape(kind)}"]`)) {
+    if (el.checked) visible.push(el.dataset.key);
+  }
+  for (const el of document.querySelectorAll(`.docBlockTitle[data-doc="${cssEscape(kind)}"]`)) {
+    const value = (el.value || '').trim();
+    if (value) labels.push(el.dataset.key + '=' + value);
+  }
+  return { visible, labels };
+}
+
+/** ذخیرهٔ بلوک‌های یک سند چاپی (رکورد پارامتر با scope=document). */
+async function paramSaveDocument(kind) {
+  const doc = (PARAM_DOCUMENTS || []).find(d => d.kind === kind);
+  if (!doc) return;
+  const picked = paramSelectedDocBlocks(kind);
+  if (!picked.visible.length) { toast('دست‌کم یک بلوک باید روشن بماند', 'error'); return; }
+  const fields = {
+    scope: 'document',
+    target: kind,
+    visibleFields: picked.visible.join(','),
+    labels: picked.labels.join(','),
+    note: 'بلوک‌های سند چاپی — از پنل پارامتریک',
+  };
+  const res = doc.paramsId
+    ? await apiFetch('/api/v1/settings/records/' + encodeURIComponent(doc.paramsId), {method: 'PATCH', body: {kind: 'formParams', title: 'بلوک‌های سند ' + doc.titleFa, fields}})
+    : await apiFetch('/api/v1/settings/records', {method: 'POST', body: {kind: 'formParams', title: 'بلوک‌های سند ' + doc.titleFa, fields, noteFa: 'ثبت از پنل پارامتریک'}});
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  const id = doc.paramsId || (res.data && res.data.id);
+  await apiFetch('/api/v1/settings/records/' + encodeURIComponent(id) + '/action', {method: 'POST', body: {action: 'activate'}});
+  PARAM_DOCUMENTS = null;
+  paramClearFormCache();
+  toast('بلوک‌های سند ذخیره و جاری شد');
+  liveReload();
 }
 
 /** عنوان فارسی وضعیت پارامتر در کارت گزارش. */
