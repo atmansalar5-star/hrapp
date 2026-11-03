@@ -333,6 +333,45 @@ func Seed() []contracts.RecordInput {
 		{Kind: "karana", Title: "کارانه شهریور — محمد احمدی", EmployeeID: "EMP-005",
 			Fields: map[string]string{"period": "1404/06", "amount": "18500000", "basis": "بهره‌وری خط تولید"}},
 
+		// فایل قانونی بیمه/مالیات: نمونهٔ «موقت» تا این نوع رکورد در استقرار تازه
+		// بی‌داده نماند؛ جمع‌ها با محاسبه‌گر واقعی جایگزین می‌شوند.
+		{Kind: "statutoryFiles", Title: "فایل بیمهٔ مهر ۱۴۰۴",
+			Fields: map[string]string{
+				"fileType": "بیمه", "period": "1404/07", "rows": "12",
+				"payableTotal": "337400000", "insuranceEmployee": "101220000",
+				"insuranceEmployer": "332580000", "unemployment": "18130000",
+				"deadline": "1404/08/15", "penalty": "0",
+			},
+			NoteFa: "نمونهٔ موقت؛ با ارسال واقعی، شمارهٔ پیگیری و رسید ثبت شود."},
+		{Kind: "statutoryFiles", Title: "فایل مالیات مهر ۱۴۰۴",
+			Fields: map[string]string{
+				"fileType": "مالیات", "period": "1404/07", "rows": "12",
+				"taxTotal": "312000000", "deadline": "1404/08/15", "penalty": "0",
+			},
+			NoteFa: "نمونهٔ موقت فایل مالیات."},
+		// حساب بانکی کارمند: شبا با رقم کنترل درست (مقدار آزمایشی، نه حساب واقعی).
+		// چرا «پیش‌نویس» و نه «فعال»: فایل پرداخت بانکی فقط حساب‌های فعال را برمی‌دارد؛
+		// اگر نمونهٔ موقت فعال باشد، در فایل پرداخت واقعی هم ظاهر می‌شود. با پیش‌نویس
+		// ماندن، نوع رکورد بی‌داده نمی‌ماند و ساخت فایل پرداخت دست‌نخورده است.
+		{Kind: "bankAccounts", Title: "حساب بانک ملی — سارا محمدی", EmployeeID: "EMP-001",
+			SeedStatus: "draft",
+			Fields: map[string]string{"bankName": "بانک ملی", "iban": "IR600170000000001234567890",
+				"accountNo": "01700000001234567890", "holderName": "سارا محمدی", "nationalId": "0012345679"},
+			NoteFa: "نمونهٔ موقت حساب حقوق؛ شبا آزمایشی با رقم کنترل معتبر."},
+		{Kind: "bankAccounts", Title: "حساب بانک صادرات — محمد احمدی", EmployeeID: "EMP-005",
+			SeedStatus: "draft",
+			Fields: map[string]string{"bankName": "بانک صادرات", "iban": "IR700190000000009876543210",
+				"accountNo": "01900000009876543210", "holderName": "محمد احمدی", "nationalId": "0056789017"},
+			NoteFa: "نمونهٔ موقت حساب حقوق."},
+		// فایل پرداخت بانکی: سند دوره.
+		{Kind: "bankFiles", Title: "فایل پرداخت بانکی مهر ۱۴۰۴",
+			Fields: map[string]string{
+				"bankName": "", "period": "1404/07", "rows": "12", "amount": "4170600000",
+				"rounding": "12000", "returnedRows": "0", "returnedAmount": "0",
+				"controlFa": "جمع کنترلی با مجموع خالص پرداختی مهر برابر است",
+			},
+			NoteFa: "نمونهٔ موقت فایل پرداخت بانکی."},
+
 		// پروندهٔ پاداش پایان خدمت: نمونهٔ تأییدشده و پیش‌نویس، تا گردش‌کار و گزارش‌های
 		// این بخش روی دادهٔ واقعی گراف کار کند.
 		{Kind: "serviceBonusFiles", Title: "پاداش پایان خدمت — محمد احمدی", EmployeeID: "EMP-005",

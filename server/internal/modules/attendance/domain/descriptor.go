@@ -238,6 +238,17 @@ func Seed() []contracts.RecordInput {
 			NoteFa: "چرخهٔ چهارروزهٔ بخش اورژانس؛ مرجع تخصیص نوبت پس از فعال‌سازی."},
 		{Kind: "shiftAssignments", Title: "تخصیص نوبت — مریم نوری", EmployeeID: "EMP-008",
 			Fields: map[string]string{"pattern": "الگوی چهارشیفتی اورژانس", "startDate": "1404/07/01", "cycleOffset": "0"}},
+		// سند ورود فایل دستگاه تردد: نمونهٔ آزمایشی «موقت» تا این نوع رکورد در استقرار
+		// تازه بی‌داده نماند و آزمون دود Postgres (که برای هر نوع رکورد یک رکورد نمونه
+		// می‌خواهد) سبز شود. با ورود فایل واقعی دستگاه، این سند در فهرست کنار آن می‌ماند
+		// و کاملاً قابل حذف است.
+		{Kind: "deviceImports", Title: "ورود فایل تردد — مهر ۱۴۰۴",
+			Fields: map[string]string{
+				"fileName": "device-1404-07.csv", "importedAt": "1404/07/30",
+				"lines": "1240", "accepted": "1218", "rejected": "22", "duplicate": "6",
+				"created": "980", "updated": "238", "skipped": "22",
+			},
+			NoteFa: "نمونهٔ موقت ورود فایل دستگاه تردد؛ با فایل واقعی جایگزین یا حذف شود."},
 		{Kind: "shiftSwaps", Title: "تعویض نوبت — احمدی با نوری", EmployeeID: "EMP-005",
 			Fields: map[string]string{"swapDate": "1404/07/10", "partnerEmployee": "EMP-008",
 				"myShift": "صبح", "partnerShift": "عصر", "reason": "علت خانوادگی"}},
