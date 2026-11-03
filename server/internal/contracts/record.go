@@ -101,6 +101,9 @@ type RecordField struct {
 	LabelFa  string `json:"labelFa"`
 	Type     string `json:"type"`
 	Required bool   `json:"required"`
+	// Source منبع خودکار مقدار (مثل employee.mobile)؛ کلاینت از همین می‌فهمد فیلد را
+	// از پروندهٔ کارمند پیش‌پر و تغییرناپذیر نشان دهد. خالی یعنی ورودی دستی.
+	Source string `json:"source,omitempty"`
 }
 
 // RecordStatus وضعیت رکورد به‌همراه عنوان فارسی.

@@ -662,6 +662,7 @@ var All = []Module{
 			{Key: "companies", Order: 9, Icon: "building", TitleFa: "شرکت‌ها و استقرارها", Component: "CompaniesScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "branding", Order: 10, Icon: "image", TitleFa: "نشان و QR کد شرکت‌ها", Component: "BrandingScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "dataExchange", Order: 11, Icon: "database", TitleFa: "تبادل داده و قالب‌های بارگذاری", Component: "DataExchangeScreen", Roles: []string{"admin", "hr_manager"}},
+			{Key: "formParams", Order: 12, Icon: "sliders", TitleFa: "پنل پارامتریک فرم‌ها و گزارش‌ها", Component: "FormParamsScreen", Roles: []string{"admin", "hr_manager"}},
 		},
 	},
 	{

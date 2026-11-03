@@ -128,6 +128,7 @@ import SysParamsScreen from '../features/settings/SysParamsScreen';
 import BrandingScreen from '../features/settings/BrandingScreen';
 // تبادل داده: اتصال به منابع بیرونی، ساختار داده و قالب‌های آمادهٔ بارگذاری.
 import DataExchangeScreen from '../features/settings/DataExchangeScreen';
+import FormParamsScreen from '../features/settings/FormParamsScreen';
 import AuditLogScreen from '../features/settings/AuditLogScreen';
 import DocTemplatesScreen from '../features/settings/DocTemplatesScreen';
 import CatalogsScreen from '../features/settings/CatalogsScreen';
@@ -254,6 +255,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   SysParamsScreen,
   BrandingScreen,
   DataExchangeScreen,
+  FormParamsScreen,
   AuditLogScreen,
   DocTemplatesScreen,
   CatalogsScreen,

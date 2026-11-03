@@ -26,6 +26,11 @@ type Field struct {
 	LabelFa  string
 	Type     string
 	Required bool
+	// Source منبع خودکار مقدار فیلد است (خالی = ورودی دستی). وقتی پر باشد، کلاینت
+	// مقدار را از پروندهٔ کارمند پیش‌پر می‌کند و آن را تغییرناپذیر نشان می‌دهد تا
+	// اطلاعات پایه در فرم‌های قرارداد، حکم و کارگزینی از یک جا بیاید، نه با تایپ
+	// دوبارهٔ کاربر. نمونه: employee.nationalId، employee.mobile، employee.education.
+	Source string
 }
 
 // Status یک وضعیت گردش‌کار.
@@ -130,7 +135,7 @@ func (d Descriptor) Schema() contracts.RecordSchema {
 	for _, k := range d.Kinds {
 		fields := make([]contracts.RecordField, 0, len(k.Fields))
 		for _, f := range k.Fields {
-			fields = append(fields, contracts.RecordField{Key: f.Key, LabelFa: f.LabelFa, Type: f.Type, Required: f.Required})
+			fields = append(fields, contracts.RecordField{Key: f.Key, LabelFa: f.LabelFa, Type: f.Type, Required: f.Required, Source: f.Source})
 		}
 		statuses := make([]contracts.RecordStatus, 0, len(k.Statuses))
 		for _, s := range k.Statuses {
@@ -367,7 +372,52 @@ func Fields(specs ...string) []Field {
 		if len(parts) > 3 {
 			f.Required = strings.TrimSpace(parts[3]) == "1"
 		}
+		// بخش پنجم (اختیاری) منبع خودکار مقدار است: employee.nationalId و مانند آن.
+		if len(parts) > 4 {
+			f.Source = strings.TrimSpace(parts[4])
+		}
 		out = append(out, f)
+	}
+	return out
+}
+
+// EmployeeBaseFieldKeys کلیدهای «اطلاعات پایهٔ کارمند» که در فرم‌های نیازمند این
+// اطلاعات (قرارداد، حکم، کارگزینی، انتصاب و...) به‌صورت مشترک تکرار می‌شوند.
+func EmployeeBaseFieldKeys() []string {
+	return []string{"nationalId", "mobile", "homePhone", "postalCode", "address", "educationDegree", "educationField"}
+}
+
+// EmployeeBaseFields فیلدهای مشترک «اطلاعات پایهٔ کارمند» برای فرم‌های گردشکاری.
+//
+// چرا یک تابع مشترک: مقادیر این فیلدها در پروندهٔ کارمند نگه‌داری می‌شوند و در فرم‌های
+// قرارداد، حکم، کارگزینی و انتصاب فقط «نمایش داده و همراه رکورد ثبت» می‌شوند. Source
+// می‌گوید مقدار از کدام فیلد پرونده بیاید؛ پس رابط لازم نیست هیچ نگاشتی را بداند و
+// اگر فردا فیلد تازه‌ای اضافه شد، فقط همین‌جا اعلام می‌شود.
+func EmployeeBaseFields() []Field {
+	return []Field{
+		{Key: "nationalId", LabelFa: "کد ملی", Type: "text", Source: "employee.nationalId"},
+		{Key: "mobile", LabelFa: "شمارهٔ موبایل", Type: "text", Source: "employee.mobile"},
+		{Key: "homePhone", LabelFa: "شمارهٔ منزل", Type: "text", Source: "employee.homePhone"},
+		{Key: "postalCode", LabelFa: "کد پستی", Type: "text", Source: "employee.postalCode"},
+		{Key: "address", LabelFa: "آدرس محل سکونت", Type: "text", Source: "employee.address"},
+		{Key: "educationDegree", LabelFa: "مدرک تحصیلی", Type: "text", Source: "employee.education"},
+		{Key: "educationField", LabelFa: "رشتهٔ تحصیلی", Type: "text", Source: "employee.educationField"},
+	}
+}
+
+// WithEmployeeBase فیلدهای اختصاصی یک نوع رکورد را با «اطلاعات پایهٔ کارمند» کامل
+// می‌کند. اگر فرمی یکی از این کلیدها را خودش داشته باشد، همان تعریف اختصاصی می‌ماند و
+// تکرار نمی‌شود.
+func WithEmployeeBase(fields []Field) []Field {
+	have := map[string]bool{}
+	for _, f := range fields {
+		have[f.Key] = true
+	}
+	out := append([]Field{}, fields...)
+	for _, f := range EmployeeBaseFields() {
+		if !have[f.Key] {
+			out = append(out, f)
+		}
 	}
 	return out
 }

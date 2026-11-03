@@ -93,6 +93,7 @@ function pageEmployeesLive() {
       <td class="ltr num" style="font-size:.72rem">${esc(e.nationalId || '—')}</td>
       <td><div class="row-actions">
         <button class="btn btn-sm btn-primary" onclick="go('profile','${esc(e.id)}')">پرونده</button>
+        <button class="btn btn-sm btn-ghost" title="ویرایش اطلاعات پایه" onclick="liveEmployeeForm('${esc(e.id)}')">✏️</button>
         <button class="btn btn-sm btn-ghost" title="گواهی اشتغال" onclick="liveOpenDoc('employment_certificate','${esc(e.id)}')">📄</button>
         <button class="btn btn-sm btn-ghost" title="فیش حقوقی" onclick="liveOpenDoc('payslip','${esc(e.id)}')">🧾</button>
       </div></td></tr>`);
@@ -102,7 +103,98 @@ function pageEmployeesLive() {
         rows, (listRes.data && listRes.data.total) || items.length);
   });
   return liveShell('فهرست کارکنان', 'کارکنان این استقرار روی دادهٔ واقعی سرور — با پروندهٔ تبیندی برای هر کارمند',
-    `<button class="btn btn-ghost" onclick="toast('خروجی اکسل در فاز اتصال به مالی فعال می‌شود','info')">⬇️ خروجی</button>`);
+    `<button class="btn btn-primary" onclick="liveEmployeeForm()">➕ کارمند تازه</button>
+     <button class="btn btn-ghost" onclick="toast('خروجی اکسل در فاز اتصال به مالی فعال می‌شود','info')">⬇️ خروجی</button>`);
+}
+
+/* =====================================================================
+   فرم ایجاد و ویرایش کارمند — اطلاعات پایهٔ پرونده
+   ---------------------------------------------------------------------
+   این فرم مرجع اطلاعات پایه است: کد ملی، شمارهٔ موبایل، شمارهٔ منزل، کد پستی و
+   نشانی محل سکونت همین‌جا ثبت می‌شوند و فرم‌های دیگر (قرارداد، حکم، انتصاب...)
+   آن‌ها را از همین پرونده می‌خوانند. قاعده‌های اعتبارسنجی در سرور است؛ پیام
+   خطای هر فیلد همان‌جا برمی‌گردد و برچسبش در فرم نشان داده می‌شود.
+   ===================================================================== */
+async function liveEmployeeForm(id) {
+  const optRes = await apiFetch('/api/v1/employee/options');
+  const options = (optRes.ok && optRes.data) || {};
+  let e = {id: '', fullName: '', nationalId: '', mobile: '', homePhone: '', phone: '', postalCode: '', address: '', email: '', departmentId: '', position: '', contractType: 'تمام‌وقت', employmentType: '', hireDate: '', baseSalary: 0, status: 'active'};
+  if (id) {
+    const res = await apiFetch('/api/v1/employee/employees/' + encodeURIComponent(id));
+    if (!res.ok) { toast(res.message, 'error'); return; }
+    e = Object.assign(e, res.data || {});
+  }
+  const deptOpts = ((options.departments) || []).map(d =>
+    `<option value="${esc(d.id)}" ${d.id === e.departmentId ? 'selected' : ''}>${esc(d.name)}</option>`).join('');
+  const typeOpts = ((options.employmentTypes) || []).map(t =>
+    `<option value="${esc(t.key)}" ${t.key === e.employmentType ? 'selected' : ''}>${esc(t.titleFa)}</option>`).join('');
+  const contractOpts = (['تمام‌وقت', 'پیمانکاری', 'پاره‌وقت']).map(t =>
+    `<option ${t === e.contractType ? 'selected' : ''}>${t}</option>`).join('');
+  const statusOpts = ((options.statusOptions) || []).map(s =>
+    `<option value="${esc(s.key)}" ${s.key === e.status ? 'selected' : ''}>${esc(s.titleFa)}</option>`).join('');
+  openModal({
+    title: id ? 'ویرایش کارمند — ' + (e.fullName || e.id) : 'ثبت کارمند تازه',
+    body: `<fieldset class="field-group"><legend>اطلاعات هویتی و تماس</legend>
+      <div class="form-grid">
+        <div class="field"><label>نام و نام خانوادگی <span class="req">*</span></label><input id="neName" value="${esc(e.fullName || '')}"></div>
+        <div class="field"><label>کد ملی <span class="req">*</span></label><input id="neNid" class="ltr num" value="${esc(e.nationalId || '')}" placeholder="۱۰ رقم"></div>
+        <div class="field"><label>شمارهٔ موبایل</label><input id="neMobile" class="ltr num" value="${esc(e.mobile || '')}" placeholder="09xxxxxxxxx"></div>
+        <div class="field"><label>شمارهٔ منزل</label><input id="neHomePhone" class="ltr num" value="${esc(e.homePhone || '')}" placeholder="061xxxxxxxx"></div>
+        <div class="field"><label>کد پستی</label><input id="nePostal" class="ltr num" value="${esc(e.postalCode || '')}" placeholder="۱۰ رقم"></div>
+        <div class="field"><label>تلفن تماس دیگر</label><input id="nePhone" class="ltr num" value="${esc(e.phone || '')}"></div>
+        <div class="field full"><label>آدرس محل سکونت</label><input id="neAddress" value="${esc(e.address || '')}" placeholder="شهر، خیابان، پلاک"></div>
+        <div class="field"><label>ایمیل</label><input id="neEmail" class="ltr" value="${esc(e.email || '')}"></div>
+      </div></fieldset>
+      <fieldset class="field-group"><legend>اطلاعات شغلی</legend>
+      <div class="form-grid">
+        <div class="field"><label>واحد سازمانی <span class="req">*</span></label><select id="neDept">${deptOpts}</select></div>
+        <div class="field"><label>پست سازمانی <span class="req">*</span></label><input id="nePosition" value="${esc(e.position || '')}"></div>
+        <div class="field"><label>نوع قرارداد</label><select id="neContract">${contractOpts}</select></div>
+        <div class="field"><label>نوع استخدام</label><select id="neEmploymentType">${typeOpts}</select></div>
+        <div class="field"><label>تاریخ استخدام (شمسی) <span class="req">*</span></label><input id="neHire" class="num" value="${esc(e.hireDate || '')}" placeholder="1404/07/01"></div>
+        <div class="field"><label>حقوق پایه (ریال)</label><input id="neBase" type="number" min="0" value="${esc(String(e.baseSalary || ''))}"></div>
+        <div class="field"><label>وضعیت</label><select id="neStatus">${statusOpts}</select></div>
+      </div></fieldset>`,
+    foot: `<button class="btn btn-primary" onclick="liveEmployeeSave('${esc(id || '')}')">💾 ذخیره</button>
+           <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
+  });
+}
+
+/** ذخیرهٔ کارمند: قاعدهٔ اعتبارسنجی در سرور است و پیام هر فیلد همان‌جا می‌آید. */
+async function liveEmployeeSave(id) {
+  const body = {
+    fullName: ($('#neName').value || '').trim(),
+    nationalId: digitsOf($('#neNid').value),
+    mobile: digitsOf($('#neMobile').value),
+    homePhone: digitsOf($('#neHomePhone').value),
+    postalCode: digitsOf($('#nePostal').value),
+    phone: digitsOf($('#nePhone').value),
+    address: ($('#neAddress').value || '').trim(),
+    email: ($('#neEmail').value || '').trim(),
+    departmentId: $('#neDept').value,
+    position: ($('#nePosition').value || '').trim(),
+    contractType: $('#neContract').value,
+    employmentType: $('#neEmploymentType').value,
+    hireDate: ($('#neHire').value || '').trim(),
+    baseSalary: Number(digitsOf($('#neBase').value)) || 0,
+    status: $('#neStatus').value,
+  };
+  const res = await apiFetch('/api/v1/employee/employees' + (id ? '/' + encodeURIComponent(id) : ''),
+    {method: id ? 'PATCH' : 'POST', body});
+  if (!res.ok) {
+    // پیام‌های اعتبارسنجی فیلدبه‌فیلد از سرور می‌آید (کلید = نام فیلد).
+    const details = (res.data && res.data.details) || {};
+    const labels = {fullName: 'نام', nationalId: 'کد ملی', mobile: 'موبایل', homePhone: 'شمارهٔ منزل',
+      postalCode: 'کد پستی', address: 'نشانی', email: 'ایمیل', departmentId: 'واحد', position: 'پست',
+      hireDate: 'تاریخ استخدام', baseSalary: 'حقوق پایه', phone: 'تلفن'};
+    const first = Object.keys(details)[0];
+    toast(first ? (labels[first] || first) + ': ' + details[first] : res.message, 'error');
+    return;
+  }
+  EMP_BASE_CACHE = {};
+  closeModal();
+  toast(id ? 'اطلاعات کارمند ویرایش شد' : 'کارمند تازه ثبت شد');
+  liveReload();
 }
 
 /** برچسب فارسی وضعیت کارمند. */
@@ -194,13 +286,19 @@ function pageProfileLive(id) {
       ['نام و نام خانوادگی', esc(e.fullName || '—')],
       ['کد پرسنلی', `<span class="ltr num">${esc(e.id)}</span>`],
       ['کد ملی', e.nationalId ? `<span class="ltr num">${esc(e.nationalId)}</span>` : '—'],
-      ['تلفن همراه', e.phone ? `<span class="ltr num">${esc(e.phone)}</span>` : '—'],
+      ['شمارهٔ موبایل', e.mobile ? `<span class="ltr num">${esc(e.mobile)}</span>` : '—'],
+      ['شمارهٔ منزل', e.homePhone ? `<span class="ltr num">${esc(e.homePhone)}</span>` : '—'],
+      ['تلفن تماس', e.phone ? `<span class="ltr num">${esc(e.phone)}</span>` : '—'],
+      ['کد پستی', e.postalCode ? `<span class="ltr num">${esc(e.postalCode)}</span>` : '—'],
+      ['آدرس محل سکونت', e.address ? esc(e.address) : '—'],
       ['ایمیل', e.email ? `<span class="ltr">${esc(e.email)}</span>` : '—'],
       ['مدیر مستقیم', esc(e.managerName || '—')],
       ['عکس کارگزینی', photoState.hasPhoto
         ? `ثبت‌شده ${photoState.updatedAt ? '— ' + fa(photoState.updatedAt) : ''} <button class="btn btn-sm btn-ghost" onclick="profileLiveTab='photo';go('profile','${esc(id)}')">نمایش و تغییر</button>`
         : `ثبت نشده — <button class="btn btn-sm btn-primary" onclick="profileLiveTab='photo';go('profile','${esc(id)}')">بارگذاری عکس</button>`],
-    ]) + statNote('سایر مشخصات هویتی و مدارک (شناسنامه، مدارک تحصیلی، آدرس) در ماژول «بایگانی و شناسایی کارکنان» ثبت می‌شود؛ اینجا فقط فیلدهایی نشان داده می‌شود که سرور کارکنان دارد.');
+    ]) + `<div class="row-actions" style="margin-top:8px">
+      <button class="btn btn-ghost" onclick="liveEmployeeForm('${esc(e.id)}')">✏️ ویرایش اطلاعات پایه</button>
+    </div>` + statNote('اطلاعات پایهٔ همین تب مرجع همهٔ فرم‌های دیگر است: فرم قرارداد، حکم حقوق، انتصاب و جابه‌جایی همین کد ملی، شماره‌ها، کد پستی، نشانی و مدرک تحصیلی را از پرونده می‌خوانند و دوباره از کاربر نمی‌پرسند. مدارک تحصیلی تفصیلی در «بایگانی و شناسایی کارکنان» ثبت می‌شود.');
 
     // تب عکس پرسنلی: نمایش «عکس کارگزینی» و بارگذاری/حذف آن. فایل در پوشهٔ دادهٔ سرور
     // می‌ماند و نشانی نمایش آن امضاشده است؛ قاعدهٔ نوع و حجم فایل در سرور سنجیده می‌شود.

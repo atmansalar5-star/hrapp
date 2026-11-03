@@ -44,4 +44,7 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// فرم‌های خود را از همین‌جا می‌سازند، پس افزودن قلم تازه در پنل تنظیمات خودکار در
 	// فرم‌های آن‌ها دیده می‌شود.
 	deps.Ports.SetCatalogReader(catalogProvider{svc: svc})
+	// پنل پارامتریک: کاتالوگ همهٔ فرم‌ها و منابع گزارش به‌همراه پارامترهای ذخیره‌شده
+	// (نمایش/پنهان، اجباری، برچسب سفارشی و ستون‌های گزارش).
+	registerFormParamEndpoints(mux, deps, svc)
 }

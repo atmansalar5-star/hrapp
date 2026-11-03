@@ -253,6 +253,7 @@ function pageRecordkitLive(page) {
     if (!listRes.ok) return liveErrorBox(listRes.message);
     const items = (listRes.data && listRes.data.items) || [];
     RK_STATE[page] = {mod, kind};
+    rkSetModuleID(page, schema.module);
 
     // پنل شارژ کارت‌های رفاهی: گزینه‌ها (کارت‌ها، بخش‌ها با نرخ جاری و
     // مناسبت‌های فعال) از خود سرور می‌آید، پس نرخ تازه بدون تغییر کد دیده می‌شود.
@@ -442,6 +443,16 @@ function rkBindKind(page, mod, kind) {
   RK_STATE[page] = {mod, kind};
 }
 
+/** ثبت شناسهٔ ماژول (از شناسهٔ سرور) کنار وضعیت صفحه.
+ *
+ * چرا جدا از پیشوند API: پارامترهای پنل تنظیمات با کلید «ماژول|نوع رکورد» ذخیره
+ * می‌شوند و پیشوند مسیر همیشه با شناسهٔ ماژول یکی نیست (مثل staffing_moves با پیشوند
+ * /api/v1/moves)؛ پس شناسهٔ درست از خودِ پاسخ schema می‌آید، نه از پیشوند.
+ */
+function rkSetModuleID(page, moduleID) {
+  if (RK_STATE[page] && moduleID) RK_STATE[page].moduleID = String(moduleID);
+}
+
 /** جستجو: عبارت را از کادر می‌خواند، در سرور اعمال می‌کند و صفحه را بازخوانی می‌کند.
  *  خواندن عبارت پیش از بازخوانی ضروری است، چون بازخوانی کادر را از نو می‌سازد. */
 function rkSearch(page) {
@@ -457,6 +468,51 @@ function rkEdit(page, id) {
     rkOpenForm(page, st.kind, res.data);
   });
 }
+/* =====================================================================
+   پارامترهای فرم از پنل تنظیمات
+   ---------------------------------------------------------------------
+   پنل «پارامترهای فرم و گزارش» می‌تواند فیلدی را از یک فرم پنهان کند، اجباری
+   کند یا برچسبش را عوض کند. همان پارامترها اینجا روی فیلدهای پیش‌فرضِ شناسهٔ
+   ماژول اعمال می‌شوند تا یک منبع حقیقت بماند: دامنه می‌گوید چه فیلدی وجود دارد و
+   پنل تنظیمات می‌گوید چه چیزی از آن نمایش داده شود.
+   ===================================================================== */
+var FORM_PARAMS_CACHE = null;
+
+/** نگاشت پارامترهای فرم (کلید: «ماژول|نوع رکورد»). */
+async function formParamsMap() {
+  if (FORM_PARAMS_CACHE) return FORM_PARAMS_CACHE;
+  const res = await apiFetch('/api/v1/settings/forms');
+  const map = {};
+  for (const form of ((res.ok && res.data && res.data.forms) || [])) map[form.target] = form;
+  FORM_PARAMS_CACHE = map;
+  return map;
+}
+
+/** فیلدهای مؤثر یک نوع رکورد پس از اعمال پارامتر تنظیمات. */
+async function effectiveKindFields(st, kind) {
+  const moduleId = String((st && (st.moduleID || ((st.mod || {}).prefix || '').replace('/api/v1/', ''))) || '').trim().toLowerCase();
+  const map = await formParamsMap();
+  const form = map[moduleId + '|' + String((kind && kind.key) || '').toLowerCase()];
+  const base = (kind && kind.fields) || [];
+  if (!form) return base;
+  const shown = {};
+  for (const f of (form.fields || [])) shown[f.key] = f;
+  const out = [];
+  for (const f of base) {
+    const configured = shown[f.key];
+    if (configured && configured.visible === false) continue;
+    out.push({
+      key: f.key,
+      // برچسب سفارشی تنظیمات بر برچسب دامنه مقدم است.
+      labelFa: (configured && configured.labelFa) || f.labelFa,
+      type: f.type,
+      required: !!(f.required || (configured && configured.required)),
+      source: f.source || (configured && configured.source) || '',
+    });
+  }
+  return out;
+}
+
 async function rkOpenForm(page, kind, existing, prefill) {
   const isEdit = !!existing;
   // مقدار آغازین هر فیلد: در ویرایش از خود رکورد و در ثبت تازه از پیش‌پرکردن صفحه
@@ -472,7 +528,9 @@ async function rkOpenForm(page, kind, existing, prefill) {
   const empField = kind.employeeScoped
     ? `<div class="field"><label>کارمند <span class="req">*</span></label>${await liveEmployeeSelect('rkEmp', empValue)}</div>`
     : '';
-  const fields = (kind.fields || []).map(f =>
+  // فیلدهای نمایش‌داده‌شدهٔ همین فرم: پیش‌فرض دامنه + پارامتر پنل تنظیمات (پنهان/اجباری/برچسب).
+  const formFields = await effectiveKindFields(RK_STATE[page], kind);
+  const fields = formFields.map(f =>
     `<div class="field"><label>${esc(f.labelFa)}${f.required ? ' <span class="req">*</span>' : ''}</label>${rkInput('rkF_' + f.key, f, initial(f.key))}</div>`).join('');
   openModal({
     title: (isEdit ? 'ویرایش ' : 'ثبت ') + kind.titleFa,
@@ -485,6 +543,9 @@ async function rkOpenForm(page, kind, existing, prefill) {
     foot: `<button class="btn btn-primary" onclick="rkSave('${esc(page)}',${isEdit ? `'${esc(existing.id)}'` : 'null'})">${isEdit ? 'ذخیره' : 'ثبت'}</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
   });
+  // اطلاعات پایهٔ کارمند (کد ملی، تماس‌ها، نشانی، مدرک) از پرونده خوانده و در فیلدهای
+  // منبع‌دار همین فرم پیش‌پر می‌شود؛ ورودی دستی همان فیلدها لازم نیست.
+  rkFillEmployeeSources(kind, !isEdit);
 }
 async function rkSave(page, id) {
   const st = RK_STATE[page];

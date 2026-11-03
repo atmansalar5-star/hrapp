@@ -656,6 +656,7 @@ window.HRMS_MENU = [
         { page: "companies", label: "شرکت‌ها و استقرارها", icon: "building", roles: ['admin', 'hr_manager'] },
         { page: "branding", label: "نشان و QR کد شرکت‌ها", icon: "image", roles: ['admin', 'hr_manager'] },
         { page: "dataExchange", label: "تبادل داده و قالب‌های بارگذاری", icon: "database", roles: ['admin', 'hr_manager'] },
+        { page: "formParams", label: "پنل پارامتریک فرم‌ها و گزارش‌ها", icon: "sliders", roles: ['admin', 'hr_manager'] },
         ],
       },
       ],

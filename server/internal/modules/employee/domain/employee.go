@@ -27,6 +27,10 @@ type Employee struct {
 	BaseSalary     int64
 	LeaveBalance   float64
 	Phone          string
+	Mobile         string
+	HomePhone      string
+	PostalCode     string
+	Address        string
 	Email          string
 	ManagerName    string
 	Version        int
@@ -49,6 +53,10 @@ func (e Employee) ToContract() contracts.Employee {
 		BaseSalary:       e.BaseSalary,
 		LeaveBalance:     int(e.LeaveBalance),
 		Phone:            e.Phone,
+		Mobile:           e.Mobile,
+		HomePhone:        e.HomePhone,
+		PostalCode:       e.PostalCode,
+		Address:          e.Address,
 		Email:            e.Email,
 		ManagerName:      e.ManagerName,
 		Version:          e.Version,
@@ -74,6 +82,10 @@ func FromInput(id string, in contracts.EmployeeInput, departmentName string) Emp
 		HireDate:       in.HireDate,
 		BaseSalary:     in.BaseSalary,
 		Phone:          in.Phone,
+		Mobile:         strings.TrimSpace(in.Mobile),
+		HomePhone:      strings.TrimSpace(in.HomePhone),
+		PostalCode:     calendar.NormalizeDigits(strings.TrimSpace(in.PostalCode)),
+		Address:        strings.TrimSpace(in.Address),
 		Email:          in.Email,
 	}
 }
@@ -109,6 +121,18 @@ func (e Employee) Apply(in contracts.EmployeeInput) Employee {
 	}
 	if in.Phone != "" {
 		e.Phone = in.Phone
+	}
+	if in.Mobile != "" {
+		e.Mobile = strings.TrimSpace(in.Mobile)
+	}
+	if in.HomePhone != "" {
+		e.HomePhone = strings.TrimSpace(in.HomePhone)
+	}
+	if in.PostalCode != "" {
+		e.PostalCode = calendar.NormalizeDigits(strings.TrimSpace(in.PostalCode))
+	}
+	if in.Address != "" {
+		e.Address = strings.TrimSpace(in.Address)
 	}
 	if in.Email != "" {
 		e.Email = in.Email
@@ -225,6 +249,26 @@ func Validate(in contracts.EmployeeInput) map[string]string {
 	}
 	if in.Phone != "" && countDigits(in.Phone) < 8 {
 		errs["phone"] = "شمارهٔ تماس باید حداقل ۸ رقم داشته باشد."
+	}
+	// اطلاعات پایهٔ پرونده: قاعده‌ها اینجا هستند تا فرم‌های مصرف‌کننده (قرارداد، حکم،
+	// کارگزینی) همان‌ها را نشان دهند و هیچ قاعده‌ای در رابط تکرار نشود.
+	if mobile := calendar.NormalizeDigits(strings.TrimSpace(in.Mobile)); mobile != "" {
+		if len(mobile) != 11 || !strings.HasPrefix(mobile, "09") {
+			errs["mobile"] = "شمارهٔ موبایل باید ۱۱ رقم و با ۰۹ آغاز شود."
+		}
+	}
+	if home := calendar.NormalizeDigits(strings.TrimSpace(in.HomePhone)); home != "" {
+		if len(home) < 8 {
+			errs["homePhone"] = "شمارهٔ منزل باید حداقل ۸ رقم داشته باشد."
+		}
+	}
+	if postal := calendar.NormalizeDigits(strings.TrimSpace(in.PostalCode)); postal != "" {
+		if len(postal) != 10 {
+			errs["postalCode"] = "کد پستی باید ۱۰ رقم باشد."
+		}
+	}
+	if addr := strings.TrimSpace(in.Address); addr != "" && len([]rune(addr)) < 10 {
+		errs["address"] = "نشانی محل سکونت باید حداقل ۱۰ نویسه باشد."
 	}
 	return errs
 }

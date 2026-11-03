@@ -5399,6 +5399,16 @@
             "admin",
             "hr_manager"
           ]
+        },
+        {
+          "key": "formParams",
+          "order": 12,
+          "titleFa": "پنل پارامتریک فرم‌ها و گزارش‌ها",
+          "component": "FormParamsScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
         }
       ]
     },

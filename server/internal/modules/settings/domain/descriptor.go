@@ -67,6 +67,11 @@ func Descriptor() recordkit.Descriptor {
 				),
 			},
 			docTemplatesKind(),
+			// پارامتر فرم‌ها و گزارش‌ها: برای هر فرم می‌گوید کدام فیلدها دیده شوند
+			// (کم و زیاد کردن فیلدها)، کدام اجباری باشند و برچسب کدام عوض شود. برای هر
+			// گزارش هم ستون‌های انتخابی را نگه می‌دارد. مصرف‌کننده: فرم‌های رکوردی و
+			// گزارش‌ساز — هیچ فهرستی در رابط هاردکد نمی‌شود.
+			formParamsKind(),
 			// شرکت‌ها و استقرارهای هلدینگ: فرم ورود شرکت تازه و ویرایش شرکت‌های موجود.
 			companyProfilesKind(),
 			{
@@ -211,6 +216,62 @@ func validateDocTemplate(in contracts.RecordInput) error {
 	}
 	if strings.TrimSpace(in.Fields["body"]) == "" {
 		return &recordkit.ValidationError{Details: map[string]string{"fields.body": "متن قالب الزامی است."}}
+	}
+	return nil
+}
+
+// KindFormParams کلید نوع رکورد پارامتر فرم/گزارش.
+const KindFormParams = "formParams"
+
+// formParamsKind پارامتر نمایش فرم‌ها و گزارش‌ها.
+//
+// چرا رکورد و نه تنظیم سخت‌کد: مدیر سامانه باید بتواند بدون تغییر نرم‌افزار فیلدهای
+// اضافی یک فرم را پنهان کند، فیلدی را اجباری کند، برچسبش را فارسی‌تر کند یا ستون‌های
+// یک گزارش را کم و زیاد کند. هر تغییر یک رکورد است و در سابقهٔ حسابرسی می‌ماند.
+func formParamsKind() recordkit.Kind {
+	return recordkit.Kind{
+		Key: KindFormParams, TitleFa: "پارامتر فرم و گزارش", IDPrefix: "FPARAM", EmployeeScoped: false,
+		Fields: recordkit.Fields(
+			// scope: form (فرم رکوردی) یا report (گزارش).
+			"scope|نوع هدف (form/report)|select|1",
+			// target: برای فرم «ماژول|کلید نوع» و برای گزارش «کلید منبع داده».
+			"target|هدف (ماژول|نوع رکورد یا کلید منبع گزارش)|text|1",
+			"visibleFields|فیلدهای نمایش‌داده‌شده (با کاما — خالی یعنی همه)|text|0",
+			"requiredFields|فیلدهای اجباری (با کاما)|text|0",
+			"labels|برچسب فارسی سفارشی (کلید=برچسب، با کاما)|text|0",
+			"columns|ستون‌های گزارش (با کاما)|text|0",
+			"note|یادداشت|text|0",
+		),
+		Statuses:    recordkit.Statuses("draft|پیش‌نویس", "active|جاری", "inactive|غیرفعال"),
+		Initial:     "draft",
+		Transitions: recordkit.Steps("draft|active", "active|inactive", "inactive|active"),
+		Actions: recordkit.Actions(
+			"activate|جاری‌سازی پارامتر|primary|active|0",
+			"deactivate|غیرفعال‌سازی|ghost|inactive|0",
+		),
+		Validate:         validateFormParams,
+		EditableStatuses: []string{"draft", "active", "inactive"},
+	}
+}
+
+// validateFormParams قاعدهٔ پارامتر فرم/گزارش.
+func validateFormParams(in contracts.RecordInput) error {
+	scope := strings.TrimSpace(in.Fields["scope"])
+	if scope != "form" && scope != "report" {
+		return &recordkit.ValidationError{Details: map[string]string{
+			"fields.scope": "نوع هدف باید form (فرم) یا report (گزارش) باشد.",
+		}}
+	}
+	target := strings.TrimSpace(in.Fields["target"])
+	if target == "" {
+		return &recordkit.ValidationError{Details: map[string]string{
+			"fields.target": "هدف (ماژول|نوع رکورد یا کلید منبع گزارش) الزامی است.",
+		}}
+	}
+	if scope == "form" && !strings.Contains(target, "|") {
+		return &recordkit.ValidationError{Details: map[string]string{
+			"fields.target": "هدف فرم باید به شکل «ماژول|کلید نوع رکورد» باشد (مثل contracts|transfers).",
+		}}
 	}
 	return nil
 }

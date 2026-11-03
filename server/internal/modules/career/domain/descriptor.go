@@ -26,12 +26,12 @@ func Descriptor() recordkit.Descriptor {
 		Kinds: []recordkit.Kind{
 			{
 				Key: "appointments", TitleFa: "انتصاب", IDPrefix: "APPT", EmployeeScoped: true,
-				Fields: recordkit.Fields(
+				Fields: recordkit.WithEmployeeBase(recordkit.Fields(
 					"position|پست سازمانی|text|1",
 					"unit|واحد سازمانی|text|1",
 					"effectiveDate|تاریخ اجرا|date|1",
 					"decreeNo|شمارهٔ ابلاغ|text|0",
-				),
+				)),
 				Statuses: recordkit.Statuses(
 					"draft|پیش‌نویس", "approved|تأییدشدهٔ مدیریت", "issued|ابلاغ‌شده", "cancelled|لغوشده",
 				),
@@ -45,12 +45,12 @@ func Descriptor() recordkit.Descriptor {
 			},
 			{
 				Key: "promotions", TitleFa: "ترفیع", IDPrefix: "PROMO", EmployeeScoped: true,
-				Fields: recordkit.Fields(
+				Fields: recordkit.WithEmployeeBase(recordkit.Fields(
 					"fromPosition|پست فعلی|text|1",
 					"toPosition|پست جدید|text|1",
 					"effectiveDate|تاریخ اجرا|date|1",
 					"evaluationScore|امتیاز ارزیابی|number|0",
-				),
+				)),
 				Statuses: recordkit.Statuses(
 					"draft|پیش‌نویس", "approved|تأییدشدهٔ کمیته", "issued|ابلاغ‌شده", "cancelled|لغوشده",
 				),

@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"sort"
 	"sync"
 	"time"
 
@@ -238,6 +239,22 @@ func (p *Ports) SetRecordList(moduleID string, l contracts.RecordListPort) {
 		p.recordLists = map[string]contracts.RecordListPort{}
 	}
 	p.recordLists[moduleID] = l
+}
+
+// RecordModules شناسهٔ ماژول‌هایی که شناسهٔ رکورد خود را ثبت کرده‌اند (به ترتیب
+// الفبا). مصرف‌کننده: پنل پارامتریک تنظیمات — برای ساختن کاتالوگ فرم‌ها و فیلدهایشان
+// از خودِ اعلام ماژول‌ها، بدون هیچ فهرست دستی در ماژول تنظیمات.
+func (p *Ports) RecordModules() []string {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	out := make([]string, 0, len(p.recordLists))
+	for id, l := range p.recordLists {
+		if l != nil {
+			out = append(out, id)
+		}
+	}
+	sort.Strings(out)
+	return out
 }
 
 // RecordList خواندن پورت رکوردهای یک ماژول با شناسهٔ آن ماژول.

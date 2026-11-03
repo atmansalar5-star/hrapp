@@ -22,15 +22,27 @@ type DependentService struct {
 	CardKey string `json:"cardKey,omitempty"`
 	// GroupFa گروه نمایشی در فرم تکفل (بیمه و درمان / رفاه و کارت).
 	GroupFa string `json:"groupFa,omitempty"`
+	// Master پرچمِ «تکفل» است: تیک اصلی شناخته‌شدن فرد به‌عنوان فرد تحت تکفل. فرم‌ها و
+	// گزارش‌های بعدی با همین پرچم می‌فهمند کدام چک‌باکس کلید اصلی است، نه با مقایسهٔ رشته.
+	Master bool `json:"master,omitempty"`
+	// ApprovalKey پرچم مصوبه/مجوز: خدماتی که بدون مصوبهٔ جداگانه تعلق نمی‌گیرند
+	// (نمونه: «مصوبهٔ پرواز») با این پرچم علامت می‌خورند.
+	ApprovalKey bool `json:"approvalKey,omitempty"`
 }
 
 // dependentServiceCatalog فهرست خدمات قابل تعلق برای فرد تحت تکفل.
+//
+// دو تیک تازه هم اینجاست: «تکفل» (تیک اصلی شناخته‌شدن فرد به‌عنوان تحت تکفل) و
+// «مصوبهٔ پرواز» (مجوز استفاده از بلیت/پرواز). این دو فعلاً ذخیره می‌شوند تا
+// فرم‌های بعدی (درخواست پرواز، گزارش‌ها و شارژ) از همین داده بخوانند.
 var dependentServiceCatalog = []DependentService{
+	{Key: "dependency", TitleFa: "تکفل", GroupFa: "تکفل و وضعیت", Master: true},
 	{Key: "medical", TitleFa: "خدمات درمانی", GroupFa: "بیمه و درمان"},
 	{Key: "supplementary_insurance", TitleFa: "بیمهٔ تکمیلی", GroupFa: "بیمه و درمان"},
 	{Key: "travel_card", TitleFa: "سفر کارت", GroupFa: "رفاه و سفر"},
+	{Key: "flight_approval", TitleFa: "مصوبهٔ پرواز", GroupFa: "رفاه و سفر", ApprovalKey: true},
 	{Key: "petrokart", TitleFa: "پتروکارت (بخش فرهنگی و رستوران)", CardKey: "petrokart", GroupFa: "کارت رفاهی"},
-	{Key: "naftcard", TitleFa: "نفتکارت (نفتمارت / فارس‌کارت / سامان‌کارت)", CardKey: "naftmart", GroupFa: "کارت رفاهی"},
+	{Key: "naftcard", TitleFa: "نفت‌کارت (نفتمارت / فارس‌کارت / سامان‌کارت)", CardKey: "naftmart", GroupFa: "کارت رفاهی"},
 }
 
 // DependentServices فهرست خدمات تعلق (کپی، تا مصرف‌کننده اصل را تغییر ندهد).

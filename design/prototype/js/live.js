@@ -316,6 +316,140 @@ function liveWagePayload(prefix) {
   };
 }
 
+/* =====================================================================
+   اطلاعات پایهٔ کارمند در فرم‌های نیازمند (قرارداد، حکم، انتصاب، جابه‌جایی)
+   ---------------------------------------------------------------------
+   چرا یک بلوک مشترک: کد ملی، شماره‌های تماس، کد پستی، نشانی و مدرک تحصیلی در
+   پروندهٔ کارمند نگه‌داری می‌شوند. فرم‌های دیگر نباید همان اطلاعات را دوباره
+   از کاربر بگیرند یا نسخهٔ ناهمخوان بسازند؛ پس اینجا یک‌بار خوانده، نمایش داده
+   و در فیلدهای «منبع‌دار» (source) فرم پیش‌پر می‌شود.
+   داده از دو مسیر رسمی می‌آید: پروندهٔ کارمند و خلاصهٔ تحصیلی بایگانی.
+   ===================================================================== */
+var EMP_BASE_CACHE = {};
+
+/** اطلاعات پایهٔ یک کارمند (پرونده + آخرین مدرک + مدرک ملاک حقوق). */
+async function employeeBaseInfo(employeeId) {
+  if (!employeeId) return null;
+  if (EMP_BASE_CACHE[employeeId]) return EMP_BASE_CACHE[employeeId];
+  const [empRes, eduRes] = await Promise.all([
+    apiFetch('/api/v1/employee/employees/' + encodeURIComponent(employeeId)),
+    apiFetch('/api/v1/archive/education/' + encodeURIComponent(employeeId)),
+  ]);
+  const e = (empRes.ok && empRes.data) || {};
+  const edu = (eduRes.ok && eduRes.data) || {};
+  const latest = edu.latest || {};
+  const basis = edu.activeBasis || null;
+  const levelField = [latest.levelFa, latest.field].filter(Boolean).join(' — ');
+  const info = {
+    employeeId: employeeId,
+    fullName: e.fullName || '',
+    nationalId: e.nationalId || '',
+    mobile: e.mobile || '',
+    homePhone: e.homePhone || '',
+    phone: e.phone || '',
+    postalCode: e.postalCode || '',
+    address: e.address || '',
+    departmentName: e.departmentName || '',
+    position: e.position || '',
+    educationLevelFa: latest.levelFa || '',
+    educationField: latest.field || '',
+    educationText: levelField,
+    educationUniversity: latest.university || '',
+    educationDate: latest.graduationDate || '',
+    degreeBasis: basis ? [basis.effectiveLevelFa || basis.levelFa || '', basis.field || ''].filter(Boolean).join(' — ') : '',
+    hasEducation: !!latest.levelFa,
+  };
+  EMP_BASE_CACHE[employeeId] = info;
+  return info;
+}
+
+/** مقدار یک «منبع» (source) فیلد فرم از اطلاعات پایه. */
+function employeeSourceValue(info, source) {
+  if (!info) return '';
+  const map = {
+    'employee.nationalId': info.nationalId,
+    'employee.mobile': info.mobile,
+    'employee.homePhone': info.homePhone,
+    'employee.postalCode': info.postalCode,
+    'employee.address': info.address,
+    'employee.education': info.educationText,
+    'employee.educationField': info.educationField,
+    'employee.fullName': info.fullName,
+    'employee.department': info.departmentName,
+    'employee.position': info.position,
+  };
+  return map[String(source || '').trim()] || '';
+}
+
+/** بلوک فقط‌خواندنی «اطلاعات پایهٔ کارمند» برای درج در هر فرم. */
+function employeeBaseBlockHtml(info) {
+  if (!info || !info.employeeId) {
+    return '<div class="muted" style="font-size:.78rem">برای نمایش اطلاعات پایه، کارمند را انتخاب کنید.</div>';
+  }
+  const item = (label, value) => `<div><span class="muted">${esc(label)}:</span> <span class="ltr num">${esc(value || '—')}</span></div>`;
+  const education = info.hasEducation
+    ? [info.educationLevelFa, info.educationField].filter(Boolean).join(' — ')
+    : 'ثبت نشده';
+  return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:3px 14px;font-size:.8rem">
+      ${item('کد ملی', info.nationalId)}
+      ${item('شمارهٔ موبایل', info.mobile)}
+      ${item('شمارهٔ منزل', info.homePhone)}
+      ${item('کد پستی', info.postalCode)}
+      ${item('آخرین مدرک تحصیلی', education)}
+      ${item('مدرک ملاک حقوق', info.degreeBasis || '—')}
+    </div>
+    <div style="font-size:.8rem;margin-top:5px"><span class="muted">نشانی محل سکونت:</span> ${esc(info.address || '—')}</div>`;
+}
+
+/** قالب آمادهٔ بلوک پایه برای درج در فرم (کارت خاکستری با عنوان). */
+function liveEmployeeBasePanel(boxId) {
+  return `<div class="field full" style="grid-column:1/-1">
+    <label>اطلاعات پایهٔ کارمند (از پرونده خوانده می‌شود)</label>
+    <div id="${boxId}" style="border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:var(--surface-2,rgba(0,0,0,.02))"></div>
+  </div>`;
+}
+
+/** نشاندن بلوک پایه در یک فرم و تازه‌سازی آن با تغییر کارمند. */
+async function mountEmployeeBase(selectId, boxId) {
+  const sel = document.getElementById(selectId);
+  const box = document.getElementById(boxId);
+  if (!sel || !box) return;
+  const render = async () => {
+    box.innerHTML = '<div class="muted" style="font-size:.78rem">در حال خواندن پرونده...</div>';
+    box.innerHTML = employeeBaseBlockHtml(await employeeBaseInfo(sel.value));
+  };
+  sel.addEventListener('change', render);
+  await render();
+}
+
+/** پیش‌پرکردن فیلدهای «منبع‌دار» یک فرم رکورد از پروندهٔ کارمند.
+ *
+ * فیلدهایی که سرور برایشان source اعلام کرده (مثل employee.mobile) تغییرناپذیر
+ * می‌شوند تا اطلاعات پایه در هر فرم از یک جا بیاید؛ مقدار ذخیره‌شدهٔ رکورد (در
+ * حالت ویرایش) دست‌نخورده می‌ماند و فقط فیلد خالی پر می‌شود.
+ */
+async function rkFillEmployeeSources(kind, overwrite) {
+  const sourced = (kind.fields || []).filter(f => f.source);
+  if (!sourced.length) return;
+  const sel = document.getElementById('rkEmp');
+  // overwrite: در ثبت تازه مقدار پرونده می‌نشیند؛ در ویرایش مقدار ذخیره‌شدهٔ رکورد دست‌نخورده
+  // می‌ماند، مگر کاربر خودش کارمند را عوض کند.
+  const fill = async (force) => {
+    const info = await employeeBaseInfo(sel ? sel.value : '');
+    for (const f of sourced) {
+      const el = document.getElementById('rkF_' + f.key);
+      if (!el) continue;
+      const value = employeeSourceValue(info, f.source);
+      if (value && (force || !el.value)) el.value = value;
+      el.readOnly = true;
+      el.setAttribute('title', 'از پروندهٔ کارمند خوانده می‌شود و در این فرم قابل تغییر نیست.');
+      el.style.background = 'var(--surface-2, rgba(0,0,0,.03))';
+    }
+  };
+  if (sel) sel.addEventListener('change', () => fill(true));
+  await fill(!!overwrite);
+}
+
 async function liveContractForm() {
   const selectHtml = await liveEmployeeSelect('ctEmp', null);
   const regions = await liveClimateRegions();
@@ -327,6 +461,7 @@ async function liveContractForm() {
     title: 'انعقاد قرارداد کار (قانون کار)',
     body: `<div class="form-grid">
       <div class="field"><label>کارمند <span class="req">*</span></label>${selectHtml}</div>
+      ${liveEmployeeBasePanel('ctEmpBase')}
       <div class="field"><label>نوع قرارداد <span class="req">*</span></label>
         <select id="ctKind" onchange="liveContractKindToggle()">
           <option value="permanent">مدت دائم</option>
@@ -343,6 +478,7 @@ async function liveContractForm() {
     foot: `<button class="btn btn-primary" onclick="liveContractSave()">ثبت پیش‌نویس</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
   });
+  mountEmployeeBase('ctEmp', 'ctEmpBase');
 }
 function liveContractKindToggle() {
   const el = $('#ctEndField');
@@ -379,6 +515,7 @@ async function liveContractEdit(id) {
     title: 'ویرایش قرارداد ' + c.id,
     body: `<div class="form-grid">
       <div class="field"><label>کارمند <span class="req">*</span></label>${selectHtml}</div>
+      ${liveEmployeeBasePanel('ctEmpBase')}
       <div class="field"><label>نوع قرارداد <span class="req">*</span></label>
         <select id="ctKind" onchange="liveContractKindToggle()">
           <option value="permanent" ${c.kind === 'permanent' ? 'selected' : ''}>مدت دائم</option>
@@ -395,6 +532,7 @@ async function liveContractEdit(id) {
     foot: `<button class="btn btn-primary" onclick="liveContractUpdate('${esc(c.id)}')">ذخیره</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
   });
+  mountEmployeeBase('ctEmp', 'ctEmpBase');
 }
 async function liveContractUpdate(id) {
   const body = {
@@ -929,6 +1067,7 @@ async function liveDecreeForm() {
     title: 'صدور حکم حقوق',
     body: `<div class="form-grid">
       <div class="field"><label>کارمند <span class="req">*</span></label>${selectHtml}</div>
+      ${liveEmployeeBasePanel('decEmpBase')}
       <div class="field"><label>گروه شغلی <span class="req">*</span></label><input id="decGroup" placeholder="مثلاً: کارشناس ارشد"></div>
       <div class="field"><label>مبلغ پایهٔ ماهانه (ریال) <span class="req">*</span></label><input id="decSalary" type="number" min="1"></div>
       <div class="field"><label>تاریخ اجرا (شمسی) <span class="req">*</span></label><input id="decEffective" placeholder="1404/07/01"></div>
@@ -939,6 +1078,7 @@ async function liveDecreeForm() {
     foot: `<button class="btn btn-primary" onclick="liveDecreeSave()">ثبت پیش‌نویس</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
   });
+  mountEmployeeBase('decEmp', 'decEmpBase');
 }
 async function liveDecreeSave() {
   const body = {
@@ -2236,6 +2376,7 @@ const LIVE_PAGES = {
   salaryDecrees: pageSalaryDecreesLive,
   employmentCerts: pageEmploymentCertsLive,
   reportBuilder: pageReportBuilderLive,
+  formParams: pageFormParamsLive,
 };
 
 /* دکمه‌های افزودهٔ صفحه‌های رکوردی (پارامتر حقوق، قالب‌ها). */

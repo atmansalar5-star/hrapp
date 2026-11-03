@@ -1530,6 +1530,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             icon: "database",
             roles: &[RoleKey::Admin, RoleKey::HrManager],
         },
+        ScreenPolicy {
+            key: "formParams",
+            title_fa: "پنل پارامتریک فرم‌ها و گزارش‌ها",
+            component: "FormParamsScreen",
+            icon: "sliders",
+            roles: &[RoleKey::Admin, RoleKey::HrManager],
+        },
         ],
     },
     ModulePolicy {

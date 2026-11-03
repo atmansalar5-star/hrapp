@@ -27,6 +27,11 @@ func employeeFields() []contracts.ReportField {
 		{Key: "status", LabelFa: "وضعیت", Type: "text"},
 		{Key: "hireDate", LabelFa: "تاریخ استخدام", Type: "date"},
 		{Key: "baseSalary", LabelFa: "حقوق پایه", Type: "money"},
+		// اطلاعات پایهٔ پرونده: در گزارش‌های بیمه، مکاتبات و تماس با کارکنان لازم است.
+		{Key: "mobile", LabelFa: "شمارهٔ موبایل", Type: "text"},
+		{Key: "homePhone", LabelFa: "شمارهٔ منزل", Type: "text"},
+		{Key: "postalCode", LabelFa: "کد پستی", Type: "text"},
+		{Key: "address", LabelFa: "آدرس محل سکونت", Type: "text"},
 	}
 }
 
@@ -114,6 +119,10 @@ func (s employeeReportSource) Rows(ctx context.Context, req contracts.ReportRequ
 			"status":           e.Status,
 			"hireDate":         e.HireDate,
 			"baseSalary":       fmt.Sprintf("%d", e.BaseSalary),
+			"mobile":           e.Mobile,
+			"homePhone":        e.HomePhone,
+			"postalCode":       e.PostalCode,
+			"address":          e.Address,
 		}
 		// شرط‌های دلخواه کاربر روی هر قلم، پیش از افزودن سطر اعمال می‌شوند.
 		if !repfilter.Matches(values, req.Conditions) {

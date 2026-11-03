@@ -24,9 +24,16 @@ type Employee struct {
 	BaseSalary       int64  `json:"baseSalary"`
 	LeaveBalance     int    `json:"leaveBalance"`
 	Phone            string `json:"phone"`
-	Email            string `json:"email"`
-	ManagerName      string `json:"managerName"`
-	Version          int    `json:"version"`
+	// Mobile و HomePhone شمارهٔ همراه و تلفن منزل کارمند؛ از تلفن تماس (Phone) جدا
+	// هستند تا گزارش‌ها و فرم‌های قرارداد/حکم هر کدام را جداگانه نشان دهند.
+	Mobile    string `json:"mobile,omitempty"`
+	HomePhone string `json:"homePhone,omitempty"`
+	// PostalCode و Address اطلاعات نشانی کارمند برای فرم‌های قرارداد، حکم و مکاتبات.
+	PostalCode  string `json:"postalCode,omitempty"`
+	Address     string `json:"address,omitempty"`
+	Email       string `json:"email"`
+	ManagerName string `json:"managerName"`
+	Version     int    `json:"version"`
 	// PhotoURL نشانی سرو «عکس کارگزینی» این کارمند (امضاشده)؛ خالی یعنی عکس
 	// بارگذاری نشده است. عکس در پوشهٔ دادهٔ سرور نگه داشته می‌شود و این نشانی از
 	// خودِ همان فایل ساخته می‌شود، پس با بازآوری باینری از دست نمی‌رود.
@@ -66,7 +73,13 @@ type EmployeeInput struct {
 	Status         string `json:"status,omitempty"`
 	BaseSalary     int64  `json:"baseSalary,omitempty"`
 	Phone          string `json:"phone,omitempty"`
-	Email          string `json:"email,omitempty"`
+	// شمارهٔ همراه، تلفن منزل، کد پستی و نشانی — اطلاعات پایه‌ای که در فرم‌های
+	// قرارداد، حکم و سایر فرم‌های نیازمند اطلاعات پایه هم نمایش داده می‌شود.
+	Mobile     string `json:"mobile,omitempty"`
+	HomePhone  string `json:"homePhone,omitempty"`
+	PostalCode string `json:"postalCode,omitempty"`
+	Address    string `json:"address,omitempty"`
+	Email      string `json:"email,omitempty"`
 }
 
 // EmployeePage صفحهٔ کارکنان همراه با شمارش کل رکوردها.
