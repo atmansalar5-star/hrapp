@@ -32,4 +32,7 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	deps.Ports.SetWorkTime(workTimeProvider{svc: svc, deps: deps})
 	// ورود فایل دستگاه تردد، برنامهٔ نوبت و پوشش شیفت (زیرکارهای ۱.۲ و ۱.۳ فاز ۱).
 	registerDeviceEndpoints(mux, deps, svc)
+	// تقویم کارکرد: نمای ماهانه با وضعیت هر روز (تعطیل هفتگی/رسمی، مناسبت، مرخصی،
+	// مأموریت، اضافه‌کاری، کارکرد و روزهای کاری بدون کارکرد).
+	registerWorkCalendarEndpoint(mux, deps, svc)
 }
