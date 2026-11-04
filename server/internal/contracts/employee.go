@@ -23,7 +23,13 @@ type Employee struct {
 	HireDate         string `json:"hireDate"`
 	BaseSalary       int64  `json:"baseSalary"`
 	LeaveBalance     int    `json:"leaveBalance"`
-	Phone            string `json:"phone"`
+	// Gender جنسیت کارمند (کلید کاتالوگ GenderCatalog) و GenderFa عنوان فارسی آن.
+	// مبنای برش‌های آماری «جنسیت × واحد»، «جنسیت × نوع استخدام» و «جنسیت × تحصیلات».
+	Gender   string `json:"gender,omitempty"`
+	GenderFa string `json:"genderFa,omitempty"`
+	// BirthDate تاریخ تولد به قالب شمسی YYYY/MM/DD؛ مبنای محاسبهٔ سن و گروه سنی.
+	BirthDate string `json:"birthDate,omitempty"`
+	Phone     string `json:"phone"`
 	// Mobile و HomePhone شمارهٔ همراه و تلفن منزل کارمند؛ از تلفن تماس (Phone) جدا
 	// هستند تا گزارش‌ها و فرم‌های قرارداد/حکم هر کدام را جداگانه نشان دهند.
 	Mobile    string `json:"mobile,omitempty"`
@@ -73,6 +79,9 @@ type EmployeeInput struct {
 	Status         string `json:"status,omitempty"`
 	BaseSalary     int64  `json:"baseSalary,omitempty"`
 	Phone          string `json:"phone,omitempty"`
+	// Gender و BirthDate اطلاعات پرسنلی کارمند؛ برای آمار سن/جنسیت و فرم‌های پرونده.
+	Gender    string `json:"gender,omitempty"`
+	BirthDate string `json:"birthDate,omitempty"`
 	// شمارهٔ همراه، تلفن منزل، کد پستی و نشانی — اطلاعات پایه‌ای که در فرم‌های
 	// قرارداد، حکم و سایر فرم‌های نیازمند اطلاعات پایه هم نمایش داده می‌شود.
 	Mobile     string `json:"mobile,omitempty"`
@@ -144,6 +153,60 @@ func EmployeeStatusTitleFa(key string) string {
 }
 
 // EmployeeFilter فیلترهای فهرست کارکنان؛ Scope برای اعمال محدودهٔ دسترسی نقش استفاده می‌شود.
+// Gender جنسیت کارمند — کلید ماشین‌خوان با عنوان فارسی.
+//
+// چرا کاتالوگ مشترک: برش‌های آماری (جنسیت × واحد، جنسیت × نوع استخدام، جنسیت ×
+// تحصیلات)، اعتبارسنجی دامنه و گزینه‌های فرم همه از همین فهرست می‌خوانند تا کلید و
+// برچسب در چند جا تکرار نشود.
+type Gender struct {
+	Key     string `json:"key"`
+	TitleFa string `json:"titleFa"`
+}
+
+// genderCatalog جنسیت‌های مجاز سامانه.
+var genderCatalog = []Gender{
+	{Key: "male", TitleFa: "مرد"},
+	{Key: "female", TitleFa: "زن"},
+}
+
+// Genders فهرست جنسیت‌ها (کپی، تا مصرف‌کننده اصل را تغییر ندهد).
+func Genders() []Gender {
+	out := make([]Gender, len(genderCatalog))
+	copy(out, genderCatalog)
+	return out
+}
+
+// GenderKeys کلیدهای مجاز جنسیت.
+func GenderKeys() []string {
+	out := make([]string, 0, len(genderCatalog))
+	for _, g := range genderCatalog {
+		out = append(out, g.Key)
+	}
+	return out
+}
+
+// ValidGender آیا کلید جنسیت مجاز است.
+func ValidGender(key string) bool {
+	value := strings.TrimSpace(key)
+	for _, g := range genderCatalog {
+		if g.Key == value {
+			return true
+		}
+	}
+	return false
+}
+
+// GenderTitleFa عنوان فارسی جنسیت؛ کلید ناشناخته خودش برمی‌گردد تا پاسخ صادق بماند.
+func GenderTitleFa(key string) string {
+	value := strings.TrimSpace(key)
+	for _, g := range genderCatalog {
+		if g.Key == value {
+			return g.TitleFa
+		}
+	}
+	return value
+}
+
 type EmployeeFilter struct {
 	Query        string
 	DepartmentID string

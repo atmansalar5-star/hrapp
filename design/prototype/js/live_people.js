@@ -118,7 +118,7 @@ function pageEmployeesLive() {
 async function liveEmployeeForm(id) {
   const optRes = await apiFetch('/api/v1/employee/options');
   const options = (optRes.ok && optRes.data) || {};
-  let e = {id: '', fullName: '', nationalId: '', mobile: '', homePhone: '', phone: '', postalCode: '', address: '', email: '', departmentId: '', position: '', contractType: 'تمام‌وقت', employmentType: '', hireDate: '', baseSalary: 0, status: 'active'};
+  let e = {id: '', fullName: '', nationalId: '', gender: '', birthDate: '', mobile: '', homePhone: '', phone: '', postalCode: '', address: '', email: '', departmentId: '', position: '', contractType: 'تمام‌وقت', employmentType: '', hireDate: '', baseSalary: 0, status: 'active'};
   if (id) {
     const res = await apiFetch('/api/v1/employee/employees/' + encodeURIComponent(id));
     if (!res.ok) { toast(res.message, 'error'); return; }
@@ -128,6 +128,8 @@ async function liveEmployeeForm(id) {
     `<option value="${esc(d.id)}" ${d.id === e.departmentId ? 'selected' : ''}>${esc(d.name)}</option>`).join('');
   const typeOpts = ((options.employmentTypes) || []).map(t =>
     `<option value="${esc(t.key)}" ${t.key === e.employmentType ? 'selected' : ''}>${esc(t.titleFa)}</option>`).join('');
+  const genderOpts = [`<option value="">ثبت نشده</option>`].concat(((options.genderOptions) || []).map(g =>
+    `<option value="${esc(g.key)}" ${g.key === e.gender ? 'selected' : ''}>${esc(g.titleFa)}</option>`)).join('');
   const contractOpts = (['تمام‌وقت', 'پیمانکاری', 'پاره‌وقت']).map(t =>
     `<option ${t === e.contractType ? 'selected' : ''}>${t}</option>`).join('');
   const statusOpts = ((options.statusOptions) || []).map(s =>
@@ -143,6 +145,8 @@ async function liveEmployeeForm(id) {
         <div class="field"><label>کد پستی</label><input id="nePostal" class="ltr num" value="${esc(e.postalCode || '')}" placeholder="۱۰ رقم"></div>
         <div class="field"><label>تلفن تماس دیگر</label><input id="nePhone" class="ltr num" value="${esc(e.phone || '')}"></div>
         <div class="field full"><label>آدرس محل سکونت</label><input id="neAddress" value="${esc(e.address || '')}" placeholder="شهر، خیابان، پلاک"></div>
+        <div class="field"><label>جنسیت</label><select id="neGender">${genderOpts}</select></div>
+        <div class="field"><label>تاریخ تولد (شمسی)</label><input id="neBirth" class="num" value="${esc(e.birthDate || '')}" placeholder="1368/04/12"></div>
         <div class="field"><label>ایمیل</label><input id="neEmail" class="ltr" value="${esc(e.email || '')}"></div>
       </div></fieldset>
       <fieldset class="field-group"><legend>اطلاعات شغلی</legend>
@@ -165,6 +169,8 @@ async function liveEmployeeSave(id) {
   const body = {
     fullName: ($('#neName').value || '').trim(),
     nationalId: digitsOf($('#neNid').value),
+    gender: $('#neGender').value,
+    birthDate: digitsOf($('#neBirth').value),
     mobile: digitsOf($('#neMobile').value),
     homePhone: digitsOf($('#neHomePhone').value),
     postalCode: digitsOf($('#nePostal').value),
@@ -184,7 +190,7 @@ async function liveEmployeeSave(id) {
   if (!res.ok) {
     // پیام‌های اعتبارسنجی فیلدبه‌فیلد از سرور می‌آید (کلید = نام فیلد).
     const details = (res.data && res.data.details) || {};
-    const labels = {fullName: 'نام', nationalId: 'کد ملی', mobile: 'موبایل', homePhone: 'شمارهٔ منزل',
+    const labels = {fullName: 'نام', nationalId: 'کد ملی', gender: 'جنسیت', birthDate: 'تاریخ تولد', mobile: 'موبایل', homePhone: 'شمارهٔ منزل',
       postalCode: 'کد پستی', address: 'نشانی', email: 'ایمیل', departmentId: 'واحد', position: 'پست',
       hireDate: 'تاریخ استخدام', baseSalary: 'حقوق پایه', phone: 'تلفن'};
     const first = Object.keys(details)[0];
@@ -286,6 +292,8 @@ function pageProfileLive(id) {
       ['نام و نام خانوادگی', esc(e.fullName || '—')],
       ['کد پرسنلی', `<span class="ltr num">${esc(e.id)}</span>`],
       ['کد ملی', e.nationalId ? `<span class="ltr num">${esc(e.nationalId)}</span>` : '—'],
+      ['جنسیت', esc(e.genderFa || '—')],
+      ['تاریخ تولد', e.birthDate ? `<span class="num">${fa(e.birthDate)}</span>` : '—'],
       ['شمارهٔ موبایل', e.mobile ? `<span class="ltr num">${esc(e.mobile)}</span>` : '—'],
       ['شمارهٔ منزل', e.homePhone ? `<span class="ltr num">${esc(e.homePhone)}</span>` : '—'],
       ['تلفن تماس', e.phone ? `<span class="ltr num">${esc(e.phone)}</span>` : '—'],

@@ -57,7 +57,8 @@ const employeeColumns = `
 	e.position, e.contract_type, e.employment_type, e.status, e.hire_date,
 	e.base_salary, e.leave_balance, coalesce(e.phone, ''), coalesce(e.email, ''),
 	coalesce(e.manager_name, ''), coalesce(e.mobile, ''), coalesce(e.home_phone, ''),
-	coalesce(e.postal_code, ''), coalesce(e.address, ''), e.version`
+	coalesce(e.postal_code, ''), coalesce(e.address, ''), coalesce(e.gender, ''),
+	e.birth_date, e.version`
 
 const employeeFrom = `from hr_employee.employee e
 	left join hr_employee.department d on d.id = e.department_id`
@@ -69,15 +70,21 @@ type scanner interface{ Scan(dest ...any) error }
 func scanEmployee(row scanner) (domain.Employee, error) {
 	var e domain.Employee
 	var hireDate time.Time
+	// تاریخ تولد اختیاری است؛ رکوردهای قدیمی مقدار NULL دارند.
+	var birthDate sql.NullTime
 	if err := row.Scan(&e.ID, &e.FullName, &e.NationalID, &e.DepartmentID, &e.DepartmentName,
 		&e.Position, &e.ContractType, &e.EmploymentType, &e.Status, &hireDate,
 		&e.BaseSalary, &e.LeaveBalance, &e.Phone, &e.Email, &e.ManagerName,
-		&e.Mobile, &e.HomePhone, &e.PostalCode, &e.Address, &e.Version); err != nil {
+		&e.Mobile, &e.HomePhone, &e.PostalCode, &e.Address, &e.Gender,
+		&birthDate, &e.Version); err != nil {
 		return domain.Employee{}, err
 	}
 	// تاریخ استخدام در داده و API به قالب شمسی نگه داشته می‌شود و در جدول از نوع date
 	// است؛ تبدیل در همین لبه انجام می‌شود (قاعدهٔ پروژه: تبدیل تقویمی در لایهٔ کد).
 	e.HireDate = jalaliString(hireDate)
+	if birthDate.Valid {
+		e.BirthDate = jalaliString(birthDate.Time)
+	}
 	return e, nil
 }
 
@@ -100,6 +107,20 @@ func jalaliDate(value string) (time.Time, error) {
 		return time.Time{}, err
 	}
 	return calendar.ToGregorian(date.Year, date.Month, date.Day)
+}
+
+// birthDateValue تاریخ تولد شمسی را برای نوشتن در ستون date آماده می‌کند؛
+// رشتهٔ خالی یعنی «ثبت نشده» و NULL در جدول می‌نشیند.
+func birthDateValue(value string) any {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return nil
+	}
+	date, err := jalaliDate(value)
+	if err != nil {
+		return nil
+	}
+	return date
 }
 
 // Get خواندن یک کارمند حذف‌نشده با شناسه.
@@ -255,9 +276,10 @@ func (s *PgStore) Save(ctx context.Context, e domain.Employee) (domain.Employee,
 		insert into hr_employee.employee (
 			id, full_name, national_id, department_id, position, contract_type, employment_type,
 			status, hire_date, base_salary, leave_balance, phone, email, manager_name,
-			mobile, home_phone, postal_code, address, version, server_seq, deleted, created_at, updated_at
+			mobile, home_phone, postal_code, address, gender, birth_date,
+			version, server_seq, deleted, created_at, updated_at
 		) values (
-			$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,
+			$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
 			1, coalesce((select max(server_seq) from hr_employee.employee), 0) + 1, false, now(), now()
 		)
 		on conflict (id) do update set
@@ -277,6 +299,8 @@ func (s *PgStore) Save(ctx context.Context, e domain.Employee) (domain.Employee,
 			home_phone = excluded.home_phone,
 			postal_code = excluded.postal_code,
 			address = excluded.address,
+			gender = excluded.gender,
+			birth_date = excluded.birth_date,
 			version = hr_employee.employee.version + 1,
 			server_seq = coalesce((select max(server_seq) from hr_employee.employee), 0) + 1,
 			deleted = false,
@@ -284,7 +308,7 @@ func (s *PgStore) Save(ctx context.Context, e domain.Employee) (domain.Employee,
 		id, strings.TrimSpace(e.FullName), strings.TrimSpace(e.NationalID), e.DepartmentID,
 		strings.TrimSpace(e.Position), e.ContractType, e.EmploymentType, e.Status,
 		hireDate, e.BaseSalary, e.LeaveBalance, e.Phone, e.Email, e.ManagerName,
-		e.Mobile, e.HomePhone, e.PostalCode, e.Address)
+		e.Mobile, e.HomePhone, e.PostalCode, e.Address, e.Gender, birthDateValue(e.BirthDate))
 	if err != nil {
 		return domain.Employee{}, err
 	}

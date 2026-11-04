@@ -27,4 +27,7 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/statistics")
 	registerAnalyticsEndpoints(mux, deps)
 	registerTabEndpoints(mux, deps)
+	// سکشن آمار: جدول‌های توافقی (سن×سابقه، تحصیلات×واحد، جنسیت×نوع استخدام و...) و
+	// توزیع‌های تک‌بُعدی با شاخص‌های کلیدی.
+	registerCrosstabEndpoints(mux, deps)
 }

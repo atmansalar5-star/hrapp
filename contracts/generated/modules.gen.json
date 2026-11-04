@@ -4854,8 +4854,20 @@
           ]
         },
         {
-          "key": "statsAttendance",
+          "key": "statsSection",
           "order": 2,
+          "titleFa": "برش‌های آماری",
+          "component": "StatsSectionScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager"
+          ]
+        },
+        {
+          "key": "statsAttendance",
+          "order": 3,
           "titleFa": "حضور و غیاب و تردد",
           "component": "StatsAttendanceScreen",
           "roles": [
@@ -4867,7 +4879,7 @@
         },
         {
           "key": "statsLeave",
-          "order": 3,
+          "order": 4,
           "titleFa": "مرخصی‌ها",
           "component": "StatsLeaveScreen",
           "roles": [
@@ -4879,7 +4891,7 @@
         },
         {
           "key": "statsMission",
-          "order": 4,
+          "order": 5,
           "titleFa": "ماموریت‌ها",
           "component": "StatsMissionScreen",
           "roles": [
@@ -4891,7 +4903,7 @@
         },
         {
           "key": "statsBasePay",
-          "order": 5,
+          "order": 6,
           "titleFa": "اطلاعات پایه حقوق و مزایا",
           "component": "StatsBasePayScreen",
           "roles": [
@@ -4902,7 +4914,7 @@
         },
         {
           "key": "statsKarana",
-          "order": 6,
+          "order": 7,
           "titleFa": "کارانه",
           "component": "StatsKaranaScreen",
           "roles": [

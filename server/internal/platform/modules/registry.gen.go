@@ -538,11 +538,12 @@ var All = []Module{
 		Scopes:      map[string]string{"line_manager": "own_unit"},
 		Screens: []Screen{
 			{Key: "statsOverview", Order: 1, Icon: "bar-chart", TitleFa: "داشبورد آماری", Component: "StatsOverviewScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
-			{Key: "statsAttendance", Order: 2, Icon: "clock", TitleFa: "حضور و غیاب و تردد", Component: "StatsAttendanceScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
-			{Key: "statsLeave", Order: 3, Icon: "calendar-off", TitleFa: "مرخصی‌ها", Component: "StatsLeaveScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
-			{Key: "statsMission", Order: 4, Icon: "pin", TitleFa: "ماموریت‌ها", Component: "StatsMissionScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
-			{Key: "statsBasePay", Order: 5, Icon: "database", TitleFa: "اطلاعات پایه حقوق و مزایا", Component: "StatsBasePayScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
-			{Key: "statsKarana", Order: 6, Icon: "percent", TitleFa: "کارانه", Component: "StatsKaranaScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
+			{Key: "statsSection", Order: 2, Icon: "pie-chart", TitleFa: "برش‌های آماری", Component: "StatsSectionScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
+			{Key: "statsAttendance", Order: 3, Icon: "clock", TitleFa: "حضور و غیاب و تردد", Component: "StatsAttendanceScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
+			{Key: "statsLeave", Order: 4, Icon: "calendar-off", TitleFa: "مرخصی‌ها", Component: "StatsLeaveScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
+			{Key: "statsMission", Order: 5, Icon: "pin", TitleFa: "ماموریت‌ها", Component: "StatsMissionScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
+			{Key: "statsBasePay", Order: 6, Icon: "database", TitleFa: "اطلاعات پایه حقوق و مزایا", Component: "StatsBasePayScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "statsKarana", Order: 7, Icon: "percent", TitleFa: "کارانه", Component: "StatsKaranaScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
 		},
 	},
 	{

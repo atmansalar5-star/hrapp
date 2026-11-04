@@ -1196,6 +1196,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager],
         },
         ScreenPolicy {
+            key: "statsSection",
+            title_fa: "برش‌های آماری",
+            component: "StatsSectionScreen",
+            icon: "pie-chart",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager],
+        },
+        ScreenPolicy {
             key: "statsAttendance",
             title_fa: "حضور و غیاب و تردد",
             component: "StatsAttendanceScreen",

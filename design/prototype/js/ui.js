@@ -120,6 +120,8 @@ const ICONS = {
   bus:'🚌', ticket:'🎫', bed:'🛏️', layers:'🧱', hourglass:'⌛', database:'🗄️',
   percent:'٪', flag:'🏴', pin:'📍', comment:'💬', briefcase:'💼', lightbulb:'💡',
   store:'🏬', book:'📘', scale:'⚖️', search:'🔍', link:'🔗', calendarCheck:'🗓️',
+  // سکشن آمار: برش‌های توافقی و نمودار ترکیبی.
+  'pie-chart':'🥧',
 };
 const icon = name => ICONS[name] || '•';
 

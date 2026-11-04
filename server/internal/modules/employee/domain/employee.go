@@ -26,6 +26,8 @@ type Employee struct {
 	HireDate       string
 	BaseSalary     int64
 	LeaveBalance   float64
+	Gender         string
+	BirthDate      string
 	Phone          string
 	Mobile         string
 	HomePhone      string
@@ -52,6 +54,9 @@ func (e Employee) ToContract() contracts.Employee {
 		HireDate:         e.HireDate,
 		BaseSalary:       e.BaseSalary,
 		LeaveBalance:     int(e.LeaveBalance),
+		Gender:           e.Gender,
+		GenderFa:         contracts.GenderTitleFa(e.Gender),
+		BirthDate:        e.BirthDate,
 		Phone:            e.Phone,
 		Mobile:           e.Mobile,
 		HomePhone:        e.HomePhone,
@@ -82,6 +87,8 @@ func FromInput(id string, in contracts.EmployeeInput, departmentName string) Emp
 		HireDate:       in.HireDate,
 		BaseSalary:     in.BaseSalary,
 		Phone:          in.Phone,
+		Gender:         strings.TrimSpace(in.Gender),
+		BirthDate:      calendar.NormalizeDigits(strings.TrimSpace(in.BirthDate)),
 		Mobile:         strings.TrimSpace(in.Mobile),
 		HomePhone:      strings.TrimSpace(in.HomePhone),
 		PostalCode:     calendar.NormalizeDigits(strings.TrimSpace(in.PostalCode)),
@@ -115,6 +122,12 @@ func (e Employee) Apply(in contracts.EmployeeInput) Employee {
 	}
 	if in.HireDate != "" {
 		e.HireDate = in.HireDate
+	}
+	if in.Gender != "" {
+		e.Gender = strings.TrimSpace(in.Gender)
+	}
+	if in.BirthDate != "" {
+		e.BirthDate = calendar.NormalizeDigits(strings.TrimSpace(in.BirthDate))
 	}
 	if in.BaseSalary > 0 {
 		e.BaseSalary = in.BaseSalary
@@ -242,6 +255,19 @@ func Validate(in contracts.EmployeeInput) map[string]string {
 		}
 		if !ok {
 			errs["status"] = "وضعیت کارمند نامعتبر است."
+		}
+	}
+	// اطلاعات پرسنلی: جنسیت از کاتالوگ مشترک و تاریخ تولد شمسی با بازهٔ سنی معقول.
+	// گروه سنی در آمار روی همین تاریخ ساخته می‌شود، پس قالب درست آن مهم است.
+	if gender := strings.TrimSpace(in.Gender); gender != "" && !contracts.ValidGender(gender) {
+		errs["gender"] = "جنسیت باید یکی از گزینه‌های «مرد» یا «زن» باشد."
+	}
+	if birth := calendar.NormalizeDigits(strings.TrimSpace(in.BirthDate)); birth != "" {
+		date, err := calendar.Parse(birth)
+		if err != nil {
+			errs["birthDate"] = "تاریخ تولد باید به قالب شمسی YYYY/MM/DD باشد."
+		} else if date.Year < 1300 || date.Year > 1420 {
+			errs["birthDate"] = "سال تولد باید بین ۱۳۰۰ و ۱۴۲۰ باشد."
 		}
 	}
 	if in.Email != "" && !looksLikeEmail(in.Email) {

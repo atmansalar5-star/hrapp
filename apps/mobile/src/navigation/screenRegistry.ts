@@ -156,6 +156,7 @@ import VeteransAffairsScreen from '../features/grievances/VeteransAffairsScreen'
 
 // واحد آمار و گزارشات — آمار، پایش و تأیید اطلاعات پایه
 import StatsOverviewScreen from '../features/statistics/StatsOverviewScreen';
+import StatsSectionScreen from '../features/statistics/StatsSectionScreen';
 import StatsAttendanceScreen from '../features/statistics/StatsAttendanceScreen';
 import StatsLeaveScreen from '../features/statistics/StatsLeaveScreen';
 import StatsMissionScreen from '../features/statistics/StatsMissionScreen';
@@ -273,6 +274,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   ComplaintsScreen,
   VeteransAffairsScreen,
   StatsOverviewScreen,
+  StatsSectionScreen,
   StatsAttendanceScreen,
   StatsLeaveScreen,
   StatsMissionScreen,

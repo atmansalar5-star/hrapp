@@ -443,6 +443,7 @@ window.HRMS_MENU = [
         shared: false,
         screens: [
         { page: "statsOverview", label: "داشبورد آماری", icon: "bar-chart", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
+        { page: "statsSection", label: "برش‌های آماری", icon: "pie-chart", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
         { page: "statsAttendance", label: "حضور و غیاب و تردد", icon: "clock", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
         { page: "statsLeave", label: "مرخصی‌ها", icon: "calendar-off", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
         { page: "statsMission", label: "ماموریت‌ها", icon: "pin", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },

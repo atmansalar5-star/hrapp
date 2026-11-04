@@ -65,8 +65,29 @@
       ]
     },
     {
-      "key": "statsAttendance",
+      "key": "statsSection",
       "order": 2,
+      "icon": "pie-chart",
+      "titleFa": "برش‌های آماری",
+      "component": "StatsSectionScreen",
+      "purposeFa": "جدول‌های توافقی و نمودارهای جمعیت کارکنان به تفکیک سن، سابقه خدمت، تحصیلات، واحد سازمانی، نوع استخدام و جنسیت با امکان ساخت هر برش دلخواه و خروجی گرفتن.",
+      "actionsFa": [
+        "ساخت برش دو‌بُعدی دلخواه",
+        "مشاهدهٔ جدول توافقی و هیت‌مپ",
+        "نمودار میله‌ای و دایره‌ای",
+        "خروجی CSV برش",
+        "کنترل پروندهٔ ناقص"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec",
+        "line_manager"
+      ]
+    },
+    {
+      "key": "statsAttendance",
+      "order": 3,
       "icon": "clock",
       "titleFa": "حضور و غیاب و تردد",
       "component": "StatsAttendanceScreen",
@@ -87,7 +108,7 @@
     },
     {
       "key": "statsLeave",
-      "order": 3,
+      "order": 4,
       "icon": "calendar-off",
       "titleFa": "مرخصی‌ها",
       "component": "StatsLeaveScreen",
@@ -108,7 +129,7 @@
     },
     {
       "key": "statsMission",
-      "order": 4,
+      "order": 5,
       "icon": "pin",
       "titleFa": "ماموریت‌ها",
       "component": "StatsMissionScreen",
@@ -129,7 +150,7 @@
     },
     {
       "key": "statsBasePay",
-      "order": 5,
+      "order": 6,
       "icon": "database",
       "titleFa": "اطلاعات پایه حقوق و مزایا",
       "component": "StatsBasePayScreen",
@@ -149,7 +170,7 @@
     },
     {
       "key": "statsKarana",
-      "order": 6,
+      "order": 7,
       "icon": "percent",
       "titleFa": "کارانه",
       "component": "StatsKaranaScreen",

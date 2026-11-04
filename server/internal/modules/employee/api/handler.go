@@ -152,6 +152,7 @@ func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {
 		"statuses":         contracts.EmployeeStatusKeys(),
 		"statusOptions":    contracts.EmployeeStatuses(),
 		"contractTypes":    []string{"تمام‌وقت", "پیمانکاری", "پاره‌وقت"},
+		"genderOptions":    contracts.Genders(),
 		"employmentTypes":  contracts.EmploymentTypes(),
 		"employmentGroups": contracts.EmploymentGroups(),
 		"departments":      h.departmentList(r),
