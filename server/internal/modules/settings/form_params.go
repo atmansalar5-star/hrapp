@@ -88,7 +88,7 @@ func registerFormParamEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *re
 	// عنوانی. کاتالوگ از خود موتور اسناد می‌آید و پارامتر (scope=document) در همین ماژول
 	// ذخیره می‌شود؛ موتور اسناد آن را در زمان چاپ می‌خواند.
 	mux.HandleFunc("GET /api/v1/settings/documents", read(func(w http.ResponseWriter, r *http.Request) {
-		documents := buildDocumentCatalog(r, svc)
+		documents := buildDocumentCatalog(r, deps, svc)
 		httpx.WriteJSON(w, http.StatusOK, map[string]any{"documents": documents, "total": len(documents)})
 	}))
 }
@@ -301,11 +301,25 @@ type documentBlockView struct {
 	TitleFaOverridden string `json:"customTitle,omitempty"`
 }
 
+// documentTextView یک جای متن قابل ویرایش در سند چاپی (پاراگراف متن، یادداشت پای سند).
+type documentTextView struct {
+	Key     string `json:"key"`
+	TitleFa string `json:"titleFa"`
+	HintFa  string `json:"hintFa"`
+	// Text همان چیزی است که در کادر ویرایش می‌آید: متن ذخیره‌شده، وگرنه پیش‌فرض مؤثر.
+	Text string `json:"text"`
+	// Default متن پیش‌فرض مؤثر (قالب متن فعال اگر باشد، وگرنه پیش‌فرض موتور اسناد).
+	Default string `json:"default"`
+	// Custom یعنی برای این جای متن پارامتری ذخیره شده است.
+	Custom bool `json:"custom"`
+}
+
 // documentView یک نوع سند چاپی با بلوک‌هایش.
 type documentView struct {
 	Kind      string              `json:"kind"`
 	TitleFa   string              `json:"titleFa"`
 	Blocks    []documentBlockView `json:"blocks"`
+	Texts     []documentTextView  `json:"texts"`
 	ParamsID  string              `json:"paramsId,omitempty"`
 	Status    string              `json:"status,omitempty"`
 	StatusFa  string              `json:"statusFa,omitempty"`
@@ -313,7 +327,12 @@ type documentView struct {
 }
 
 // buildDocumentCatalog کاتالوگ اسناد چاپی به‌همراه پارامتر ذخیره‌شدهٔ هر سند.
-func buildDocumentCatalog(r *http.Request, svc *recordkit.Service) []documentView {
+//
+// چرا متن‌ها هم اینجا می‌آیند: پنل پارامتریک باید علاوه بر تیک بلوک‌ها، خودِ متن
+// پاراگراف (مثلاً متن گواهی اشتغال) را در کادری نشان بدهد که همان متن مؤثر سند است —
+// نه یک متن نمونهٔ جدا. اگر قالب متن فعالی برای سند ساخته شده باشد، همان قالب پیش‌فرض
+// کادر است تا کاربر همان چیزی را ببیند که روی کاغذ می‌رود.
+func buildDocumentCatalog(r *http.Request, deps modulekit.Deps, svc *recordkit.Service) []documentView {
 	params := savedParams(r, svc, "document")
 	out := []documentView{}
 	for _, doc := range documents.Catalog() {
@@ -339,8 +358,10 @@ func buildDocumentCatalog(r *http.Request, svc *recordkit.Service) []documentVie
 				TitleFaOverridden: custom[block.Key],
 			})
 		}
+		texts := buildDocumentTexts(r, deps, doc, record, hasParams)
 		view := documentView{
-			Kind: string(doc.Kind), TitleFa: doc.TitleFa, Blocks: blocks, VisibleNo: visibleCount,
+			Kind: string(doc.Kind), TitleFa: doc.TitleFa, Blocks: blocks,
+			Texts: texts, VisibleNo: visibleCount,
 		}
 		if hasParams {
 			view.ParamsID = record.ID
@@ -348,6 +369,38 @@ func buildDocumentCatalog(r *http.Request, svc *recordkit.Service) []documentVie
 			view.StatusFa = record.StatusFa
 		}
 		out = append(out, view)
+	}
+	return out
+}
+
+// buildDocumentTexts جای‌های متنی یک سند را با متن مؤثرشان برمی‌گرداند.
+func buildDocumentTexts(r *http.Request, deps modulekit.Deps, doc documents.DocCatalog, record paramRecord, hasParams bool) []documentTextView {
+	defaults := documents.DefaultText(doc.Kind)
+	if provider, ok := deps.Ports.DocumentTemplates(); ok {
+		if tpl, found, err := provider.ActiveTemplate(r.Context(), string(doc.Kind)); err == nil && found {
+			if body := strings.TrimSpace(tpl.Body); body != "" {
+				defaults["body"] = body
+			}
+			if footer := strings.TrimSpace(tpl.Footer); footer != "" {
+				defaults["note"] = footer
+			}
+		}
+	}
+	out := make([]documentTextView, 0, len(doc.Texts))
+	for _, slot := range doc.Texts {
+		fallback := defaults[slot.Key]
+		stored := ""
+		if hasParams {
+			stored = strings.TrimSpace(record.Fields[slot.Key+"Text"])
+		}
+		text := stored
+		if text == "" {
+			text = fallback
+		}
+		out = append(out, documentTextView{
+			Key: slot.Key, TitleFa: slot.TitleFa, HintFa: slot.HintFa,
+			Text: text, Default: fallback, Custom: stored != "",
+		})
 	}
 	return out
 }

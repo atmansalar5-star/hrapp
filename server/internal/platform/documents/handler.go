@@ -256,6 +256,8 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 			Email:      employee.Email,
 		},
 		Contract: contractRef,
+		// پارامترهای سازمانی برای جای‌نگهدارهای متن (بندهای قرارداد).
+		OrgParams: allParams(deps),
 		// چیدمان پیش‌فرض همین سند؛ سپس سفارشی‌سازی پنل تنظیمات روی آن می‌نشیند.
 		Layout: DefaultLayout(kind),
 	}
@@ -268,44 +270,24 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 	case KindContract:
 		data.Params = payrollParams(deps)
 		data.Structure = wageStructure(ctx, deps, employee)
-		data.BodyFa = contractClauses(deps, employee, contractRef)
-		data.NoteFa = "این قرارداد در دو نسخه تنظیم و پس از امضای طرفین، هر نسخه حکم واحد خود را دارد."
 		addBaseInfoForm(&data)
 	case KindSalaryDecree:
 		data.Params = payrollParams(deps)
 		data.Structure = wageStructure(ctx, deps, employee)
-		data.BodyFa = []string{
-			"مبلغ پایهٔ ماهانهٔ نامبرده بر پایهٔ آخرین حکم و مصوبات شرکت تعیین شده است.",
-			"مبانی محاسبهٔ سامانه (ساعت کار موظفی، ضریب اضافه‌کاری و روز پرداخت) در جدول بالا آمده و مبنای اجرای دوره‌های حقوق بعدی است.",
-			"هر تغییر در مصوبات، حکم جدید با تاریخ اجرای مشخص تولید می‌کند؛ احکام گذشته بازنویسی نمی‌شوند.",
-		}
-		data.NoteFa = "پرداخت‌های متغیر مانند کارانه و اضافه‌کاری در دورهٔ حقوق همان ماه محاسبه و پرداخت می‌شود."
 		addBaseInfoForm(&data)
 	case KindPayslip:
 		data.Params = payrollParams(deps)
 		info := computePayslip(ctx, deps, employee, today)
 		data.Payslip = &info
-		data.BodyFa = []string{
-			fmt.Sprintf("فیش حقوقی دورهٔ %s برای %s در واحد %s صادر شده است.", info.Period, employee.FullName, employee.DepartmentName),
-			fmt.Sprintf("جمع ناخالص %s، بیمهٔ سهم کارمند %s و مالیات %s است.", money(info.Gross), money(info.InsuranceEmployee), money(info.Tax)),
-			"مبالغ بر پایهٔ پارامترهای حقوق و اقلام تعریف‌شدهٔ سامانه محاسبه شده و در سرور مرجع است.",
-		}
-		data.NoteFa = "این فیش از سامانهٔ جامع منابع انسانی صادر شده و در صورت مغایرت، پرداخت سامانه مرجع است."
 	case KindEmploymentCertificate:
-		body := fmt.Sprintf("گواهی می‌شود %s با کد پرسنلی %s از تاریخ %s در شرکت %s در واحد %s به عنوان %s اشتغال دارد.",
-			employee.FullName, employee.ID, employee.HireDate, deps.Org.TitleFa, employee.DepartmentName, employee.Position)
-		if contractRef != nil && contractRef.KindFa != "" {
-			body += fmt.Sprintf(" نوع همکاری ایشان «%s» است.", contractRef.KindFa)
-		}
-		data.BodyFa = []string{
-			body,
-			"این گواهی بنا به درخواست نامبرده و برای ارائه به مراجع ذی‌ربط صادر شده است.",
-			"اعتبار این سند با کد رهگیری درج‌شده در پایین صفحه در سامانه قابل بررسی است.",
-		}
 		addBaseInfoForm(&data)
 	case KindDegreeBasis:
 		buildDegreeBasisForm(ctx, deps, &data, basisRec)
 	}
+
+	// متن پیش‌فرض قالب‌محور سند (پاراگراف متن و یادداشت پای سند) با دادهٔ واقعی پر
+	// می‌شود؛ سپس قالب متن فعال و در پایان متن پنل پارامتریک رویش می‌نشیند.
+	applyDefaultText(&data)
 
 	// اگر برای این نوع سند، قالب طراحى‌شدهٔ فعال وجود داشته باشد، متن آن با دادهٔ واقعی
 	// جایگزین می‌شود؛ در غیر این صورت متن پیش‌فرض سامانه چاپ می‌شود.
@@ -321,7 +303,55 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 		}
 	}
 
+	// آخرین حرف را مدیر سامانه می‌زند: متن پاراگراف/یادداشتی که در پنل پارامتریک
+	// برای همین سند نوشته شده است، بر قالب پیش‌فرض و قالب متن ساخته‌شده مقدم است.
+	applyPanelTexts(&data)
+
 	return data, nil
+}
+
+// applyDefaultText متن پیش‌فرض قالب‌محور سند را با دادهٔ واقعی روی برگه می‌نشاند.
+//
+// قاعده: اگر متن سند از قبل تعیین شده باشد (بندهای محاسبه‌شدهٔ قرارداد) دست نمی‌زنیم؛
+// وگرنه پاراگراف متن و یادداشت پای سند از قالب پیش‌فرض سامانه ساخته می‌شوند. همین
+// قالب در پنل پارامتریک هم نشان داده می‌شود، پس متن پنل و متن چاپی هم‌خوان می‌مانند.
+func applyDefaultText(data *Data) {
+	texts := DefaultText(data.Kind)
+	if len(texts) == 0 {
+		return
+	}
+	vars := PlaceholderVars(*data)
+	if len(data.BodyFa) == 0 {
+		if lines := ApplyTemplate(texts["body"], vars); len(lines) > 0 {
+			data.BodyFa = lines
+		}
+	}
+	if strings.TrimSpace(data.NoteFa) == "" {
+		if lines := ApplyTemplate(texts["note"], vars); len(lines) > 0 {
+			data.NoteFa = strings.Join(lines, " ")
+		}
+	}
+}
+
+// applyPanelTexts متن پاراگراف/یادداشت نوشته‌شده در پنل پارامتریک را جای متن سند
+// می‌گذارد.
+//
+// چرا بالاترین اولویت: این متن آخرین تصمیم صریح مدیر سامانه برای همین سند است
+// (مثلاً ویرایش متن گواهی اشتغال)، پس بر قالب متن ساخته‌شده هم مقدم است. جای‌نگهدارها
+// با همان دادهٔ واقعی پر می‌شوند تا متن پنل هم مثل قالب متن کار کند.
+func applyPanelTexts(data *Data) {
+	vars := PlaceholderVars(*data)
+	if custom := data.Layout.Text("body"); custom != "" {
+		if lines := ApplyTemplate(custom, vars); len(lines) > 0 {
+			data.BodyFa = lines
+			data.CustomBody = true
+		}
+	}
+	if custom := data.Layout.Text("note"); custom != "" {
+		if lines := ApplyTemplate(custom, vars); len(lines) > 0 {
+			data.NoteFa = strings.Join(lines, " ")
+		}
+	}
 }
 
 // applyLayout سفارشی‌سازی «بلوک‌های سند چاپی» را از پنل پارامتریک (تنظیمات) می‌خواند.
@@ -383,6 +413,17 @@ func applyLayout(ctx context.Context, deps modulekit.Deps, kind Kind, data *Data
 			if len(overrides) > 0 {
 				data.Layout.Titles = overrides
 			}
+		}
+		// متن‌های نوشتنی سند: پاراگراف متن و یادداشت پای برگه. کلید فیلد پارامتر
+		// «<کلید جای متن>+Text» است (bodyText، noteText).
+		texts := map[string]string{}
+		for _, slot := range KindTextSlots(kind) {
+			if value := strings.TrimSpace(rec.Fields[slot.Key+"Text"]); value != "" {
+				texts[slot.Key] = value
+			}
+		}
+		if len(texts) > 0 {
+			data.Layout.Texts = texts
 		}
 		return
 	}
@@ -728,19 +769,17 @@ func payrollParams(deps modulekit.Deps) []Param {
 	return out
 }
 
-func contractClauses(deps modulekit.Deps, e contracts.Employee, c *ContractInfo) []string {
-	hours, _ := deps.Org.Param("payroll.monthlyHours")
-	leave, _ := deps.Org.Param("leave.annualDays")
-	work := deps.Org.WorkWeekFa
-	clauses := []string{
-		fmt.Sprintf("طرف دوم از تاریخ شروع در واحد %s به عنوان %s انجام وظیفه می‌کند.", e.DepartmentName, e.Position),
-		fmt.Sprintf("هفتهٔ کاری شرکت: %s و ساعت کار موظفی ماهانه %s ساعت است.", work, hours),
-		fmt.Sprintf("مرخصی استحقاقی سالانه %s روز و مرخصی استعلاجی طبق قانون کار و ضوابط شرکت است.", leave),
-		"مبلغ پایهٔ ماهانه و سایر مزایا مطابق حکم حقوق صادرشده از واحد جبران خدمات پرداخت می‌شود.",
-		"رعایت آیین‌نامه‌های داخلی، مقررات حفاظت فنی و محرمانگی اطلاعات شرکت الزامی است.",
-		"این قرارداد تابع قانون کار و مقررات تأمین اجتماعی است و اختلاف‌ها از راه مراجع قانونی پیگیری می‌شود.",
+// allParams همهٔ پارامترهای استقرار شرکت فعال (هر گروه) برای جای‌نگهدارهای متن.
+//
+// چرا جدا از payrollParams: جدول «مبنای محاسبهٔ سامانه» فقط پارامترهای حقوق و دستمزد را
+// نشان می‌دهد، ولی متن قرارداد به مرخصی سالانه هم نیاز دارد و نباید با اضافه‌شدن یک
+// ردیف، جدول سند شلوغ شود.
+func allParams(deps modulekit.Deps) []Param {
+	out := make([]Param, 0, len(deps.Org.Params))
+	for _, p := range deps.Org.Params {
+		out = append(out, Param{Key: p.Key, TitleFa: p.TitleFa, Value: p.Value, UnitFa: p.UnitFa, GroupFa: p.GroupFa})
 	}
-	return clauses
+	return out
 }
 
 func nowOf(deps modulekit.Deps) time.Time {

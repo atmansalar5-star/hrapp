@@ -241,6 +241,10 @@ func formParamsKind() recordkit.Kind {
 			"labels|برچسب فارسی سفارشی (کلید=برچسب، با کاما)|text|0",
 			"columns|ستون‌های گزارش (با کاما)|text|0",
 			"note|یادداشت|text|0",
+			// متن‌های نوشتنی سند چاپی (scope=document): پاراگراف متن و یادداشت پای برگه.
+			// خالی‌بودن یعنی متن پیش‌فرض سامانه چاپ شود.
+			"bodyText|پاراگراف متن سند (خالی = پیش‌فرض سامانه)|text|0",
+			"noteText|یادداشت پای سند (خالی = پیش‌فرض سامانه)|text|0",
 		),
 		Statuses:    recordkit.Statuses("draft|پیش‌نویس", "active|جاری", "inactive|غیرفعال"),
 		Initial:     "draft",

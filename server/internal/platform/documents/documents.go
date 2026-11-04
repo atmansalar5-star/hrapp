@@ -259,9 +259,56 @@ func BlockKeys() []string {
 
 // DocCatalog یک نوع سند چاپی به‌همراه بلوک‌های پشتیبانی‌شده‌اش (برای پنل تنظیمات).
 type DocCatalog struct {
-	Kind    Kind    `json:"kind"`
-	TitleFa string  `json:"titleFa"`
-	Blocks  []Block `json:"blocks"`
+	Kind    Kind       `json:"kind"`
+	TitleFa string     `json:"titleFa"`
+	Blocks  []Block    `json:"blocks"`
+	Texts   []TextSlot `json:"texts"`
+}
+
+// TextSlot یک «متن آزاد» سند چاپی (پاراگراف متن، یادداشت پای سند).
+//
+// چرا جدا از بلوک: بلوک یعنی «این جدول/بخش روی کاغذ بیاید یا نه»، ولی پاراگراف متن
+// نوشتنی است؛ متن گواهی اشتغال یا بند پایانی حکم در هر سازمانی متفاوت است و باید
+// همانجا در پنل پارامتریک ویرایش شود. کلید هر جای متن همان کلید بلوکش است تا
+// خاموش‌کردن بلوک، متنش را هم از سند بردارد.
+type TextSlot struct {
+	Key     string `json:"key"`
+	TitleFa string `json:"titleFa"`
+	HintFa  string `json:"hintFa"`
+}
+
+// textSlots جای‌های متن قابل ویرایش در اسناد چاپی.
+var textSlots = []TextSlot{
+	{
+		Key: "body", TitleFa: "پاراگراف متن سند",
+		HintFa: "هر خط یک پاراگراف چاپ می‌شود و جای‌نگهدارها (مثل {{employee.fullName}}) با دادهٔ واقعی پر می‌شوند؛ خالی یعنی متن پیش‌فرض سامانه.",
+	},
+	{
+		Key: "note", TitleFa: "یادداشت پای سند",
+		HintFa: "یک بند کوتاه در پای برگه؛ خالی یعنی یادداشت پیش‌فرض سامانه.",
+	},
+}
+
+// TextSlots همهٔ جای‌های متن قابل ویرایش (کپی، تا مصرف‌کننده اصل را تغییر ندهد).
+func TextSlots() []TextSlot {
+	out := make([]TextSlot, len(textSlots))
+	copy(out, textSlots)
+	return out
+}
+
+// KindTextSlots جای‌های متنی که یک نوع سند پشتیبانی می‌کند.
+func KindTextSlots(kind Kind) []TextSlot {
+	supported := map[string]bool{}
+	for _, key := range KindBlocks(kind) {
+		supported[key] = true
+	}
+	out := []TextSlot{}
+	for _, slot := range textSlots {
+		if supported[slot.Key] {
+			out = append(out, slot)
+		}
+	}
+	return out
 }
 
 // docKindOrder ترتیب نمایش اسناد در پنل تنظیمات.
@@ -281,7 +328,7 @@ func Catalog() []DocCatalog {
 				blocks = append(blocks, block)
 			}
 		}
-		out = append(out, DocCatalog{Kind: kind, TitleFa: TitleFa(kind), Blocks: blocks})
+		out = append(out, DocCatalog{Kind: kind, TitleFa: TitleFa(kind), Blocks: blocks, Texts: KindTextSlots(kind)})
 	}
 	return out
 }
@@ -319,10 +366,20 @@ type Layout struct {
 	Visible map[string]bool
 	// Titles عنوان سفارشی بلوک‌ها (کلید → عنوان).
 	Titles map[string]string
+	// Texts متن سفارشی جای‌های متنی سند (کلید → متن). خالی یعنی پیش‌فرض سامانه.
+	Texts map[string]string
 }
 
 // Shows آیا بلوک در این سند نمایش داده شود.
 func (l Layout) Shows(key string) bool { return l.Visible[key] }
+
+// Text متن سفارشی یک جای سند (پاراگراف متن، یادداشت)؛ رشتهٔ خالی یعنی پیش‌فرض.
+func (l Layout) Text(key string) string {
+	if l.Texts == nil {
+		return ""
+	}
+	return strings.TrimSpace(l.Texts[key])
+}
 
 // Title عنوان بلوک: اگر پنل تنظیمات عنوان سفارشی گذاشته باشد همان، وگرنه پیش‌فرض.
 func (l Layout) Title(key, fallback string) string {
@@ -343,6 +400,59 @@ func DefaultLayout(kind Kind) Layout {
 	return Layout{Visible: visible}
 }
 
+// defaultBodies متن پیش‌فرض پاراگراف هر سند، به شکل «قالب با جای‌نگهدار».
+//
+// چرا قالب و نه متن آماده: همین رشتهٔ قالب هم روی برگه چاپ می‌شود و هم در پنل
+// پارامتریک به کاربر نشان داده می‌شود تا ویرایشش کند؛ پس یک منبع حقیقت است و متن
+// پنل با متن چاپ‌شده نمی‌تواند ناهمخوان شود.
+var defaultBodies = map[Kind][]string{
+	KindContract: {
+		"طرف دوم از تاریخ شروع در واحد {{employee.department}} به عنوان {{employee.position}} انجام وظیفه می‌کند.",
+		"هفتهٔ کاری شرکت: {{company.workWeek}} و ساعت کار موظفی ماهانه {{params.payroll.monthlyHours}} ساعت است.",
+		"مرخصی استحقاقی سالانه {{params.leave.annualDays}} روز و مرخصی استعلاجی طبق قانون کار و ضوابط شرکت است.",
+		"مبلغ پایهٔ ماهانه و سایر مزایا مطابق حکم حقوق صادرشده از واحد جبران خدمات پرداخت می‌شود.",
+		"رعایت آیین‌نامه‌های داخلی، مقررات حفاظت فنی و محرمانگی اطلاعات شرکت الزامی است.",
+		"این قرارداد تابع قانون کار و مقررات تأمین اجتماعی است و اختلاف‌ها از راه مراجع قانونی پیگیری می‌شود.",
+	},
+	KindSalaryDecree: {
+		"مبلغ پایهٔ ماهانهٔ نامبرده بر پایهٔ آخرین حکم و مصوبات شرکت تعیین شده است.",
+		"مبانی محاسبهٔ سامانه (ساعت کار موظفی، ضریب اضافه‌کاری و روز پرداخت) در جدول بالا آمده و مبنای اجرای دوره‌های حقوق بعدی است.",
+		"هر تغییر در مصوبات، حکم جدید با تاریخ اجرای مشخص تولید می‌کند؛ احکام گذشته بازنویسی نمی‌شوند.",
+	},
+	KindPayslip: {
+		"فیش حقوقی دورهٔ {{payslip.period}} برای {{employee.fullName}} در واحد {{employee.department}} صادر شده است.",
+		"جمع ناخالص {{payslip.grossFa}}، بیمهٔ سهم کارمند {{payslip.insuranceEmployeeFa}} و مالیات {{payslip.taxFa}} است.",
+		"مبالغ بر پایهٔ پارامترهای حقوق و اقلام تعریف‌شدهٔ سامانه محاسبه شده و در سرور مرجع است.",
+	},
+	KindEmploymentCertificate: {
+		"گواهی می‌شود {{employee.fullName}} با کد پرسنلی {{employee.id}} از تاریخ {{employee.hireDate}} در شرکت {{company.title}} در واحد {{employee.department}} به عنوان {{employee.position}} اشتغال دارد.{{contract.kindClause}}",
+		"این گواهی بنا به درخواست نامبرده و برای ارائه به مراجع ذی‌ربط صادر شده است.",
+		"اعتبار این سند با کد رهگیری درج‌شده در پایین صفحه در سامانه قابل بررسی است.",
+	},
+}
+
+// defaultNotes یادداشت پیش‌فرض پای هر سند.
+var defaultNotes = map[Kind]string{
+	KindContract:     "این قرارداد در دو نسخه تنظیم و پس از امضای طرفین، هر نسخه حکم واحد خود را دارد.",
+	KindSalaryDecree: "پرداخت‌های متغیر مانند کارانه و اضافه‌کاری در دورهٔ حقوق همان ماه محاسبه و پرداخت می‌شود.",
+	KindPayslip:      "این فیش از سامانهٔ جامع منابع انسانی صادر شده و در صورت مغایرت، پرداخت سامانه مرجع است.",
+}
+
+// DefaultText متن پیش‌فرض جای‌های متنی یک سند (کلید → قالب با جای‌نگهدار).
+//
+// خروجی خالی برای یک سند یعنی آن سند متن پیش‌فرض قالب‌محور ندارد (مثل قرارداد که
+// بندهایش محاسبه‌شده است، یا فرم «مدرک ملاک حقوق» که فقط جدول دارد).
+func DefaultText(kind Kind) map[string]string {
+	out := map[string]string{}
+	if lines := defaultBodies[kind]; len(lines) > 0 {
+		out["body"] = strings.Join(lines, "\n")
+	}
+	if note := strings.TrimSpace(defaultNotes[kind]); note != "" {
+		out["note"] = note
+	}
+	return out
+}
+
 // Data همهٔ دادهٔ لازم برای ساخت یک سند چاپی.
 type Data struct {
 	Kind     Kind
@@ -356,6 +466,9 @@ type Data struct {
 	// اقلام پارامتریک و همان موتور محاسبهٔ شبیه‌ساز ساخته می‌شود.
 	Structure []StructureRow
 	Params    []Param
+	// OrgParams همهٔ پارامترهای استقرار فعال (هر گروه) برای پرکردن جای‌نگهدارهای
+	// متن؛ در جدول «مبنای محاسبهٔ سامانه» چاپ نمی‌شود — آن جدول همان Params است.
+	OrgParams []Param
 	BodyFa    []string
 	NoteFa    string
 	// FormTitleFa/FormFields/FormTables فرم اداری سند (مثل «تعیین مدرک ملاک حقوق»).
@@ -429,8 +542,20 @@ func PlaceholderVars(d Data) map[string]string {
 		"employee.educationDate":   d.Employee.EducationDate,
 		"employee.degreeBasis":     d.Employee.DegreeBasisFa,
 	}
+	// جای‌نگهدارهای شرطی همیشه تعریف می‌شوند؛ وگرنه قالبی که به بخشی اشاره می‌کند که
+	// در این سند نیست (مثل قرارداد فعالِ نداشته) جای‌نگهدار خام روی برگه چاپ می‌کند.
+	vars["contract.kindClause"] = ""
+	vars["payslip.grossFa"] = ""
+	vars["payslip.insuranceEmployeeFa"] = ""
+	vars["payslip.insuranceEmployerFa"] = ""
+	vars["payslip.taxFa"] = ""
+	vars["payslip.netFa"] = ""
 	if d.Contract != nil {
 		vars["contract.id"] = d.Contract.ID
+		if strings.TrimSpace(d.Contract.KindFa) != "" {
+			// جملهٔ «نوع همکاری» فقط وقتی معنا دارد که قرارداد فعالی وجود داشته باشد.
+			vars["contract.kindClause"] = " نوع همکاری ایشان «" + d.Contract.KindFa + "» است."
+		}
 		vars["contract.kind"] = d.Contract.KindFa
 		vars["contract.status"] = d.Contract.StatusFa
 		vars["contract.startDate"] = d.Contract.StartDate
@@ -441,6 +566,13 @@ func PlaceholderVars(d Data) map[string]string {
 	if d.Payslip != nil {
 		vars["payslip.period"] = d.Payslip.Period
 		vars["payslip.gross"] = fmt.Sprintf("%d", d.Payslip.Gross)
+		// نسخهٔ خوانا (با جداکنندهٔ هزارگان) برای متن پاراگراف؛ رقم فارسی را خود
+		// موتور چاپ می‌گذارد.
+		vars["payslip.grossFa"] = money(d.Payslip.Gross)
+		vars["payslip.insuranceEmployeeFa"] = money(d.Payslip.InsuranceEmployee)
+		vars["payslip.insuranceEmployerFa"] = money(d.Payslip.InsuranceEmployer)
+		vars["payslip.taxFa"] = money(d.Payslip.Tax)
+		vars["payslip.netFa"] = money(d.Payslip.Net)
 		vars["payslip.insuranceEmployee"] = fmt.Sprintf("%d", d.Payslip.InsuranceEmployee)
 		vars["payslip.insuranceEmployer"] = fmt.Sprintf("%d", d.Payslip.InsuranceEmployer)
 		vars["payslip.tax"] = fmt.Sprintf("%d", d.Payslip.Tax)
@@ -460,6 +592,16 @@ func PlaceholderVars(d Data) map[string]string {
 	}
 	for _, p := range d.Params {
 		if p.Key != "" {
+			vars["params."+p.Key] = p.Value
+		}
+	}
+	// پارامترهای سازمانی خارج از جدول سند (مثل مرخصی سالانه) هم در دسترس متن هستند؛
+	// اگر کلیدی همین‌جا تعریف شده باشد، همان مقدار جدول مقدم است.
+	for _, p := range d.OrgParams {
+		if p.Key == "" {
+			continue
+		}
+		if _, exists := vars["params."+p.Key]; !exists {
 			vars["params."+p.Key] = p.Value
 		}
 	}

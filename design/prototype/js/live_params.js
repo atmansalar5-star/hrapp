@@ -37,7 +37,7 @@ function pageFormParamsLive() {
     const tabBar = `<div class="tabs">
       <button class="tab ${PARAM_TAB === 'forms' ? 'active' : ''}" onclick="PARAM_TAB='forms';liveReload()">🧾 فیلدهای فرم‌ها (${fa(PARAM_FORMS.length)})</button>
       <button class="tab ${PARAM_TAB === 'reports' ? 'active' : ''}" onclick="PARAM_TAB='reports';liveReload()">📊 ستون‌های گزارش‌ها (${fa(PARAM_REPORTS.length)})</button>
-      <button class="tab ${PARAM_TAB === 'documents' ? 'active' : ''}" onclick="PARAM_TAB='documents';liveReload()">🖨️ بلوک‌های اسناد چاپی (${fa((PARAM_DOCUMENTS || []).length)})</button>
+      <button class="tab ${PARAM_TAB === 'documents' ? 'active' : ''}" onclick="PARAM_TAB='documents';liveReload()">🖨️ اسناد چاپی (${fa((PARAM_DOCUMENTS || []).length)})</button>
     </div>`;
 
       const body = PARAM_TAB === 'forms' ? paramsFormsTable(PARAM_FORMS)
@@ -94,6 +94,7 @@ function paramsReportsCards(reports) {
 function paramsDocumentsCards(docs) {
   if (!docs.length) return statNote('کاتالوگ اسناد چاپی در دسترس نیست.');
   return docs.map(d => {
+    const texts = paramDocTextAreas(d);
     const rows = d.blocks.map(b => `<tr>
       <td><label style="display:inline-flex;align-items:center;gap:6px">
         <input type="checkbox" class="docBlock" data-doc="${esc(d.kind)}" data-key="${esc(b.key)}" ${b.visible ? 'checked' : ''}>
@@ -104,14 +105,47 @@ function paramsDocumentsCards(docs) {
     return `<div class="card card-pad" style="margin-bottom:10px">
       <div class="card-title">🖨️ ${esc(d.titleFa)} <span class="muted" style="font-size:.75rem">— ${esc(d.kind)} — ${fa(d.visibleCount)} از ${fa(d.blocks.length)} بلوک روشن</span>
         ${d.paramsId ? `<span class="chip">${esc(statusFaText(d.status))}</span>` : ''}</div>
-      <div class="muted" style="font-size:.75rem;margin-bottom:6px">هر بلوک را می‌توانید از سند حذف کنید (تیک را بردارید) یا عنوانش را فارسی‌تر کنید؛ خالی‌بودن عنوان یعنی همان عنوان پیش‌فرض سامانه.</div>
+      <div class="muted" style="font-size:.75rem;margin-bottom:6px">هر بلوک را می‌توانید از سند حذف کنید (تیک را بردارید) یا عنوانش را فارسی‌تر کنید؛ خالی‌بودن عنوان یعنی همان عنوان پیش‌فرض سامانه. متن پاراگراف و یادداشت پای سند را هم در کادرهای زیر همین جدول می‌توانید ویرایش کنید.</div>
       ${liveTable(['بلوک روی سند', 'عنوان سفارشی (اختیاری)'], rows, d.blocks.length)}
+      ${texts}
       <div class="row-actions" style="margin-top:8px">
-        <button class="btn btn-primary" onclick="paramSaveDocument('${esc(d.kind)}')">💾 ذخیرهٔ بلوک‌های سند</button>
+        <button class="btn btn-primary" onclick="paramSaveDocument('${esc(d.kind)}')">💾 ذخیرهٔ تنظیمات سند</button>
         ${d.paramsId ? `<button class="btn btn-ghost" onclick="paramToggle('${esc(d.paramsId)}','${d.status === 'inactive' ? 'activate' : 'deactivate'}')">${d.status === 'inactive' ? '↩️ بازفعال' : '⏸ غیرفعال'}</button>` : ''}
       </div>
     </div>`;
   }).join('');
+}
+
+/** کادرهای متن نوشتنی یک سند: پاراگراف متن و یادداشت پای برگه.
+ *
+ * چرا textarea و نه ورودی یک‌خطی: متن گواهی اشتغال چند پاراگراف است و هر خط یک
+ * پاراگراف روی کاغذ می‌شود؛ همان متنی که در سرور به قالب پیش‌فرض سند تبدیل می‌شود.
+ */
+function paramDocTextAreas(d) {
+  const texts = d.texts || [];
+  if (!texts.length) return '';
+  return `<div style="margin-top:12px">
+    ${texts.map(t => `<div style="margin-bottom:10px">
+      <div class="muted" style="font-size:.78rem;margin-bottom:4px">📝 ${esc(t.titleFa)} <span class="chip">${t.custom ? 'ویرایش‌شده' : 'پیش‌فرض'}</span></div>
+      <textarea class="docText" data-doc="${esc(d.kind)}" data-slot="${esc(t.key)}" rows="4"
+        style="width:100%;font-size:.8rem;line-height:1.9;resize:vertical">${esc(t.text || '')}</textarea>
+      <div class="row-actions" style="margin-top:4px">
+        <button class="btn btn-sm btn-ghost" onclick="paramResetDocText('${esc(d.kind)}','${esc(t.key)}')">↺ بازگرداندن پیش‌فرض</button>
+        <span class="muted" style="font-size:.72rem">${esc(t.hintFa)}</span>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+/** بازگرداندن یک جای متن به متن پیش‌فرض مؤثر سند (پیش از ذخیره). */
+function paramResetDocText(kind, slot) {
+  const doc = (PARAM_DOCUMENTS || []).find(d => d.kind === kind);
+  if (!doc) return;
+  const view = (doc.texts || []).find(t => t.key === slot);
+  const el = document.querySelector(`.docText[data-doc="${cssEscape(kind)}"][data-slot="${cssEscape(slot)}"]`);
+  if (!view || !el) return;
+  el.value = view.default || '';
+  toast('متن پیش‌فرض در کادر گذاشته شد؛ برای اعمال، ذخیره کنید');
 }
 
 /** بلوک‌های تیک‌خورده و عنوان‌های سفارشی یک سند. */
@@ -128,7 +162,7 @@ function paramSelectedDocBlocks(kind) {
   return { visible, labels };
 }
 
-/** ذخیرهٔ بلوک‌های یک سند چاپی (رکورد پارامتر با scope=document). */
+/** ذخیرهٔ تنظیمات یک سند چاپی: بلوک‌ها، عنوان‌ها و متن پاراگراف. */
 async function paramSaveDocument(kind) {
   const doc = (PARAM_DOCUMENTS || []).find(d => d.kind === kind);
   if (!doc) return;
@@ -141,15 +175,24 @@ async function paramSaveDocument(kind) {
     labels: picked.labels.join(','),
     note: 'بلوک‌های سند چاپی — از پنل پارامتریک',
   };
+  // متن‌های نوشتنی سند: اگر کادر همان متن پیش‌فرض مؤثر باشد خالی ذخیره می‌شود تا
+  // تغییرهای بعدیِ پیش‌فرض هم به سند برسد؛ وگرنه متن نوشته‌شده ذخیره می‌شود.
+  for (const el of document.querySelectorAll(`.docText[data-doc="${cssEscape(kind)}"]`)) {
+    const slot = el.dataset.slot;
+    const view = (doc.texts || []).find(t => t.key === slot) || {};
+    const value = (el.value || '').replace(/\r\n/g, '\n').trim();
+    const fallback = (view.default || '').trim();
+    fields[slot + 'Text'] = value === fallback ? '' : value;
+  }
   const res = doc.paramsId
-    ? await apiFetch('/api/v1/settings/records/' + encodeURIComponent(doc.paramsId), {method: 'PATCH', body: {kind: 'formParams', title: 'بلوک‌های سند ' + doc.titleFa, fields}})
-    : await apiFetch('/api/v1/settings/records', {method: 'POST', body: {kind: 'formParams', title: 'بلوک‌های سند ' + doc.titleFa, fields, noteFa: 'ثبت از پنل پارامتریک'}});
+    ? await apiFetch('/api/v1/settings/records/' + encodeURIComponent(doc.paramsId), {method: 'PATCH', body: {kind: 'formParams', title: 'تنظیمات سند ' + doc.titleFa, fields}})
+    : await apiFetch('/api/v1/settings/records', {method: 'POST', body: {kind: 'formParams', title: 'تنظیمات سند ' + doc.titleFa, fields, noteFa: 'ثبت از پنل پارامتریک'}});
   if (!res.ok) { toast(res.message, 'error'); return; }
   const id = doc.paramsId || (res.data && res.data.id);
   await apiFetch('/api/v1/settings/records/' + encodeURIComponent(id) + '/action', {method: 'POST', body: {action: 'activate'}});
   PARAM_DOCUMENTS = null;
   paramClearFormCache();
-  toast('بلوک‌های سند ذخیره و جاری شد');
+  toast('تنظیمات سند ذخیره و جاری شد');
   liveReload();
 }
 
