@@ -123,6 +123,48 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
@@ -266,6 +308,48 @@
           "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
           "value": "4500000",
           "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
           "groupFa": "ماموریت و کارانه"
         },
         {
@@ -434,6 +518,48 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "quarterly",
@@ -588,6 +714,48 @@
           "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
           "value": "4500000",
           "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
           "groupFa": "ماموریت و کارانه"
         },
         {
@@ -756,6 +924,48 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
@@ -918,6 +1128,48 @@
           "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
           "value": "4500000",
           "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
           "groupFa": "ماموریت و کارانه"
         },
         {
@@ -1086,6 +1338,48 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
@@ -1248,6 +1542,48 @@
           "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
           "value": "4500000",
           "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
           "groupFa": "ماموریت و کارانه"
         },
         {
@@ -1416,6 +1752,48 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
@@ -1578,6 +1956,48 @@
           "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
           "value": "4500000",
           "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
           "groupFa": "ماموریت و کارانه"
         },
         {
@@ -1746,6 +2166,48 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
@@ -1908,6 +2370,48 @@
           "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
           "value": "4500000",
           "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
           "groupFa": "ماموریت و کارانه"
         },
         {
@@ -2077,6 +2581,48 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
@@ -2238,6 +2784,48 @@
           "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
           "value": "4500000",
           "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
           "groupFa": "ماموریت و کارانه"
         },
         {
@@ -2403,6 +2991,48 @@
           "titleFa": "فوق‌العادهٔ روزانهٔ ماموریت",
           "value": "4500000",
           "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorBreakfast",
+          "titleFa": "عامل صبحانه (سهم از نرخ روزانه)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLunch",
+          "titleFa": "عامل نهار (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorDinner",
+          "titleFa": "عامل شام (سهم از نرخ روزانه)",
+          "value": "35",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.factorLodging",
+          "titleFa": "عامل خواب (سهم از نرخ روزانه)",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.mileageRate",
+          "titleFa": "نرخ کرایهٔ کیلومتری مأموریت",
+          "value": "50000",
+          "unitFa": "ریال/کیلومتر",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.personalFacilitiesPercent",
+          "titleFa": "جبران استفاده از امکانات شخصی",
+          "value": "10",
+          "unitFa": "٪",
           "groupFa": "ماموریت و کارانه"
         },
         {

@@ -155,7 +155,8 @@ var All = []Module{
 			{Key: "leaveApprove", Order: 3, Icon: "check-circle", TitleFa: "تأیید مرخصی", Component: "LeaveApprovalScreen", Roles: []string{"admin", "hr_manager", "line_manager"}},
 			{Key: "overtime", Order: 4, Icon: "timer", TitleFa: "اضافه‌کاری", Component: "OvertimeScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
 			{Key: "missions", Order: 5, Icon: "map", TitleFa: "ماموریت‌ها", Component: "MissionsScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager", "employee"}},
-			{Key: "calendar", Order: 6, Icon: "calendar", TitleFa: "تقویم کاری", Component: "WorkCalendarScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager", "employee"}},
+			{Key: "missionCalc", Order: 6, Icon: "compass", TitleFa: "فرم محاسبهٔ مأموریت", Component: "MissionCalcScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
+			{Key: "calendar", Order: 7, Icon: "calendar", TitleFa: "تقویم کاری", Component: "WorkCalendarScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager", "employee"}},
 		},
 	},
 	{

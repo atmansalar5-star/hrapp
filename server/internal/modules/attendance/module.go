@@ -35,4 +35,7 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// تقویم کارکرد: نمای ماهانه با وضعیت هر روز (تعطیل هفتگی/رسمی، مناسبت، مرخصی،
 	// مأموریت، اضافه‌کاری، کارکرد و روزهای کاری بدون کارکرد).
 	registerWorkCalendarEndpoint(mux, deps, svc)
+	// فرم محاسبهٔ مأموریت: پارامترهای پیش‌فرض شرکت و محاسبهٔ فوقالعادهٔ مأموریت با تفکیک
+	// وعده‌ها، اقامت، امکانات شخصی و ایاب‌وذهاب.
+	registerMissionCalcEndpoints(mux, deps)
 }

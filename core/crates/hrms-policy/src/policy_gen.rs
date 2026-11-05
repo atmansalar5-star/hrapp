@@ -325,6 +325,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager, RoleKey::Employee],
         },
         ScreenPolicy {
+            key: "missionCalc",
+            title_fa: "فرم محاسبهٔ مأموریت",
+            component: "MissionCalcScreen",
+            icon: "compass",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager],
+        },
+        ScreenPolicy {
             key: "calendar",
             title_fa: "تقویم کاری",
             component: "WorkCalendarScreen",

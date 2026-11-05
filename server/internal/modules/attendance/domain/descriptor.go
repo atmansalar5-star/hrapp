@@ -53,6 +53,27 @@ func Descriptor() recordkit.Descriptor {
 					"fromDate|از تاریخ|date|1",
 					"toDate|تا تاریخ|date|1",
 					"purpose|هدف مأموریت|text|0",
+					// فرم محاسبهٔ مأموریت: تاریخ/ساعت شروع و مدت، عوامل و ضریب وعدهها،
+					// امکانات شخصی، اقامت و ایاب‌وذهاب. محاسبهٔ مبلغ با موتور قواعد انجام
+					// می‌گیرد و «allowanceTotal» حاصل همان محاسبه است.
+					"startTime|ساعت شروع مأموریت|text|0",
+					"durationDays|مدت مأموریت (روز)|number|0",
+					"missionFactor|ضریب عوامل مأموریت|number|0",
+					"factorBreakfast|عامل صبحانه|number|0",
+					"factorLunch|عامل نهار|number|0",
+					"factorDinner|عامل شام|number|0",
+					"factorLodging|عامل خواب|number|0",
+					"usePersonalFacilities|استفاده از امکانات شخصی|select|0",
+					"personalFacilitiesAmount|مبلغ جبران امکانات شخصی (ریال)|money|0",
+					"useHotel|استفاده از هتل|select|0",
+					"hotelCost|هزینهٔ هتل (ریال)|money|0",
+					"useGuesthouse|استفاده از مهمانسرا|select|0",
+					"guesthouseCost|هزینهٔ مهمانسرا (ریال)|money|0",
+					"taxiCost|هزینهٔ تاکسی از محل اقامت تا فرودگاه (ریال)|money|0",
+					"busCost|هزینهٔ اتوبوس (ریال)|money|0",
+					"mileageKm|مسافت کرایهٔ کیلومتری (کیلومتر)|number|0",
+					"mileageRate|نرخ هر کیلومتر (ریال)|money|0",
+					"allowanceTotal|فوقالعادهٔ مأموریت قابل پرداخت (ریال)|money|0",
 				),
 				Statuses: recordkit.Statuses(
 					"draft|پیش‌نویس", "pending|در انتظار تأیید", "approved|تأییدشده", "settled|تسویه‌شده", "rejected|ردشده",

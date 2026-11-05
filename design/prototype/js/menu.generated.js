@@ -114,6 +114,7 @@ window.HRMS_MENU = [
         { page: "leaveApprove", label: "تأیید مرخصی", icon: "check-circle", roles: ['admin', 'hr_manager', 'line_manager'] },
         { page: "overtime", label: "اضافه‌کاری", icon: "timer", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
         { page: "missions", label: "ماموریت‌ها", icon: "map", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager', 'employee'] },
+        { page: "missionCalc", label: "فرم محاسبهٔ مأموریت", icon: "compass", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
         { page: "calendar", label: "تقویم کاری", icon: "calendar", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager', 'employee'] },
         ],
       },

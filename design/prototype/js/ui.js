@@ -122,6 +122,8 @@ const ICONS = {
   store:'🏬', book:'📘', scale:'⚖️', search:'🔍', link:'🔗', calendarCheck:'🗓️',
   // سکشن آمار: برش‌های توافقی و نمودار ترکیبی.
   'pie-chart':'🥧',
+  // مأموریت: فرم محاسبهٔ فوقالعادهٔ مأموریت (سفر، اقامت، ایاب‌وذهاب).
+  compass:'🧭', hotel:'🏨', suitcase:'🧳',
 };
 const icon = name => ICONS[name] || '•';
 

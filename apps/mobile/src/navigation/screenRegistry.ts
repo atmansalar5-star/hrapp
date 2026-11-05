@@ -47,6 +47,7 @@ import LeaveApprovalScreen from '../features/attendance/LeaveApprovalScreen';
 import OvertimeScreen from '../features/attendance/OvertimeScreen';
 import WorkCalendarScreen from '../features/attendance/WorkCalendarScreen';
 import MissionsScreen from '../features/attendance/MissionsScreen';
+import MissionCalcScreen from '../features/attendance/MissionCalcScreen';
 
 // حقوق و دستمزد
 import PayrollRunScreen from '../features/payroll/PayrollRunScreen';
@@ -208,6 +209,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   LeaveApprovalScreen,
   OvertimeScreen,
   WorkCalendarScreen,
+  MissionCalcScreen,
   PayrollRunScreen,
   PayslipScreen,
   PayItemsScreen,

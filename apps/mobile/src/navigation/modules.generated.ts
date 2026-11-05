@@ -211,7 +211,8 @@ export const MODULES: ModuleSpec[] = [
       { key: "leaveApprove", order: 3, icon: "check-circle", titleFa: "تأیید مرخصی", purposeFa: "صفحهٔ مدیر برای تأیید یا رد درخواست‌های مرخصی در انتظار، با نمایش زنجیرهٔ تأیید و مانده.", component: "LeaveApprovalScreen", roles: ["admin", "hr_manager", "line_manager"] },
       { key: "overtime", order: 4, icon: "timer", titleFa: "اضافه‌کاری", purposeFa: "ثبت، تأیید و محاسبهٔ اضافه‌کاری بر پایهٔ نرخ ساعتی و ضرایب تعریف‌شده در تنظیمات.", component: "OvertimeScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager"] },
       { key: "missions", order: 5, icon: "map", titleFa: "ماموریت‌ها", purposeFa: "ثبت درخواست ماموریت، تأیید مدیر واحد، محاسبهٔ فوق‌العادهٔ ماموریت و ارسال داده به واحد آمار و گزارشات برای بررسی و تأیید.", component: "MissionsScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager", "employee"] },
-      { key: "calendar", order: 6, icon: "calendar", titleFa: "تقویم کاری", purposeFa: "نمایش ماهانهٔ شیفت‌ها، تعطیلات و مرخصی‌ها روی تقویم شمسی.", component: "WorkCalendarScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager", "employee"] },
+      { key: "missionCalc", order: 6, icon: "compass", titleFa: "فرم محاسبهٔ مأموریت", purposeFa: "محاسبهٔ فوقالعادهٔ مأموریت با عوامل مأموریت: سهم صبحانه، نهار، شام و خواب از نرخ روزانهٔ شرکت، پذیرایی میزبان، اقامت در هتل یا مهمانسرا، جبران استفاده از امکانات شخصی و هزینه‌های ایاب‌وذهاب (تاکسی، اتوبوس و کرایهٔ کیلومتری)، به‌همراه ذخیرهٔ آن به‌صورت رکورد مأموریت.", component: "MissionCalcScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager"] },
+      { key: "calendar", order: 7, icon: "calendar", titleFa: "تقویم کاری", purposeFa: "نمایش ماهانهٔ شیفت‌ها، تعطیلات و مرخصی‌ها روی تقویم شمسی.", component: "WorkCalendarScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager", "employee"] },
     ],
   },
   {
