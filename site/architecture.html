@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>معماری و فناوری سامانهٔ جامع منابع انسانی</title>
+<meta name="description" content="معماری سه‌لایهٔ سامانهٔ جامع منابع انسانی: هستهٔ قواعد با Rust، سرور مرجع با Go، رابط React Native و نمونهٔ وب؛ مانیفست‌محور، پارامتریک و آمادهٔ استقرار سازمانی.">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:site_name" content="سامانهٔ جامع منابع انسانی اچ‌آر اپ">
+<meta property="og:title" content="معماری، امنیت و استقرار سامانهٔ جامع منابع انسانی">
+<meta property="og:description" content="هستهٔ قواعد با Rust، سرور مرجع با Go، رابط React Native و نمونهٔ وب؛ مانیفست‌محور، پارامتریک و آمادهٔ استقرار سازمانی.">
+<meta property="og:image" content="assets/shots/02-dashboard.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F766E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230F766E'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23fff' font-family='Tahoma'%3E%D9%87%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/Vazirmatn-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">پرش به محتوای اصلی</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="brand__mark" aria-hidden="true">ه</span>
+      <span class="brand__text">
+        <span class="brand__name">سامانهٔ جامع منابع انسانی</span>
+        <span class="brand__sub">اچ‌آر اپ — نسخهٔ نمایشی و تبلیغاتی</span>
+      </span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="فهرست">☰</button>
+    <nav class="site-nav" id="site-nav" aria-label="ناوبری اصلی">
+      <a href="index.html">خانه</a>
+      <a href="features.html">قابلیت‌ها</a>
+      <a href="demo.html">دمو و تصاویر</a>
+      <a href="architecture.html" aria-current="page">معماری</a>
+      <a href="resume.html">رزومهٔ طراح</a>
+      <a href="resume.html#contact">تماس</a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn--primary btn--sm" href="http://127.0.0.1:8099/" target="_blank" rel="noopener">ورود به دموی زنده</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="section section--surface page-head" style="padding-block:48px 30px">
+    <div class="wrap">
+      <span class="eyebrow">معماری و فناوری</span>
+      <h1>سه لایه، سه زبان، یک منبع حقیقت</h1>
+      <p class="lead" style="max-width:80ch;margin-top:14px">
+        سامانه عمداً از سه بخش مستقل ساخته شده است تا هر بخش به کاری که در آن بهترین است مشغول باشد:
+        <b>هستهٔ قواعد</b> به زبان <span class="latin">Rust</span> برای صحت و کارایی محاسبه،
+        <b>سرور</b> به زبان <span class="latin">Go</span> به‌شکل مونولیت ماژولار برای مرجعیت داده و دسترسی،
+        و <b>رابط کاربری</b> به <span class="latin">React Native</span> برای نمایش و ناوبری — با یک نمونهٔ تحت وب
+        برای ارائه، آموزش و استفادهٔ اداری.
+      </p>
+      <div class="btn-row" style="margin-top:20px">
+        <a class="btn btn--primary" href="demo.html">دیدن سامانه در عمل</a>
+        <a class="btn btn--ghost" href="features.html">قابلیت‌ها</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ نمودار لایه‌ها ============ -->
+  <section class="section" style="padding-block:34px">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">نمای کلی</span>
+        <h2>مسیر یک درخواست، از انگشت کاربر تا سطر داده</h2>
+      </div>
+
+      <div class="arch">
+        <div class="arch__row">
+          <div class="arch__box arch__box--ui">
+            <h4>رابط کاربری — React Native</h4>
+            <p>نمایش، ناوبری و چندزبانی. هیچ قاعدهٔ کسب‌وکاری اینجا نیست: نه اعتبارسنجی، نه محاسبه، نه تشخیص دسترسی.</p>
+          </div>
+          <div class="arch__box arch__box--core">
+            <h4>هستهٔ بومی — Rust</h4>
+            <p>تنها دروازهٔ قواعد: اعتبارسنجی، محاسبهٔ حقوق و مرخصی، تقویم شمسی، سیاست دسترسی، انبار محلی و صف همگام‌سازی.</p>
+          </div>
+          <div class="arch__box arch__box--server">
+            <h4>سرور مرجع — Go</h4>
+            <p>مرجع نهایی داده: کوئری‌ها، اعمال محدودهٔ دسترسی، گردش‌کار، سندها، فایل‌های قانونی و لاگ حسابرسی.</p>
+          </div>
+        </div>
+
+        <div class="arch__arrow" aria-hidden="true">▼ ▲</div>
+
+        <div class="arch__row" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div class="arch__box">
+            <h4>جریان داده در برنامهٔ همراه</h4>
+            <p>کار آفلاین انجام می‌شود، در انبار محلی ثبت می‌گردد و از صف بیرونی (<span class="latin">outbox</span>) با سرور همگام می‌شود؛ تعارض‌ها با قاعدهٔ روشن حل می‌شوند و نسخهٔ سرور مقدم است.</p>
+          </div>
+          <div class="arch__box">
+            <h4>جریان داده در نمونهٔ تحت وب</h4>
+            <p>همان سرویس‌های سرور با فراخوانی <span class="latin">JSON</span>؛ لایهٔ رابط نازک است و هر صفحه تنها قالب و سپس داده را می‌سازد. اگر سرور نباشد، حالت نمایشی می‌ماند و هیچ محاسبه‌ای انجام نمی‌شود.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ قواعد معماری ============ -->
+  <section class="section section--tint">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">قواعد سخت معماری</span>
+        <h2>چهار قاعده‌ای که نمی‌شکنند</h2>
+      </div>
+      <div class="grid grid-2">
+        <div class="card reveal">
+          <h3>۱. هیچ قاعدهٔ کسب‌وکاری در رابط کاربری نیست</h3>
+          <p class="mod-card__desc" style="margin-top:8px">
+            اعتبارسنجی، محاسبهٔ حقوق و مرخصی، تقویم و منوی نقش‌محور، همه از هستهٔ بومی می‌آید.
+            اگر هسته بار نشود، رابط محاسبه نمی‌کند و خطای صریح می‌دهد؛ <b>نسخهٔ دومی از قواعد در جاوااسکریپت ساخته نمی‌شود</b>.
+          </p>
+        </div>
+        <div class="card reveal">
+          <h3>۲. سرور مرجع نهایی است</h3>
+          <p class="mod-card__desc" style="margin-top:8px">
+            محدودهٔ دسترسی نقش (<span class="latin">all / own_unit / own</span>) در کوئری سرور اعمال می‌شود؛
+            پنهان‌کردن یک ردیف یا دکمه در مرورگر، ارزش امنیتی ندارد. هر عمل مهم در لاگ حسابرسی می‌نشیند.
+          </p>
+        </div>
+        <div class="card reveal">
+          <h3>۳. یک مانیفست، همهٔ مشتقات</h3>
+          <p class="mod-card__desc" style="margin-top:8px">
+            مانیفست هر ماژول منبع واحد است و از آن ساخته می‌شود: رجیستری سرور، منوی برنامه،
+            جدول سیاست دسترسی، رکوردهای دسترسی، انواع داده و مستندات فارسی. انحراف هر یک، ساخت خودکار و
+            آزمون‌های دروازه را می‌شکند.
+          </p>
+        </div>
+        <div class="card reveal">
+          <h3>۴. استقرار پارامتریک از داده می‌آید، نه از کد</h3>
+          <p class="mod-card__desc" style="margin-top:8px">
+            فعال بودن اداره‌ها و ماژول‌ها، پارامترهای حقوقی‑مالی و مشخصات برند هر شرکت، داده است.
+            سرور، برنامهٔ همراه و نمونهٔ تحت وب، هر سه از همان یک فایل استقرار ساخته می‌شوند؛
+            پس رفتارشان برای شرکت‌های دیگر یکی است و ماژول خاموش، <b>ثبت نمی‌شود</b> (مسیرش وجود ندارد).
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ فناوری ============ -->
+  <section class="section section--surface">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">فهرست فناوری</span>
+        <h2>چه چیزی، با چه چیزی ساخته شده</h2>
+      </div>
+      <div class="tbl-wrap reveal">
+        <table class="tbl">
+          <thead><tr><th>لایه</th><th>فناوری</th><th>کاربرد در سامانه</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>هستهٔ قواعد</td>
+              <td class="latin">Rust</td>
+              <td>انواع و اعتبارسنجی دامنه، تقویم شمسی و روز کاری، قواعد حقوق و مرخصی و عملکرد، سیاست دسترسی، انبار محلی، صف همگام‌سازی و حل تعارض. آزمون هم‌ارزی‌سنجی بین هسته و سرور، از یک مجموعهٔ مرجع تغذیه می‌شود.</td>
+            </tr>
+            <tr>
+              <td>سرور</td>
+              <td class="latin">Go</td>
+              <td>مونولیت ماژولار با مرزهای اجبارشده؛ رجیستری ماژول‌ها، سرویس‌های <span class="latin">JSON</span>، گردش‌کار رکورد، موتور سند چاپی، فایل‌های قانونی و بانکی، سرو فایل با امضا، صفحه‌های عمومی تأیید و لاگ حسابرسی.</td>
+            </tr>
+            <tr>
+              <td>پایگاه‌داده</td>
+              <td class="latin">PostgreSQL</td>
+              <td>مرجع نهایی داده؛ مهاجرت‌های نسخه‌دار (<span class="latin">migrations</span>)، طرح جدایی برای هر ماژول و ایندکس‌های گزارش‌گیری.</td>
+            </tr>
+            <tr>
+              <td>رابط کاربری همراه</td>
+              <td class="latin">React Native</td>
+              <td>برنامهٔ کارکنان و مدیران؛ رابط راست‌چین، قلم فارسی محلی، توکن‌های طراحی مشترک و اتصال به هستهٔ بومی.</td>
+            </tr>
+            <tr>
+              <td>رابط کاربری وب</td>
+              <td class="latin">HTML / CSS / JavaScript</td>
+              <td>نمونهٔ کامل تحت وب سامانه برای ارائه، آموزش و استفادهٔ اداری؛ بدون هیچ کتابخانهٔ بیرونی، با نمودارهای <span class="latin">CSS</span>‌محور و قلم وزیرمتن محلی.</td>
+            </tr>
+            <tr>
+              <td>ساخت و تولید کد</td>
+              <td class="latin">Node.js</td>
+              <td>تولید مشتقات از مانیفست‌ها و قراردادها، دروازهٔ بازبینی و آزمون دود؛ هر تغییر ساختاری پیش از کامیت، سبز بودنشان را لازم دارد.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ امنیت ============ -->
+  <section class="section section--tint">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">امنیت و انطباق</span>
+        <h2>کنترل‌های امنیتی، جای‌به‌جای خودشان</h2>
+      </div>
+      <div class="grid grid-2">
+        <div class="card reveal">
+          <h3>احراز هویت و مدیریت نشست</h3>
+          <ul class="checks" style="margin-top:10px">
+            <li>ورود با نام کاربری و رمز؛ صدور توکن دسترسی کوتاه‌مدت و توکن تازه‌سازی بلندمدت.</li>
+            <li>صفحه‌های عمومی (نمایش نشان شرکت و تأیید سند/کارمند) بدون ورود کار می‌کنند و کمینهٔ اطلاعات را نشان می‌دهند.</li>
+            <li>خروج از حساب، توکن تازه‌سازی را باطل می‌کند.</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3>کنترل دسترسی نقش‌محور</h3>
+          <ul class="checks" style="margin-top:10px">
+            <li>پنج نقش با منو، داشبورد و محدودهٔ دادهٔ مجزا.</li>
+            <li>سه سطح دسترسی روی داده: همه، واحد خود، خودِ کاربر — و اعمال آن در کوئری سرور.</li>
+            <li>مسدود بودن ورود مستقیم به صفحه‌های غیرمجاز، حتی با دانستن نشانی.</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3>حفاظت از فایل‌ها</h3>
+          <ul class="checks" style="margin-top:10px">
+            <li>تعیین نوع فایل با <b>امضای دودویی</b>، نه پسوند؛ محدودیت حجم در بارگذاری.</li>
+            <li>نام فایل ساختهٔ سرور و بازبینی مسیر هنگام خواندن؛ هیچ مسیری بیرون از پوشهٔ داده خوانده نمی‌شود.</li>
+            <li>عکس‌های پرسنلی با نشانی امضاشدهٔ <span class="latin">HMAC</span> سرو می‌شوند.</li>
+            <li>نشان شرکت به‌شکل <span class="latin">SVG</span> بدون اسکریپت یا رویداد پذیرفته می‌شود.</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3>حسابرسی و صحت داده</h3>
+          <ul class="checks" style="margin-top:10px">
+            <li>لاگ حسابرسی برای عمل‌های مهم: کاربر، نقش، زمان و نتیجه.</li>
+            <li>سابقهٔ تغییرات روی هر رکورد؛ هیچ سطری حذف نمی‌شود.</li>
+            <li>اعتبارسنجی کد ملی با رقم کنترل و شبا با الگوریتم <span class="latin">mod 97</span>.</li>
+            <li>امضای <span class="latin">HMAC</span> روی نشانی تأیید سند؛ دستکاری سریال، تأیید را بی‌اعتبار می‌کند.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ استقرار و بهره‌برداری ============ -->
+  <section class="section section--surface">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">استقرار و بهره‌برداری</span>
+        <h2>روی این ماشین، سامانه خودش بالا می‌آید</h2>
+        <p class="lead" style="margin-top:12px">
+          برای اینکه سرور محلی پس از هر راه‌اندازی دوبارهٔ رایانه در دسترس باشد، دو مکانیزم سیستمی تنظیم شده است:
+          سرویس ویندوزی برای پایگاه‌داده و یک تسک زمان‌بندی‌شده برای سرور.
+        </p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card reveal">
+          <h3>🗄️ پایگاه‌داده</h3>
+          <p class="mod-card__desc" style="margin-top:8px">
+            سرویس <span class="latin">HRMS-PostgreSQL</span> با شروع خودکار هنگام بوت، خوشهٔ محلی را روی
+            <span class="latin">127.0.0.1:5432</span> بالا می‌آورد و در صورت خطا دوباره راه‌اندازی می‌شود.
+            کنترل (شروع/توقف) دسترسی مدیر می‌خواهد.
+          </p>
+        </div>
+        <div class="card reveal">
+          <h3>🚀 سرور برنامه</h3>
+          <p class="mod-card__desc" style="margin-top:8px">
+            تسک زمان‌بندی‌شدهٔ <span class="latin">HRMS Server</span> با محرک شروع سیستم و تأخیر کوتاه،
+            فایل اجرایی سرور را روی <span class="latin">127.0.0.1:8099</span> اجرا می‌کند و خروجی را در
+            گزارش سرور می‌نویسد. برای کار توسعه، تسک موقتاً متوقف و سرور از سورس اجرا می‌شود.
+          </p>
+        </div>
+      </div>
+
+      <div style="margin-top:22px" class="reveal">
+        <h3 style="margin-bottom:10px">فرمان‌های پرکاربرد</h3>
+        <pre class="code"><span class="c"># اجرای سامانه از سورس (توقف موقت تسک بوت، ساخت و اجرا)</span>
+start-HRMS.bat
+
+<span class="c"># گزارش وضعیت: ابزار Go، فایل اجرایی، پایگاه‌داده، تسک بوت و سلامت سرور</span>
+start-HRMS.bat status
+
+<span class="c"># بازگرداندن سرور به تسک بوت ویندوز</span>
+start-HRMS.bat task
+
+<span class="c"># بررسی سلامت سرور فعال و شرکت جاری</span>
+curl http://127.0.0.1:8099/healthz
+
+<span class="c"># اجرای سرور برای یک شرکت مشخص (استقرار پارامتریک)</span>
+server\bin\hrmsd.exe -addr 127.0.0.1:8099 -org bandar_imam -web ..\design\prototype -root . -env .env -data data</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ پشتیبان‌گیری ============ -->
+  <section class="section section--tint">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">پشتیبان‌گیری و بازگردانی</span>
+        <h2>دادهٔ سازمان، قابل بازگردانی — و راستی‌آزمایی‌شده</h2>
+        <p class="lead" style="margin-top:12px">
+          بک‌آپ در این پروژه «یک فایل فشرده» نیست؛ یک بستهٔ مستندشده است که پیش از تحویل،
+          بازگردانی‌اش روی یک پایگاه‌دادهٔ آزمایشی تازه آزموده می‌شود.
+        </p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card reveal">
+          <h3>ساختار هر بسته</h3>
+          <ul class="checks" style="margin-top:10px">
+            <li>سورس کامل مخزن همراه تاریخچهٔ نسخه‌نگاری.</li>
+            <li>فایل‌های اجرایی سرور، ساخته‌شده به‌شکل تمیز و کم‌حجم.</li>
+            <li>برون‌کشی دادهٔ پایگاه‌داده در پوشهٔ استقرار.</li>
+            <li>دادهٔ واقعی سرور: نشان شرکت‌ها، عکس‌های کارگزینی و فایل‌های تبادل داده.</li>
+            <li>گزارش شمار سطر هر جدول و روش بازگردانی، کنار فهرست چک‌سام فایل‌ها.</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3>راستی‌آزمایی اجباری بسته</h3>
+          <ul class="checks" style="margin-top:10px">
+            <li>بازگردانی روی پایگاه‌دادهٔ آزمایشی تازه و مقایسهٔ <b>سطربه‌سطر</b> با گزارش شمار سطر (اختلاف باید «ندارد» باشد).</li>
+            <li>بررسی <span class="latin">UTF-8</span> بدون <span class="latin">BOM</span> و سلامت متن فارسی در فایل داده.</li>
+            <li>ساخت موفق فایل اجرایی سرور از سورس <b>خودِ همان بسته</b>.</li>
+            <li>تطبیق آخرین کامیت بسته با برچسب نسخه.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note note--ok" style="margin-top:20px">
+        ریتم پشتیبان‌گیری «یک بسته به‌ازای هر برچسب نسخه» و نگه‌داشتن سه بستهٔ آخر است؛
+        فهرست بسته‌های موجود هم در کنار همان پوشهٔ پشتیبان نگه داشته می‌شود.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ پرسش‌های فنی ============ -->
+  <section class="section section--surface">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">پرسش‌های فنی متداول</span>
+        <h2>پاسخ کوتاه به چند پرسش طبیعی</h2>
+      </div>
+      <div class="grid grid-2">
+        <div class="card reveal"><h3>اگر اینترنت سازمان قطع شود؟</h3><p class="mod-card__desc" style="margin-top:8px">سامانه روی شبکهٔ داخلی اجرا می‌شود و هیچ وابستگی به سرویس بیرونی ندارد: قلم، نمودار، فایل‌های قانونی و همهٔ دارایی‌ها محلی‌اند.</p></div>
+        <div class="card reveal"><h3>اگر قواعد سازمان در آینده عوض شود؟</h3><p class="mod-card__desc" style="margin-top:8px">بخش بزرگی از تغییرها پارامتری است (نرخ، سقف، مهلت، مبلغ مصوب) و از خود رابط انجام می‌شود. تغییرهای منطقی، یک‌جا در دامنه اعمال می‌شوند و چون هیچ نسخهٔ دومی از قواعد وجود ندارد، همهٔ خروجی‌ها با هم به‌روز می‌شوند.</p></div>
+        <div class="card reveal"><h3>چرا نمونهٔ وب و برنامهٔ همراه هر دو؟</h3><p class="mod-card__desc" style="margin-top:8px">کار اداری سنگین (پردازش حقوق، گزارش‌گیری، تنظیمات) روی میز بهتر انجام می‌شود و درخواست‌های شخصی (مرخصی، فیش، کارت) روی گوشی. قواعد در هر دو یکی است، چون از یک هسته می‌آید.</p></div>
+        <div class="card reveal"><h3>دادهٔ آزمایشی از دادهٔ واقعی جداست؟</h3><p class="mod-card__desc" style="margin-top:8px">بله. محیط نمایشی با دادهٔ نمونهٔ فارسی برپا می‌شود و برای استقرار واقعی، هم داده و هم پارامترها از پایهٔ خود سازمان تغذیه می‌شوند.</p></div>
+        <div class="card reveal"><h3>چگونه از انحراف مستندات جلوگیری می‌شود؟</h3><p class="mod-card__desc" style="margin-top:8px">مستندات فارسی صفحه‌ها و عنوان‌ها از قراردادها و مانیفست‌ها تولید می‌شوند و دستی ویرایش نمی‌شوند؛ پیش از هر تغییر ساختاری، بازبینی و آزمون‌های دروازه باید سبز بمانند.</p></div>
+        <div class="card reveal"><h3>امکان استقرار مستقل (بدون پایگاه‌داده) هست؟</h3><p class="mod-card__desc" style="margin-top:8px">بله؛ نسخهٔ مستقل همراه داده و راهنمای فارسی، در صورت درخواست سازمان ساخته می‌شود — برای ارائه، آموزش یا محیط‌های محدود.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tint">
+    <div class="wrap">
+      <div class="contact-card reveal">
+        <div>
+          <h2>معماری را در عمل ببینید</h2>
+          <p style="margin-top:10px">دموی زنده همان سامانه‌ای است که این معماری را اجرا می‌کند؛ تصاویر و مسیر آزمایش هم آماده است.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="http://127.0.0.1:8099/" target="_blank" rel="noopener">ورود به دموی زنده</a>
+          <a class="btn btn--ghost" href="demo.html">تصاویر و راهنما</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>سامانهٔ جامع منابع انسانی — اچ‌آر اپ</h4>
+        <p style="font-size:.86rem;line-height:2">وب‌سایت معرفی، دمو و تبلیغاتی سامانه؛ همراه با معرفی طراح و تحلیل‌گر سامانه.</p>
+      </div>
+      <div>
+        <h4>پیوندها</h4>
+        <ul>
+          <li><a href="index.html">خانه</a></li>
+          <li><a href="features.html">قابلیت‌ها</a></li>
+          <li><a href="demo.html">دمو و تصاویر</a></li>
+          <li><a href="architecture.html">معماری و فناوری</a></li>
+          <li><a href="resume.html">رزومهٔ طراح</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>دسترسی سریع</h4>
+        <ul>
+          <li><a href="http://127.0.0.1:8099/" target="_blank" rel="noopener">دموی زندهٔ سامانه</a></li>
+          <li><a href="resume.html#contact">تماس با طراح</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© اچ‌آر اپ — سامانهٔ جامع منابع انسانی</span>
+      <span>طراحی، تحلیل و برنامه‌نویسی: مسعود وائقی</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+</body>
+</html>

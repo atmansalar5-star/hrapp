@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دمو و تصاویر سامانهٔ جامع منابع انسانی</title>
+<meta name="description" content="راهنمای دموی زندهٔ سامانهٔ جامع منابع انسانی: حساب‌های آزمایشی، مسیر پیشنهادی آزمایش قابلیت‌ها و تصاویر واقعی از صفحه‌های سامانه.">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:site_name" content="سامانهٔ جامع منابع انسانی اچ‌آر اپ">
+<meta property="og:title" content="دموی زندهٔ سامانهٔ جامع منابع انسانی — مسیر پیشنهادی آزمایش">
+<meta property="og:description" content="حساب‌های آزمایشی، مسیر گام‌به‌گام آزمایش قابلیت‌ها و ۱۶ تصویر واقعی از صفحه‌های سامانه.">
+<meta property="og:image" content="assets/shots/01-login.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F766E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230F766E'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23fff' font-family='Tahoma'%3E%D9%87%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/Vazirmatn-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+<style>
+  /* گالری یک‌ستونه: تصاویر سامانه متن‌محورند و باید خوانا باشند. */
+  .gallery--one{grid-template-columns:minmax(0,1fr)}
+  .shot img{cursor:zoom-in}
+  .lightbox{
+    position:fixed;inset:0;z-index:200;display:none;place-items:center;
+    background:rgba(8,20,26,.92);padding:22px;
+  }
+  .lightbox.open{display:grid}
+  .lightbox img{max-width:96vw;max-height:88vh;width:auto;border-radius:12px;box-shadow:var(--shadow-lg)}
+  .lightbox__close{
+    position:absolute;inset-block-start:16px;inset-inline-end:18px;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;
+    width:44px;height:44px;border-radius:50%;font-size:1.2rem;
+  }
+  .lightbox__cap{color:#CFE3E1;font-size:.86rem;text-align:center;margin-top:12px;max-width:80ch}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">پرش به محتوای اصلی</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="brand__mark" aria-hidden="true">ه</span>
+      <span class="brand__text">
+        <span class="brand__name">سامانهٔ جامع منابع انسانی</span>
+        <span class="brand__sub">اچ‌آر اپ — نسخهٔ نمایشی و تبلیغاتی</span>
+      </span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="فهرست">☰</button>
+    <nav class="site-nav" id="site-nav" aria-label="ناوبری اصلی">
+      <a href="index.html">خانه</a>
+      <a href="features.html">قابلیت‌ها</a>
+      <a href="demo.html" aria-current="page">دمو و تصاویر</a>
+      <a href="architecture.html">معماری</a>
+      <a href="resume.html">رزومهٔ طراح</a>
+      <a href="resume.html#contact">تماس</a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn--primary btn--sm" href="http://127.0.0.1:8099/" target="_blank" rel="noopener">ورود به دموی زنده</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="section section--surface page-head" style="padding-block:48px 30px">
+    <div class="wrap">
+      <span class="eyebrow">دمو و تصاویر</span>
+      <h1>سامانه را ببینید، وارد شوید و خودتان امتحان کنید</h1>
+      <p class="lead" style="max-width:80ch;margin-top:14px">
+        تصاویر این صفحه، <b>نماگرفت واقعی</b> از همان سامانهٔ در حال اجرا هستند؛ نه طرح گرافیکی و نه ماکت.
+        اگر سرور روی همین رایانه بالا باشد، با دکمهٔ زیر همان محیط باز می‌شود و می‌توانید فرآیندها را
+        روی دادهٔ آزمایشی انجام دهید. اگر سرور بالا نباشد، همین تصاویر کل مسیر کار را نشان می‌دهند.
+      </p>
+
+      <div class="btn-row" style="margin-top:20px">
+        <a class="btn btn--primary" href="http://127.0.0.1:8099/" target="_blank" rel="noopener">🖥 باز کردن دموی زنده</a>
+        <a class="btn btn--ghost" href="features.html">قابلیت‌ها و ماژول‌ها</a>
+        <a class="btn btn--ghost" href="architecture.html">معماری سامانه</a>
+      </div>
+
+      <div class="note note--info" style="margin-top:22px">
+        <b>اگر صفحهٔ دمو باز نشد:</b> سامانهٔ قابل اجرا با فرمان
+        <code>start-HRMS.bat</code> در پوشهٔ پروژه راه می‌افتد (یا با اجرای
+        <code>server\bin\hrmsd.exe -addr 127.0.0.1:8099 -org bandar_imam -web ..\design\prototype -root . -env .env</code>)
+        و سپس نشانی <span class="latin">http://127.0.0.1:8099/</span> در دسترس است.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ حساب‌های آزمایشی ============ -->
+  <section class="section" style="padding-block:40px">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">ورود به محیط نمایشی</span>
+        <h2>پنج نقش، پنج نگاه متفاوت به یک سامانه</h2>
+        <p class="lead" style="margin-top:12px">
+          برای درک درست سامانه، بهتر است با بیش از یک نقش وارد شوید: منو، داشبورد و محدودهٔ دادهٔ هر نقش
+          متفاوت است و همین تفاوت، تفاوت یک سامانه با «چند فرم» است.
+        </p>
+      </div>
+
+      <div class="grid grid-3" style="gap:12px">
+        <div class="acct"><span class="acct__u">hr.manager</span><span class="acct__r">مدیر منابع انسانی</span><span class="acct__p">demo</span></div>
+        <div class="acct"><span class="acct__u">hr.spec</span><span class="acct__r">کارشناس منابع انسانی</span><span class="acct__p">demo</span></div>
+        <div class="acct"><span class="acct__u">line.mgr</span><span class="acct__r">مدیر واحد</span><span class="acct__p">demo</span></div>
+        <div class="acct"><span class="acct__u">employee</span><span class="acct__r">کارمند</span><span class="acct__p">demo</span></div>
+        <div class="acct"><span class="acct__u">admin</span><span class="acct__r">مدیر سیستم</span><span class="acct__p">demo</span></div>
+        <div class="acct"><span class="acct__u">-</span><span class="acct__r">رمز همهٔ حساب‌ها</span><span class="acct__p">demo</span></div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top:22px">
+        <div class="card">
+          <h3>مدیر منابع انسانی</h3>
+          <p class="mod-card__desc" style="margin-top:6px">همهٔ ماژول‌های کارکنان، حقوق، رفاه و گزارش‌ها؛ تأیید مرخصی، پردازش حقوق، فایل‌های قانونی و تنظیمات سازمانی.</p>
+        </div>
+        <div class="card">
+          <h3>کارشناس منابع انسانی</h3>
+          <p class="mod-card__desc" style="margin-top:6px">کارگزینی روزمره: پرونده، قرارداد، کارکرد، ورود فایل دستگاه تردد و ثبت رکوردها — بدون پردازش حقوق.</p>
+        </div>
+        <div class="card">
+          <h3>مدیر واحد</h3>
+          <p class="mod-card__desc" style="margin-top:6px">فقط واحد خودش: تأیید مرخصی زیردستان، درخواست رفاهی و مشاهدهٔ کارکنان واحد.</p>
+        </div>
+        <div class="card">
+          <h3>کارمند</h3>
+          <p class="mod-card__desc" style="margin-top:6px">پروندهٔ خودش، درخواست مرخصی، فیش حقوقی، کارت‌های خدماتی و درخواست‌های شخصی.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ مسیر پیشنهادی ============ -->
+  <section class="section section--tint">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">مسیر پیشنهادی آزمایش</span>
+        <h2>در ده دقیقه، قابلیت‌های کلیدی را امتحان کنید</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><b>با نقش کارمند وارد شوید</b><p>درخواست مرخصی ثبت کنید و ببینید کارتابل و منوی محدود این نقش چه تفاوتی دارد.</p></div>
+        <div class="step"><b>با نقش مدیر واحد وارد شوید</b><p>همان درخواست را در «تأیید مرخصی» ببینید: تأیید کنید و اثر آن را روی ماندهٔ مرخصی بسنجید.</p></div>
+        <div class="step"><b>با نقش مدیر منابع انسانی وارد شوید</b><p>پروندهٔ یک کارمند را باز کنید: تب‌های پرونده، عکس کارگزینی، قرارداد و اسناد، حضور و کارکرد و سوابق تغییرات.</p></div>
+        <div class="step"><b>فایل تردد دستگاه را وارد کنید</b><p>از صفحهٔ «ثبت تردد» فایل نمونهٔ دستگاه تردد را بارگذاری کنید؛ خطوط ناقص و تکراری در گزارش مغایرت می‌آیند و تردد تازه نمی‌سازند.</p></div>
+        <div class="step"><b>دورهٔ حقوق را پردازش کنید</b><p>در «پردازش حقوق» دوره را محاسبه کنید؛ سپس «تطبیق کارکرد با حقوق» را ببینید که کارکرد واقعی را با مبلغ نوشته‌شده می‌سنجد.</p></div>
+        <div class="step"><b>فیش حقوقی و فایل‌های قانونی را ببینید</b><p>فیش یک کارمند را باز کنید: شاکلهٔ مزد مبنا و فوق‌العاده‌های اقلیمی با منبع هر مقدار. سپس لیست بیمه، لیست مالیات و فایل پرداخت بانکی را بسازید.</p></div>
+        <div class="step"><b>ساختار سازمانی را ببینید</b><p>متصدی هر پست، عکس کارگزینی و نتیجهٔ احراز شرایط؛ یک انتصاب با نتیجهٔ «احرازنشده» را امتحان کنید تا پیام قاعدهٔ دامنه را ببینید.</p></div>
+        <div class="step"><b>شرکت فعال را عوض کنید</b><p>از انتخابگر شرکت در نوار بالا، شرکت دیگری را فعال کنید؛ منو و ماژول‌ها بر پایهٔ همان استقرار بازسازی می‌شوند.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ گالری ============ -->
+  <section class="section section--surface">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">تصاویر سامانه</span>
+        <h2>نماگرفت‌های واقعی از صفحه‌های کلیدی</h2>
+        <p class="lead" style="margin-top:12px">روی هر تصویر کلیک کنید تا بزرگ شود.</p>
+      </div>
+
+      <div class="gallery gallery--one">
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۱. پردهٔ ورود و انتخاب نقش</span><span class="shot__url">127.0.0.1:8099</span></div>
+          <img src="assets/shots/01-login.png" width="1926" height="927" loading="lazy"
+               alt="صفحهٔ ورود سامانه با نشان شرکت، فیلد نام کاربری و رمز عبور و فهرست حساب‌های آزمایشی پنج نقش.">
+          <figcaption><b>شروع کار: ورود و نشان شرکت</b>نشان شرکت فعال روی صفحهٔ ورود دیده می‌شود، پیش از آنکه کاربری احراز شده باشد — چون نشان، دادهٔ شرکت است و از پوشهٔ دادهٔ سرور سرو می‌شود.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۲. داشبورد مدیر منابع انسانی</span><span class="shot__url">/dashboard</span></div>
+          <img src="assets/shots/02-dashboard.png" width="1926" height="927" loading="lazy"
+               alt="داشبورد مدیر منابع انسانی با کارت‌های کارکنان فعال، مرخصی در انتظار تأیید، نمودار توزیع نیرو در واحدها و روند استخدام شش ماه.">
+          <figcaption><b>نمای فرماندهی مدیر</b>کارت‌های کلیدی، نمودار توزیع نیرو در واحدها، روند جذب در برابر ترک خدمت، آخرین درخواست‌های مرخصی و اعلان‌های اخیر — همه بر پایهٔ نقش کاربر.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۳. فهرست کارکنان</span><span class="shot__url">/api/v1/employee</span></div>
+          <img src="assets/shots/03-employees.png" width="1926" height="927" loading="lazy"
+               alt="فهرست کارکنان با کارت‌های جمع‌بندی، جست‌وجو و پالایه، و جدول کامل شامل کد ملی، نوع استخدام، حقوق پایه و وضعیت.">
+          <figcaption><b>فهرست کارکنان روی دادهٔ واقعی</b>کارت‌های جمع‌بندی (کل، شاغل، مرخصی/آزمایشی، جمع حقوق پایه)، جست‌وجو و پالایه بر پایهٔ وضعیت و واحد، و جدول کامل پرونده‌ها. مدیر واحد فقط واحد خودش را می‌بیند.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۴. پروندهٔ تبیندی کارمند</span><span class="shot__url">/api/v1/employee/employees</span></div>
+          <img src="assets/shots/16-profile.png" width="1926" height="927" loading="lazy"
+               alt="پروندهٔ کارمند با سرصفحهٔ مشخصات و هفت زبانه: مشخصات شخصی، شغلی، تحصیلات، عکس پرسنلی، قرارداد و اسناد، حضور و کارکرد، سوابق تغییرات.">
+          <figcaption><b>هفت زبانه برای یک پرونده</b>سرصفحه وضعیت اشتغال و وضعیت عکس کارگزینی را نشان می‌دهد؛ هر زبانه بخشی از پرونده است و اطلاعات پایهٔ همین صفحه، مرجع همهٔ فرم‌های دیگر سامانه است.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۵. ساختار سازمانی و متصدی پست‌ها</span><span class="shot__url">/api/v1/orgstructure</span></div>
+          <img src="assets/shots/04-org.png" width="1926" height="927" loading="lazy"
+               alt="ساختار سازمانی با کارت‌های پست، نمودار درختی واحدها، متصدی هر پست، عکس کارگزینی و تعداد پست‌های بلا تصدی.">
+          <figcaption><b>نمودار سازمانی با متصدی واقعی</b>کارت‌های بالای صفحه پست‌ها، دارای متصدی، بلا تصدی و انتصاب‌های پیشین را می‌شمارند؛ روی هر گره، متصدی جاری با عکس کارگزینی و هشدار «متصدی بدون عکس» دیده می‌شود.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۶. حضور و غیاب، مرخصی و ماموریت</span><span class="shot__url">/api/v1/attendance</span></div>
+          <img src="assets/shots/05-attendance.png" width="1926" height="927" loading="lazy"
+               alt="جدول تردد کارکنان با ساعت ورود و خروج، کارکرد، تأخیر و تعجیل، نوبت، کد دستگاه تردد و فایل مبدأ.">
+          <figcaption><b>از فایل دستگاه تردد تا کارکرد</b>هر سطر یک تردد با ساعت ورود و خروج، کارکرد روز، تأخیر/تعجیل، نوبت و کد دستگاه؛ ستون «فایل مبدأ» نشان می‌دهد رکورد از کدام فایل بارگذاری شده است.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۷. تأیید مرخصی (کارتابل مدیر)</span><span class="shot__url">/api/v1/attendance/leaves</span></div>
+          <img src="assets/shots/08-leave-approve.png" width="1926" height="927" loading="lazy"
+               alt="صفحهٔ تأیید مرخصی با کارت‌های وضعیت و سطری در وضعیت «در انتظار تأیید مدیر واحد» و دکمه‌های تأیید و رد.">
+          <figcaption><b>گردش تأیید با ثبت کاربر و تاریخ</b>کارتابل مدیر واحد فقط درخواست‌های در انتظار خودش را نشان می‌دهد؛ تأیید یا رد، وضعیت رکورد را با تاریخ و کاربر تغییر می‌دهد و اثرش روی ماندهٔ مرخصی می‌نشیند.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۸. قراردادهای کارکنان</span><span class="shot__url">/api/v1/contracts</span></div>
+          <img src="assets/shots/09-contracts.png" width="1926" height="927" loading="lazy"
+               alt="فهرست قراردادها با نوع (مدت موقت و دائم)، وضعیت، تاریخ شروع و پایان و دکمه‌های تمدید، تبدیل به دائم و خاتمه.">
+          <figcaption><b>قرارداد مدت موقت و مدت دائم</b>چرخهٔ کامل قرارداد: انعقاد، تأیید، تمدید، تبدیل به دائم و خاتمه — با کنترل سرآمد، هم‌پوشانی و چاپ قرارداد بر پایهٔ قالب قانون کار.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۹. پردازش حقوق</span><span class="shot__url">/api/v1/payroll</span></div>
+          <img src="assets/shots/06-payroll-run.png" width="1926" height="927" loading="lazy"
+               alt="صفحهٔ پردازش حقوق با کارت‌های خالص دوره، جمع ناخالص، اضافه‌کاری تأییدنشده و کسر مرخصی، و جدول دوره‌های پردازش.">
+          <figcaption><b>دورهٔ پردازش بر پایهٔ کارکرد</b>دورهٔ جاری از کارکرد همان ماه ساخته می‌شود (تردد، مرخصی، ماموریت، اضافه‌کاری) و با موتور قواعد و پارامترهای شرکت محاسبه می‌شود؛ چرخهٔ وضعیت دوره: محاسبه‌شده ← قفل‌شده ← پرداخت‌شده.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۱۰. فیش حقوقی و شاکلهٔ مزد مبنا</span><span class="shot__url">/api/v1/payroll/payslip</span></div>
+          <img src="assets/shots/07-payslip.png" width="1926" height="927" loading="lazy"
+               alt="فیش حقوقی با کارت‌های مزد مبنا، جمع مزایا، جمع کسور و خالص، و تفکیک اجزای دریافتنی و کسورات.">
+          <figcaption><b>فیش از سند خودِ کارمند</b>اجزای مزد و ضرایب اقلیمی از حکم ابلاغ‌شده یا قرارداد جاری همان کارمند خوانده می‌شود؛ فیش، شاکلهٔ مزد مبنا و منبع هر مقدار را هم گزارش می‌کند و هم به‌شکل <span class="latin">PDF</span> چاپ می‌شود.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۱۱. مدیریت عملکرد</span><span class="shot__url">/api/v1/performance</span></div>
+          <img src="assets/shots/10-perf-cycles.png" width="1926" height="927" loading="lazy"
+               alt="صفحهٔ دوره‌های ارزیابی عملکرد با کارت‌های جمع‌بندی و فهرست دوره‌ها.">
+          <figcaption><b>دوره، فرم و نتیجه</b>دورهٔ ارزیابی برای بازهٔ زمانی مشخص ساخته می‌شود، فرم‌های ارزیابی به نقش‌ها تخصیص می‌یابد و نتایج برای گزارش‌های مدیریتی جمع می‌شود.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۱۲. داشبورد آماری</span><span class="shot__url">/api/v1/statistics</span></div>
+          <img src="assets/shots/11-stats.png" width="1926" height="927" loading="lazy"
+               alt="داشبورد آماری: نمودار جمعیت کارکنان به تفکیک واحد سازمانی، صف تایید درخواست‌ها و وضعیت رکوردهای حضور دوره.">
+          <figcaption><b>آمار تجمیعی برای تصمیم‌گیری</b>جمعیت کارکنان به تفکیک واحد، صف تایید درخواست‌ها و وضعیت رکوردهای حضور دوره؛ همه اعداد از سرور و روی داده واقعی محاسبه می‌شوند.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۱۳. پارامترهای حقوق و ضرایب</span><span class="shot__url">/api/v1/payroll/params</span></div>
+          <img src="assets/shots/14-payparams.png" width="1926" height="927" loading="lazy"
+               alt="فهرست پارامترهای حقوق با مقدار، واحد و وضعیت جاری و پیش‌نویس.">
+          <figcaption><b>پارامتر فقط در حالت جاری اثر دارد</b>نرخ‌ها، سقف‌ها، مبالغ مصوب و مهلت‌ها پارامترند؛ پارامتر پیش‌نویس در محاسبه اثر نمی‌کند تا نرخ جاری ناخواسته عوض نشود. دکمهٔ «جاری‌سازی» همان گردش استاندارد را اجرا می‌کند.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۱۴. هماهنگی آموزش</span><span class="shot__url">/api/v1/training</span></div>
+          <img src="assets/shots/15-training.png" width="1926" height="927" loading="lazy"
+               alt="صفحهٔ هماهنگی آموزش با کارت‌های جمع‌بندی و فهرست دوره‌های آموزشی.">
+          <figcaption><b>چرخهٔ آموزش</b>نیازسنجی، برنامه‌ریزی آموزشی، اجرا و هماهنگی دوره‌ها، دوره‌ها و سوابق آموزشی کارکنان — روی همان موتور مشترک رکورد با گردش تأیید.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۱۵. گزارش‌ها</span><span class="shot__url">/api/v1/reports</span></div>
+          <img src="assets/shots/13-reports.png" width="1926" height="927" loading="lazy"
+               alt="صفحهٔ گزارش‌ها با کارت‌های جمع‌بندی و جدول گزارش‌های ثبت‌شده.">
+          <figcaption><b>گزارش‌های عملیاتی، تحلیلی و مدیریتی</b>گزارش‌ساز بر پایهٔ اقلام، گزارش‌های مدیریتی و گزارش‌های آماری؛ خروجی هر گزارش هم در دسترس است.</figcaption>
+        </figure>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar"><span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span><span>۱۶. شرکت‌ها و استقرارها</span><span class="shot__url">/api/v1/settings/records</span></div>
+          <img src="assets/shots/12-companies.png" width="1926" height="927" loading="lazy"
+               alt="صفحهٔ شرکت‌ها و استقرارها با جدول ۱۵ شرکت، هلدینگ، کد شرکت، تعداد کارکنان، رنگ برند و وضعیت نشان.">
+          <figcaption><b>شرکت‌ها، داده‌اند نه کد</b>فرم «شرکت‌ها و استقرارها» پروفایل هر شرکت را با همان موتور مشترک رکورد ثبت و ویرایش می‌کند: کد شرکت، هلدینگ، تعداد کارکنان، رنگ برند، وضعیت نشان و پارامترهای اختصاصی.</figcaption>
+        </figure>
+
+      </div>
+
+      <div class="note" style="margin-top:26px">
+        تصاویر با نسبت واقعی صفحه‌های سامانه (فارسی، راست‌چین و روی دادهٔ آزمایشی) ثبت شده‌اند.
+        نام کارکنان در محیط دمو، دادهٔ نمونه است و ارتباطی با افراد واقعی ندارد.
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tint">
+    <div class="wrap">
+      <div class="grid grid-2" style="gap:26px">
+        <div class="card card--pad-lg">
+          <h2>برای مدیریت و ارزیاب</h2>
+          <ul class="checks" style="margin-top:14px">
+            <li>مسیر پیشنهادی آزمایش، قابلیت‌های کلیدی را در ده دقیقه پوشش می‌دهد.</li>
+            <li>هر فرآیند، قاعدهٔ خودش را در دامنه دارد؛ پیام‌های خطا فارسی و دقیق‌اند.</li>
+            <li>گزارش‌ها و فایل‌های قانونی از همان یک محاسبه ساخته می‌شوند، نه از محاسبهٔ دوباره.</li>
+            <li>پارامترها و استقرار شرکت‌ها، داده است؛ تغییر آن‌ها انتشار نسخهٔ تازه لازم ندارد.</li>
+          </ul>
+        </div>
+        <div class="card card--pad-lg">
+          <h2>برای کارشناس فناوری اطلاعات</h2>
+          <ul class="checks" style="margin-top:14px">
+            <li>معماری سه‌لایه: هستهٔ قواعد، سرور مرجع، رابط فقط‌نمایشی.</li>
+            <li>یک مانیفست برای هر ماژول؛ مشتقات (منو، دسترسی، انواع، مستندات) خودکار ساخته می‌شوند.</li>
+            <li>خروجی‌ها <span class="latin">UTF-8</span>؛ داده با تاریخ شمسی و ارقام لاتین، نمایش با ارقام فارسی.</li>
+            <li>پشتیبان‌گیری با بستهٔ نسخه‌دار و راستی‌آزمایی بازگردانی سطربه‌سطر.</li>
+          </ul>
+          <div class="btn-row" style="margin-top:16px">
+            <a class="btn btn--ghost" href="architecture.html">جزئیات معماری</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>سامانهٔ جامع منابع انسانی — اچ‌آر اپ</h4>
+        <p style="font-size:.86rem;line-height:2">وب‌سایت معرفی، دمو و تبلیغاتی سامانه؛ همراه با معرفی طراح و تحلیل‌گر سامانه.</p>
+      </div>
+      <div>
+        <h4>پیوندها</h4>
+        <ul>
+          <li><a href="index.html">خانه</a></li>
+          <li><a href="features.html">قابلیت‌ها</a></li>
+          <li><a href="demo.html">دمو و تصاویر</a></li>
+          <li><a href="architecture.html">معماری و فناوری</a></li>
+          <li><a href="resume.html">رزومهٔ طراح</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>دسترسی سریع</h4>
+        <ul>
+          <li><a href="http://127.0.0.1:8099/" target="_blank" rel="noopener">دموی زندهٔ سامانه</a></li>
+          <li><a href="resume.html#contact">تماس با طراح</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© اچ‌آر اپ — سامانهٔ جامع منابع انسانی</span>
+      <span>طراحی، تحلیل و برنامه‌نویسی: مسعود وائقی</span>
+    </div>
+  </div>
+</footer>
+
+<!-- نمایش تمام‌صفحهٔ تصاویر -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="نمایش تصویر">
+  <button class="lightbox__close" type="button" aria-label="بستن">✕</button>
+  <div>
+    <img id="lightboxImg" alt="">
+    <p class="lightbox__cap" id="lightboxCap"></p>
+  </div>
+</div>
+
+<script src="assets/js/site.js"></script>
+<script>
+/* نمایش تمام‌صفحهٔ نماگرفت‌ها: هر تصویر گالری با کلیک، بزرگ می‌شود.
+   تصویر بدون src در ابتدا ساخته می‌شود تا مرورگر درخواست بی‌مورد نفرستد. */
+(function () {
+  var box = document.getElementById('lightbox');
+  var img = document.getElementById('lightboxImg');
+  var cap = document.getElementById('lightboxCap');
+  var closeBtn = box ? box.querySelector('.lightbox__close') : null;
+  var lastFocus = null;
+  if (!box || !img) return;
+
+  function open(fig) {
+    var source = fig.querySelector('img');
+    var caption = fig.querySelector('figcaption');
+    if (!source) return;
+    lastFocus = source;
+    img.src = source.getAttribute('src');
+    img.alt = source.getAttribute('alt') || '';
+    cap.textContent = caption ? caption.textContent.trim() : '';
+    box.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  }
+  function close() {
+    box.classList.remove('open');
+    img.removeAttribute('src');
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.gallery figure'), function (fig) {
+    var thumb = fig.querySelector('img');
+    if (!thumb) return;
+    /* تصویر بندانگشتی هم با ماوس و هم با صفحه‌کلید باز می‌شود */
+    thumb.setAttribute('tabindex', '0');
+    thumb.setAttribute('role', 'button');
+    thumb.addEventListener('click', function () { open(fig); });
+    thumb.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); open(fig); }
+    });
+  });
+  closeBtn.addEventListener('click', close);
+  box.addEventListener('click', function (e) { if (e.target === box) close(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && box.classList.contains('open')) close();
+  });
+})();
+</script>
+</body>
+</html>

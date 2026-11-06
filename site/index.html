@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سامانهٔ جامع منابع انسانی اچ‌آر اپ — معرفی، دمو و قابلیت‌ها</title>
+<meta name="description" content="سامانهٔ جامع منابع انسانی اچ‌آر اپ: ۱۰ اداره، ۲۷ زیرواحد، ۳۰ ماژول و ۱۱۱ صفحهٔ فارسی راست‌چین — با دموی زندهٔ قابل آزمایش، معماری هستهٔ Rust و سرور Go، و معرفی تحلیل‌گر و طراح سامانه.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:site_name" content="سامانهٔ جامع منابع انسانی اچ‌آر اپ">
+<meta property="og:title" content="سامانهٔ جامع منابع انسانی اچ‌آر اپ — دمو و معرفی قابلیت‌ها">
+<meta property="og:description" content="۳۰ ماژول، ۱۱۱ صفحهٔ فارسی راست‌چین و دموی زندهٔ قابل آزمایش؛ همراه با معرفی تحلیل‌گر و طراح سامانه.">
+<meta property="og:image" content="assets/shots/02-dashboard.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0F766E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230F766E'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23fff' font-family='Tahoma'%3E%D9%87%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/Vazirmatn-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">پرش به محتوای اصلی</a>
+
+<!-- ================= سرصفحه ================= -->
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="brand__mark" aria-hidden="true">ه</span>
+      <span class="brand__text">
+        <span class="brand__name">سامانهٔ جامع منابع انسانی</span>
+        <span class="brand__sub">اچ‌آر اپ — نسخهٔ نمایشی و تبلیغاتی</span>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="فهرست">☰</button>
+
+    <nav class="site-nav" id="site-nav" aria-label="ناوبری اصلی">
+      <a href="index.html" aria-current="page">خانه</a>
+      <a href="features.html">قابلیت‌ها</a>
+      <a href="demo.html">دمو و تصاویر</a>
+      <a href="architecture.html">معماری</a>
+      <a href="resume.html">رزومهٔ طراح</a>
+      <a href="resume.html#contact">تماس</a>
+    </nav>
+
+    <div class="header-cta">
+      <a class="btn btn--primary btn--sm" href="http://127.0.0.1:8099/" target="_blank" rel="noopener">ورود به دموی زنده</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ================= قهرمان ================= -->
+  <section class="hero">
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="hero__inner">
+        <div>
+          <span class="hero__pill">🇮🇷 سامانهٔ بومی، فارسی و راست‌چین — بدون وابستگی به سرویس بیرونی</span>
+          <h1>سامانهٔ جامع منابع انسانی، از <span class="accent">کارگزینی</span> تا <span class="accent">حقوق و دستمزد</span> و <span class="accent">توسعهٔ سرمایهٔ انسانی</span></h1>
+          <p class="hero__lead">
+            یک سامانهٔ یکپارچه برای همهٔ کارهای ادارهٔ منابع انسانی: پروندهٔ پرسنلی و قراردادها، حضور و غیاب و
+            نوبت‌کاری، حقوق و دستمزد با فایل‌های قانونی بیمه و مالیات، عملکرد و آموزش، رفاه و کارت‌های خدماتی،
+            ساختار سازمانی و انتصابات، گزارش‌های مدیریتی و تنظیمات پارامتریک چند‌شرکتی.
+            سامانه روی دادهٔ واقعی کار می‌کند و همین حالا قابل آزمایش است.
+          </p>
+
+          <div class="btn-row">
+            <a class="btn btn--primary" href="http://127.0.0.1:8099/" target="_blank" rel="noopener">
+              <span>🖥</span> ورود به محیط دمو
+            </a>
+            <a class="btn btn--ghost" href="demo.html">راهنمای دمو و تصاویر</a>
+            <a class="btn btn--ghost" href="features.html">فهرست ۳۰ ماژول</a>
+          </div>
+
+          <div class="hero__facts">
+            <span class="chip">🎖 ۵ نقش کاربری با دسترسی مجزا</span>
+            <span class="chip">📊 مرجع نهایی: سرور (نه رابط)</span>
+            <span class="chip">🧮 موتور قواعد هم‌ارزی‌سنجی‌شده با Rust</span>
+            <span class="chip">🏢 شبیه‌سازی ۱۵ شرکت روی یک سامانه</span>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <canvas id="heroGraph" width="440" height="440" role="img"
+            aria-label="نمودار مدار: پنج نقش کاربری، هر یک با دسترسی خودش، به یک هستهٔ واحد قواعد وصل می‌شوند."></canvas>
+          <p class="hero-visual__legend">
+            <b>یک هسته، چند نقش.</b><br>
+            پنهان‌کردن منو در رابط، امنیت نیست؛ محدودهٔ دسترسی
+            (<span class="latin">all / own_unit / own</span>) در کوئری سرور اعمال می‌شود.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= نوار آمار ================= -->
+  <section class="stats-strip" aria-label="آمار سامانه">
+    <div class="wrap">
+      <div class="stat"><div class="stat__num" data-fa-num="10">۱۰</div><div class="stat__lbl">ادارهٔ منابع انسانی و ستادی</div></div>
+      <div class="stat"><div class="stat__num" data-fa-num="27">۲۷</div><div class="stat__lbl">زیرواحد سازمانی</div></div>
+      <div class="stat"><div class="stat__num" data-fa-num="30">۳۰</div><div class="stat__lbl">ماژول یکپارچه</div></div>
+      <div class="stat"><div class="stat__num" data-fa-num="111">۱۱۱</div><div class="stat__lbl">صفحهٔ فارسی مستندشده</div></div>
+    </div>
+  </section>
+
+  <!-- ================= معرفی کوتاه ================= -->
+  <section class="section section--surface">
+    <div class="wrap">
+      <div class="grid grid-2" style="align-items:center;gap:34px">
+        <div class="reveal">
+          <span class="eyebrow">معرفی سامانه</span>
+          <h2>یک سامانه، همهٔ فرآیندهای منابع انسانی — با یک منبع حقیقت</h2>
+          <p class="lead" style="margin-block:14px 16px">
+            اچ‌آر اپ از سه لایهٔ روشن ساخته شده است: <b>هستهٔ قواعد</b> (اعتبارسنجی، محاسبهٔ حقوق، مرخصی، تقویم شمسی
+            و دسترسی)، <b>سرور</b> (مرجع نهایی داده و دسترسی) و <b>رابط کاربری</b> (فقط نمایش و ناوبری).
+            این تفکیک یعنی هیچ قاعدهٔ کسب‌وکاری در رابط کاربری تکرار نمی‌شود؛ پس عدد حقوق، ماندهٔ مرخصی و
+            فهرست دسترسی در همهٔ صفحه‌ها، فایل‌ها و اسناد چاپی یکی است.
+          </p>
+          <ul class="checks">
+            <li>منوی چهارسطحی: حوزهٔ سازمانی ← اداره ← زیرواحد ← ماژول ← صفحه.</li>
+            <li>گردش‌کار استاندارد رکورد: پیش‌نویس ← فعال ← بایگانی، با سابقهٔ تغییرات و اعتبارسنجی.</li>
+            <li>همهٔ خروجی‌ها <span class="latin">UTF-8</span> با ارقام و تاریخ شمسی؛ اکسل و CSV راست‌چین و فارسی.</li>
+            <li>اجرای پارامتریک برای چند شرکت، بدون تغییر کد.</li>
+          </ul>
+        </div>
+
+        <figure class="card shot reveal">
+          <div class="shot__bar">
+            <span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>نمای زندهٔ سامانه — داشبورد مدیر منابع انسانی</span>
+            <span class="shot__url">127.0.0.1:8099</span>
+          </div>
+          <img src="assets/shots/02-dashboard.png" width="1926" height="927"
+               alt="داشبورد مدیر منابع انسانی: کارت‌های کارکنان فعال، مرخصی در انتظار تأیید، آگهی‌های باز، نمودار توزیع نیرو و آخرین درخواست‌های مرخصی.">
+          <figcaption><b>داشبورد نقش‌محور</b>کارت‌ها و فهرست‌ها بر پایهٔ نقش کاربر تغییر می‌کنند؛ همهٔ اعداد از سرور خوانده می‌شوند.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ماژول‌های شاخص ================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head center">
+        <span class="eyebrow">قابلیت‌ها در یک نگاه</span>
+        <h2>از استخدام تا بازنشستگی، در ۳۰ ماژول به‌هم‌پیوسته</h2>
+        <p class="lead" style="margin-top:12px">
+          هر ماژول مرز روشن خودش را دارد: جدول، سرویس، دسترسی و مستندات فارسی مستقل — و در همان حال
+          با بقیهٔ ماژول‌ها یکپارچه است. چند نمونهٔ شاخص:
+        </p>
+      </div>
+
+      <div class="grid grid-3">
+        <article class="card mod-card reveal">
+          <div class="mod-card__head">
+            <span class="mod-card__ico" aria-hidden="true">🪪</span>
+            <div>
+              <div class="mod-card__t">امور کارکنان و پروندهٔ پرسنلی</div>
+              <div class="mod-card__u">واحد امور کارکنان · کارگزینی و خدمات پرسنلی</div>
+            </div>
+          </div>
+          <p class="mod-card__desc">پروندهٔ تبیندی هر کارمند با مشخصات پایه، عکس کارگزینی، مدرک ملاک، سابقه، قرارداد و اسناد، حضور و کارکرد و سوابق تغییرات.</p>
+          <div class="mod-card__meta"><span class="tag tag--ok">پیاده‌شده</span><span class="chip">۳ صفحه</span></div>
+        </article>
+
+        <article class="card mod-card reveal">
+          <div class="mod-card__head">
+            <span class="mod-card__ico" aria-hidden="true">⚙️</span>
+            <div>
+              <div class="mod-card__t">حقوق و دستمزد</div>
+              <div class="mod-card__u">واحد امور کارکنان · جبران خدمات</div>
+            </div>
+          </div>
+          <p class="mod-card__desc">دورهٔ پردازش، اجزای حقوق، مزد مبنا و شاکلهٔ آن، فیش حقوقی، احکام، فایل قانونی بیمه و مالیات و فایل پرداخت بانکی.</p>
+          <div class="mod-card__meta"><span class="tag tag--ok">پیاده‌شده</span><span class="chip">۵ صفحه</span></div>
+        </article>
+
+        <article class="card mod-card reveal">
+          <div class="mod-card__head">
+            <span class="mod-card__ico" aria-hidden="true">🕐</span>
+            <div>
+              <div class="mod-card__t">حضور و غیاب، مرخصی و ماموریت</div>
+              <div class="mod-card__u">واحد امور کارکنان · جبران خدمات</div>
+            </div>
+          </div>
+          <p class="mod-card__desc">ثبت تردد، ورود فایل دستگاه تردد، برنامهٔ نوبت و پوشش، تأخیر و شب‌کاری، مرخصی و ماموریت با گردش تأیید.</p>
+          <div class="mod-card__meta"><span class="tag tag--ok">پیاده‌شده</span><span class="chip">۶ صفحه</span></div>
+        </article>
+
+        <article class="card mod-card reveal">
+          <div class="mod-card__head">
+            <span class="mod-card__ico" aria-hidden="true">🏢</span>
+            <div>
+              <div class="mod-card__t">ساختار سازمانی و انتصابات</div>
+              <div class="mod-card__u">واحد برنامه‌ریزی نیروی انسانی</div>
+            </div>
+          </div>
+          <p class="mod-card__desc">نمودار و جدول تفصیلی واحدها، شناسنامهٔ پست، متصدی جاری، قاعدهٔ احراز شرایط، سابقهٔ انتصاب و تاریخچهٔ تغییرات سمت.</p>
+          <div class="mod-card__meta"><span class="tag tag--ok">پیاده‌شده</span><span class="chip">۲ صفحه</span></div>
+        </article>
+
+        <article class="card mod-card reveal">
+          <div class="mod-card__head">
+            <span class="mod-card__ico" aria-hidden="true">🎁</span>
+            <div>
+              <div class="mod-card__t">رفاه، کارت‌های خدماتی و پاداش</div>
+              <div class="mod-card__u">واحد امور کارکنان · جبران خدمات</div>
+            </div>
+          </div>
+          <p class="mod-card__desc">تسهیلات و درخواست‌های رفاهی، سرویس مدارس، اسکان، پتروکارت و نفت‌کارت با سقف افراد تحت تکفل، پاداش تحصیلی و پاداش‌ها.</p>
+          <div class="mod-card__meta"><span class="tag tag--ok">پیاده‌شده</span><span class="chip">۲۳ صفحه</span></div>
+        </article>
+
+        <article class="card mod-card reveal">
+          <div class="mod-card__head">
+            <span class="mod-card__ico" aria-hidden="true">📈</span>
+            <div>
+              <div class="mod-card__t">گزارش‌ها، آمار و سامانهٔ تأیید</div>
+              <div class="mod-card__u">واحد آمار و گزارشات · تنظیمات سامانه</div>
+            </div>
+          </div>
+          <p class="mod-card__desc">داشبورد آماری، برش‌های آماری، گزارش‌ساز بر پایهٔ اقلام، گزارش‌های مدیریتی و صفحهٔ عمومی تأیید سند/کارمند با <span class="latin">QR</span> و امضای <span class="latin">HMAC</span>.</p>
+          <div class="mod-card__meta"><span class="tag tag--ok">پیاده‌شده</span><span class="chip">۲۱ صفحه</span></div>
+        </article>
+      </div>
+
+      <div class="btn-row" style="justify-content:center;margin-top:28px">
+        <a class="btn btn--indigo" href="features.html">دیدن فهرست کامل ۳۰ ماژول و ۷۰ قابلیت</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= تفکیک‌کنندهٔ فنی ================= -->
+  <section class="section section--tint">
+    <div class="wrap">
+      <div class="section-head center">
+        <span class="eyebrow">چرا این سامانه متفاوت است؟</span>
+        <h2>سه قاعدهٔ معماری که همه‌چیز را سرِ جا نگه می‌دارد</h2>
+      </div>
+
+      <div class="arch">
+        <div class="arch__row">
+          <div class="arch__box arch__box--core reveal">
+            <h4>۱. هیچ قاعدهٔ کسب‌وکاری در رابط کاربری نیست</h4>
+            <p>اعتبارسنجی، محاسبهٔ حقوق و مرخصی، تقویم شمسی و دسترسی، همه از هستهٔ بومی می‌آید. اگر هسته بار نشود، برنامه محاسبه نمی‌کند و خطای صریح می‌دهد؛ نسخهٔ دومی از قواعد در جاوااسکریپت ساخته نمی‌شود.</p>
+          </div>
+          <div class="arch__box arch__box--server reveal">
+            <h4>۲. سرور مرجع نهایی است</h4>
+            <p>محدودهٔ دسترسی نقش در کوئری سرور اعمال می‌شود و پنهان‌کردن یک دکمه در مرورگر، جای کنترل دسترسی را نمی‌گیرد. هر عمل، سابقهٔ حسابرسی خودش را دارد.</p>
+          </div>
+          <div class="arch__box arch__box--ui reveal">
+            <h4>۳. یک مانیفست، همهٔ مشتقات</h4>
+            <p>از مانیفست هر ماژول، رجیستری سرور، منوی برنامه، جدول سیاست دسترسی، انواع داده و مستندات فارسی ساخته می‌شود؛ هر انحراف، ساخت خودکار را می‌شکند.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="justify-content:center;margin-top:26px">
+        <a class="btn btn--ghost" href="architecture.html">معماری و فناوری، با جزئیات</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= دموی زنده ================= -->
+  <section class="section section--surface">
+    <div class="wrap">
+      <div class="grid grid-2" style="gap:34px;align-items:center">
+        <figure class="card shot reveal">
+          <div class="shot__bar">
+            <span class="shot__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>پردهٔ ورود سامانه</span>
+            <span class="shot__url">127.0.0.1:8099</span>
+          </div>
+          <img src="assets/shots/01-login.png" width="1926" height="927"
+               alt="صفحهٔ ورود سامانهٔ منابع انسانی با نشان شرکت و فهرست حساب‌های آزمایشی برای نقش‌های مختلف.">
+          <figcaption><b>ورود با حساب‌های آزمایشی</b>هر پنج نقش با رمز آزمایشی <span class="latin">demo</span> در دسترس‌اند؛ محیط دمو برای معرفی قابلیت‌ها آماده است.</figcaption>
+        </figure>
+
+        <div class="reveal">
+          <span class="eyebrow">دمو و معرفی قابلیت‌ها</span>
+          <h2>همین حالا سامانه را باز کنید و امتحان کنید</h2>
+          <p class="lead" style="margin-block:14px 18px">
+            این وب‌سایت، نسخهٔ نمایشی است برای معرفی؛ اما سامانهٔ واقعی روی همین رایانه اجرا می‌شود.
+            با یکی از حساب‌های آزمایشی وارد شوید و فرآیندها را روی دادهٔ واقعی ببینید: تأیید مرخصی،
+            ورود فایل تردد دستگاه، پردازش حقوق، صدور فیش و مشاهدهٔ فایل‌های قانونی.
+          </p>
+
+          <div class="grid grid-2" style="gap:12px">
+            <div class="acct"><span class="acct__u">hr.manager</span><span class="acct__r">مدیر منابع انسانی</span><span class="acct__p">demo</span></div>
+            <div class="acct"><span class="acct__u">hr.spec</span><span class="acct__r">کارشناس منابع انسانی</span><span class="acct__p">demo</span></div>
+            <div class="acct"><span class="acct__u">line.mgr</span><span class="acct__r">مدیر واحد</span><span class="acct__p">demo</span></div>
+            <div class="acct"><span class="acct__u">employee</span><span class="acct__r">کارمند</span><span class="acct__p">demo</span></div>
+            <div class="acct"><span class="acct__u">admin</span><span class="acct__r">مدیر سیستم</span><span class="acct__p">demo</span></div>
+            <div class="acct"><span class="acct__u">-</span><span class="acct__r">رمز همهٔ حساب‌ها</span><span class="acct__p">demo</span></div>
+          </div>
+
+          <div class="btn-row" style="margin-top:20px">
+            <a class="btn btn--primary" href="http://127.0.0.1:8099/" target="_blank" rel="noopener">باز کردن سامانه در پنجرهٔ تازه</a>
+            <a class="btn btn--ghost" href="demo.html">۱۲ نمای راهنما</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= شرکت‌ها ================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head center">
+        <span class="eyebrow">استقرار پارامتریک</span>
+        <h2>یک سامانه، چند شرکت — بدون تغییر کد</h2>
+        <p class="lead" style="margin-top:12px">
+          اداره‌های فعال، ماژول‌های روشن، پارامترهای حقوقی‑مالی و مشخصات برند هر شرکت، <b>داده</b> است نه کد.
+          سرور، برنامهٔ موبایل و نمونهٔ تحت وب، هر سه از همان یک فایل استقرار ساخته می‌شوند.
+        </p>
+      </div>
+
+      <div class="tbl-wrap reveal">
+        <table class="tbl">
+          <caption class="muted" style="padding:10px 14px;text-align:right">نمونهٔ استقرارهای تعریف‌شده در سامانه</caption>
+          <thead>
+            <tr><th>شرکت</th><th>هلدینگ</th><th>کد</th><th>ادارهٔ فعال</th><th>ماژول فعال</th><th>کارکنان</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>پتروشیمی بندر امام <span class="tag tag--ok">استقرار مرجع</span></td><td>هلدینگ خلیج فارس</td><td class="latin">BIPC</td><td data-fa-num="9"></td><td data-fa-num="26"></td><td data-fa-num="4200" data-fa-group></td></tr>
+            <tr><td>ستاد هلدینگ خلیج فارس</td><td>هلدینگ خلیج فارس</td><td class="latin">PGH</td><td data-fa-num="5"></td><td data-fa-num="10"></td><td data-fa-num="320" data-fa-group></td></tr>
+            <tr><td>شرکت پتروشیمی نمونه</td><td>هلدینگ نمونه</td><td class="latin">SPC</td><td data-fa-num="7"></td><td data-fa-num="23"></td><td data-fa-num="850" data-fa-group></td></tr>
+            <tr><td>شرکت خدمات و پیمانکاری نمونه</td><td>هلدینگ نمونه</td><td class="latin">CSC</td><td data-fa-num="5"></td><td data-fa-num="14"></td><td data-fa-num="1500" data-fa-group></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="muted center" style="margin-top:14px">
+        فهرست کامل استقرارها ۱۵ شرکت است و از فرم «شرکت‌ها و استقرارها» در ماژول تنظیمات، قابل ثبت و ویرایش است.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= تماس ================= -->
+  <section class="section section--tint" id="contact-teaser">
+    <div class="wrap">
+      <div class="contact-card reveal">
+        <div>
+          <h2>طراحی و تحلیل این سامانه، حاصل تجربهٔ میدانی منابع انسانی است</h2>
+          <p style="margin-top:10px">
+            اچ‌آر اپ بر پایهٔ نزدیک به چهار دهه کار اجرایی و مدیریتی در حوزهٔ منابع انسانی و
+            تحلیل و طراحی سامانه‌های آن ساخته شده است — نه ترجمهٔ یک نرم‌افزار خارجی.
+          </p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="resume.html">معرفی طراح و رزومهٔ حرفه‌ای</a>
+          <a class="btn btn--ghost" href="resume.html#contact">راه‌های تماس</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= پانویس ================= -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>سامانهٔ جامع منابع انسانی — اچ‌آر اپ</h4>
+        <p style="font-size:.86rem;line-height:2">
+          وب‌سایت معرفی، دمو و تبلیغاتی سامانه؛ همراه با معرفی تحلیل‌گر و طراح سامانه.
+          این سایت خودش «سامانه» نیست؛ ویترین آن است — سامانهٔ قابل اجرا از دکمهٔ «ورود به دموی زنده» باز می‌شود.
+        </p>
+      </div>
+      <div>
+        <h4>پیوندها</h4>
+        <ul>
+          <li><a href="features.html">قابلیت‌ها و ۳۰ ماژول</a></li>
+          <li><a href="demo.html">راهنمای دمو و تصاویر</a></li>
+          <li><a href="architecture.html">معماری و فناوری</a></li>
+          <li><a href="resume.html">رزومهٔ طراح سامانه</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>دسترسی سریع</h4>
+        <ul>
+          <li><a href="http://127.0.0.1:8099/" target="_blank" rel="noopener">دموی زندهٔ سامانه</a></li>
+          <li><a href="../design/prototype/index.html">نمونهٔ رابط (بدون سرور)</a></li>
+          <li><a href="resume.html#contact">تماس با طراح</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© اچ‌آر اپ — سامانهٔ جامع منابع انسانی</span>
+      <span>طراحی، تحلیل و برنامه‌نویسی: مسعود وائقی</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+</body>
+</html>
