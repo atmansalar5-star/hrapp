@@ -74,6 +74,24 @@ func Descriptor() recordkit.Descriptor {
 					"mileageKm|مسافت کرایهٔ کیلومتری (کیلومتر)|number|0",
 					"mileageRate|نرخ هر کیلومتر (ریال)|money|0",
 					"allowanceTotal|فوقالعادهٔ مأموریت قابل پرداخت (ریال)|money|0",
+					// نوع مأموریت: اداری، اعزام پزشکی یا خارج از کشور.
+					"missionType|نوع مأموریت|select|0",
+					// اعزام پزشکی: مشمول هزینه (بیمار/همراه بیمار) و امکانات اسکان.
+					"beneficiary|مشمول هزینه|select|0",
+					"accommodationType|نوع اسکان|select|0",
+					"accommodationCost|هزینهٔ اسکان (ریال)|money|0",
+					"companionCount|شمار همراهان|number|0",
+					"medicalMealsAmount|سهم وعده‌های مشمول (ریال)|money|0",
+					// مأموریت خارج از کشور: پرداخت ریالی و ارزی.
+					"currency|ارز پرداخت|select|0",
+					"fxRate|نرخ تسعیر ارز به ریال|money|0",
+					"fxPerDiem|فوقالعادهٔ روزانهٔ ارزی|money|0",
+					"fxAmount|سایر مبالغ ارزی|money|0",
+					"rialAmount|مبالغ ریالی مأموریت (ریال)|money|0",
+					"documentsTotal|جمع اسناد تأییدشدهٔ ریالی (ریال)|money|0",
+					"fxDocumentsTotal|جمع اسناد تأییدشدهٔ ارزی|money|0",
+					"totalFx|جمع ارزی قابل پرداخت|money|0",
+					"rialEquivalent|معادل ریالی ارز (ریال)|money|0",
 				),
 				Statuses: recordkit.Statuses(
 					"draft|پیش‌نویس", "pending|در انتظار تأیید", "approved|تأییدشده", "settled|تسویه‌شده", "rejected|ردشده",
@@ -87,6 +105,32 @@ func Descriptor() recordkit.Descriptor {
 					"approve|تأیید|primary|approved|0|hr_manager,line_manager",
 					"settle|ثبت تسویه|ghost|settled|0|hr_manager",
 					"reject|رد درخواست|danger|rejected|1|hr_manager,line_manager",
+				),
+			},
+			{
+				Key: "missionDocuments", TitleFa: "سند و فاکتور مأموریت", IDPrefix: "MSD", EmployeeScoped: true,
+				Fields: recordkit.Fields(
+					"mission|شمارهٔ مأموریت|text|0",
+					"employeeId|کد کارمند|text|0",
+					"docType|نوع سند|select|1",
+					"docNo|شمارهٔ سند / قبض|text|1",
+					"docDate|تاریخ سند|date|1",
+					"amount|مبلغ سند|money|1",
+					"currency|ارز|select|0",
+					"fxRate|نرخ تسعیر (برای اسناد ارزی)|money|0",
+					"payer|پرداخت‌کننده|select|0",
+					"attachment|نشانی فایل پیوست|text|0",
+					"note|توضیح|text|0",
+				),
+				Statuses: recordkit.Statuses(
+					"draft|ثبت‌شده", "pending|در انتظار تأیید مالی", "approved|تأییدشده", "rejected|ردشده",
+				),
+				Initial:     "draft",
+				Transitions: recordkit.Steps("draft|pending", "pending|approved,rejected"),
+				Actions: recordkit.Actions(
+					"submit|ارسال برای تأیید|primary|pending|0|employee,hr_spec,hr_manager,line_manager",
+					"approve|تأیید فاکتور|primary|approved|0|hr_manager",
+					"reject|رد فاکتور|danger|rejected|1|hr_manager",
 				),
 			},
 			{

@@ -364,6 +364,13 @@ pub static POLICIES: &[ModulePolicy] = &[
         ],
         screens: &[
         ScreenPolicy {
+            key: "oilPayslip",
+            title_fa: "فیش حقوقی صندوق نفت",
+            component: "OilPayslipScreen",
+            icon: "calculator",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ScreenPolicy {
             key: "payrollRun",
             title_fa: "پردازش حقوق",
             component: "PayrollRunScreen",
@@ -811,6 +818,13 @@ pub static POLICIES: &[ModulePolicy] = &[
         (RoleKey::Employee, Scope::Own),
         ],
         screens: &[
+        ScreenPolicy {
+            key: "appointmentForm",
+            title_fa: "فرم تصویب‌خواهی انتصاب و ترفیع",
+            component: "AppointmentFormScreen",
+            icon: "stamp",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager],
+        },
         ScreenPolicy {
             key: "appointments",
             title_fa: "انتصابات",

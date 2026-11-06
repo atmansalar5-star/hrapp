@@ -229,6 +229,7 @@ export const MODULES: ModuleSpec[] = [
     apiPrefix: "/api/v1/payroll",
     featureFlag: "module.payroll",
     screens: [
+      { key: "oilPayslip", order: 0, icon: "calculator", titleFa: "فیش حقوقی صندوق نفت", purposeFa: "محاسبه و صدور فیش ماهانهٔ کارکنان تابع صندوق بازنشستگی نفت: پایهٔ حقوق، فوق‌العادهٔ مناطق گرمسیری درصدی از پایه، ساخت «مبنای فوق‌العاده‌ها» و محاسبهٔ بقیهٔ فوق‌العاده‌ها (اقلیمی و نوبت‌کاری) درصدی از همان مبنا، با کسور صندوق و مالیات.", component: "OilPayslipScreen", roles: ["admin", "hr_manager", "hr_spec"] },
       { key: "payrollRun", order: 1, icon: "play-circle", titleFa: "پردازش حقوق", purposeFa: "اجرای محاسبات ماهانهٔ حقوق و مشاهدهٔ جمع ناخالص، مالیات، بیمه و خالص هر دوره.", component: "PayrollRunScreen", roles: ["admin", "hr_manager"] },
       { key: "payslip", order: 2, icon: "receipt", titleFa: "فیش حقوقی", purposeFa: "نمایش و دانلود فیش حقوقی؛ اجزای مزد و ضرایب اقلیمی از حکم کارگزینی یا قرارداد خودِ کارمند خوانده می‌شود، شاکلهٔ «مزد مبنا» خط‌به‌خط می‌آید و کارمند فقط فیش خود را می‌بیند.", component: "PayslipScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager", "employee"] },
       { key: "payItems", order: 3, icon: "sliders", titleFa: "اجزای حقوق", purposeFa: "تعریف آیتم‌های حقوقی، فرمول‌ها و معافیت‌ها به‌صورت پارامتریک و نسخه‌دار.", component: "PayItemsScreen", roles: ["admin", "hr_manager"] },
@@ -390,6 +391,7 @@ export const MODULES: ModuleSpec[] = [
     apiPrefix: "/api/v1/career",
     featureFlag: "module.career",
     screens: [
+      { key: "appointmentForm", order: 0, icon: "stamp", titleFa: "فرم تصویب‌خواهی انتصاب و ترفیع", purposeFa: "ساخت درخواست انتصاب، ترفیع، جابه‌جایی یا سرپرستی موقت برای تصویب‌خواهی: سنجش شرط‌ها (سابقه، امتیاز ارزیابی، جهش گروه، ظرفیت پست، تعهد خدمت)، ساخت زنجیرهٔ تصویب از مدیر واحد تا مدیرعامل و اجرای ابلاغ پس از تصویب.", component: "AppointmentFormScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager"] },
       { key: "appointments", order: 1, icon: "stamp", titleFa: "انتصابات", purposeFa: "ثبت و پیگیری ابلاغ‌های سازمانی: انتصاب، جابه‌جایی، مأموریت بلندمدت و پایان تصدی، همراه با زنجیرهٔ تأیید و صدور ابلاغ.", component: "AppointmentsScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager"] },
       { key: "promotions", order: 2, icon: "trending-up", titleFa: "ترفیعات", purposeFa: "مدیریت درخواست‌های ترفیع و ارتقای گروه شغلی بر پایهٔ امتیاز ارزیابی عملکرد، سابقهٔ خدمت و ظرفیت تشکیلات.", component: "PromotionsScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager"] },
       { key: "careerPath", order: 3, icon: "route", titleFa: "کارراههٔ شغلی", purposeFa: "تعریف مسیر رشد شغلی هر گروه شغلی، مقایسهٔ موقعیت فعلی کارمند با مسیر پیشنهادی و ثبت برنامهٔ جانشین‌پروری پست‌های کلیدی.", component: "CareerPathScreen", roles: ["admin", "hr_manager", "hr_spec", "line_manager", "employee"] },

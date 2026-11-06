@@ -37,6 +37,8 @@ func Descriptor() recordkit.Descriptor {
 			payrollRunsKind(),
 			karanaKind(),
 			serviceBonusKind(),
+			// نظام پرداخت صندوق بازنشستگی نفت: فیش ماهانهٔ کارکنان تابع صندوق.
+			oilPayslipsKind(),
 			// فاز ۱: فایل قانونی بیمه/مالیات، حساب بانکی کارمند و فایل پرداخت بانکی.
 			statutoryFilesKind(),
 			bankAccountsKind(),
@@ -220,6 +222,49 @@ func payrollRunsKind() recordkit.Kind {
 			"lock|قفل دوره|ghost|locked|0",
 			"pay|ثبت پرداخت|primary|paid|0",
 		),
+	}
+}
+
+/* ------------------ نظام پرداخت صندوق بازنشستگی نفت ------------------ */
+
+// oilPayslipsKind فیش ماهانهٔ کارکنان تابع صندوق بازنشستگی نفت.
+//
+// چرا نوع رکورد جدا از فیش نظام عمومی: این نظام ساختار خودش را دارد (پایهٔ حقوق،
+// فوق‌العادهٔ بدی آب و هوا و مبنای فوق‌العاده‌ها) و مبالغش با نظام دیگر یکی نیست. نگه‌داشتن
+// آن به‌عنوان رکورد، سابقهٔ فیش، تأیید، پرداخت و جستجو را با همان موتور بقیهٔ ماژول‌ها
+// ممکن می‌کند. خودِ محاسبه در `rules.ComputeOilPayslip` است و اینجا فقط نتیجه ثبت می‌شود.
+func oilPayslipsKind() recordkit.Kind {
+	return recordkit.Kind{
+		Key: "oilPayslips", TitleFa: "فیش حقوقی صندوق نفت", IDPrefix: "OILP", EmployeeScoped: true,
+		Fields: recordkit.Fields(
+			"period|دورهٔ حقوق (ماه)|text|1",
+			"baseSalary|پایهٔ حقوق (ریال)|money|1",
+			"climatePercent|درصد فوق‌العادهٔ بدی آب و هوا|number|0",
+			"climate|فوق‌العادهٔ بدی آب و هوا (ریال)|money|0",
+			"allowanceBase|مبنای فوق‌العاده‌ها (ریال)|money|0",
+			"allowancesTotal|جمع فوق‌العاده‌ها (ریال)|money|0",
+			"gross|جمع ناخالص (ریال)|money|0",
+			"deductions|جمع کسور (ریال)|money|0",
+			"net|خالص پرداختی (ریال)|money|0",
+			"shift|نوع نوبت‌کاری|select|0",
+			"shiftDays|روزهای نوبت‌کاری|number|0",
+			"overtimeHours|ساعت اضافه‌کاری|number|0",
+			"note|یادداشت محاسبه|text|0",
+		),
+		Statuses: recordkit.Statuses(
+			"draft|پیش‌نویس", "approved|تأییدشده", "issued|صادرشده", "paid|پرداخت‌شده", "cancelled|لغوشده",
+		),
+		Initial: "draft",
+		Transitions: recordkit.Steps(
+			"draft|approved,cancelled", "approved|issued,cancelled", "issued|paid",
+		),
+		Actions: recordkit.Actions(
+			"approve|تأیید فیش|primary|approved|0|hr_manager",
+			"issue|صدور فیش|primary|issued|0|hr_manager,hr_spec",
+			"pay|ثبت پرداخت|primary|paid|0|hr_manager",
+			"cancel|لغو|danger|cancelled|1|hr_manager",
+		),
+		HistoryDate: "period",
 	}
 }
 

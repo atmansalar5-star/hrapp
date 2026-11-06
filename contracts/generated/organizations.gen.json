@@ -165,11 +165,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -353,11 +549,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -560,11 +952,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "quarterly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -759,11 +1347,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -966,11 +1750,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -1173,11 +2153,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -1380,11 +2556,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -1587,11 +2959,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -1794,11 +3362,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -2001,11 +3765,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -2208,11 +4168,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -2415,11 +4571,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -2623,11 +4975,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -2829,11 +5377,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",
@@ -3036,11 +5780,207 @@
           "groupFa": "ماموریت و کارانه"
         },
         {
+          "key": "mission.medicalCompanionPercent",
+          "titleFa": "سهم وعده‌های همراه بیمار (در اعزام پزشکی)",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.defaultCurrency",
+          "titleFa": "ارز پیش‌فرض مأموریت خارج از کشور",
+          "value": "EUR",
+          "unitFa": "کد ارز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.perDiem",
+          "titleFa": "فوق‌العادهٔ روزانهٔ ارزی مأموریت خارج از کشور",
+          "value": "100",
+          "unitFa": "ارز در روز",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.EUR",
+          "titleFa": "نرخ تسعیر یورو",
+          "value": "900000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.USD",
+          "titleFa": "نرخ تسعیر دلار آمریکا",
+          "value": "830000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.AED",
+          "titleFa": "نرخ تسعیر درهم امارات",
+          "value": "226000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "mission.fx.rate.GBP",
+          "titleFa": "نرخ تسعیر پوند انگلیس",
+          "value": "1050000",
+          "unitFa": "ریال",
+          "groupFa": "ماموریت و کارانه"
+        },
+        {
           "key": "karana.cycle",
           "titleFa": "دورهٔ پرداخت کارانه",
           "value": "monthly",
           "unitFa": "ماهانه",
           "groupFa": "ماموریت و کارانه"
+        },
+        {
+          "key": "appointment.minServiceMonths",
+          "titleFa": "حداقل سابقهٔ گروه شغلی برای ترفیع",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.minEvaluationScore",
+          "titleFa": "حداقل امتیاز ارزیابی عملکرد برای ترفیع",
+          "value": "75",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.maxGradeStep",
+          "titleFa": "بیشینهٔ جهش گروه شغلی در یک ترفیع",
+          "value": "1",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.commitmentMonths",
+          "titleFa": "حداقل تعهد خدمت گروه‌های مدیریتی",
+          "value": "24",
+          "unitFa": "ماه",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا کمیته تصویب می‌کند",
+          "value": "4",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.ceoRank",
+          "titleFa": "پلهٔ گروه شغلی که از آن به بالا مدیرعامل تصویب می‌کند",
+          "value": "5",
+          "unitFa": "پله",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "appointment.committeeForPromotion",
+          "titleFa": "تصویب کمیته برای هر ترفیع",
+          "value": "1",
+          "unitFa": "۱=بله، ۰=خیر",
+          "groupFa": "انتصاب و ترفیع"
+        },
+        {
+          "key": "oilpay.climatePercent",
+          "titleFa": "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری) از پایهٔ حقوق",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.deprivation",
+          "titleFa": "فوق‌العادهٔ محرومیت",
+          "value": "27.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.special",
+          "titleFa": "فوق‌العادهٔ ویژه",
+          "value": "3",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.timeConsumed",
+          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "value": "16.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.workshop",
+          "titleFa": "فوق‌العادهٔ کارگاهی",
+          "value": "10",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.attractionSpecialty",
+          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.production",
+          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "value": "30",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.allowance.shiftWorker",
+          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employeePercent",
+          "titleFa": "کسور سهم کارمند صندوق بازنشستگی نفت",
+          "value": "7",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.fund.employerPercent",
+          "titleFa": "سهم کارفرما در صندوق بازنشستگی نفت",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.insurance.employeePercent",
+          "titleFa": "بیمهٔ سهم کارمند در نظام صندوق نفت",
+          "value": "0",
+          "unitFa": "٪",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.tax.exemption",
+          "titleFa": "معافیت مالیاتی ماهانه در نظام صندوق نفت",
+          "value": "24000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.overtimeFactor",
+          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
+          "value": "1.4",
+          "unitFa": "برابر",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.monthlyHours",
+          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
+          "value": "176",
+          "unitFa": "ساعت",
+          "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "retirement.ageMen",

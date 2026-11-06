@@ -125,6 +125,7 @@ window.HRMS_MENU = [
         subUnitFa: "جبران خدمات",
         shared: false,
         screens: [
+        { page: "oilPayslip", label: "فیش حقوقی صندوق نفت", icon: "calculator", roles: ['admin', 'hr_manager', 'hr_spec'] },
         { page: "payrollRun", label: "پردازش حقوق", icon: "play-circle", roles: ['admin', 'hr_manager'] },
         { page: "payslip", label: "فیش حقوقی", icon: "receipt", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager', 'employee'] },
         { page: "payItems", label: "اجزای حقوق", icon: "sliders", roles: ['admin', 'hr_manager'] },
@@ -261,6 +262,7 @@ window.HRMS_MENU = [
         subUnitFa: "انتصابات، ترفیعات و کارراههٔ شغلی",
         shared: false,
         screens: [
+        { page: "appointmentForm", label: "فرم تصویب‌خواهی انتصاب و ترفیع", icon: "stamp", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
         { page: "appointments", label: "انتصابات", icon: "stamp", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
         { page: "promotions", label: "ترفیعات", icon: "trending-up", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
         { page: "careerPath", label: "کارراههٔ شغلی", icon: "route", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager', 'employee'] },

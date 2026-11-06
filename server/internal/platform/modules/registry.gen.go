@@ -176,6 +176,7 @@ var All = []Module{
 		Roles:       map[string][]string{"admin": {"read", "write", "delete", "approve"}, "hr_manager": {"read", "write", "approve"}, "hr_spec": {"read", "write"}, "line_manager": {"read"}, "employee": {"read"}},
 		Scopes:      map[string]string{"employee": "own"},
 		Screens: []Screen{
+			{Key: "oilPayslip", Order: 0, Icon: "calculator", TitleFa: "فیش حقوقی صندوق نفت", Component: "OilPayslipScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "payrollRun", Order: 1, Icon: "play-circle", TitleFa: "پردازش حقوق", Component: "PayrollRunScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "payslip", Order: 2, Icon: "receipt", TitleFa: "فیش حقوقی", Component: "PayslipScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager", "employee"}},
 			{Key: "payItems", Order: 3, Icon: "sliders", TitleFa: "اجزای حقوق", Component: "PayItemsScreen", Roles: []string{"admin", "hr_manager"}},
@@ -361,6 +362,7 @@ var All = []Module{
 		Roles:       map[string][]string{"admin": {"read", "write", "delete", "approve"}, "hr_manager": {"read", "write", "approve"}, "hr_spec": {"read", "write"}, "line_manager": {"read"}, "employee": {"read"}},
 		Scopes:      map[string]string{"line_manager": "own_unit", "employee": "own"},
 		Screens: []Screen{
+			{Key: "appointmentForm", Order: 0, Icon: "stamp", TitleFa: "فرم تصویب‌خواهی انتصاب و ترفیع", Component: "AppointmentFormScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
 			{Key: "appointments", Order: 1, Icon: "stamp", TitleFa: "انتصابات", Component: "AppointmentsScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
 			{Key: "promotions", Order: 2, Icon: "trending-up", TitleFa: "ترفیعات", Component: "PromotionsScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
 			{Key: "careerPath", Order: 3, Icon: "route", TitleFa: "کارراههٔ شغلی", Component: "CareerPathScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager", "employee"}},

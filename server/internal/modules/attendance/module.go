@@ -37,5 +37,8 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	registerWorkCalendarEndpoint(mux, deps, svc)
 	// فرم محاسبهٔ مأموریت: پارامترهای پیش‌فرض شرکت و محاسبهٔ فوقالعادهٔ مأموریت با تفکیک
 	// وعده‌ها، اقامت، امکانات شخصی و ایاب‌وذهاب.
-	registerMissionCalcEndpoints(mux, deps)
+	registerMissionCalcEndpoints(mux, deps, svc)
+	// فهرست‌های مرجع فیلدهای انتخابی (نوع مرخصی، نوع مأموریت، اسکان، ارز و نوع سند) تا
+	// فرم و جدول به‌جای کد خام، عنوان فارسی نشان دهند.
+	registerOptionsEndpoint(mux, deps)
 }

@@ -42,6 +42,9 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// حقوق خوانده می‌شود؛ پس اگر مدیر درصدی را در صفحهٔ پارامترها عوض کند، محاسبه هم
 	// بی‌نیاز از انتشار نسخهٔ تازه همان مقدار را می‌بیند.
 	registerServiceBonusEndpoints(mux, deps, svc)
+	// نظام پرداخت صندوق بازنشستگی نفت: پایهٔ حقوق، فوق‌العادهٔ مناطق گرمسیری و
+	// فوق‌العاده‌های درصدی از «مبنای فوق‌العاده‌ها» (اقلیمی و نوبت‌کاری).
+	registerOilPayEndpoints(mux, deps, svc)
 
 	// منبع دادهٔ گزارش‌ساز: اقلام حقوق را به‌عنوان ستون‌های انتخاب‌شدنی معرفی می‌کند.
 	deps.Ports.RegisterReportSource(payrollReportSource{svc: svc})

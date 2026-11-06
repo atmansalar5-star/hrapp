@@ -24,5 +24,8 @@ func (m *Module) ID() string { return "career" }
 
 // Register انبار، سرویس و مسیرهای استاندارد رکوردها را ثبت می‌کند.
 func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
-	recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/career")
+	svc := recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/career")
+	// تصویب‌خواهی و اجرا: پارامترهای آستانه، سنجش شرط‌ها با زنجیرهٔ تصویب و اجرای ابلاغ
+	// روی همان رکورد. قاعده در موتور قواعد است؛ این مسیرها فقط وصل‌کننده‌اند.
+	registerApprovalEndpoints(mux, deps, svc)
 }

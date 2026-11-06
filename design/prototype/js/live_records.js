@@ -196,6 +196,27 @@ function rkSelectTitle(fieldKey, value) {
   return hit ? hit.titleFa : value;
 }
 
+/**
+ * نگاشت فهرست‌های مرجع ماژول حضور و غیاب به فیلدهای انتخابی فرم و جدول.
+ *
+ * چرا اینجا: انواع مرخصی، نوع مأموریت، مشمول اعزام پزشکی، نوع اسکان، ارز پرداخت، نوع سند
+ * پشتیبان و پرداخت‌کننده همه در دامنهٔ سرور اعلام شده‌اند؛ این تابع فقط همان‌ها را به کلید
+ * فیلد وصل می‌کند تا هیچ گزینه‌ای در رابط ساخته نشود.
+ */
+function rkApplyAttendanceOptions(o) {
+  const pairs = list => (list || []).map(x => ({key: x.key, titleFa: x.titleFa}));
+  rkSetSelectOpts('leaveType', pairs(o.leaveTypes));
+  rkSetSelectOpts('missionType', pairs(o.missionTypes));
+  rkSetSelectOpts('beneficiary', pairs(o.beneficiaries));
+  rkSetSelectOpts('accommodationType', pairs(o.accommodations));
+  rkSetSelectOpts('currency', pairs(o.currencies));
+  rkSetSelectOpts('docType', pairs(o.documentTypes));
+  rkSetSelectOpts('payer', pairs(o.payers));
+  rkSetSelectOpts('usePersonalFacilities', pairs(o.yesNo));
+  rkSetSelectOpts('useHotel', pairs(o.yesNo));
+  rkSetSelectOpts('useGuesthouse', pairs(o.yesNo));
+}
+
 /** یافتن ماژول مالک یک صفحه از منوی تولیدشده (برای پیشوند API). */
 function rkFindModule(page) {
   for (const dir of (window.HRMS_MENU || []))
@@ -254,6 +275,13 @@ function pageRecordkitLive(page) {
     const items = (listRes.data && listRes.data.items) || [];
     RK_STATE[page] = {mod, kind};
     rkSetModuleID(page, schema.module);
+
+    // فهرست‌های مرجع ماژول حضور و غیاب (نوع مرخصی، نوع مأموریت، اسکان، ارز و نوع سند):
+    // از /options همان ماژول می‌آید تا فیلدهای انتخابی در جدول و فرم عنوان فارسی بدهند.
+    if (mod.prefix === '/api/v1/attendance') {
+      const attendanceOpts = await apiFetch(mod.prefix + '/options');
+      if (attendanceOpts.ok) rkApplyAttendanceOptions(attendanceOpts.data || {});
+    }
 
     // پنل شارژ کارت‌های رفاهی: گزینه‌ها (کارت‌ها، بخش‌ها با نرخ جاری و
     // مناسبت‌های فعال) از خود سرور می‌آید، پس نرخ تازه بدون تغییر کد دیده می‌شود.

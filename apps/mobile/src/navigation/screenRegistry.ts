@@ -30,6 +30,7 @@ import OrgChartScreen from '../features/orgstructure/OrgChartScreen';
 import PositionsScreen from '../features/orgstructure/PositionsScreen';
 
 // واحد برنامه‌ریزی نیروی انسانی — انتصابات، ترفیعات و کارراههٔ شغلی
+import AppointmentFormScreen from '../features/career/AppointmentFormScreen';
 import AppointmentsScreen from '../features/career/AppointmentsScreen';
 import PromotionsScreen from '../features/career/PromotionsScreen';
 import CareerPathScreen from '../features/career/CareerPathScreen';
@@ -51,6 +52,7 @@ import MissionCalcScreen from '../features/attendance/MissionCalcScreen';
 
 // حقوق و دستمزد
 import PayrollRunScreen from '../features/payroll/PayrollRunScreen';
+import OilPayslipScreen from '../features/payroll/OilPayslipScreen';
 import PayslipScreen from '../features/payroll/PayslipScreen';
 import PayItemsScreen from '../features/payroll/PayItemsScreen';
 import KaranaScreen from '../features/payroll/KaranaScreen';
@@ -198,6 +200,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   OrgChartScreen,
   PositionsScreen,
   AppointmentsScreen,
+  AppointmentFormScreen,
   PromotionsScreen,
   CareerPathScreen,
   HiringRequestsScreen,
@@ -211,6 +214,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   WorkCalendarScreen,
   MissionCalcScreen,
   PayrollRunScreen,
+  OilPayslipScreen,
   PayslipScreen,
   PayItemsScreen,
   PayParamsScreen,
