@@ -10,6 +10,7 @@ import (
 
 	"hrms/internal/contracts"
 	"hrms/internal/platform/calendar"
+	"hrms/internal/rules"
 )
 
 // کارمند در حافظهٔ سامانه.
@@ -33,9 +34,12 @@ type Employee struct {
 	HomePhone      string
 	PostalCode     string
 	Address        string
-	Email          string
-	ManagerName    string
-	Version        int
+	// ResidenceSite کلید محل سکونت (فهرست `rules.OilResidences`)؛ مبنای درصد جدول ۱ و ۲
+	// آیین‌نامهٔ فوق‌العاده‌های صندوق بازنشستگی نفت. خالی یعنی ثبت نشده.
+	ResidenceSite string
+	Email         string
+	ManagerName   string
+	Version       int
 }
 
 // ToContract تبدیل به شکل انتقالی قرارداد API.
@@ -62,6 +66,8 @@ func (e Employee) ToContract() contracts.Employee {
 		HomePhone:        e.HomePhone,
 		PostalCode:       e.PostalCode,
 		Address:          e.Address,
+		ResidenceSite:    e.ResidenceSite,
+		ResidenceSiteFa:  rules.OilResidenceTitleFa(e.ResidenceSite),
 		Email:            e.Email,
 		ManagerName:      e.ManagerName,
 		Version:          e.Version,
@@ -93,6 +99,7 @@ func FromInput(id string, in contracts.EmployeeInput, departmentName string) Emp
 		HomePhone:      strings.TrimSpace(in.HomePhone),
 		PostalCode:     calendar.NormalizeDigits(strings.TrimSpace(in.PostalCode)),
 		Address:        strings.TrimSpace(in.Address),
+		ResidenceSite:  resolveResidenceSite(in.ResidenceSite),
 		Email:          in.Email,
 	}
 }
@@ -147,6 +154,9 @@ func (e Employee) Apply(in contracts.EmployeeInput) Employee {
 	if in.Address != "" {
 		e.Address = strings.TrimSpace(in.Address)
 	}
+	if site := resolveResidenceSite(in.ResidenceSite); site != "" {
+		e.ResidenceSite = site
+	}
 	if in.Email != "" {
 		e.Email = in.Email
 	}
@@ -174,6 +184,16 @@ func resolveEmploymentType(employmentType, contractType string) string {
 		return "contractor_current"
 	}
 	return "official_oil"
+}
+
+// resolveResidenceSite کلید معتبر محل سکونت را برمی‌گرداند؛ کلید ناشناخته خالی می‌شود تا
+// درصدی از جدول ۱ و ۲ آیین‌نامهٔ فوق‌العاده‌ها به اشتباه به کارمند نسبت داده نشود.
+// اعتبار کلید از کاتالوگ مشترک `rules.OilResidences` می‌آید.
+func resolveResidenceSite(key string) string {
+	if site, ok := rules.OilResidenceByKey(key); ok {
+		return site.Key
+	}
+	return ""
 }
 
 func validNationalID(input string) bool {

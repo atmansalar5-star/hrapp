@@ -35,11 +35,16 @@ type Employee struct {
 	Mobile    string `json:"mobile,omitempty"`
 	HomePhone string `json:"homePhone,omitempty"`
 	// PostalCode و Address اطلاعات نشانی کارمند برای فرم‌های قرارداد، حکم و مکاتبات.
-	PostalCode  string `json:"postalCode,omitempty"`
-	Address     string `json:"address,omitempty"`
-	Email       string `json:"email"`
-	ManagerName string `json:"managerName"`
-	Version     int    `json:"version"`
+	PostalCode string `json:"postalCode,omitempty"`
+	Address    string `json:"address,omitempty"`
+	// ResidenceSite کلید محل سکونت کارمند (فهرست `rules.OilResidences`) و ResidenceSiteFa
+	// عنوان فارسی آن. مبنای درصد جدول ۱ و ۲ آیین‌نامهٔ فوق‌العاده‌های صندوق بازنشستگی نفت:
+	// «فوقالعادهٔ محرومیت از تسهیلات زندگی» و «فوقالعادهٔ جبران صرف وقت اضافی».
+	ResidenceSite   string `json:"residenceSite,omitempty"`
+	ResidenceSiteFa string `json:"residenceSiteFa,omitempty"`
+	Email           string `json:"email"`
+	ManagerName     string `json:"managerName"`
+	Version         int    `json:"version"`
 	// PhotoURL نشانی سرو «عکس کارگزینی» این کارمند (امضاشده)؛ خالی یعنی عکس
 	// بارگذاری نشده است. عکس در پوشهٔ دادهٔ سرور نگه داشته می‌شود و این نشانی از
 	// خودِ همان فایل ساخته می‌شود، پس با بازآوری باینری از دست نمی‌رود.
@@ -88,7 +93,10 @@ type EmployeeInput struct {
 	HomePhone  string `json:"homePhone,omitempty"`
 	PostalCode string `json:"postalCode,omitempty"`
 	Address    string `json:"address,omitempty"`
-	Email      string `json:"email,omitempty"`
+	// ResidenceSite کلید محل سکونت؛ درصد جدول ۱ و ۲ آیین‌نامهٔ فوق‌العاده‌های صندوق
+	// بازنشستگی نفت از همین کلید خوانده می‌شود (خالی = از پارامتر شرکت).
+	ResidenceSite string `json:"residenceSite,omitempty"`
+	Email         string `json:"email,omitempty"`
 }
 
 // EmployeePage صفحهٔ کارکنان همراه با شمارش کل رکوردها.

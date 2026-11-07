@@ -17,6 +17,7 @@ import (
 	"hrms/internal/platform/auth"
 	"hrms/internal/platform/httpx"
 	"hrms/internal/platform/modulekit"
+	"hrms/internal/rules"
 )
 
 // Handler هندلرهای ماژول کارکنان.
@@ -156,6 +157,9 @@ func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {
 		"employmentTypes":  contracts.EmploymentTypes(),
 		"employmentGroups": contracts.EmploymentGroups(),
 		"departments":      h.departmentList(r),
+		// محل سکونت: فهرست جدول ۱ و ۲ آیین‌نامهٔ فوق‌العاده‌های صندوق نفت. درصدها همان‌جا
+		// می‌آیند تا فرم کارمند و فرم فیش یک منبع داشته باشند.
+		"residenceOptions": rules.OilResidences(),
 	})
 }
 

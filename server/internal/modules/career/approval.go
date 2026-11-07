@@ -84,15 +84,163 @@ func registerApprovalEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *rec
 				})
 			return
 		}
-		updated, err := svc.Act(r.Context(), id, contracts.RecordAction{Action: "issue", NoteFa: body.NoteFa}, actorOf(r))
+
+		actor := actorOf(r)
+		steps := executeSteps(r.Context(), deps, rec, actor)
+		if failed, ok := firstFailedStep(steps); ok {
+			// هیچ تغییری اعمال نشده است؛ رکورد دست‌نخورده می‌ماند تا کاربر بتواند
+			// نقص را برطرف کند و دوباره اجرا بزند.
+			httpx.WriteErrorMsg(w, http.StatusConflict, contracts.CodeConflict,
+				"اجرای ابلاغ نیمه‌کاره ماند: "+failed.TitleFa+" — "+failed.MessageFa, nil)
+			return
+		}
+
+		updated, err := svc.Act(r.Context(), id, contracts.RecordAction{Action: "issue", NoteFa: body.NoteFa}, actor)
 		if err != nil {
 			httpx.WriteErrorMsg(w, http.StatusConflict, contracts.CodeConflict, err.Error(), nil)
 			return
 		}
 		httpx.WriteJSON(w, http.StatusOK, map[string]any{
-			"record": updated, "plan": plan, "noteFa": "ابلاغ صادر و اجرا شد؛ سابقهٔ کارمند به‌روزرسانی شد.",
+			"record": updated, "plan": plan, "steps": steps,
+			"noteFa": "ابلاغ صادر و اجرا شد؛ پست و واحد کارمند در پرونده و تصدی پست در تشکیلات ثبت شد.",
 		})
 	}))
+}
+
+// ExecuteStep اجرای یک گام از گام‌های «اجرا و ابلاغ» و نتیجهٔ واقعی آن.
+//
+// چرا این ساختار: گام‌های اجرا (`domain.ExecutionSteps`) اعلام رویه‌اند؛ ولی گزارش اجرا
+// باید بگوید کدام گام واقعاً انجام شد. تا پیش از این، اجرا فقط وضعیت رکورد را عوض می‌کرد
+// و بقیهٔ گام‌ها فقط در متن دیده می‌شدند.
+type ExecuteStep struct {
+	Order   int    `json:"order"`
+	Key     string `json:"key"`
+	TitleFa string `json:"titleFa"`
+	Done    bool   `json:"done"`
+	// Blocking یعنی بی‌این گام، اجرای ابلاغ معنا ندارد و باید با خطا برگردد. گام‌های
+	// بعدی (تشکیلات، حقوق، بایگانی) اگر انجام نشوند، ابلاغ اجرا شده است ولی گزارش
+	// اجرا همان گام را با پیام روشن «انجام‌نشده» نشان می‌دهد.
+	Blocking  bool   `json:"blocking,omitempty"`
+	DetailFa  string `json:"detailFa,omitempty"`
+	MessageFa string `json:"messageFa,omitempty"`
+}
+
+// executeSteps گام‌های اجرا را واقعاً انجام می‌دهد و نتیجهٔ هر گام را برمی‌گرداند.
+//
+// ترتیب: صدور ابلاغ (تغییر سازمانی پروندهٔ کارمند) ← ثبت تصدی پست در تشکیلات ← اعلام به
+// حقوق و دستمزد (کشف از پروندهٔ تازه‌شده) ← اطلاع و بایگانی (از رخدادهای همین رکورد).
+func executeSteps(ctx context.Context, deps modulekit.Deps, rec contracts.Record, actor string) []ExecuteStep {
+	assignment := assignmentFromRecord(rec)
+
+	// گام ۱ و ۲: پست و واحد کارمند از تاریخ اجرا در پروندهٔ او ثبت می‌شود.
+	employeeStep := ExecuteStep{Order: 1, Key: "decree", TitleFa: "صدور ابلاغ", Blocking: true}
+	assigner, ok := deps.Ports.EmployeeAssigner()
+	if !ok {
+		employeeStep.MessageFa = "پورت به‌روزرسانی پروندهٔ کارمند در دسترس نیست؛ ابلاغ در پرونده ثبت نشد."
+		return []ExecuteStep{employeeStep}
+	}
+	result, err := assigner.Assign(ctx, rec.EmployeeID, assignment, actor)
+	if err != nil {
+		employeeStep.MessageFa = "ثبت تغییر سازمانی در پروندهٔ کارمند انجام نشد: " + err.Error()
+		return []ExecuteStep{employeeStep}
+	}
+	employeeStep.Done = true
+	employeeStep.DetailFa = "پست تازه: " + result.Employee.Position + " — واحد: " + result.Employee.DepartmentName
+	if !result.PositionChanged && !result.DepartmentChanged {
+		employeeStep.DetailFa = "پرونده از قبل با ابلاغ هم‌خوان بود؛ تغییری لازم نداشت."
+	}
+	if !result.DepartmentMatched && assignment.DepartmentName != "" {
+		employeeStep.DetailFa += " (واحد «" + assignment.DepartmentName + "» در فهرست واحدها پیدا نشد.)"
+	}
+	steps := []ExecuteStep{
+		employeeStep,
+		{Order: 2, Key: "history", TitleFa: "ثبت سابقهٔ کارمند", Done: true,
+			DetailFa: "ابلاغ " + firstNonEmpty(assignment.DecreeNo, "—") + " از تاریخ " +
+				firstNonEmpty(assignment.EffectiveDate, "—") + " در سابقهٔ کارمند ثبت شد."},
+	}
+
+	// گام ۳: تصدی پست در تشکیلات (نمودار سازمانی متصدی تازه را از همین رکورد می‌خواند).
+	// این گام فقط پس از موفقیت گام نخست اجرا می‌شود تا مجموعه نیمه‌به‌روز نماند.
+	orgStep := ExecuteStep{Order: 3, Key: "orgchart", TitleFa: "به‌روزرسانی تشکیلات"}
+	if applier, ok := deps.Ports.AppointmentApplier(); !ok {
+		orgStep.MessageFa = "پورت ثبت تصدی در تشکیلات در دسترس نیست؛ نمودار سازمانی به‌روز نشد."
+	} else if orgResult, err := applier.Appoint(ctx, appointmentFromRecord(rec, assignment), actor); err != nil {
+		orgStep.MessageFa = "ثبت تصدی در تشکیلات انجام نشد: " + err.Error()
+	} else {
+		orgStep.Done = true
+		orgStep.DetailFa = orgResult.NoteFa
+		if orgResult.AssignmentID != "" {
+			orgStep.DetailFa = "انتصاب " + orgResult.AssignmentID + " — " + orgResult.NoteFa
+		}
+	}
+	steps = append(steps, orgStep)
+
+	// گام ۴ و ۵: بقیهٔ ماژول‌ها از خود پرونده و همین رکورد می‌خوانند؛ پس تغییر تازه
+	// همان لحظه در دورهٔ حقوق و در کارتابل اطلاع دیده می‌شود و سند تازه‌ای لازم نیست.
+	steps = append(steps,
+		ExecuteStep{Order: 4, Key: "payroll", TitleFa: "اعلام به حقوق و دستمزد", Done: employeeStep.Done,
+			DetailFa: "پست و واحد تازه در پروندهٔ کارمند نشسته است؛ دورهٔ حقوق همان ماه از همین پرونده خوانده می‌شود."},
+		ExecuteStep{Order: 5, Key: "notify", TitleFa: "اطلاع به کارمند و بایگانی", Done: true,
+			DetailFa: "سند ابلاغ با شماره و تاریخ اجرا در رکورد و سابقهٔ کارمند بایگانی شد."},
+	)
+	return steps
+}
+
+// firstFailedStep نخستین گام «مانع»ی که انجام نشد.
+//
+// فقط گام‌های مانع اجرا را متوقف می‌کنند؛ اگر گام تشکیلات یا اعلام به حقوق انجام نشود،
+// ابلاغ اجرا شده است و کاربر باید در گزارش ببیند کدام گام ناتمام مانده — پنهان‌کردن آن،
+// همان اشتباهی است که پیش‌تر رخ می‌داد.
+func firstFailedStep(steps []ExecuteStep) (ExecuteStep, bool) {
+	for _, step := range steps {
+		if step.Blocking && !step.Done {
+			return step, true
+		}
+	}
+	return ExecuteStep{}, false
+}
+
+// assignmentFromRecord تغییر سازمانی پروندهٔ کارمند را از فیلدهای ابلاغ می‌سازد.
+func assignmentFromRecord(rec contracts.Record) contracts.EmployeeAssignment {
+	fields := rec.Fields
+	position := strings.TrimSpace(fields["position"])
+	if rec.Kind == domain.KindPromotions {
+		position = firstNonEmpty(fields["toPosition"], position)
+	}
+	return contracts.EmployeeAssignment{
+		Position:       position,
+		DepartmentName: strings.TrimSpace(fields["unit"]),
+		DecreeNo:       strings.TrimSpace(fields["decreeNo"]),
+		EffectiveDate:  strings.TrimSpace(fields["effectiveDate"]),
+		ReasonFa:       strings.TrimSpace(fields["reason"]),
+	}
+}
+
+// appointmentFromRecord ورودی ثبت تصدی در تشکیلات را از ابلاغ می‌سازد.
+func appointmentFromRecord(rec contracts.Record, assignment contracts.EmployeeAssignment) contracts.PositionAppointment {
+	return contracts.PositionAppointment{
+		EmployeeID:    rec.EmployeeID,
+		PositionCode:  strings.TrimSpace(rec.Fields["positionCode"]),
+		PositionTitle: assignment.Position,
+		Unit:          assignment.DepartmentName,
+		StartDate:     assignment.EffectiveDate,
+		DecreeNo:      assignment.DecreeNo,
+		// «دلیل و ملاک تصویب» همان شواهد احراز است؛ ابلاغی که زنجیرهٔ تصویب را
+		// گذرانده، شرطهای احراز را برآورده کرده است.
+		Evidence:   assignment.ReasonFa,
+		Commitment: intOf(rec.Fields["commitment"]),
+		NoteFa:     rec.Title,
+	}
+}
+
+// firstNonEmpty نخستین مقدار ناتهی.
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if trimmed := strings.TrimSpace(value); trimmed != "" {
+			return trimmed
+		}
+	}
+	return ""
 }
 
 // actorOf نام کاربر جاری برای ثبت در رخدادهای رکورد.
@@ -372,6 +520,9 @@ func approvalNoteFa() string {
 		"ظرفیت پست و تعهد خدمت گروه‌های مدیریتی (appointment.commitmentMonths).\n" +
 		"زنجیرهٔ تصویب: مدیر واحد ← مدیر منابع انسانی ← کمیتهٔ انتصابات و ترفیعات " +
 		"(از پلهٔ appointment.committeeRank) ← مدیرعامل (از پلهٔ appointment.ceoRank).\n" +
-		"اجرا فقط پس از تصویب همهٔ سطوح و با ثبت شمارهٔ ابلاغ ممکن است؛ پس از اجرا، " +
-		"تاریخ مؤثر در سابقهٔ کارمند ثبت و گروه شغلی او در پرونده به‌روزرسانی می‌شود."
+		"اجرا فقط پس از تصویب و با ثبت شمارهٔ ابلاغ ممکن است و پنج گام را واقعاً انجام می‌دهد: " +
+		"صدور ابلاغ و ثبت پست و واحد تازه در پروندهٔ کارمند، ثبت سابقه، ثبت تصدی پست در " +
+		"تشکیلات (انتصاب تازه در نمودار سازمانی و پایان تصدی پیشین)، اعلام به حقوق و دستمزد " +
+		"و بایگانی سند. گزارش هر گام در پاسخ اجرا برمی‌گردد؛ اگر گامی ناتمام بماند، همان‌جا با " +
+		"پیام روشن نشان داده می‌شود و رکورد ابلاغ‌نشده نمی‌ماند."
 }

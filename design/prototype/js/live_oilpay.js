@@ -44,10 +44,15 @@ function oilSelect(id) {
   return el ? el.value : '';
 }
 
-/** درصد دستی هر قلم فوق‌العاده از فرم. */
+/** درصد دستی هر قلم فوق‌العاده از فرم.
+ *
+ *  قلم‌هایی که درصدشان از جدول‌های آیین‌نامه می‌آید (drivenBy: محل سکونت یا پایهٔ سمت)
+ *  فرستاده نمی‌شوند؛ وگرنه مقدار پیش‌فرض فرم همیشه بر جدول مقدم می‌شد و جدول هرگز اعمال
+ *  نمی‌گشت. آن درصدها را سرور از جدول ۱/۲/۳ حساب می‌کند. */
 function oilAllowancePercents() {
   const out = {};
   for (const a of ((OIL_DEFAULTS && OIL_DEFAULTS.allowances) || [])) {
+    if (a.drivenBy) continue;
     const el = document.getElementById('oilAllow_' + a.key);
     if (!el) continue;
     const value = Number((el.value || '').replace(/[^0-9.\-]/g, ''));
@@ -62,6 +67,9 @@ function oilInput() {
     baseSalary: oilNum('oilBaseSalary'),
     climatePercent: oilNum('oilClimatePercent'),
     allowancePercents: oilAllowancePercents(),
+    degree: oilSelect('oilDegree'),
+    jobGrade: oilSelect('oilJobGrade'),
+    residence: oilSelect('oilResidence'),
     shift: oilSelect('oilShift') === 'yes',
     shiftDays: oilNum('oilShiftDays'),
     daysInMonth: oilNum('oilDaysInMonth'),
@@ -114,6 +122,10 @@ function oilRenderSlip() {
       ${statCard({ico: '🌡️', tint: '#FEF3C7', accent: '#D97706',
         val: fa(money(s.climate)), label: 'فوقالعادهٔ بدی آب و هوا ' + fa(Math.round(s.climatePercent * 10) / 10) + '٪'})}
       ${statCard({ico: '🧮', tint: '#EDE9FE', accent: '#7C3AED', val: fa(money(s.allowanceBase)), label: 'مبنای فوقالعادهها (ریال)'})}
+      ${statCard({ico: '⭐', tint: '#FEF2F2', accent: '#B91C1C',
+        val: fa(money(s.special || 0)), label: 'فوقالعادهٔ ویژه (۳۰٪ مبنای فوقالعادهها)'})}
+      ${statCard({ico: '🎯', tint: '#F0F9FF', accent: '#0369A1',
+        val: fa(money(s.attractionBase || 0)), label: 'مبنای جذب (پایه + گرمسیری + ویژه)'})}
       ${statCard({ico: '➕', tint: '#DCFCE7', accent: '#16A34A', val: fa(money(s.gross)), label: 'جمع ناخالص (ریال)'})}
       ${statCard({ico: '➖', tint: '#FEE2E2', accent: '#DC2626', val: fa(money(s.deductions)), label: 'جمع کسور (ریال)'})}
       ${statCard({ico: '💵', tint: '#DCFCE7', accent: '#16A34A', val: fa(money(s.net)), label: 'خالص پرداختی (ریال)'})}
@@ -129,9 +141,59 @@ function oilRenderSlip() {
     <div class="card card-pad" style="margin-top:10px;font-size:.8rem;line-height:1.9">
       ${esc(OIL_RESULT.noteFa || '').split('\n').join('<br>')}
     </div>`;
+  oilSyncDriven(s);
 }
 
-/** با انتخاب کارمند، پایهٔ حقوق پرونده در فرم می‌نشیند. */
+/** درصدهای جدولی (محل سکونت و پایهٔ سمت) را از فیش محاسبه‌شده در فیلدهای خواندنی می‌گذارد.
+ *
+ *  چرا از خروجی سرور: درصد مؤثر با جدول ۱/۲/۳ و ستون روزکار/نوبت‌کار تغییر می‌کند؛ اگر
+ *  فرم عدد پیش‌فرض پارامتر را نشان می‌داد، کاربر فکر می‌کرد همان اعمال شده است. */
+function oilSyncDriven(slip) {
+  for (const a of ((OIL_DEFAULTS && OIL_DEFAULTS.allowances) || [])) {
+    if (!a.drivenBy) continue;
+    const el = document.getElementById('oilAllow_' + a.key);
+    if (!el) continue;
+    const line = (slip.lines || []).find(l => l.key === a.key);
+    el.value = line ? String(Math.round(line.percent * 10) / 10) : '0';
+  }
+}
+
+/** عنوان فارسی مدرک انتخاب‌شده. */
+function oilDegreeTitle() {
+  const key = oilSelect('oilDegree');
+  if (!key) return '';
+  const hit = ((OIL_DEFAULTS && OIL_DEFAULTS.degrees) || []).find(d => d.key === key);
+  return hit ? hit.titleFa : key;
+}
+
+/** مبلغ فوق‌العادهٔ تخصصی از سطرهای فیش (صفر اگر مدرک مشمول نباشد). */
+function oilDegreeAmount(slip) {
+  const line = (slip.lines || []).find(l => l.key === 'degreeSpecialty');
+  return line ? line.amount : 0;
+}
+
+/** عنوان فارسی پایهٔ سمت انتخاب‌شده (جدول ۳). */
+function oilGradeTitle() {
+  const key = oilSelect('oilJobGrade');
+  if (!key) return '';
+  const hit = ((OIL_DEFAULTS && OIL_DEFAULTS.jobGrades) || []).find(g => g.key === key);
+  return hit ? hit.titleFa : key;
+}
+
+/** عنوان فارسی محل سکونت انتخاب‌شده (جدول ۱ و ۲). */
+function oilResidenceTitle() {
+  const key = oilSelect('oilResidence');
+  if (!key) return '';
+  const hit = ((OIL_DEFAULTS && OIL_DEFAULTS.residences) || []).find(r => r.key === key);
+  return hit ? hit.titleFa : key;
+}
+
+/** سطر فوقالعادهٔ جذب عمومی و تخصصی شغل (درصد و مبلغ). */
+function oilAttractionLine(slip) {
+  return (slip.lines || []).find(l => l.key === 'attractionSpecialty') || { percent: 0, amount: 0 };
+}
+
+/** با انتخاب کارمند، پایهٔ حقوق و محل سکونت پرونده در فرم می‌نشیند. */
 function oilOnEmployee() {
   const hit = OIL_EMPLOYEES.find(e => e.id === oilSelect('oilEmployee'));
   const field = document.getElementById('oilBaseSalary');
@@ -139,6 +201,9 @@ function oilOnEmployee() {
     const base = Number(hit.baseSalary || 0);
     if (base > 0) field.value = String(base);
   }
+  // محل سکونت پرونده: درصد جدول ۱ و ۲ از همین کلید خوانده می‌شود.
+  const site = document.getElementById('oilResidence');
+  if (hit && site) site.value = hit.residenceSite || '';
   oilCalcSoon();
 }
 
@@ -174,6 +239,7 @@ async function oilSave() {
         climatePercent: String(s.climatePercent),
         climate: String(s.climate),
         allowanceBase: String(s.allowanceBase),
+        attractionBase: String(s.attractionBase || 0),
         allowancesTotal: String(s.allowances),
         gross: String(s.gross),
         deductions: String(s.deductions),
@@ -181,6 +247,13 @@ async function oilSave() {
         shift: oilSelect('oilShift'),
         shiftDays: String(oilNum('oilShiftDays')),
         overtimeHours: String(oilNum('oilOvertime')),
+        degreeName: oilDegreeTitle(),
+        degreePercent: String(s.degreePercent || 0),
+        degreeAllowance: String(oilDegreeAmount(s)),
+        jobGradeName: oilGradeTitle(),
+        residenceName: oilResidenceTitle(),
+        attractionPercent: String(oilAttractionLine(s).percent || 0),
+        attractionAllowance: String(oilAttractionLine(s).amount || 0),
         note: 'مبنای فوقالعاده‌ها: ' + money(s.allowanceBase) + ' ریال',
       },
       noteFa: 'فیش نظام پرداخت صندوق بازنشستگی نفت برای دورهٔ ' + period,
@@ -270,13 +343,40 @@ function pageOilPayslipLive() {
     const empOpts = OIL_EMPLOYEES.map(e => `<option value="${esc(e.id)}">${esc(e.titleFa)}</option>`).join('');
     const firstBase = (OIL_EMPLOYEES[0] && OIL_EMPLOYEES[0].baseSalary) || 0;
 
-    // اقلام فوق‌العاده: درصد مصوب شرکت در ورودی می‌آید تا فرم با عدد واقعی باز شود.
-    const allowanceFields = (def.allowances || []).map(a => `<div class="field">
-      <label>${esc(a.titleFa)} <span class="muted">(${esc(a.base === 'baseSalary' ? 'از پایهٔ حقوق' : 'از مبنای فوق‌العاده‌ها')})</span></label>
-      <input id="oilAllow_${esc(a.key)}" class="num" value="${esc(String(a.percent))}" oninput="oilCalcSoon()"></div>`).join('');
+    // اقلام فوق‌العاده: قلم ثابت ورودی دارد و قلم جدولی (محل سکونت/پایهٔ سمت) خواندنی است.
+    const allowanceFields = (def.allowances || []).map(a => {
+      const baseFa = a.base === 'baseSalary' ? 'از پایهٔ حقوق'
+        : (a.base === 'attractionBase' ? 'از مبنای جذب' : 'از مبنای فوق‌العاده‌ها');
+      if (a.drivenBy) {
+        const fromFa = a.drivenBy === 'residence' ? 'از جدول ۱ و ۲ — محل سکونت' : 'از جدول ۳ — پایهٔ سمت';
+        return `<div class="field"><label>${esc(a.titleFa)} <span class="muted">(${esc(baseFa)} · ${esc(fromFa)})</span></label>
+          <input id="oilAllow_${esc(a.key)}" class="num" value="${esc(String(a.percent))}" disabled
+            title="این درصد از جدول آیین‌نامه خوانده می‌شود؛ در انتخاب‌های بالا تغییر دهید"></div>`;
+      }
+      return `<div class="field">
+      <label>${esc(a.titleFa)} <span class="muted">(${esc(baseFa)})</span></label>
+      <input id="oilAllow_${esc(a.key)}" class="num" value="${esc(String(a.percent))}" oninput="oilCalcSoon()"></div>`;
+    }).join('');
 
     const shiftOpts = (def.shiftOptions || []).map(s =>
       `<option value="${esc(s.key)}">${esc(s.titleFa)}</option>`).join('');
+
+    // مقاطع تحصیلی با ضریب فوق‌العادهٔ تخصصی هر مقطع؛ گزینهٔ خالی یعنی مشمول نیست.
+    const degreeOpts = ['<option value="">— بدون فوق‌العادهٔ تخصصی —</option>']
+      .concat((def.degrees || []).map(d => `<option value="${esc(d.key)}">${esc(d.titleFa)} — ${fa(Math.round(d.percent * 10) / 10)}٪</option>`))
+      .join('');
+
+    // جدول ۳: پایهٔ سمت → حق جذب عمومی + حق مقام (Y).
+    const gradeOpts = ['<option value="">— بدون پایهٔ سمت (بدون جذب) —</option>']
+      .concat((def.jobGrades || []).map(g =>
+        `<option value="${esc(g.key)}">${esc(g.titleFa)} — ${fa(Math.round(g.total * 10) / 10)}٪</option>`))
+      .join('');
+
+    // جدول ۱ و ۲: محل سکونت → محرومیت و صرف وقت (روزکار/نوبت‌کار).
+    const residenceOpts = ['<option value="">— بدون محل سکونت (درصد پیش‌فرض شرکت) —</option>']
+      .concat((def.residences || []).map(r =>
+        `<option value="${esc(r.key)}">${esc(r.titleFa)} — محرومیت ${fa(Math.round(r.deprivation * 10) / 10)}٪ · صرف وقت ${fa(Math.round(r.timeConsumedDay * 10) / 10)}٪/${fa(Math.round(r.timeConsumedShift * 10) / 10)}٪</option>`))
+      .join('');
 
     const form = `<div class="card card-pad" style="margin-bottom:14px">
       <div class="card-title">💼 نظام پرداخت صندوق بازنشستگی نفت</div>
@@ -288,6 +388,12 @@ function pageOilPayslipLive() {
         ${oilField('oilBaseSalary', 'پایهٔ حقوق', String(firstBase), 'ریال', 'از پروندهٔ کارمند پر می‌شود')}
         ${oilField('oilClimatePercent', 'درصد فوق‌العادهٔ بدی آب و هوا (گرمسیری)', String(params.climatePercent || 0), '٪', 'مصوب شرکت')}
         ${oilField('oilDaysInMonth', 'روزهای ماه', String(def.daysInMonth || 30), 'روز')}
+        <div class="field"><label>محل سکونت (جدول ۱ و ۲)</label>
+          <select id="oilResidence" onchange="oilCalcSoon()">${residenceOpts}</select></div>
+        <div class="field"><label>پایهٔ سمت (جدول ۳ — جذب عمومی و تخصصی شغل)</label>
+          <select id="oilJobGrade" onchange="oilCalcSoon()">${gradeOpts}</select></div>
+        <div class="field"><label>مدرک تحصیلی (ضریب Z جدول ۳)</label>
+          <select id="oilDegree" onchange="oilCalcSoon()">${degreeOpts}</select></div>
         <div class="field"><label>وضعیت نوبت‌کاری</label>
           <select id="oilShift" onchange="oilOnShift()">${shiftOpts}</select></div>
         ${oilField('oilShiftDays', 'روزهای نوبت‌کاری در ماه', String(def.daysInMonth || 30), 'روز')}
@@ -297,7 +403,7 @@ function pageOilPayslipLive() {
     </div>
 
     <div class="card card-pad" style="margin-bottom:14px">
-      <div class="card-title">📊 فوق‌العاده‌های مصوب (درصدی از مبنای فوق‌العاده‌ها)</div>
+      <div class="card-title">📊 جدول ۱ تا ۳: فوق‌العاده‌های مصوب (درصدی از مبنای فوق‌العاده‌ها)</div>
       <div class="form-grid">${allowanceFields || '<div class="muted">قلمی تعریف نشده است.</div>'}</div>
       <div class="muted" style="font-size:.74rem;margin-top:6px">${esc(def.noteFa || '').split('\n').join('<br>')}</div>
     </div>

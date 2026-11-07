@@ -58,7 +58,7 @@ const employeeColumns = `
 	e.base_salary, e.leave_balance, coalesce(e.phone, ''), coalesce(e.email, ''),
 	coalesce(e.manager_name, ''), coalesce(e.mobile, ''), coalesce(e.home_phone, ''),
 	coalesce(e.postal_code, ''), coalesce(e.address, ''), coalesce(e.gender, ''),
-	e.birth_date, e.version`
+	coalesce(e.residence_site, ''), e.birth_date, e.version`
 
 const employeeFrom = `from hr_employee.employee e
 	left join hr_employee.department d on d.id = e.department_id`
@@ -76,7 +76,7 @@ func scanEmployee(row scanner) (domain.Employee, error) {
 		&e.Position, &e.ContractType, &e.EmploymentType, &e.Status, &hireDate,
 		&e.BaseSalary, &e.LeaveBalance, &e.Phone, &e.Email, &e.ManagerName,
 		&e.Mobile, &e.HomePhone, &e.PostalCode, &e.Address, &e.Gender,
-		&birthDate, &e.Version); err != nil {
+		&e.ResidenceSite, &birthDate, &e.Version); err != nil {
 		return domain.Employee{}, err
 	}
 	// تاریخ استخدام در داده و API به قالب شمسی نگه داشته می‌شود و در جدول از نوع date
@@ -277,9 +277,9 @@ func (s *PgStore) Save(ctx context.Context, e domain.Employee) (domain.Employee,
 			id, full_name, national_id, department_id, position, contract_type, employment_type,
 			status, hire_date, base_salary, leave_balance, phone, email, manager_name,
 			mobile, home_phone, postal_code, address, gender, birth_date,
-			version, server_seq, deleted, created_at, updated_at
+			residence_site, version, server_seq, deleted, created_at, updated_at
 		) values (
-			$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
+			$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,
 			1, coalesce((select max(server_seq) from hr_employee.employee), 0) + 1, false, now(), now()
 		)
 		on conflict (id) do update set
@@ -301,6 +301,7 @@ func (s *PgStore) Save(ctx context.Context, e domain.Employee) (domain.Employee,
 			address = excluded.address,
 			gender = excluded.gender,
 			birth_date = excluded.birth_date,
+			residence_site = excluded.residence_site,
 			version = hr_employee.employee.version + 1,
 			server_seq = coalesce((select max(server_seq) from hr_employee.employee), 0) + 1,
 			deleted = false,
@@ -308,7 +309,8 @@ func (s *PgStore) Save(ctx context.Context, e domain.Employee) (domain.Employee,
 		id, strings.TrimSpace(e.FullName), strings.TrimSpace(e.NationalID), e.DepartmentID,
 		strings.TrimSpace(e.Position), e.ContractType, e.EmploymentType, e.Status,
 		hireDate, e.BaseSalary, e.LeaveBalance, e.Phone, e.Email, e.ManagerName,
-		e.Mobile, e.HomePhone, e.PostalCode, e.Address, e.Gender, birthDateValue(e.BirthDate))
+		e.Mobile, e.HomePhone, e.PostalCode, e.Address, e.Gender,
+		birthDateValue(e.BirthDate), e.ResidenceSite)
 	if err != nil {
 		return domain.Employee{}, err
 	}

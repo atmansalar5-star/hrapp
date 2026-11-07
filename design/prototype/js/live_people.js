@@ -118,7 +118,7 @@ function pageEmployeesLive() {
 async function liveEmployeeForm(id) {
   const optRes = await apiFetch('/api/v1/employee/options');
   const options = (optRes.ok && optRes.data) || {};
-  let e = {id: '', fullName: '', nationalId: '', gender: '', birthDate: '', mobile: '', homePhone: '', phone: '', postalCode: '', address: '', email: '', departmentId: '', position: '', contractType: 'تمام‌وقت', employmentType: '', hireDate: '', baseSalary: 0, status: 'active'};
+  let e = {id: '', fullName: '', nationalId: '', gender: '', birthDate: '', mobile: '', homePhone: '', phone: '', postalCode: '', address: '', residenceSite: '', email: '', departmentId: '', position: '', contractType: 'تمام‌وقت', employmentType: '', hireDate: '', baseSalary: 0, status: 'active'};
   if (id) {
     const res = await apiFetch('/api/v1/employee/employees/' + encodeURIComponent(id));
     if (!res.ok) { toast(res.message, 'error'); return; }
@@ -134,6 +134,11 @@ async function liveEmployeeForm(id) {
     `<option ${t === e.contractType ? 'selected' : ''}>${t}</option>`).join('');
   const statusOpts = ((options.statusOptions) || []).map(s =>
     `<option value="${esc(s.key)}" ${s.key === e.status ? 'selected' : ''}>${esc(s.titleFa)}</option>`).join('');
+  // محل سکونت: کلید جدول ۱ و ۲ آیین‌نامهٔ فوق‌العاده‌های صندوق نفت؛ درصد فوق‌العادهٔ
+  // محرومیت و جبران صرف وقت در فیش حقوقی از همین انتخاب خوانده می‌شود.
+  const residenceOpts = [`<option value="">ثبت نشده (درصد پیش‌فرض شرکت)</option>`]
+    .concat(((options.residenceOptions) || []).map(r =>
+      `<option value="${esc(r.key)}" ${r.key === e.residenceSite ? 'selected' : ''}>${esc(r.titleFa)}</option>`)).join('');
   openModal({
     title: id ? 'ویرایش کارمند — ' + (e.fullName || e.id) : 'ثبت کارمند تازه',
     body: `<fieldset class="field-group"><legend>اطلاعات هویتی و تماس</legend>
@@ -146,6 +151,7 @@ async function liveEmployeeForm(id) {
         <div class="field"><label>تلفن تماس دیگر</label><input id="nePhone" class="ltr num" value="${esc(e.phone || '')}"></div>
         <div class="field full"><label>آدرس محل سکونت</label><input id="neAddress" value="${esc(e.address || '')}" placeholder="شهر، خیابان، پلاک"></div>
         <div class="field"><label>جنسیت</label><select id="neGender">${genderOpts}</select></div>
+        <div class="field"><label>محل سکونت (مبنای جدول ۱ و ۲ فوق‌العاده‌ها)</label><select id="neResidence">${residenceOpts}</select></div>
         <div class="field"><label>تاریخ تولد (شمسی)</label><input id="neBirth" class="num" value="${esc(e.birthDate || '')}" placeholder="1368/04/12"></div>
         <div class="field"><label>ایمیل</label><input id="neEmail" class="ltr" value="${esc(e.email || '')}"></div>
       </div></fieldset>
@@ -176,6 +182,7 @@ async function liveEmployeeSave(id) {
     postalCode: digitsOf($('#nePostal').value),
     phone: digitsOf($('#nePhone').value),
     address: ($('#neAddress').value || '').trim(),
+    residenceSite: $('#neResidence').value,
     email: ($('#neEmail').value || '').trim(),
     departmentId: $('#neDept').value,
     position: ($('#nePosition').value || '').trim(),

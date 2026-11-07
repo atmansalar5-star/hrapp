@@ -52,6 +52,7 @@ func Descriptor() recordkit.Descriptor {
 					"currentPosition|پست فعلی|text|0",
 					"currentUnit|واحد فعلی|text|0",
 					"position|پست پیشنهادی|text|1",
+					"positionCode|کد پست پیشنهادی|text|0",
 					"unit|واحد سازمانی پیشنهادی|text|1",
 					// گروه شغلی از نردبان گروه‌ها (select) انتخاب می‌شود؛ رتبهٔ پله در
 					// موتور قواعد مبنای سنجش جهش و سطح تصویب است.
@@ -92,6 +93,7 @@ func Descriptor() recordkit.Descriptor {
 				Fields: recordkit.WithEmployeeBase(recordkit.Fields(
 					"fromPosition|پست فعلی|text|1",
 					"toPosition|پست پیشنهادی|text|1",
+					"positionCode|کد پست پیشنهادی|text|0",
 					"unit|واحد سازمانی پیشنهادی|text|0",
 					"currentGrade|گروه شغلی فعلی|select|1",
 					"proposedGrade|گروه شغلی پیشنهادی|select|1",

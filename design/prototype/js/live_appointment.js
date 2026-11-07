@@ -21,6 +21,8 @@ var APA_POSITIONS = [];    // پست‌های سازمانی
 var APA_TIMER = null;      // زمان‌سنج محاسبهٔ خودکار
 var APA_RECORDS = [];      // درخواست‌های جاری
 var APA_SCHEMA = null;     // شناسهٔ نوع‌های رکورد (اقدام‌های مجاز هر وضعیت)
+var APA_EDIT_ID = '';      // شناسهٔ درخواستی که در فرم باز شده است (خالی = درخواست تازه)
+var APA_EXEC_STEPS = [];   // گزارش گام‌های اجرای آخرین ابلاغ
 
 /** مقدار عددی یک ورودی (خالی = صفر). */
 function apaNum(id) {
@@ -174,6 +176,8 @@ async function apaSave() {
 
   const base = {
     unit: apaText('apaUnit'),
+    // کد پست پیشنهادی: اجرای ابلاغ با همین کد، تصدی پست را در تشکیلات ثبت می‌کند.
+    positionCode: apaSelect('apaPosition'),
     currentGrade: apaSelect('apaCurrentGrade'),
     proposedGrade: apaSelect('apaProposedGrade'),
     serviceMonths: String(apaNum('apaServiceMonths')),
@@ -194,8 +198,9 @@ async function apaSave() {
 
   const gradeTitle = plan.proposedGradeFa || apaGradeTitle(apaRank(apaSelect('apaProposedGrade')));
   const title = (plan.kindFa || 'درخواست') + ' — ' + employeeName + ' — ' + gradeTitle;
-  const res = await apiFetch('/api/v1/career/records', {
-    method: 'POST',
+  const editing = APA_EDIT_ID !== '';
+  const res = await apiFetch('/api/v1/career/records' + (editing ? '/' + encodeURIComponent(APA_EDIT_ID) : ''), {
+    method: editing ? 'PATCH' : 'POST',
     body: {
       kind: recKind, title: title, employeeId: employeeId, fields: fields,
       noteFa: 'تصویب‌خواهی: ' + (plan.summaryFa || '') + ' — دلیل: ' + apaText('apaReason'),
@@ -203,9 +208,54 @@ async function apaSave() {
   });
   if (!res.ok) { toast(res.message, 'error'); return; }
   const id = (res.data && res.data.id) || '';
-  toast('درخواست ثبت شد: ' + id);
+  toast(editing ? 'درخواست اصلاح شد: ' + id : 'درخواست ثبت شد: ' + id);
   apaShowSaved(id);
   apaLoadRecords();
+}
+
+/** بارگذاری یک درخواست موجود در فرم تا بتوان تکمیل و دوباره ثبتش کرد.
+ *
+ *  چرا لازم است: درخواستی که از راه «رکورد تازه» یا بذر اولیه ساخته شده ممکن است گروه
+ *  شغلی، مظرفیت پست یا «دلیل و ملاک تصویب» نداشته باشد؛ بی اینبارگذاری، آن درخواست تا
+ *  ابد در وضعیت پیش‌نویس می‌ماند، چون گردش‌کار ارسال برای تصویب همان‌ها را می‌خواهد. */
+function apaLoadRecord(id) {
+  const rec = APA_RECORDS.find(r => r.id === id);
+  if (!rec) { toast('درخواست یافت نشد', 'error'); return; }
+  const f = rec.fields || {};
+  const kind = rec.kind === 'promotions' ? 'promotion' : 'appointment';
+  const set = (id, value) => { const el = document.getElementById(id); if (el) el.value = value; };
+  set('apaKind', kind);
+  set('apaEmployee', rec.employeeId || '');
+  set('apaCurrentUnit', f.currentUnit || '');
+  set('apaCurrentPosition', f.currentPosition || f.fromPosition || '');
+  set('apaUnit', f.unit || '');
+  set('apaCurrentGrade', f.currentGrade || '');
+  set('apaProposedGrade', f.proposedGrade || '');
+  set('apaServiceMonths', f.serviceMonths || '0');
+  set('apaEvaluation', f.evaluationScore || '0');
+  set('apaVacancy', f.vacancy || '');
+  set('apaCommitment', f.commitment || '0');
+  set('apaEffectiveDate', f.effectiveDate || '');
+  set('apaDecreeNo', f.decreeNo || '');
+  set('apaReason', f.reason || '');
+  // پست از روی عنوان یا کد در فهرست پست‌ها پیدا می‌شود؛ select با کد کار می‌کند.
+  const wanted = f.positionCode || '';
+  const title = (f.position || f.toPosition || '').trim();
+  const hit = APA_POSITIONS.find(p => p.code === wanted)
+    || APA_POSITIONS.find(p => positionTitleOf(p.titleFa) === title);
+  set('apaPosition', hit ? hit.code : (APA_POSITIONS[0] ? APA_POSITIONS[0].code : ''));
+  APA_EDIT_ID = id;
+  const box = document.getElementById('apaEditing');
+  if (box) {
+    box.innerHTML = `<span class="chip c-wait">✎ در حال ویرایش درخواست <b class="ltr">${esc(id)}</b></span>`;
+  }
+  apaPlanNow();
+  toast('درخواست ' + id + ' در فرم باز شد؛ پس از اصلاح، «ذخیرهٔ تغییرات» را بزنید');
+}
+
+/** عنوان پست بدون کد انتهای آن («سرپرست فروش (POS-405)» ← «سرپرست فروش»). */
+function positionTitleOf(label) {
+  return String(label || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 }
 
 /** جعبهٔ پس از ثبت: گام بعدی همان گردش‌کار است. */
@@ -231,12 +281,36 @@ async function apaAct(id, action) {
   apaLoadRecords();
 }
 
-/** اجرا و ابلاغ: سرور شرط‌ها را با پارامترهای شرکت دوباره می‌سنجد. */
+/** اجرا و ابلاغ: سرور شرط‌ها را با پارامترهای شرکت دوباره می‌سنجد و گام‌های اجرا را
+ *  واقعاً انجام می‌دهد (پروندهٔ کارمند، تصدی پست در تشکیلات، اعلام به حقوق). */
 async function apaExecute(id) {
   const res = await apiFetch('/api/v1/career/appointment-execute', { method: 'POST', body: { id: id } });
   if (!res.ok) { toast(res.message, 'error'); return; }
-  toast('ابلاغ صادر و اجرا شد: ' + id);
+  APA_EXEC_STEPS = (res.data && res.data.steps) || [];
+  const pending = APA_EXEC_STEPS.filter(s => !s.done);
+  toast(pending.length
+    ? 'ابلاغ اجرا شد، ولی ' + pending.length + ' گام ناتمام ماند — گزارش اجرا را ببینید'
+    : 'ابلاغ صادر و اجرا شد: ' + id);
+  apaRenderSteps(id);
   apaLoadRecords();
+}
+
+/** گزارش گام‌های اجرای ابلاغ: چه چیزی واقعاً انجام شد و چه چیزی نه. */
+function apaRenderSteps(id) {
+  const box = document.getElementById('apaExec');
+  if (!box) return;
+  if (!APA_EXEC_STEPS.length) { box.innerHTML = ''; return; }
+  const rows = APA_EXEC_STEPS.map(s => {
+    const mark = s.done
+      ? '<span class="chip c-ok">✔ انجام شد</span>'
+      : '<span class="chip c-wait">⚠ ناتمام</span>';
+    return `<tr><td class="num">${fa(s.order)}</td><td>${esc(s.titleFa)}</td><td>${mark}</td>
+      <td style="font-size:.76rem">${esc(s.done ? (s.detailFa || '—') : (s.messageFa || '—'))}</td></tr>`;
+  });
+  box.innerHTML = `<div class="card card-pad" style="margin-top:10px">
+    <div class="card-title">📜 گزارش اجرای ابلاغ <b class="ltr">${esc(id)}</b></div>
+    ${liveTable(['گام', 'اقدام', 'نتیجه', 'شرح'], rows, rows.length)}
+  </div>`;
 }
 
 /** عنوان فارسی اقدام‌ها. */
@@ -275,13 +349,18 @@ function apaRenderRecords() {
       ? `<button class="btn btn-sm btn-primary" onclick="apaExecute('${esc(r.id)}')">اجرا و ابلاغ</button>`
       : `<button class="btn btn-sm ${a.style === 'primary' ? 'btn-primary' : 'btn-ghost'}"
            onclick="apaAct('${esc(r.id)}','${esc(a.value)}')">${esc(a.labelFa)}</button>`).join(' ');
+    // پس از تصویب، دکمهٔ «اجرا و ابلاغ» از همان فهرست اقدام‌های مجاز می‌آید و به مسیر
+    // قاعده‌سنج وصل است (نه اقدام خام گردش‌کار). فقط «تکمیل در فرم» را اینجا اضافه
+    // می‌کنیم: پیش‌نویسی که از راه رکورد تازه ساخته شده، بی آن هرگز از پیش‌نویس بیرون نمی‌آید.
+    const editBtn = r.status === 'draft'
+      ? `<button class="btn btn-sm btn-ghost" onclick="apaLoadRecord('${esc(r.id)}')">✎ تکمیل در فرم</button>` : '';
     return `<tr>
       <td class="ltr" style="font-size:.74rem">${esc(r.id)}</td>
       <td>${esc(r.title)}</td>
       <td>${esc(r.employeeName || '—')}</td>
       <td>${statusChip(r.status, r.statusFa)}</td>
       <td class="num">${fa((r.fields || {}).effectiveDate || '—')}</td>
-      <td>${btns || '<span class="muted">—</span>'}</td></tr>`;
+      <td>${[btns, editBtn].filter(Boolean).join(' ') || '<span class="muted">—</span>'}</td></tr>`;
   });
   const head = ['شناسه', 'عنوان', 'کارمند', 'وضعیت', 'تاریخ اجرا', 'اقدام'];
   box.innerHTML = rows.length ? liveTable(head, rows, rows.length)
@@ -411,9 +490,12 @@ function pageAppointmentFormLive() {
       <div id="apaPlan"><div class="muted" style="font-size:.78rem">در حال سنجش شرط‌ها...</div></div>
       <div class="row-actions" style="margin-top:10px">
         <button class="btn btn-primary" onclick="apaPlanNow()">🧮 سنجش مجدد</button>
-        <button class="btn btn-ghost" onclick="apaSave()">💾 ثبت درخواست</button>
+        <button class="btn btn-ghost" onclick="apaSave()">💾 ثبت درخواست / ذخیرهٔ تغییرات</button>
+        <button class="btn btn-ghost" onclick="APA_EDIT_ID='';go('appointmentForm')">🗒 درخواست تازه</button>
       </div>
+      <div id="apaEditing" style="margin-top:8px"></div>
       <div id="apaSaved"></div>
+      <div id="apaExec"></div>
     </div>
 
     <div class="card card-pad" style="margin-bottom:14px">
@@ -438,8 +520,7 @@ function pageAppointmentFormLive() {
       apaOnEmployee();
       apaPlanNow();
       apaLoadRecords();
-    }, 60);
-    return shell;
+    }, 60);    return shell;
   });
   return liveShell('فرم تصویب‌خواهی انتصاب و ترفیع',
     'سنجش شرط‌ها، زنجیرهٔ تصویب و اجرای ابلاغ در یک جا',

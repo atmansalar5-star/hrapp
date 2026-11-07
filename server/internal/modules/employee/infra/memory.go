@@ -198,6 +198,34 @@ func DepartmentName(id string) string {
 	return "—"
 }
 
+// DepartmentByName یافتن واحد سازمانی با «نام».
+//
+// چرا لازم است: ابلاغ انتصاب نام واحد را نگه می‌دارد (نه شناسه) و اجرای ابلاغ باید همان
+// نام را به شناسهٔ واحد پروندهٔ کارمند تبدیل کند؛ این تبدیل کار مالک پرونده است تا
+// ماژول‌های دیگر فهرست واحدها را تکرار نکنند. مقایسه پس از حذف فاصله‌های اضافی و
+// یکسان‌سازی «ی/ک» انجام می‌شود تا «امور مالي» و «امور مالی» یک واحد شناخته شوند.
+func DepartmentByName(name string) (contracts.Department, bool) {
+	value := normalizeName(name)
+	if value == "" {
+		return contracts.Department{}, false
+	}
+	for _, d := range Departments() {
+		if normalizeName(d.Name) == value {
+			return d, true
+		}
+	}
+	return contracts.Department{}, false
+}
+
+// normalizeName نام واحد را برای مقایسه یکدست می‌کند.
+func normalizeName(name string) string {
+	replacer := strings.NewReplacer(
+		"ي", "ی", "ك", "ک", "ۀ", "ه", "ة", "ه",
+		"\u200c", "", " ", "", "\t", "",
+	)
+	return replacer.Replace(strings.TrimSpace(name))
+}
+
 func matchesQuery(e domain.Employee, q string) bool {
 	q = strings.ToLower(strings.TrimSpace(q))
 	return strings.Contains(strings.ToLower(e.FullName), q) ||

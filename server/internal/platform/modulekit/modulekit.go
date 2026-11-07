@@ -90,6 +90,8 @@ type Deps struct {
 type Ports struct {
 	mu            sync.RWMutex
 	employee      contracts.EmployeeReader
+	employeeWrite contracts.EmployeeAssigner
+	appointer     contracts.AppointmentApplier
 	documents     contracts.ContractDocumentProvider
 	templates     contracts.DocumentTemplateProvider
 	reportSources []contracts.ReportSource
@@ -149,6 +151,37 @@ func (p *Ports) Employees() (contracts.EmployeeReader, bool) {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
 	return p.employee, p.employee != nil
+}
+
+// SetEmployeeAssigner ثبت پورت «تغییر سازمانی پروندهٔ کارمند» (توسط ماژول employee).
+//
+// چرا جدا از پورت خواندن: فقط ماژول انتصابات پس از تصویب ابلاغ باید پست و واحد کارمند را
+// عوض کند؛ بقیهٔ ماژول‌ها حق نوشتن در پروندهٔ کارمند را نمی‌گیرند.
+func (p *Ports) SetEmployeeAssigner(a contracts.EmployeeAssigner) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.employeeWrite = a
+}
+
+// EmployeeAssigner خواندن پورت «تغییر سازمانی پروندهٔ کارمند»؛ نبودِ آن false برمی‌گرداند.
+func (p *Ports) EmployeeAssigner() (contracts.EmployeeAssigner, bool) {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	return p.employeeWrite, p.employeeWrite != nil
+}
+
+// SetAppointmentApplier ثبت پورت «ثبت تصدی پست در تشکیلات» (توسط ماژول orgstructure).
+func (p *Ports) SetAppointmentApplier(a contracts.AppointmentApplier) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.appointer = a
+}
+
+// AppointmentApplier خواندن پورت «ثبت تصدی پست در تشکیلات».
+func (p *Ports) AppointmentApplier() (contracts.AppointmentApplier, bool) {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	return p.appointer, p.appointer != nil
 }
 
 // SetContractDocuments ثبت پورت دادهٔ قرارداد برای اسناد چاپی (توسط ماژول contracts).

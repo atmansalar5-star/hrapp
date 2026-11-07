@@ -4,6 +4,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"hrms/internal/contracts"
@@ -163,6 +164,94 @@ func (s *Service) Update(ctx context.Context, id string, in contracts.EmployeeIn
 		}
 	}
 	return dto, nil
+}
+
+// Assign تغییر سازمانی کارمند را در پی اجرای یک ابلاغ انتصاب یا ترفیع اعمال می‌کند.
+//
+// چرا این متد و نه استفادهٔ مستقیم از Update: اجرای ابلاغ بخشی از یک گردش‌کار تصویب‌شده
+// است و باید فقط پست و واحد را عوض کند، نه بقیهٔ اطلاعات پرونده را؛ ورودی Update همهٔ
+// فیلدهای اجباری (نام، کد ملی، واحد، پست، تاریخ استخدام) را می‌خواهد و با یک ابلاغ
+// ناقص رد می‌شود. اینجا فقط همان دو فیلد سازمانی تغییر می‌کند و بقیه دست‌نخورده می‌مانند.
+//
+// قاعده‌ها:
+//   - نام واحد به شناسه تبدیل می‌شود؛ واحد ناشناخته تغییر نمی‌کند و DepartmentMatched=false
+//     برمی‌گردد (اجرای ابلاغ نباید به‌خاطر یک نام واحد نانوشته شکست بخورد).
+//   - اگر پست و واحد هر دو همان مقدار قبلی باشند، نوشتنی رخ نمی‌دهد (اجرای تکراری، پرونده
+//     را بی‌دلیل نسخه‌تازه نمی‌کند) و NoteFa همین را می‌گوید.
+//   - تغییر در دفتر حسابرسی و لاگ سینک ثبت می‌شود تا پروندهٔ کارمند سابقه داشته باشد.
+func (s *Service) Assign(ctx context.Context, id string, in contracts.EmployeeAssignment, actor string) (contracts.EmployeeAssignmentResult, error) {
+	current, ok, err := s.repo.Get(ctx, id)
+	if err != nil {
+		return contracts.EmployeeAssignmentResult{}, err
+	}
+	if !ok {
+		return contracts.EmployeeAssignmentResult{}, infra.ErrNotFound
+	}
+
+	updated := current
+	result := contracts.EmployeeAssignmentResult{}
+	if position := strings.TrimSpace(in.Position); position != "" && position != current.Position {
+		updated.Position = position
+		result.PositionChanged = true
+	}
+	if name := strings.TrimSpace(in.DepartmentName); name != "" {
+		if dept, found := infra.DepartmentByName(name); found {
+			result.DepartmentMatched = true
+			if dept.ID != current.DepartmentID {
+				updated.DepartmentID = dept.ID
+				updated.DepartmentName = dept.Name
+				result.DepartmentChanged = true
+			}
+		}
+	}
+
+	if !result.PositionChanged && !result.DepartmentChanged {
+		result.Employee = current.ToContract()
+		result.NoteFa = "پروندهٔ کارمند با ابلاغ هم‌خوان است؛ پست و واحد تغییری لازم نداشت."
+		return result, nil
+	}
+
+	saved, err := s.repo.Save(ctx, updated)
+	if err != nil {
+		return contracts.EmployeeAssignmentResult{}, err
+	}
+	s.recordAssign(actor, saved, in, result)
+	dto := saved.ToContract()
+	if index, err := s.photoIndex(); err == nil {
+		if photo, ok := index[dto.ID]; ok {
+			s.attachPhoto(&dto, photo)
+		}
+	}
+	result.Employee = dto
+	result.NoteFa = assignmentNoteFa(result)
+	return result, nil
+}
+
+// recordAssign تغییر سازمانی را در دفتر حسابرسی و لاگ سینک ثبت می‌کند.
+func (s *Service) recordAssign(actor string, e domain.Employee, in contracts.EmployeeAssignment, result contracts.EmployeeAssignmentResult) {
+	detail := "اجرای ابلاغ " + strings.TrimSpace(in.DecreeNo) + " — پست تازه: " + e.Position
+	if reason := strings.TrimSpace(in.ReasonFa); reason != "" {
+		detail += " — ملاک: " + reason
+	}
+	if s.audit != nil {
+		s.audit.Append(actor, "employee", "assign", e.ID, detail)
+	}
+	s.record(actor, "assign", e)
+}
+
+// assignmentNoteFa متن گزارش اجرای ابلاغ روی پرونده.
+func assignmentNoteFa(result contracts.EmployeeAssignmentResult) string {
+	parts := []string{}
+	if result.PositionChanged {
+		parts = append(parts, "پست سازمانی پرونده به‌روزرسانی شد")
+	}
+	if result.DepartmentChanged {
+		parts = append(parts, "واحد سازمانی پرونده به‌روزرسانی شد")
+	}
+	if len(parts) == 0 {
+		return "پروندهٔ کارمند با ابلاغ هم‌خوان است."
+	}
+	return strings.Join(parts, " و ") + "."
 }
 
 // Delete حذف کارمند.

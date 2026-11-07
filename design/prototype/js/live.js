@@ -349,6 +349,8 @@ async function employeeBaseInfo(employeeId) {
     phone: e.phone || '',
     postalCode: e.postalCode || '',
     address: e.address || '',
+    residenceSite: e.residenceSite || '',
+    residenceSiteFa: e.residenceSiteFa || '',
     departmentName: e.departmentName || '',
     position: e.position || '',
     educationLevelFa: latest.levelFa || '',
@@ -395,6 +397,7 @@ function employeeBaseBlockHtml(info) {
       ${item('شمارهٔ موبایل', info.mobile)}
       ${item('شمارهٔ منزل', info.homePhone)}
       ${item('کد پستی', info.postalCode)}
+      ${item('محل سکونت (جدول ۱ و ۲ فوق‌العاده‌ها)', info.residenceSiteFa)}
       ${item('آخرین مدرک تحصیلی', education)}
       ${item('مدرک ملاک حقوق', info.degreeBasis || '—')}
     </div>

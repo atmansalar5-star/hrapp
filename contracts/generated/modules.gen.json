@@ -705,14 +705,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -726,22 +726,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -774,17 +809,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -1077,14 +1112,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -1098,22 +1133,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -1146,17 +1216,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -1469,14 +1539,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -1490,22 +1560,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -1538,17 +1643,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -1851,14 +1956,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -1872,22 +1977,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -1920,17 +2060,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -2248,14 +2388,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -2269,22 +2409,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -2317,17 +2492,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -2645,14 +2820,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -2666,22 +2841,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -2714,17 +2924,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -3042,14 +3252,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -3063,22 +3273,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -3111,17 +3356,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -3439,14 +3684,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -3460,22 +3705,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -3508,17 +3788,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -3836,14 +4116,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -3857,22 +4137,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -3905,17 +4220,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -4233,14 +4548,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -4254,22 +4569,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -4302,17 +4652,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -4630,14 +4980,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -4651,22 +5001,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -4699,17 +5084,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -5027,14 +5412,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -5048,22 +5433,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -5096,17 +5516,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -5425,14 +5845,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -5446,22 +5866,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -5494,17 +5949,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -5821,14 +6276,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -5842,22 +6297,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -5890,17 +6380,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
@@ -6218,14 +6708,14 @@
         },
         {
           "key": "oilpay.allowance.special",
-          "titleFa": "فوق‌العادهٔ ویژه",
-          "value": "3",
+          "titleFa": "فوق‌العادهٔ ویژه (ردیف ۳ آیین‌نامه)",
+          "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.timeConsumed",
-          "titleFa": "فوق‌العادهٔ صرف وقت",
+          "titleFa": "فوق‌العادهٔ جبران صرف وقت اضافی — پیش‌فرض بدون محل سکونت",
           "value": "16.5",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
@@ -6239,22 +6729,57 @@
         },
         {
           "key": "oilpay.allowance.attractionSpecialty",
-          "titleFa": "فوق‌العادهٔ جذب و تخصصی شغل",
-          "value": "27",
-          "unitFa": "٪ از مبنا",
+          "titleFa": "فوق‌العادهٔ جذب عمومی و تخصصی شغل — پیش‌فرض بدون پایهٔ سمت",
+          "value": "0",
+          "unitFa": "٪ از مبنای جذب",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.production",
-          "titleFa": "فوق‌العادهٔ فرآورشی",
+          "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
           "key": "oilpay.allowance.shiftWorker",
-          "titleFa": "فوق‌العادهٔ نوبت‌کار",
+          "titleFa": "فوق‌العادهٔ نوبت‌کاری",
           "value": "35",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.diploma",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دیپلم",
+          "value": "17.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.associate",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — فوق‌دیپلم",
+          "value": "27",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.bachelor",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی",
+          "value": "38.5",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.master",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — کارشناسی ارشد",
+          "value": "46.2",
+          "unitFa": "٪ از مبنا",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
+          "key": "oilpay.degree.phd",
+          "titleFa": "ضریب فوق‌العادهٔ تخصصی — دکتری",
+          "value": "54",
           "unitFa": "٪ از مبنا",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
@@ -6287,17 +6812,17 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.overtimeFactor",
-          "titleFa": "ضریب اضافه‌کاری در نظام صندوق نفت",
-          "value": "1.4",
-          "unitFa": "برابر",
+          "key": "oilpay.overtimeRate.day",
+          "titleFa": "نرخ اضافه‌کار هر ساعت روزکار (× پایهٔ حقوق)",
+          "value": "0.014",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
-          "key": "oilpay.monthlyHours",
-          "titleFa": "ساعت کار موظفی ماهانه در نظام صندوق نفت",
-          "value": "176",
-          "unitFa": "ساعت",
+          "key": "oilpay.overtimeRate.shift",
+          "titleFa": "نرخ اضافه‌کار هر ساعت نوبت‌کار (× پایهٔ حقوق)",
+          "value": "0.016",
+          "unitFa": "برابر پایه",
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {

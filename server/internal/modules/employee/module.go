@@ -67,6 +67,10 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// ثبت پورت: تنها راه ماژول‌های دیگر برای خواندن داده کارکنان.
 	deps.Ports.SetEmployeeReader(svc)
 
+	// پورت نوشتن باریک: فقط ماژول انتصابات، پس از تصویب ابلاغ، پست و واحد کارمند را
+	// از همین راه عوض می‌کند؛ قاعده‌های پرونده (اعتبارسنجی، حسابرسی، سینک) همین‌جا می‌مانند.
+	deps.Ports.SetEmployeeAssigner(svc)
+
 	h := api.New(svc, deps)
 
 	// مسیرها مطابق contracts/openapi/hrms.json و پیشوند مانیفست ماژول.
