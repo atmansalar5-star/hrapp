@@ -13,7 +13,9 @@
 @font-face{
   font-family: Vazirmatn;
   font-style: normal; font-weight: 100 900; font-display: swap;
-  src: url("../fonts/Vazirmatn-var.woff2") format("woff2-variations");
+  /* «woff2-variations» در مرورگرهای تازه بازنشسته شده است؛ خودِ «woff2» قلم متغیر را می‌پذیرد
+     و برای همین هم موتور چاپ (نسخهٔ PDF) آن را بار می‌کند. */
+  src: url("../fonts/Vazirmatn-var.woff2") format("woff2");
 }
 @font-face{
   font-family: Vazirmatn-fallback;
@@ -475,7 +477,7 @@ pre.code .c{color:#7FB0AE}
 /* ---------- چاپ / ذخیره به PDF ----------
    هدف: هر صفحه (به‌ویژه رزومه) روی کاغذ سفید، خوانا و بدون عناصر تعاملی چاپ شود. */
 @media print{
-  @page{margin:14mm 12mm}
+  @page{size:A4;margin:14mm 12mm}
   html,body{background:#fff!important;color:#000!important}
   body{font-size:11.5pt}
   *{animation:none!important;transition:none!important;box-shadow:none!important;text-shadow:none!important}
@@ -777,4 +779,78 @@ body:has(.lightbox.open) .to-top{opacity:0!important;visibility:hidden!important
     background:#C9D6E2;border-radius:99px;border:3px solid transparent;background-clip:content-box;
   }
   ::-webkit-scrollbar-thumb:hover{background:#AFC4D4;background-clip:content-box;border:3px solid transparent}
+}
+
+/* =====================================================================
+   لایهٔ پنجم: بروشور چاپی (نسخهٔ PDF معرفی صفحهٔ دمو)
+   جلد و چیدمان کاغذی فقط در چاپ دیده می‌شوند؛ نمایش رایانه دست‌نخورده است.
+   ===================================================================== */
+.print-cover{display:none}
+
+@media print{
+  html{font-size:15px}
+
+  /* ---------- قلم در کاغذ و PDF ----------
+     موتور چاپ پی‌دی‌اف، قلم‌های *متغیر* را جای نمی‌دهد و به تاهوما برمی‌گردد؛
+     پس در چاپ همان دو فایل ثابت وزیرمتن را با نامی جدا اعلام می‌کنیم. */
+  @font-face{
+    font-family:VazirPrint;font-style:normal;font-weight:100 500;font-display:block;
+    src:url("../fonts/Vazirmatn-Regular.woff2") format("woff2");
+  }
+  @font-face{
+    font-family:VazirPrint;font-style:normal;font-weight:600 900;font-display:block;
+    src:url("../fonts/Vazirmatn-Bold.woff2") format("woff2");
+  }
+  html,body,button,input,select,textarea,
+  h1,h2,h3,h4,h5,h6,p,li,td,th,span,b,strong,em,small,figcaption,div,a{
+    font-family:VazirPrint,Vazirmatn,Vazirmatn-fallback,'IRANSans',Tahoma,'Segoe UI',sans-serif;
+  }
+  code,pre,.latin,.acct__u,.acct__p{font-family:ui-monospace,Consolas,'Courier New',monospace}
+
+  /* ---------- جلد ---------- */
+  .print-cover{
+    display:flex;flex-direction:column;justify-content:space-between;
+    min-height:250mm;break-after:page;page-break-after:always;
+  }
+  .print-cover__top{
+    display:flex;align-items:center;gap:4mm;
+    border-bottom:1px solid #CBD5E1;padding-bottom:5mm;
+  }
+  .print-cover__mark{
+    width:15mm;height:15mm;border-radius:4mm;display:grid;place-items:center;
+    background:linear-gradient(140deg,#0F766E,#2563EB);color:#fff;
+    font-size:7.5mm;font-weight:800;line-height:1;
+  }
+  .print-cover__brand{font-size:.92rem;color:#334155}
+  .print-cover__kicker{
+    display:inline-block;font-size:.82rem;color:#0F766E;font-weight:700;
+    background:#F0FAF8;border:1px solid #BFE3DE;border-radius:99px;padding:1.2mm 4mm;margin:0;
+  }
+  .print-cover__title{
+    font-size:33pt;line-height:1.32;font-weight:800;color:#0B2A33;margin:7mm 0 0;padding:0;
+  }
+  .print-cover__sub{font-size:1rem;line-height:2.05;color:#475569;margin:6mm 0 0;max-width:152mm}
+  .print-cover__stats{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-top:12mm}
+  .print-cover__stats div{
+    border:1px solid #CBD5E1;border-radius:3mm;padding:4.5mm 3mm;text-align:center;background:#F8FAFC;
+  }
+  .print-cover__stats b{display:block;font-size:19pt;color:#0F766E;line-height:1.3}
+  .print-cover__stats span{font-size:.78rem;color:#64748B}
+  .print-cover__foot{
+    display:grid;grid-template-columns:1fr 1fr;gap:6mm;
+    border-top:1px solid #CBD5E1;padding-top:5mm;font-size:.84rem;line-height:1.95;
+  }
+  .print-cover__foot b{display:block;color:#0B2A33}
+  .print-cover__foot span{color:#475569}
+
+  /* ---------- چیدمان کاغذی صفحه‌ها ---------- */
+  .section{break-before:page;page-break-before:always}
+  .section:first-of-type{break-before:auto;page-break-before:auto}
+  .section-head{break-after:avoid;page-break-after:avoid}
+  .gallery{grid-template-columns:1fr!important;gap:7mm}
+  .gallery .shot{break-inside:avoid;page-break-inside:avoid}
+  .shot__bar{background:#F1F5F9!important;border-bottom:1px solid #CBD5E1!important}
+  .shot__bar span{color:#334155!important}
+  .shot figcaption{background:#fff!important;border-top:1px solid #E2E8F0!important}
+  .step,.acct,.dept-block,.note,ul.checks li{break-inside:avoid;page-break-inside:avoid}
 }

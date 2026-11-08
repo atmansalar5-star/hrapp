@@ -1,0 +1,180 @@
+/* =====================================================================
+   سند ارائه (PDF) — چیدمان A4
+   این فایل فقط در presentation.html بار می‌شود و روی site.css سوار می‌شود:
+   متغیرها، کارت‌ها، برچسب‌ها و جدول‌ها را از همان‌جا می‌گیرد و ساختار
+   «صفحه‌های کاغذی» را می‌سازد. هر <section class="pv"> = یک صفحهٔ A4.
+   ===================================================================== */
+
+/* ---------- پایه ---------- */
+html{scroll-behavior:smooth}
+body{background:#E9EEF4}
+
+.pv{
+  position:relative;background:#fff;color:var(--text);
+  display:flex;flex-direction:column;
+}
+.pv > *{position:relative;z-index:1}
+
+/* سرصفحهٔ هر بخش */
+.pv__head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:6mm;
+  border-bottom:2px solid var(--primary-2);padding-bottom:2mm;margin-bottom:5mm;
+}
+.pv__kicker{font-size:.74rem;font-weight:700;color:var(--primary-dark)}
+.pv__brand{font-size:.68rem;color:var(--muted)}
+.pv__foot{
+  margin-top:auto;padding-top:4mm;border-top:1px solid var(--border);
+  display:flex;align-items:baseline;justify-content:space-between;gap:6mm;
+  font-size:.68rem;color:var(--muted);
+}
+
+/* تیترها و متن */
+.pv h2{font-size:17pt;line-height:1.45;margin:0 0 3mm;color:#0B2A33}
+.pv h3{font-size:11pt;line-height:1.65;margin:0 0 1.8mm;color:#0B2A33}
+.pv p{font-size:10pt;line-height:1.95;margin:0 0 2.4mm;color:var(--text-2)}
+.pv p.lead{font-size:10.6pt;color:var(--text)}
+.pv ul,.pv ol{margin:0 0 2.4mm;padding-inline-start:5.5mm}
+.pv li{font-size:9.8pt;line-height:1.9;color:var(--text-2)}
+.pv h2 + p.lead{margin-top:-1mm}
+
+/* ---------- جلد ---------- */
+.pv--cover{min-height:250mm;justify-content:space-between}
+.pv-cover__top{display:flex;align-items:center;gap:4mm;border-bottom:1px solid var(--border-2);padding-bottom:4mm}
+.pv-cover__mark{
+  width:15mm;height:15mm;border-radius:4mm;display:grid;place-items:center;flex:none;
+  background:linear-gradient(140deg,#0F766E,#2563EB);color:#fff;font-size:7.5mm;font-weight:800;line-height:1;
+}
+.pv-cover__brand{font-size:.9rem;color:#334155;line-height:1.7}
+.pv-cover__kicker{
+  display:inline-block;font-size:.8rem;font-weight:700;color:var(--primary-dark);
+  background:#F0FAF8;border:1px solid #BFE3DE;border-radius:99px;padding:1.2mm 4mm;margin:0 0 6mm;
+}
+.pv-cover__title{font-size:31pt;line-height:1.34;font-weight:800;color:#0B2A33;margin:0;padding:0}
+.pv-cover__sub{font-size:1rem;line-height:2;color:#475569;margin:6mm 0 0;max-width:150mm}
+.pv-cover__audience{
+  margin-top:9mm;border:1px solid #BFE3DE;background:#F6FCFB;border-radius:3mm;
+  padding:4mm 5mm;font-size:.94rem;line-height:1.9;
+}
+.pv-cover__audience b{color:#0B2A33}
+.pv-cover__stats{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-top:10mm}
+.pv-cover__stats div{border:1px solid var(--border-2);border-radius:3mm;padding:4mm 3mm;text-align:center;background:#F8FAFC}
+.pv-cover__stats b{display:block;font-size:18pt;color:var(--primary-dark);line-height:1.35}
+.pv-cover__stats span{font-size:.74rem;color:var(--muted)}
+.pv-cover__foot{
+  display:grid;grid-template-columns:1.15fr 1fr;gap:6mm;
+  border-top:1px solid var(--border-2);padding-top:4mm;font-size:.82rem;line-height:1.95;
+}
+.pv-cover__foot b{display:block;color:#0B2A33}
+.pv-cover__foot span{color:#475569}
+
+/* ---------- آمار و کارت‌ها ---------- */
+.pv-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:3.5mm}
+.pv-stats--3{grid-template-columns:repeat(3,1fr)}
+.pv-stat{border:1px solid var(--border);border-radius:3mm;padding:4.5mm 3mm;text-align:center;background:#F8FAFC}
+.pv-stat b{display:block;font-size:17pt;color:var(--primary-dark);line-height:1.35}
+.pv-stat span{font-size:.74rem;color:var(--muted)}
+.pv-stat--wide{grid-column:span 2}
+
+.pv-cards{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+.pv-cards--3{grid-template-columns:repeat(3,1fr)}
+.pv-card{border:1px solid var(--border);border-radius:3mm;padding:3.4mm 4mm;background:#fff;break-inside:avoid}
+.pv-card--tint{background:#F8FAFC}
+.pv-card h3{display:flex;align-items:center;gap:2mm;font-size:10.4pt;margin-bottom:1.6mm}
+.pv-card h3 i{font-style:normal;font-size:1rem}
+.pv-card p{font-size:9.4pt;line-height:1.9;margin:0}
+.pv-card ul{margin:0;padding-inline-start:5mm}
+.pv-card li{font-size:9.4pt;line-height:1.85}
+
+/* ستاره‌دار برای «تازه‌های نسخه» */
+.pv-tag{
+  display:inline-block;font-size:.66rem;font-weight:700;border-radius:99px;padding:.4mm 2mm;margin-inline-start:2mm;
+  background:#ECFDF5;color:#047857;border:1px solid #A7F3D0;vertical-align:middle;
+}
+.pv-tag--new{background:#EEF2FF;color:#3730A3;border-color:#C7D2FE}
+
+/* ---------- جدول‌ها ---------- */
+.pv table.tbl{width:100%;font-size:8.9pt}
+.pv table.tbl th,.pv table.tbl td{padding:1.9mm 2.2mm;line-height:1.7}
+.pv table.tbl th{background:#F1F5F9!important;font-size:8.6pt}
+.pv table.tbl td.latin,.pv table.tbl th.latin{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:8.1pt}
+.pv table.tbl tbody tr:nth-child(even) td{background:#FAFCFE}
+.pv-table-note{font-size:.7rem;color:var(--muted);margin-top:2mm}
+
+/* ---------- فهرست گام‌ها ---------- */
+.pv-steps{display:grid;gap:3mm;counter-reset:pstep}
+.pv-step{
+  position:relative;border:1px solid var(--border);border-radius:3mm;background:#fff;
+  padding:3.5mm 4mm 3.5mm 12mm;padding-inline-start:12mm;break-inside:avoid;
+}
+.pv-step::before{
+  counter-increment:pstep;content:counter(pstep);
+  position:absolute;inset-inline-start:3.5mm;inset-block-start:3.4mm;
+  width:6.4mm;height:6.4mm;border-radius:50%;background:var(--primary-light);color:var(--primary-dark);
+  font-size:.78rem;font-weight:700;display:grid;place-items:center;border:1px solid #BFE3DE;
+}
+.pv-step b{font-size:10pt;color:#0B2A33}
+.pv-step p{font-size:9.5pt;margin:1mm 0 0;line-height:1.9}
+
+/* ---------- صفحهٔ نماگرفت ---------- */
+.pv--shot{justify-content:flex-start}
+.pv--shot h2{font-size:14pt;margin-bottom:2mm}
+.pv--shot .shot{margin:2mm auto 0;width:100%}
+.pv--shot .shot + .shot{margin-top:4mm}
+.pv--shot .shot img{width:100%;height:auto;display:block;margin-inline:auto}
+.pv--shot .shot__bar{padding:1.5mm 3mm;font-size:8pt}
+.pv--shot .shot__dots i{width:6px;height:6px}
+.pv--shot .shot figcaption{font-size:8.3pt;line-height:1.7;padding:2.4mm 3.4mm}
+.pv--shot .shot figcaption b{font-size:8.9pt;margin-bottom:1px}
+.pv-shot__meta{display:flex;flex-wrap:wrap;gap:2mm;margin-top:3mm}
+.pv-shot__meta .chip{font-size:.7rem;padding:1mm 3mm}
+.pv-shot__note{font-size:8.6pt;line-height:1.85;color:var(--muted);margin-top:3mm}
+
+/* ---------- نمای رایانه ---------- */
+@media screen{
+  .deck{padding:20px 0 40px}
+  .pv{
+    max-width:210mm;min-height:auto;margin:0 auto 20px;padding:14mm 12mm;
+    border-radius:10px;box-shadow:0 14px 34px -22px rgba(15,23,42,.4);
+  }
+  .pv--cover{min-height:255mm}
+  .deck__screenbar{
+    max-width:210mm;margin:0 auto 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    font-size:.8rem;color:#475569;
+  }
+  .deck__screenbar a{color:var(--primary-dark)}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+/* روی نمایشگر، جدول‌ها را مهار می‌کنیم تا هرگز از سند بیرون نزنند
+   (چیدمان چاپ دست‌نخورده می‌ماند؛ قواعد زیر فقط برای screen است). */
+@media screen{
+  .pv table.tbl{table-layout:fixed}
+  .pv table.tbl th,.pv table.tbl td{overflow-wrap:anywhere}
+  .pv table.tbl th:first-child,.pv table.tbl td:first-child{width:7%}
+  .pv table.tbl th.latin,.pv table.tbl td.latin{width:22%}
+}
+
+/* روی نمایشگر کوچک، سند را مثل «نمایشگر PDF» نگه می‌داریم: عرض A4 و پیمایش افقی
+   درون خودِ سند، تا چیدمان جدول‌ها و نماگرفت‌ها به هم نریزد. */
+@media screen and (max-width:840px){
+  .deck{overflow-x:auto;padding:12px 0 28px}
+  .pv{min-width:210mm;max-width:210mm;padding:14mm 12mm;border-radius:6px}
+  .deck__screenbar{display:none}
+}
+
+/* ---------- چاپ / PDF ---------- */
+@media print{
+  body{background:#fff!important}
+  .deck{padding:0!important}
+  .deck__screenbar{display:none!important}
+  .pv{
+    max-width:none!important;margin:0!important;padding:0!important;border-radius:0!important;box-shadow:none!important;
+    break-after:page;page-break-after:always;
+  }
+  .pv:last-child{break-after:auto;page-break-after:auto}
+  .pv--cover{min-height:252mm}
+  .pv-cards,.pv-cards--3,.pv-stats,.pv-stats--3,.pv-cover__stats{grid-template-columns:repeat(4,1fr)}
+  .pv-cards,.pv-cards--3{grid-template-columns:1fr 1fr}
+  .pv-stats--3{grid-template-columns:repeat(3,1fr)}
+  .pv-card,.pv-stat,.pv-step,.shot,table.tbl tr{break-inside:avoid;page-break-inside:avoid}
+  .pv__head,.pv h2,.pv h3{break-after:avoid;page-break-after:avoid}
+}
