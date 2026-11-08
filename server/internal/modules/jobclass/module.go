@@ -1,7 +1,9 @@
 // Package jobclass ماژول طبقه‌بندی مشاغل.
 //
 // پیاده‌سازی واقعی روی موتور مشترک `recordkit`: طبقه‌بندی، ارزشیابی و شرح شغل هر یک یک
-// نوع رکورد است و قواعدش در بستهٔ domain اعلام شده.
+// نوع رکورد است و قواعدش در بستهٔ domain اعلام شده. مسیرهای تازه (شرح مشاغل، شناسنامهٔ
+// شغل و فرم محاسباتی شرایط احراز) هم روی همان سرویس سوار می‌شوند تا دادهٔ شغل در یک جا
+// بماند و شناسنامه از دادهٔ جاری ساخته شود.
 package jobclass
 
 import (
@@ -21,7 +23,11 @@ func New() *Module { return &Module{} }
 // ID شناسهٔ ماژول.
 func (m *Module) ID() string { return "jobclass" }
 
-// Register مسیرهای استاندارد رکوردهای طبقه‌بندی مشاغل را ثبت می‌کند.
+// Register مسیرهای استاندارد رکوردهای طبقه‌بندی مشاغل و مسیرهای شرح مشاغل، شناسنامهٔ
+// شغل و فرم محاسباتی شرایط احراز را ثبت می‌کند.
 func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
-	recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/jobclass")
+	svc := recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/jobclass")
+	registerJobEndpoints(mux, deps, svc)
+	// پورت شناسنامهٔ شغل: تصویب‌خواهی انتصاب و ارتقا شرط شغل را از همین‌جا می‌خواند.
+	registerJobRegistry(deps, svc)
 }

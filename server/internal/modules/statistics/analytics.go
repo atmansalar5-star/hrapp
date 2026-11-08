@@ -229,11 +229,21 @@ func attendanceStats(ctx context.Context, deps modulekit.Deps) attendanceSummary
 		}
 		out.Rows = append(out.Rows, row)
 	}
+	// جمع شناورِ ساعت و روز دنبالهٔ دودویی میسازد (مثلاً ۱۲۱٫۲۸۰۰۰۰۰۰۰۰۰۰۰۲ در کارت
+	// «مجموع کارکرد»)؛ عدد آماری پیش از انتشار به دو رقم اعشار میرسد تا رابط همان
+	// عددی را نشان بدهد که کاربر انتظار دارد.
+	out.WorkedHours = round2(out.WorkedHours)
+	out.OvertimeHours = round2(out.OvertimeHours)
+	out.LeaveDays = round2(out.LeaveDays)
+	out.MissionDays = round2(out.MissionDays)
+
 	out.DeptRows = sortedRows(byDept, func(r statRow) float64 { return r.Hours })
 	var deptHours float64
-	for _, r := range out.DeptRows {
-		deptHours += r.Hours
+	for i := range out.DeptRows {
+		out.DeptRows[i].Hours = round2(out.DeptRows[i].Hours)
+		deptHours += out.DeptRows[i].Hours
 	}
+	deptHours = round2(deptHours)
 	for i := range out.DeptRows {
 		out.DeptRows[i].SharePct = sharePct(out.DeptRows[i].Hours, deptHours)
 	}

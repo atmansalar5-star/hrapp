@@ -71,6 +71,8 @@ func BaseElementVars(input PayrollInput, result PayrollResult) map[string]float6
 		"hourlyRate":         float64(input.OvertimeHourlyRate),
 		"overtimeHourlyRate": float64(input.OvertimeHourlyRate),
 		"otherDeductions":    float64(input.OtherDeductions),
+		"payGap":             float64(nonNegative64(input.PayGap)),
+		"paygap":             float64(nonNegative64(input.PayGap)),
 		"gross":              float64(result.Gross),
 		"taxableIncome":      float64(result.TaxableIncome),
 		"insuranceBase":      float64(result.InsuranceBase),

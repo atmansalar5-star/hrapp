@@ -34,7 +34,7 @@ func registerApprovalEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *rec
 	// پارامترهای فرم: آستانه‌های تصویب، نردبان گروه شغلی، انواع درخواست، پست‌های سازمانی،
 	// کارکنان و تاریخ امروز (شمسی، از ساعت سرور).
 	mux.HandleFunc("GET /api/v1/career/appointment-defaults", read(func(w http.ResponseWriter, r *http.Request) {
-		httpx.WriteJSON(w, http.StatusOK, approvalDefaults(r.Context(), deps))
+		httpx.WriteJSON(w, http.StatusOK, approvalDefaults(r.Context(), deps, svc))
 	}))
 
 	// تصویب‌خواهی: شرط‌ها و زنجیرهٔ تصویب را می‌سازد (بدون تغییر داده).
@@ -45,7 +45,39 @@ func registerApprovalEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *rec
 				"ورودی تصویب‌خواهی خوانده نشد.", nil)
 			return
 		}
-		httpx.WriteJSON(w, http.StatusOK, approvalPlan(deps, in))
+		httpx.WriteJSON(w, http.StatusOK, approvalPlan(r.Context(), deps, svc, in))
+	}))
+
+	// امضای یک سطح تصویب: سطح جاری از زنجیرهٔ تصویب همین رکورد خوانده می‌شود، نقش
+	// امضاکننده با نقش همان سطح سنجیده می‌شود و آخرین امضا، تصویب نهایی را می‌بندد.
+	//
+	// چرا دروازهٔ این مسیر «خواندن» است و نه «تصویب»: سطح نخست تصویب با مدیر واحد است و
+	// نقش‌های مختلف باید بتوانند سطح خودشان را امضا کنند؛ اجازهٔ واقعی همان‌جا و سطح‌به‌سطح
+	// در `signApprovalLevel` سنجیده می‌شود (نقش هر سطح از زنجیرهٔ تصویب می‌آید).
+	mux.HandleFunc("POST /api/v1/career/appointment-sign", read(func(w http.ResponseWriter, r *http.Request) {
+		id, body, ok := approvalRequestBody(w, r)
+		if !ok {
+			return
+		}
+		signApprovalLevel(w, r, deps, svc, id, body.NoteFa)
+	}))
+
+	// بازگشت برای اصلاح: درخواست به پیش‌نویس برمی‌گردد و دلیل بازگشت در رکورد می‌ماند.
+	mux.HandleFunc("POST /api/v1/career/appointment-return", read(func(w http.ResponseWriter, r *http.Request) {
+		id, body, ok := approvalRequestBody(w, r)
+		if !ok {
+			return
+		}
+		returnApproval(w, r, svc, id, body.NoteFa)
+	}))
+
+	// ابطال ابلاغ اجراشده: تصدی تشکیلات بسته و پروندهٔ کارمند به وضع پیشین برمی‌گردد.
+	mux.HandleFunc("POST /api/v1/career/appointment-revoke", approve(func(w http.ResponseWriter, r *http.Request) {
+		id, body, ok := approvalRequestBody(w, r)
+		if !ok {
+			return
+		}
+		revokeDecree(w, r, deps, svc, id, body.NoteFa)
 	}))
 
 	// اجرا: پیش از هر تغییری، شرط‌ها با پارامترهای شرکت دوباره سنجیده می‌شود و تنها اگر
@@ -75,7 +107,16 @@ func registerApprovalEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *rec
 			httpx.WriteErrorMsg(w, http.StatusNotFound, contracts.CodeNotFound, "درخواست یافت نشد.", nil)
 			return
 		}
-		plan := rules.PlanApproval(inputFromRecord(rec), approvalParams(deps))
+		// اجرا تنها از وضعیت «تصویب‌شده» ممکن است؛ تصویب نهایی خودش دروازهٔ زنجیرهٔ
+		// سطح‌ها را سنجیده است و اینجا دوباره سنجیده می‌شود تا مسیر خام گردش‌کار هم امن بماند.
+		if rec.Status != domain.StatusApproved {
+			httpx.WriteErrorMsg(w, http.StatusConflict, contracts.CodeConflict,
+				"اجرای ابلاغ تنها از وضعیت «تصویب‌شده» ممکن است؛ نخست سطح‌های تصویب را کامل کنید.", map[string]string{
+					"status": rec.Status,
+				})
+			return
+		}
+		plan := appointmentPlan(r.Context(), deps, svc, inputFromRecord(rec))
 		if !plan.Allowed {
 			httpx.WriteErrorMsg(w, http.StatusConflict, contracts.CodeConflict,
 				"اجرای ابلاغ ممکن نیست: "+blockingSummaryFa(plan), map[string]string{
@@ -86,7 +127,7 @@ func registerApprovalEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *rec
 		}
 
 		actor := actorOf(r)
-		steps := executeSteps(r.Context(), deps, rec, actor)
+		steps, execFields := executeSteps(r.Context(), deps, rec, actor)
 		if failed, ok := firstFailedStep(steps); ok {
 			// هیچ تغییری اعمال نشده است؛ رکورد دست‌نخورده می‌ماند تا کاربر بتواند
 			// نقص را برطرف کند و دوباره اجرا بزند.
@@ -95,7 +136,9 @@ func registerApprovalEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *rec
 			return
 		}
 
-		updated, err := svc.Act(r.Context(), id, contracts.RecordAction{Action: "issue", NoteFa: body.NoteFa}, actor)
+		updated, err := svc.Act(r.Context(), id, contracts.RecordAction{
+			Action: "issue", NoteFa: body.NoteFa, Fields: execFields,
+		}, actor)
 		if err != nil {
 			httpx.WriteErrorMsg(w, http.StatusConflict, contracts.CodeConflict, err.Error(), nil)
 			return
@@ -129,29 +172,39 @@ type ExecuteStep struct {
 //
 // ترتیب: صدور ابلاغ (تغییر سازمانی پروندهٔ کارمند) ← ثبت تصدی پست در تشکیلات ← اعلام به
 // حقوق و دستمزد (کشف از پروندهٔ تازه‌شده) ← اطلاع و بایگانی (از رخدادهای همین رکورد).
-func executeSteps(ctx context.Context, deps modulekit.Deps, rec contracts.Record, actor string) []ExecuteStep {
+func executeSteps(ctx context.Context, deps modulekit.Deps, rec contracts.Record, actor string) ([]ExecuteStep, map[string]string) {
 	assignment := assignmentFromRecord(rec)
+	// فیلدهایی که اجرا در رکورد می‌نویسد: شناسهٔ تصدی تشکیلات (برای ابطال) و وضع پیشین
+	// کارمند (برای برگرداندن پرونده). اینها را سرور می‌نویسد، نه رابط.
+	fields := map[string]string{}
 
-	// گام ۱ و ۲: پست و واحد کارمند از تاریخ اجرا در پروندهٔ او ثبت می‌شود.
+	// گام ۱ و ۲: پست، واحد و گروه شغلی کارمند از تاریخ اجرا در پروندهٔ او ثبت می‌شود.
 	employeeStep := ExecuteStep{Order: 1, Key: "decree", TitleFa: "صدور ابلاغ", Blocking: true}
 	assigner, ok := deps.Ports.EmployeeAssigner()
 	if !ok {
 		employeeStep.MessageFa = "پورت به‌روزرسانی پروندهٔ کارمند در دسترس نیست؛ ابلاغ در پرونده ثبت نشد."
-		return []ExecuteStep{employeeStep}
+		return []ExecuteStep{employeeStep}, fields
 	}
 	result, err := assigner.Assign(ctx, rec.EmployeeID, assignment, actor)
 	if err != nil {
 		employeeStep.MessageFa = "ثبت تغییر سازمانی در پروندهٔ کارمند انجام نشد: " + err.Error()
-		return []ExecuteStep{employeeStep}
+		return []ExecuteStep{employeeStep}, fields
 	}
 	employeeStep.Done = true
 	employeeStep.DetailFa = "پست تازه: " + result.Employee.Position + " — واحد: " + result.Employee.DepartmentName
-	if !result.PositionChanged && !result.DepartmentChanged {
+	if result.Employee.JobGrade != "" {
+		employeeStep.DetailFa += " — گروه شغلی: " + result.Employee.JobGradeFa
+	}
+	if !result.PositionChanged && !result.DepartmentChanged && !result.GradeChanged {
 		employeeStep.DetailFa = "پرونده از قبل با ابلاغ هم‌خوان بود؛ تغییری لازم نداشت."
 	}
 	if !result.DepartmentMatched && assignment.DepartmentName != "" {
 		employeeStep.DetailFa += " (واحد «" + assignment.DepartmentName + "» در فهرست واحدها پیدا نشد.)"
 	}
+	fields[domain.FieldBeforePosition] = result.Before.Position
+	fields[domain.FieldBeforeUnit] = result.Before.DepartmentName
+	fields[domain.FieldBeforeGrade] = result.Before.JobGrade
+
 	steps := []ExecuteStep{
 		employeeStep,
 		{Order: 2, Key: "history", TitleFa: "ثبت سابقهٔ کارمند", Done: true,
@@ -170,6 +223,7 @@ func executeSteps(ctx context.Context, deps modulekit.Deps, rec contracts.Record
 		orgStep.Done = true
 		orgStep.DetailFa = orgResult.NoteFa
 		if orgResult.AssignmentID != "" {
+			fields[domain.FieldAssignmentID] = orgResult.AssignmentID
 			orgStep.DetailFa = "انتصاب " + orgResult.AssignmentID + " — " + orgResult.NoteFa
 		}
 	}
@@ -179,11 +233,11 @@ func executeSteps(ctx context.Context, deps modulekit.Deps, rec contracts.Record
 	// همان لحظه در دورهٔ حقوق و در کارتابل اطلاع دیده می‌شود و سند تازه‌ای لازم نیست.
 	steps = append(steps,
 		ExecuteStep{Order: 4, Key: "payroll", TitleFa: "اعلام به حقوق و دستمزد", Done: employeeStep.Done,
-			DetailFa: "پست و واحد تازه در پروندهٔ کارمند نشسته است؛ دورهٔ حقوق همان ماه از همین پرونده خوانده می‌شود."},
+			DetailFa: "پست، واحد و گروه شغلی تازه در پروندهٔ کارمند نشسته است؛ دورهٔ حقوق همان ماه از همین پرونده خوانده می‌شود."},
 		ExecuteStep{Order: 5, Key: "notify", TitleFa: "اطلاع به کارمند و بایگانی", Done: true,
 			DetailFa: "سند ابلاغ با شماره و تاریخ اجرا در رکورد و سابقهٔ کارمند بایگانی شد."},
 	)
-	return steps
+	return steps, fields
 }
 
 // firstFailedStep نخستین گام «مانع»ی که انجام نشد.
@@ -210,9 +264,12 @@ func assignmentFromRecord(rec contracts.Record) contracts.EmployeeAssignment {
 	return contracts.EmployeeAssignment{
 		Position:       position,
 		DepartmentName: strings.TrimSpace(fields["unit"]),
-		DecreeNo:       strings.TrimSpace(fields["decreeNo"]),
-		EffectiveDate:  strings.TrimSpace(fields["effectiveDate"]),
-		ReasonFa:       strings.TrimSpace(fields["reason"]),
+		// گروه شغلی پیشنهادی در پرونده می‌نشیند؛ فیش حقوق صندوق نفت «پایهٔ سمت» را از
+		// همین گروه پیشنهاد می‌دهد (نگاشت پارامتریک) و پرونده هم واقعیت ترفیع را دارد.
+		JobGrade:      strings.TrimSpace(fields["proposedGrade"]),
+		DecreeNo:      strings.TrimSpace(fields["decreeNo"]),
+		EffectiveDate: strings.TrimSpace(fields["effectiveDate"]),
+		ReasonFa:      strings.TrimSpace(fields["reason"]),
 	}
 }
 
@@ -252,8 +309,9 @@ func actorOf(r *http.Request) string {
 }
 
 // approvalDefaults پارامترها و فهرست‌های مرجع فرم تصویب‌خواهی.
-func approvalDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
-	params := approvalParams(deps)
+func approvalDefaults(ctx context.Context, deps modulekit.Deps, svc *recordkit.Service) map[string]any {
+	overrides := appointmentParamOverrides(ctx, svc)
+	params := approvalParams(deps, overrides)
 	today := ""
 	if now, err := calendar.FromGregorian(deps.Clock()); err == nil {
 		today = now.String()
@@ -262,7 +320,7 @@ func approvalDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
 		"kinds":       rules.AppointmentKinds(),
 		"grades":      rules.Grades(),
 		"params":      params,
-		"paramViews":  approvalParamViews(deps),
+		"paramViews":  approvalParamViews(deps, overrides),
 		"today":       today,
 		"yesNo":       []map[string]string{{"key": "yes", "titleFa": "بله"}, {"key": "no", "titleFa": "خیر"}},
 		"employees":   employeeOptions(ctx, deps),
@@ -270,14 +328,77 @@ func approvalDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
 		"noteFa":      approvalNoteFa(),
 		"company":     deps.Org.TitleFa,
 		"chainNoteFa": "زنجیرهٔ تصویب از مدیر واحد آغاز می‌شود و با بالا رفتن گروه شغلی، کمیتهٔ انتصابات و مدیرعامل اضافه می‌شوند.",
+		// شرایط احراز: فهرست مقاطع تحصیلی و شناسنامه‌های شغل سازمان. شرط شغل از همین
+		// شناسنامه‌ها خوانده می‌شود، پس کاربر فقط شغل مرجع را انتخاب می‌کند.
+		"degreeLevels":            rules.DegreeLevels(),
+		"jobs":                    jobOptions(ctx, deps),
+		"qualificationParamViews": qualificationParamViews(deps, overrides),
+		"qualificationNoteFa": "سنجش شرایط احراز با شناسنامهٔ شغل مصوب و پارامترهای شرکت " +
+			"انجام می‌شود؛ کمبود جبران‌نشده مانع تصویب است و مازاد، دورهٔ انتظار ارتقا را کوتاه می‌کند.",
+		// پارامترهای قابل ویرایش از همین فرم: مقدار مؤثر، منبع مقدار و امکان تغییر/افزودن.
+		"editableParams": appointmentParamViews(ctx, deps, svc),
+		"paramsNoteFa":   appointmentParamNoteFa(),
 	}
 }
 
+// jobOptions شناسنامه‌های شغل سازمان برای انتخاب شغل مرجع (از پورت طبقه‌بندی مشاغل).
+//
+// چرا از پورت: مالک شناسنامه ماژول طبقه‌بندی مشاغل است؛ این ماژول فقط فهرست را می‌خواند و
+// هیچ شرطی نمی‌سازد. شناسنامهٔ تأییدنشده با نشان «پیش‌نویس» می‌آید تا انتخابش آگاهانه باشد.
+func jobOptions(ctx context.Context, deps modulekit.Deps) []map[string]any {
+	reader, ok := deps.Ports.JobRegistry()
+	if !ok {
+		return []map[string]any{}
+	}
+	jobs, err := reader.Jobs(ctx)
+	if err != nil {
+		return []map[string]any{}
+	}
+	out := make([]map[string]any, 0, len(jobs))
+	for _, j := range jobs {
+		out = append(out, map[string]any{
+			"recordId": j.RecordID, "code": j.JobCode, "titleFa": j.TitleFa,
+			"unitFa": j.UnitFa, "groupFa": j.GroupFa, "approved": j.Approved,
+			"statusFa": j.StatusFa, "degreeFa": j.DegreeFa,
+			"requireDegree": j.Requirement.DegreeLevel,
+			"requireFields": strings.Join(j.Requirement.Fields, "، "),
+			"minExperience": j.Requirement.MinExperienceYears,
+			"requirementFa": rules.RequirementFa(j.Requirement),
+		})
+	}
+	return out
+}
+
+// qualificationParamViews پارامترهای شرایط احراز را برای نمایش در فرم برمی‌گرداند.
+//
+// مقدار نمایش‌داده‌شده همان مقدار مؤثر است: اگر مقدار تازه‌ای در فرم انتصابات ثبت شده باشد،
+// همان نشان داده می‌شود تا کاربر ببیند سنجش با چه عددی انجام شد.
+func qualificationParamViews(deps modulekit.Deps, overrides map[string]float64) []map[string]string {
+	out := []map[string]string{}
+	for _, p := range deps.Org.Params {
+		if !strings.HasPrefix(p.Key, "qual.") {
+			continue
+		}
+		value := p.Value
+		if v, ok := overrides[p.Key]; ok {
+			value = strconv.FormatFloat(v, 'f', -1, 64)
+		}
+		out = append(out, map[string]string{
+			"key": p.Key, "titleFa": p.TitleFa, "value": value, "unitFa": p.UnitFa,
+		})
+	}
+	return out
+}
+
 // approvalPlan محاسبهٔ تصویب‌خواهی با پارامترهای شرکت.
-func approvalPlan(deps modulekit.Deps, in rules.AppointmentInput) map[string]any {
-	plan := rules.PlanApproval(in, approvalParams(deps))
+//
+// شرط احراز شغل پیش از سنجش، از شناسنامهٔ شغل مرجع (پورت طبقه‌بندی مشاغل) خوانده می‌شود تا
+// تصمیم‌گیرنده با شرط جاری سازمان سنجیده شود، نه با نسخهٔ کهنهٔ رکورد.
+func approvalPlan(ctx context.Context, deps modulekit.Deps, svc *recordkit.Service, in rules.AppointmentInput) map[string]any {
+	in = withRegistryRequirement(ctx, deps, in)
+	plan := appointmentPlan(ctx, deps, svc, in)
 	out := map[string]any{
-		"plan": plan, "input": in, "params": approvalParams(deps), "noteFa": approvalNoteFa(),
+		"plan": plan, "input": in, "params": approvalParams(deps, appointmentParamOverrides(ctx, svc)), "noteFa": approvalNoteFa(),
 		// گام‌های اجرا از دامنه می‌آید تا فرم و مستند استقرار یک ترتیب داشته باشند.
 		"execution": domain.ExecutionSteps(in.Kind),
 	}
@@ -291,35 +412,60 @@ func approvalPlan(deps modulekit.Deps, in rules.AppointmentInput) map[string]any
 	return out
 }
 
-// approvalParams آستانه‌های تصویب را از پروفایل شرکت فعال می‌خواند.
-func approvalParams(deps modulekit.Deps) rules.ApprovalParams {
+// appointmentPlan سنجش تصویب‌خواهی با شرط احراز خوانده‌شده از شناسنامهٔ شغل.
+//
+// چرا یک تابع مشترک: پیش‌نمایش فرم، امضای سطح تصویب و دروازهٔ اجرا هر سه باید یک عدد
+// ببینند؛ اگر یکی از آن‌ها شرط شناسنامه را نخواند، درخواستی که در فرم سبز بود در لحظهٔ
+// امضا مانع می‌گیرد.
+func appointmentPlan(ctx context.Context, deps modulekit.Deps, svc *recordkit.Service, in rules.AppointmentInput) rules.ApprovalPlan {
+	return rules.PlanApproval(withRegistryRequirement(ctx, deps, in),
+		approvalParams(deps, appointmentParamOverrides(ctx, svc)))
+}
+
+// approvalParams آستانه‌های تصویب را از سه لایه می‌خواند: پیش‌فرض موتور قواعد ← پارامتر
+// استقرار شرکت ← مقدار ثبت‌شده در فرم انتصابات و ترفیعات (رکورد پارامتر جاری).
+//
+// چرا لایهٔ سوم: مدیر منابع انسانی باید بتواند آستانه را از خود فرم زیاد/کم کند؛ مقدار
+// شرکت (استقرار) هم بر پیش‌فرض مقدم است تا هر شرکت سیاست خودش را داشته باشد.
+func approvalParams(deps modulekit.Deps, overrides map[string]float64) rules.ApprovalParams {
 	params := rules.DefaultApprovalParams()
-	if v, ok := numericParam(deps, "appointment.minServiceMonths"); ok && v > 0 {
+	value := func(key string) (float64, bool) {
+		if v, ok := overrides[key]; ok {
+			return v, true
+		}
+		return numericParam(deps, key)
+	}
+	if v, ok := value("appointment.minServiceMonths"); ok && v > 0 {
 		params.MinServiceMonths = int(v)
 	}
-	if v, ok := numericParam(deps, "appointment.minEvaluationScore"); ok && v > 0 {
+	if v, ok := value("appointment.minEvaluationScore"); ok && v > 0 {
 		params.MinEvaluationScore = v
 	}
-	if v, ok := numericParam(deps, "appointment.maxGradeStep"); ok && v > 0 {
+	if v, ok := value("appointment.maxGradeStep"); ok && v > 0 {
 		params.MaxGradeStep = int(v)
 	}
-	if v, ok := numericParam(deps, "appointment.commitmentMonths"); ok && v > 0 {
+	if v, ok := value("appointment.commitmentMonths"); ok && v > 0 {
 		params.CommitmentMonths = int(v)
 	}
-	if v, ok := numericParam(deps, "appointment.committeeRank"); ok && v > 0 {
+	if v, ok := value("appointment.committeeRank"); ok && v > 0 {
 		params.CommitteeRank = int(v)
 	}
-	if v, ok := numericParam(deps, "appointment.ceoRank"); ok && v > 0 {
+	if v, ok := value("appointment.ceoRank"); ok && v > 0 {
 		params.CEORank = int(v)
 	}
-	if text := stringParam(deps, "appointment.committeeForPromotion"); text != "" {
+	if v, ok := value("appointment.committeeForPromotion"); ok {
+		params.CommitteeForPromotion = v != 0
+	} else if text := stringParam(deps, "appointment.committeeForPromotion"); text != "" {
 		params.CommitteeForPromotion = text != "0" && !strings.EqualFold(text, "no")
 	}
+	// آستانه‌های شرایط احراز از همان مسیر سه‌لایه می‌آید تا فرم محاسباتی طبقه‌بندی مشاغل و
+	// تصویب‌خواهی انتصاب یک عدد ببینند.
+	params.Qualification = rulesQualificationParams(deps, overrides)
 	return params
 }
 
-// approvalParamViews پارامترهای تصویب را برای نمایش در فرم برمی‌گرداند.
-func approvalParamViews(deps modulekit.Deps) []map[string]string {
+// approvalParamViews پارامترهای تصویب را برای نمایش در فرم برمی‌گرداند (مقدار استقرار شرکت).
+func approvalParamViews(deps modulekit.Deps, _ map[string]float64) []map[string]string {
 	out := []map[string]string{}
 	for _, p := range deps.Org.Params {
 		if !strings.HasPrefix(p.Key, "appointment.") {
@@ -439,7 +585,41 @@ func inputFromRecord(rec contracts.Record) rules.AppointmentInput {
 		VacancyChecked:     strings.TrimSpace(fields["vacancy"]) != "",
 		CommitmentMonths:   intOf(fields["commitment"]),
 		EffectiveDate:      strings.TrimSpace(fields["effectiveDate"]),
+
+		// شرایط احراز: شرط شغل از شناسنامه خوانده می‌شود (کد شغل) و مشخصات متقاضی از
+		// فیلدهای ثبت‌شدهٔ همین رکورد.
+		JobCode:                   strings.TrimSpace(fields[domain.FieldJobCode]),
+		RequireDegreeLevel:        strings.TrimSpace(fields[domain.FieldRequireDegree]),
+		RequireFields:             strings.TrimSpace(fields[domain.FieldRequireFields]),
+		RequireMinExperienceYears: intOf(fields[domain.FieldRequireMinExperience]),
+		CandidateDegreeLevel:      strings.TrimSpace(fields[domain.FieldCandidateDegree]),
+		CandidateField:            strings.TrimSpace(fields[domain.FieldCandidateField]),
+		CandidateExperienceYears:  intOf(fields[domain.FieldCandidateExperience]),
 	}
+}
+
+// withRegistryRequirement شرط شغل را از شناسنامهٔ شغل مرجع روی ورودی می‌نشاند.
+//
+// چرا از پورت و در لحظهٔ سنجش: شرط احراز یک شغل با بازنگری شناسنامه عوض می‌شود و رکورد
+// تصویب‌خواهی نباید نسخهٔ کهنهٔ شرط را نگه دارد؛ پس فقط «کد شغل» در رکورد می‌ماند و شرط
+// همیشه از شناسنامهٔ تأییدشدهٔ جاری خوانده می‌شود.
+func withRegistryRequirement(ctx context.Context, deps modulekit.Deps, in rules.AppointmentInput) rules.AppointmentInput {
+	if strings.TrimSpace(in.JobCode) == "" {
+		return in
+	}
+	reader, ok := deps.Ports.JobRegistry()
+	if !ok {
+		return in
+	}
+	view, found, err := reader.Requirement(ctx, in.JobCode)
+	if err != nil || !found {
+		return in
+	}
+	in.RequireDegreeLevel = view.Requirement.DegreeLevel
+	in.RequireFields = strings.Join(view.Requirement.Fields, "،")
+	in.RequireMinExperienceYears = view.Requirement.MinExperienceYears
+	in.JobTitleFa = view.TitleFa
+	return in
 }
 
 // intOf عدد صحیح یک فیلد متنی.

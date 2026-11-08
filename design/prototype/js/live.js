@@ -286,6 +286,11 @@ function liveWageFields(prefix, v, regions) {
       ${numField('Sacrifice', 'فوق‌العادهٔ ایثارگری (ریال)', v && v.sacrificeAllowance)}
       ${numField('Climate', 'فوق‌العادهٔ اقلیمی مصوب (ریال در ماه)', v && v.climateAllowance)}
       ${numField('Repair', 'ترمیم حقوق (ریال)', v && v.salaryRepair)}
+      ${numField('PayGap', 'تفاوت تطبیق (ریال در ماه)', v && v.payGap)}
+      <div class="field"><label>تاریخ شروع تفاوت تطبیق</label>
+        <input id="${prefix}PayGapSince" value="${val(v && v.payGapSince)}" placeholder="۱۴۰۵/۰۷/۰۱">
+        <span class="muted" style="font-size:.72rem">تفاوت تطبیق جذب‌شدنی است: با هر افزایش حقوق کم می‌شود، جزو مزد مبنا نیست و مشمول بیمه و مالیات است.</span>
+      </div>
       ${pctField('BadClimate', 'بدی آب و هوا', v && v.badClimatePercent)}
       ${pctField('Deprivation', 'محرومیت از تسهیلات زندگی', v && v.deprivationPercent)}
       ${pctField('RegionHardship', 'صعوبت شرایط منطقه', v && v.regionHardshipPercent)}
@@ -309,6 +314,8 @@ function liveWagePayload(prefix) {
     sacrificeAllowance: num('Sacrifice'),
     climateAllowance: num('Climate'),
     salaryRepair: num('Repair'),
+    payGap: num('PayGap'),
+    payGapSince: (($('#' + prefix + 'PayGapSince') || {}).value || '').trim(),
     badClimatePercent: ratio('BadClimate'),
     deprivationPercent: ratio('Deprivation'),
     regionHardshipPercent: ratio('RegionHardship'),

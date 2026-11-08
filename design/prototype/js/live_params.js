@@ -13,6 +13,9 @@ var PARAM_TAB = 'forms';
 var PARAM_FORMS = null;
 var PARAM_REPORTS = null;
 var PARAM_DOCUMENTS = null;
+/** تعریف گزارش‌ها و منابع دادهٔ آن‌ها (تب «تعریف گزارش‌ها»). */
+var PARAM_DEFS = null;
+var PARAM_DEF_SOURCES = null;
 
 /** صفحهٔ پنل پارامتریک.
  *
@@ -24,24 +27,29 @@ function pageFormParamsLive() {
   // محتوای صفحه در liveLoad بارگذاری می‌شود و داخل #liveRegion می‌نشیند؛ پوسته همین‌جا
   // برگردانده می‌شود (همان الگوی صفحه‌های زندهٔ دیگر).
   liveLoad(async () => {
-    const [formsRes, reportsRes, docsRes] = await Promise.all([
+    const [formsRes, reportsRes, docsRes, defsRes] = await Promise.all([
       apiFetch('/api/v1/settings/forms'),
       apiFetch('/api/v1/settings/reports'),
       apiFetch('/api/v1/settings/documents'),
+      apiFetch('/api/v1/settings/report-defs'),
     ]);
     if (!formsRes.ok) return liveErrorBox(formsRes.message);
     PARAM_FORMS = (formsRes.data && formsRes.data.forms) || [];
     PARAM_REPORTS = (reportsRes.ok && reportsRes.data && reportsRes.data.reports) || [];
       PARAM_DOCUMENTS = (docsRes.ok && docsRes.data && docsRes.data.documents) || [];
+      PARAM_DEFS = (defsRes.ok && defsRes.data && defsRes.data.reports) || [];
+      PARAM_DEF_SOURCES = (defsRes.ok && defsRes.data && defsRes.data.sources) || [];
 
     const tabBar = `<div class="tabs">
       <button class="tab ${PARAM_TAB === 'forms' ? 'active' : ''}" onclick="PARAM_TAB='forms';liveReload()">🧾 فیلدهای فرم‌ها (${fa(PARAM_FORMS.length)})</button>
       <button class="tab ${PARAM_TAB === 'reports' ? 'active' : ''}" onclick="PARAM_TAB='reports';liveReload()">📊 ستون‌های گزارش‌ها (${fa(PARAM_REPORTS.length)})</button>
+      <button class="tab ${PARAM_TAB === 'defs' ? 'active' : ''}" onclick="PARAM_TAB='defs';liveReload()">📑 تعریف گزارش‌ها (${fa((PARAM_DEFS || []).length)})</button>
       <button class="tab ${PARAM_TAB === 'documents' ? 'active' : ''}" onclick="PARAM_TAB='documents';liveReload()">🖨️ اسناد چاپی (${fa((PARAM_DOCUMENTS || []).length)})</button>
     </div>`;
 
       const body = PARAM_TAB === 'forms' ? paramsFormsTable(PARAM_FORMS)
         : PARAM_TAB === 'reports' ? paramsReportsCards(PARAM_REPORTS)
+        : PARAM_TAB === 'defs' ? paramsReportDefs(PARAM_DEFS || [], PARAM_DEF_SOURCES || [])
         : paramsDocumentsCards(PARAM_DOCUMENTS || []);
     return tabBar +
       statNote('فهرست فرم‌ها و فیلدهای هر فرم از شناسهٔ خودِ ماژول‌ها خوانده می‌شود؛ پس با افزودن فیلد تازه در دامنه، همین‌جا خودکار دیده می‌شود. پارامتری که «غیرفعال» شود داده‌اش می‌ماند ولی در فرم اثر نمی‌گذارد.') +
@@ -88,6 +96,101 @@ function paramsReportsCards(reports) {
       <div id="repResult_${esc(r.source)}" style="margin-top:10px"></div>
     </div>`;
   }).join('');
+}
+
+/** فهرست تعریف گزارش‌ها با امکان ساخت گزارش تازه، فعال‌سازی و غیرفعال‌سازی.
+ *
+ * چرا اینجا: پنل پارامترها باید گزارش را «کم و زیاد» کند، نه فقط ستون‌هایش را. تعریف گزارش
+ * همان رکورد نوع «reportDefs» ماژول گزارش‌هاست؛ این بخش آن را می‌خواند و برای ساخت/تغییر،
+ * مسیر رسمی همان ماژول را صدا می‌زند تا قاعدهٔ گردشکار در یک جا بماند.
+ */
+function paramsReportDefs(defs, sources) {
+  const rows = defs.map(d => `<tr>
+    <td class="ltr" style="font-size:.72rem">${esc(d.id)}</td>
+    <td>${esc(d.titleFa)}</td>
+    <td class="ltr" style="font-size:.72rem">${esc(d.source)}</td>
+    <td class="ltr" style="font-size:.72rem">${esc(d.items || '—')}</td>
+    <td class="num">${esc(d.limit || '—')}</td>
+    <td>${statusChip(d.status, d.statusFa || d.status)}</td>
+    <td><div class="row-actions">
+      <button class="btn btn-sm btn-ghost" onclick="paramDefToggle('${esc(d.id)}','${d.status === 'active' ? 'revise' : 'activate'}')">
+        ${d.status === 'active' ? '⏸ غیرفعال' : '↩️ فعال‌سازی'}</button>
+    </div></td></tr>`);
+
+  const sourceOpts = (sources || []).map(s =>
+    `<option value="${esc(s.key)}">${esc(s.titleFa)} — ${esc(s.key)}</option>`).join('');
+
+  const createCard = `<div class="card card-pad" style="margin-bottom:12px">
+    <div class="card-title">➕ گزارش تازه</div>
+    <div class="muted" style="font-size:.75rem;line-height:2;margin-bottom:8px">
+      گزارش تازه از یکی از منابع دادهٔ سامانه ساخته می‌شود؛ اقلام (ستون‌ها) را با کلید لاتین و جداکنندهٔ ویرگول بنویسید.
+      غیرفعال‌سازی، تعریف را پاک نمی‌کند و با «فعال‌سازی» برمی‌گردد.
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <div class="field" style="min-width:260px"><label>منبع داده</label><select id="pdSource">${sourceOpts || '<option value="">—</option>'}</select></div>
+      <div class="field" style="min-width:220px"><label>عنوان گزارش</label><input class="inp" id="pdTitle" placeholder="مثلاً گزارش نیروی انسانی واحد"></div>
+      <div class="field" style="min-width:280px"><label>اقلام (با ویرگول)</label><input class="inp ltr" id="pdItems" placeholder="id,fullName,departmentName"></div>
+      <div class="field"><label>گروه‌بندی</label><input class="inp ltr" id="pdGroup" placeholder="departmentName"></div>
+      <div class="field"><label>سقف سطر</label><input class="inp num" id="pdLimit" value="200"></div>
+      <button class="btn btn-primary" onclick="paramDefCreate()">➕ ساخت گزارش</button>
+    </div>
+    <div id="pdMsg" style="margin-top:8px"></div>
+  </div>`;
+
+  const fieldsHint = (sources || []).length
+    ? `<div class="card card-pad" style="margin-bottom:12px">
+        <div class="card-title">🧭 اقلام هر منبع داده</div>
+        <div class="muted" style="font-size:.76rem;line-height:2">
+          ${(sources || []).map(s => `<b>${esc(s.titleFa)}</b> (<span class="ltr">${esc(s.key)}</span>): ${esc(s.fields || '—')}`).join('<br>')}
+        </div>
+      </div>` : '';
+
+  return createCard + fieldsHint +
+    `<div class="card card-pad">
+      <div class="card-title">📑 تعریف گزارش‌های سامانه (${fa(defs.length)})</div>
+      ${defs.length
+        ? liveTable(['شناسه', 'عنوان', 'منبع داده', 'اقلام', 'سقف سطر', 'وضعیت', 'اقدام'], rows, defs.length)
+        : '<div class="muted" style="font-size:.8rem">گزارشی تعریف نشده است.</div>'}
+    </div>`;
+}
+
+/** ساخت تعریف گزارش تازه. */
+async function paramDefCreate() {
+  const val = id => {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  };
+  const source = val('pdSource');
+  const title = val('pdTitle');
+  const items = val('pdItems');
+  if (!source || !title || !items) { toast('منبع، عنوان و اقلام گزارش الزامی است', 'error'); return; }
+  const res = await apiFetch('/api/v1/reports/records', {
+    method: 'POST',
+    body: {
+      kind: 'reportDefs', title,
+      fields: {source, items, groupBy: val('pdGroup'), limit: val('pdLimit')},
+      noteFa: 'ساخت تعریف گزارش از پنل پارامترها',
+    },
+  });
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  const id = res.data && res.data.id;
+  if (id) await apiFetch('/api/v1/reports/records/' + encodeURIComponent(id) + '/action', {
+    method: 'POST', body: {action: 'activate', noteFa: 'فعال‌سازی خودکار تعریف تازه'},
+  });
+  toast('تعریف گزارش ساخته و فعال شد');
+  PARAM_DEFS = null;
+  liveReload();
+}
+
+/** فعال/غیرفعال کردن تعریف گزارش. */
+async function paramDefToggle(id, action) {
+  const res = await apiFetch('/api/v1/reports/records/' + encodeURIComponent(id) + '/action', {
+    method: 'POST', body: {action},
+  });
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  toast(action === 'activate' ? 'تعریف گزارش فعال شد' : 'تعریف گزارش غیرفعال شد');
+  PARAM_DEFS = null;
+  liveReload();
 }
 
 /** کارت هر سند چاپی: تیک بلوک‌ها و عنوان دلخواه هر بلوک. */
@@ -209,18 +312,77 @@ function paramEditForm(target) {
     <td><label style="display:inline-flex;align-items:center;gap:6px">
       <input type="checkbox" class="fpVisible" data-key="${esc(f.key)}" ${f.visible ? 'checked' : ''}>
       <span class="ltr" style="font-size:.74rem">${esc(f.key)}</span></label></td>
-    <td>${f.source ? `<span class="chip" style="font-size:.7rem">از پروندهٔ کارمند</span>` : '<span class="muted">دستی</span>'}</td>
+    <td>${f.custom ? '<span class="chip c-ok" style="font-size:.7rem">فیلد سفارشی</span>'
+      : (f.source ? '<span class="chip" style="font-size:.7rem">از پروندهٔ کارمند</span>' : '<span class="muted">دستی</span>')}</td>
     <td><label style="display:inline-flex;align-items:center;gap:6px">
       <input type="checkbox" class="fpRequired" data-key="${esc(f.key)}" ${f.required ? 'checked' : ''}> اجباری</label></td>
     <td><input class="fpLabel" data-key="${esc(f.key)}" value="${esc(f.labelFa)}" style="font-size:.78rem"></td>
+    <td>${f.custom ? `<button class="btn btn-sm btn-ghost" onclick="paramRemoveExtraField('${esc(form.target)}','${esc(f.key)}')">🗑 حذف فیلد</button>` : ''}</td>
   </tr>`);
+  const customCount = form.fields.filter(f => f.custom).length;
   openModal({
     title: 'تنظیم فیلدهای فرم — ' + form.titleFa,
     body: `<div class="muted" style="font-size:.78rem;margin-bottom:8px">هدف: <span class="ltr">${esc(form.target)}</span> — با برداشتن تیک هر فیلد، آن فیلد از فرم حذف می‌شود و با زدن تیک برمی‌گردد. برچسب را می‌توانید فارسی‌تر کنید.</div>
-      ${liveTable(['نمایش', 'منبع مقدار', 'اجباری', 'برچسب', ], rows, form.fields.length)}`,
+      ${liveTable(['نمایش', 'منبع مقدار', 'اجباری', 'برچسب', 'حذف فیلد سفارشی'], rows, form.fields.length)}
+      <div class="card-title" style="margin:14px 0 6px">➕ افزودن فیلد سفارشی (${fa(customCount)} فیلد سفارشی)</div>
+      <div class="muted" style="font-size:.75rem;line-height:2;margin-bottom:8px">
+        فیلد سفارشی، فیلدی است که در دامنهٔ ماژول نیست و شما به فرم اضافه می‌کنید (مثل «کد مرکز هزینه» یا «شمارهٔ حکم قبلی»).
+        کلید لاتین و یکتا، برچسب فارسی و نوع فیلد را بنویسید؛ مقدار آن در همان رکورد ذخیره می‌شود. حذف فیلد سفارشی، تعریف آن را برمی‌دارد.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <div class="field"><label>کلید (لاتین)</label><input class="inp ltr" id="fpNewKey" placeholder="costCenter"></div>
+        <div class="field"><label>برچسب فارسی</label><input class="inp" id="fpNewLabel" placeholder="کد مرکز هزینه"></div>
+        <div class="field"><label>نوع</label>
+          <select id="fpNewType">
+            <option value="text">متن</option><option value="number">عدد</option>
+            <option value="money">مبلغ</option><option value="date">تاریخ شمسی</option>
+            <option value="select">انتخابی</option>
+          </select></div>
+        <button class="btn btn-primary" onclick="paramAddExtraField('${esc(form.target)}')">➕ افزودن فیلد</button>
+      </div>
+      <div id="fpExtraMsg" style="margin-top:8px"></div>`,
     foot: `<button class="btn btn-primary" onclick="paramSaveForm('${esc(form.target)}')">💾 ذخیره و جاری‌سازی</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
   });
+}
+
+/** پیام نتیجهٔ فیلد سفارشی داخل مودال. */
+function paramExtraMsg(message, isError) {
+  const box = document.getElementById('fpExtraMsg');
+  if (!box) return;
+  box.innerHTML = isError
+    ? liveErrorBox(message)
+    : `<div class="card card-pad" style="font-size:.8rem;line-height:2">✅ ${esc(message)}</div>`;
+}
+
+/** افزودن فیلد سفارشی به فرم از مودال تنظیم فیلدها. */
+async function paramAddExtraField(target) {
+  const key = ((document.getElementById('fpNewKey') || {}).value || '').trim();
+  const labelFa = ((document.getElementById('fpNewLabel') || {}).value || '').trim();
+  const type = ((document.getElementById('fpNewType') || {}).value || 'text');
+  if (!key || !labelFa) { toast('کلید و برچسب فیلد سفارشی الزامی است', 'error'); return; }
+  const res = await apiFetch('/api/v1/settings/form-fields', {
+    method: 'POST', body: {target, key, labelFa, type},
+  });
+  if (!res.ok) { paramExtraMsg(res.message, true); toast(res.message, 'error'); return; }
+  toast((res.data && res.data.noteFa) || 'فیلد سفارشی افزوده شد');
+  PARAM_FORMS = null;
+  paramClearFormCache();
+  closeModal();
+  liveReload();
+}
+
+/** حذف فیلد سفارشی از فرم. */
+async function paramRemoveExtraField(target, key) {
+  const res = await apiFetch('/api/v1/settings/form-fields', {
+    method: 'POST', body: {target, key, remove: true},
+  });
+  if (!res.ok) { paramExtraMsg(res.message, true); toast(res.message, 'error'); return; }
+  toast((res.data && res.data.noteFa) || 'فیلد سفارشی حذف شد');
+  PARAM_FORMS = null;
+  paramClearFormCache();
+  closeModal();
+  liveReload();
 }
 
 /** پاک‌کردن حافظهٔ پارامترها تا فرم‌های بازشده پارامتر تازه را ببینند.
@@ -248,12 +410,26 @@ async function paramSaveForm(target) {
   }
   // «همهٔ فیلدها نمایان» یعنی پارامتری لازم نیست؛ خالی ذخیره می‌شود تا فیلد تازهٔ آینده هم دیده شود.
   const visibleValue = visible.length === form.fieldCount ? '' : visible.join(',');
+  // فیلدهای سفارشی جدا از فیلدهای دامنه شمرده می‌شوند؛ اگر در فهرست نمایش نباشند، ذخیرهٔ
+  // پارامتر نباید آنها را پاک کند (ذخیره، کل فیلدهای رکورد را جایگزین می‌کند).
+  const customVisible = form.fields.filter(f => f.custom)
+    .filter(f => {
+      const box = document.querySelector(`.fpVisible[data-key="${cssEscape(f.key)}"]`);
+      return !box || box.checked;
+    }).map(f => f.key);
+  const domainCount = form.fieldCount - form.fields.filter(f => f.custom).length;
+  const domainVisible = visible.filter(k => !form.fields.some(f => f.custom && f.key === k));
+  const finalVisible = (domainVisible.length === domainCount && customVisible.length === form.fields.filter(f => f.custom).length)
+    ? ''
+    : visible.join(',');
   const fields = {
     scope: 'form',
     target: target,
-    visibleFields: visibleValue,
+    visibleFields: finalVisible || visibleValue,
     requiredFields: required.join(','),
     labels: labels.join(','),
+    // فیلدهای سفارشی دست‌نخورده می‌مانند؛ افزودن/حذف آنها از دکمه‌های همین مودال است.
+    extraFields: form.fields.filter(f => f.custom).map(f => f.key + '|' + f.labelFa + '|' + f.type).join('؛'),
     note: 'ساخته‌شده از پنل پارامتریک',
   };
   const res = form.paramsId

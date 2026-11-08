@@ -261,6 +261,27 @@ pub static POLICIES: &[ModulePolicy] = &[
             icon: "file-text",
             roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager],
         },
+        ScreenPolicy {
+            key: "jobRegistry",
+            title_fa: "شرح مشاغل",
+            component: "JobRegistryScreen",
+            icon: "book-open",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager],
+        },
+        ScreenPolicy {
+            key: "jobCard",
+            title_fa: "شناسنامهٔ شغل",
+            component: "JobCardScreen",
+            icon: "id-card",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager],
+        },
+        ScreenPolicy {
+            key: "jobQualification",
+            title_fa: "فرم محاسباتی شرایط احراز",
+            component: "JobQualificationScreen",
+            icon: "calculator",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager],
+        },
         ],
     },
     ModulePolicy {
@@ -403,6 +424,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             title_fa: "گزارش‌های مالی حقوق",
             component: "PayReportsScreen",
             icon: "bar-chart",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ScreenPolicy {
+            key: "payGap",
+            title_fa: "تطبیق حقوق و تفاوت تطبیق",
+            component: "PayGapScreen",
+            icon: "scale",
             roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
         },
         ScreenPolicy {

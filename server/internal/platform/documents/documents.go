@@ -156,6 +156,15 @@ type PayslipInfo struct {
 	WageSourceFa string
 	// Elements تفکیک اقلام حقوق؛ همان محاسبه‌ای را نشان می‌دهد که شبیه‌ساز فیش می‌دهد.
 	Elements []PayslipElement
+	// PayGap تفاوت تطبیق ماهانهٔ این کارمند (از حکم کارگزینی) و تاریخ شروع آن.
+	//
+	// چرا جدا از Elements: تفاوت تطبیق قلم پارامتریک حقوق نیست، مبلغی است که روی حکم
+	// کارگزینی ثبت می‌شود؛ فیش باید آن را صریح نشان دهد تا کارمند بداند این مبلغ جذب‌شدنی
+	// است و بخشی از مزد مبنا نیست.
+	PayGap      int64
+	PayGapSince string
+	// PayGapFa همان مبلغ با جداکنندهٔ هزارگان برای چاپ (خالی = بدون تفاوت تطبیق).
+	PayGapFa string
 }
 
 // PayslipElement یک سطر از تفکیک اقلام فیش حقوقی.
@@ -582,6 +591,9 @@ func PlaceholderVars(d Data) map[string]string {
 			lines = append(lines, fmt.Sprintf("%s: %s", el.TitleFa, el.AmountFa))
 		}
 		vars["payslip.elements"] = strings.Join(lines, "\n")
+		vars["payslip.payGap"] = fmt.Sprintf("%d", d.Payslip.PayGap)
+		vars["payslip.payGapFa"] = money(d.Payslip.PayGap)
+		vars["payslip.payGapSince"] = d.Payslip.PayGapSince
 	}
 	if len(d.Structure) > 0 {
 		lines := make([]string, 0, len(d.Structure))
@@ -874,6 +886,14 @@ var documentTemplate = template.Must(template.New("document").Parse(`<!doctype h
   <table>
     <tr><th>مزد مبنا (مبنای اضافه‌کاری و فوق‌العاده‌های درصدی)</th><td class="num">{{.Payslip.MazdBase}}</td>
         <th>منبع اجزای مزد</th><td>{{if .Payslip.WageSourceFa}}{{.Payslip.WageSourceFa}}{{else}}پروندهٔ پرسنلی و پارامترهای شرکت{{end}}</td></tr>
+  </table>
+  {{end}}
+  {{if .Payslip.PayGap}}
+  <table>
+    <tr><th>تفاوت تطبیق (جذب‌شدنی)</th><td class="num">{{.Payslip.PayGapFa}}</td>
+        <th>جایگاه در شاکلهٔ مزد</th><td>خارج از مزد مبنا؛ مشمول بیمه و مالیات</td></tr>
+    {{if .Payslip.PayGapSince}}<tr><th>از تاریخ</th><td class="num">{{.Payslip.PayGapSince}}</td>
+        <th>وضعیت</th><td>با هر افزایش حقوق کاهش می‌یابد تا جذب کامل شود</td></tr>{{end}}
   </table>
   {{end}}
   <table>

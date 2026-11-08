@@ -37,6 +37,13 @@ type PayrollInput struct {
 	OvertimeHours      int64 `json:"overtimeHours"`
 	OvertimeHourlyRate int64 `json:"overtimeHourlyRate"`
 	OtherDeductions    int64 `json:"otherDeductions"`
+	// PayGap تفاوت تطبیق ماهانه (ریال): مابه‌التفاوت حقوق پیشین با طرح تازه که جذب‌شدنی
+	// است. صفر یعنی کارمند مشمول تفاوت تطبیق نیست.
+	//
+	// چرا در جمع ناخالص: تفاوت تطبیق بخشی از حقوق و مزایای ماه است، پس هم بیمه و هم
+	// مالیات به آن تعلق می‌گیرد (مگر پارامتر شرکت خلافش را بگوید). ولی جزو «مزد مبنا»
+	// نیست و مبنای اضافه‌کاری و فوقالعاده‌های درصدی را بالا نمی‌برد.
+	PayGap int64 `json:"payGap"`
 }
 
 // PayrollResult خروجی محاسبهٔ فیش.
@@ -112,10 +119,13 @@ func TaxFor(income int64, brackets []TaxBracket) int64 {
 }
 
 // ComputePayroll محاسبهٔ کامل یک فیش.
+//
+// تفاوت تطبیق (اگر ثبت شده باشد) به جمع ناخالص اضافه می‌شود و در نتیجه مبنای بیمه و
+// مالیات هم آن را می‌بیند؛ ولی در PayrollResult جداگانه نمی‌آید چون بخشی از همان جمع است.
 func ComputePayroll(input PayrollInput, params PayrollParams) PayrollResult {
 	overtimePay := input.OvertimeHours * input.OvertimeHourlyRate
 	childrenPay := int64(input.Children) * params.ChildAllowancePerChild
-	gross := input.BaseSalary + params.HousingAllowance + childrenPay + overtimePay
+	gross := input.BaseSalary + params.HousingAllowance + childrenPay + overtimePay + nonNegative64(input.PayGap)
 
 	insuranceBase := gross
 	if params.InsuranceCeiling > 0 && gross > params.InsuranceCeiling {

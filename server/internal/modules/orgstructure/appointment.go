@@ -51,6 +51,16 @@ func (a applier) Appoint(ctx context.Context, in contracts.PositionAppointment, 
 			"پست پیشنهادی را از فهرست پست‌های ساختار سازمانی انتخاب کنید."}
 	}
 
+	// ظرفیت پست: پیش از ثبت تصدی، شمار متصدیان فعال همان پست سنجیده می‌شود. بدون این
+	// کنترل، تصدی هم‌زمان چند نفر روی پستی با ظرفیت یک ممکن بود و نمودار سازمانی هم
+	// همان چند متصدی را نشان می‌داد.
+	capacity, holders := a.capacity(ctx, code, employeeID)
+	if capacity > 0 && holders >= capacity {
+		return result, &recordkit.RuleError{Message: "ظرفیت پست «" + positionTitle + "» تکمیل است (" +
+			strconv.Itoa(holders) + " از " + strconv.Itoa(capacity) + " متصدی)؛ " +
+			"تا پایان تصدی پیشین یا افزایش ظرفیت در تشکیلات، انتصاب تازه ثبت نمی‌شود."}
+	}
+
 	// انتصاب تازه: ابتدا به‌عنوان پیش‌نویس ثبت و سپس با اقدام «انتصاب و آغاز تصدی»
 	// به وضعیت «در حال تصدی» می‌رود؛ درست همان مسیری که کاربر از فرم طی می‌کند.
 	created, err := a.svc.Create(ctx, contracts.RecordInput{
@@ -111,6 +121,82 @@ func (a applier) Appoint(ctx context.Context, in contracts.PositionAppointment, 
 		return result, nil
 	}
 	result.NoteFa = appointmentNoteFa(result)
+	return result, nil
+}
+
+// capacity ظرفیت پست و شمار متصدیان فعال آن را برمی‌گرداند.
+//
+// تصدی‌های خودِ همین کارمند شمرده نمی‌شوند: ابلاغ تازه‌ای که پست او را تمدید می‌کند نباید
+// به‌خاطر تصدی پیشینِ خودش رد شود. ظرفیت نامعتبر یا صفر، یک نفر فرض می‌شود.
+func (a applier) capacity(ctx context.Context, code, employeeID string) (int, int) {
+	capacity := 1
+	positions, err := a.svc.List(ctx, contracts.RecordFilter{
+		Kind: domain.KindPositions, Scope: "all", Size: 500,
+	})
+	if err == nil {
+		for _, rec := range positions.Items {
+			if normalize(strings.TrimSpace(rec.Fields["code"])) != normalize(code) {
+				continue
+			}
+			if value, err := strconv.Atoi(strings.TrimSpace(rec.Fields["headcount"])); err == nil && value > 0 {
+				capacity = value
+			}
+			break
+		}
+	}
+	holders := 0
+	page, err := a.svc.List(ctx, contracts.RecordFilter{
+		Kind: domain.KindAssignments, Status: domain.AssignmentActive, Scope: "all", Size: 500,
+	})
+	if err != nil {
+		return capacity, 0
+	}
+	for _, rec := range page.Items {
+		if normalize(strings.TrimSpace(rec.Fields["position"])) != normalize(code) {
+			continue
+		}
+		if strings.TrimSpace(rec.EmployeeID) == strings.TrimSpace(employeeID) {
+			continue
+		}
+		holders++
+	}
+	return capacity, holders
+}
+
+// Release تصدی ثبت‌شده را پایانیافته می‌کند (ابطال ابلاغ).
+//
+// چرا با شناسهٔ انتصاب: ابطال باید همان رکوردی را ببندد که اجرای ابلاغ ساخته است؛ اگر با
+// کد پست بسته می‌شد، ممکن بود تصدی متصدی دیگر همان پست هم بسته شود.
+func (a applier) Release(ctx context.Context, in contracts.PositionRelease, actor string) (contracts.PositionReleaseResult, error) {
+	result := contracts.PositionReleaseResult{}
+	id := strings.TrimSpace(in.AssignmentID)
+	if id == "" {
+		return result, &recordkit.RuleError{Message: "ابطال ابلاغ بدون شناسهٔ انتصاب تشکیلات ممکن نیست."}
+	}
+	rec, ok, err := a.svc.Get(ctx, contracts.RecordFilter{Kind: domain.KindAssignments, Scope: "all"}, id)
+	if err != nil {
+		return result, err
+	}
+	if !ok {
+		result.NoteFa = "انتصاب «" + id + "» در تشکیلات پیدا نشد؛ تصدی‌ای برای بستن نبود."
+		return result, nil
+	}
+	if rec.Status != domain.AssignmentActive {
+		result.NoteFa = "انتصاب «" + id + "» در وضعیت «" + rec.Status + "» است و تصدی فعالی برای بستن ندارد."
+		return result, nil
+	}
+	if strings.TrimSpace(in.EmployeeID) != "" && strings.TrimSpace(rec.EmployeeID) != strings.TrimSpace(in.EmployeeID) {
+		return result, &recordkit.RuleError{Message: "انتصاب انتخاب‌شده به این کارمند تعلق ندارد؛ ابطال متوقف شد."}
+	}
+	note := "ابطال ابلاغ " + strings.TrimSpace(in.DecreeNo)
+	if reason := strings.TrimSpace(in.ReasonFa); reason != "" {
+		note += " — " + reason
+	}
+	if _, err := a.svc.Act(ctx, id, contracts.RecordAction{Action: "end", NoteFa: note}, actor); err != nil {
+		return result, err
+	}
+	result.Released = true
+	result.NoteFa = "تصدی «" + id + "» پایانیافته شد."
 	return result, nil
 }
 

@@ -308,9 +308,17 @@ func ValidateWageStructure(w contracts.WageStructure) map[string]string {
 		"sacrificeAllowance": w.SacrificeAllowance,
 		"climateAllowance":   w.ClimateAllowance,
 		"salaryRepair":       w.SalaryRepair,
+		"payGap":             w.PayGap,
 	} {
 		if amount < 0 {
 			errs[key] = "مبلغ این جزء نمی‌تواند منفی باشد."
+		}
+	}
+	// تاریخ شروع تفاوت تطبیق اگر ثبت شده باشد باید تاریخ شمسی معتبر باشد؛ مبدأ محاسبهٔ
+	// جذب و سابقهٔ حکم است، پس تاریخ نامعتبر نباید بی‌صدا بماند.
+	if since := strings.TrimSpace(w.PayGapSince); since != "" {
+		if _, err := calendar.Parse(since); err != nil {
+			errs["payGapSince"] = "تاریخ شروع تفاوت تطبیق باید به قالب شمسی YYYY/MM/DD باشد."
 		}
 	}
 	return errs

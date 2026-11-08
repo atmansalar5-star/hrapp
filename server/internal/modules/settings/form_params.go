@@ -9,11 +9,14 @@
 package settings
 
 import (
+	"context"
+	"encoding/json"
 	"net/http"
 	"strings"
 
 	"hrms/internal/contracts"
 	"hrms/internal/modules/settings/domain"
+	"hrms/internal/platform/auth"
 	"hrms/internal/platform/documents"
 	"hrms/internal/platform/httpx"
 	"hrms/internal/platform/modulekit"
@@ -29,6 +32,9 @@ type formFieldView struct {
 	Visible  bool   `json:"visible"`
 	// Source منبع خودکار مقدار (employee.mobile و مانند آن)؛ خالی یعنی ورودی دستی.
 	Source string `json:"source,omitempty"`
+	// Custom یعنی این فیلد در دامنهٔ ماژول نیست و از پنل پارامترها به فرم افزوده شده
+	// است؛ مقدارش در همان رکورد ذخیره می‌شود.
+	Custom bool `json:"custom,omitempty"`
 }
 
 // formView یک فرم (نوع رکورد) با فیلدهای مؤثرش.
@@ -42,6 +48,8 @@ type formView struct {
 	FieldCount    int             `json:"fieldCount"`
 	VisibleCount  int             `json:"visibleCount"`
 	RequiredCount int             `json:"requiredCount"`
+	// CustomCount شمار فیلدهای سفارشی افزوده‌شده از پنل پارامترها.
+	CustomCount int `json:"customCount"`
 	// ParamsID شناسهٔ رکورد پارامتر همین فرم (خالی = پارامتری ثبت نشده است).
 	ParamsID string `json:"paramsId,omitempty"`
 	Status   string `json:"status,omitempty"`
@@ -90,6 +98,37 @@ func registerFormParamEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *re
 	mux.HandleFunc("GET /api/v1/settings/documents", read(func(w http.ResponseWriter, r *http.Request) {
 		documents := buildDocumentCatalog(r, deps, svc)
 		httpx.WriteJSON(w, http.StatusOK, map[string]any{"documents": documents, "total": len(documents)})
+	}))
+
+	// افزودن یا حذف «فیلد سفارشی» روی یک فرم: مدیر سامانه می‌تواند فیلدی را که در دامنهٔ
+	// ماژول نیست به فرم بیفزاید و مقدارش در همان رکورد ذخیره شود، یا فیلد افزوده را کم کند.
+	write := func(fn http.HandlerFunc) http.HandlerFunc { return deps.Require("settings", "write", fn) }
+	mux.HandleFunc("POST /api/v1/settings/form-fields", write(func(w http.ResponseWriter, r *http.Request) {
+		var in extraFieldRequest
+		if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+			httpx.WriteErrorMsg(w, http.StatusBadRequest, contracts.CodeBadRequest,
+				"ورودی فیلد سفارشی خوانده نشد.", nil)
+			return
+		}
+		out, msg := saveExtraField(r.Context(), deps, svc, in, settingsActor(r))
+		if msg != "" {
+			httpx.WriteErrorMsg(w, http.StatusBadRequest, contracts.CodeBadRequest, msg, nil)
+			return
+		}
+		httpx.WriteJSON(w, http.StatusOK, out)
+	}))
+
+	// فهرست تعریف گزارش‌های موجود (از پورت ماژول گزارش‌ها) تا پنل پارامترها بتواند
+	// گزارش تازه بسازد یا گزارش موجود را غیرفعال/حذف کند. ساخت و تغییر با مسیر رسمی
+	// همان ماژول انجام می‌شود (`/api/v1/reports/records`) تا قاعده در یک جا بماند.
+	mux.HandleFunc("GET /api/v1/settings/report-defs", read(func(w http.ResponseWriter, r *http.Request) {
+		defs := buildReportDefs(r.Context(), deps)
+		httpx.WriteJSON(w, http.StatusOK, map[string]any{
+			"reports": defs, "total": len(defs),
+			"sources": reportSourceOptions(deps),
+			"noteFa": "تعریف گزارش، منبع داده و ستون‌های آن را نگه می‌دارد؛ گزارش غیرفعال " +
+				"پاک نمی‌شود و با «فعال‌سازی دوباره» برمی‌گردد.",
+		})
 	}))
 }
 
@@ -184,7 +223,274 @@ func labelOverrides(value string) map[string]string {
 	return out
 }
 
-// statusTitleFa عنوان فارسی وضعیت پارامتر.
+// extraField یک فیلد سفارشی افزوده‌شده از پنل پارامترها.
+type extraField struct {
+	Key     string
+	LabelFa string
+	Type    string
+}
+
+// allowedExtraTypes نوع‌های مجاز فیلد سفارشی (همان نوع‌های موتور رکورد).
+var allowedExtraTypes = map[string]bool{
+	"text": true, "date": true, "number": true, "money": true, "select": true,
+}
+
+// parseExtraFields رشتهٔ فیلدهای سفارشی را می‌شکند. قالب هر قلم «کلید|برچسب|نوع» و
+// جداکنندهٔ قلم‌ها «؛» یا خط تازه است. قلم ناقص یا نوع ناشناخته نادیده گرفته می‌شود تا
+// رکورد خراب، فرم را نشکند.
+func parseExtraFields(value string) []extraField {
+	out := []extraField{}
+	replacer := strings.NewReplacer("\n", "؛", "\r", "؛", ";", "؛")
+	for _, part := range strings.Split(replacer.Replace(value), "؛") {
+		item := strings.TrimSpace(part)
+		if item == "" {
+			continue
+		}
+		pieces := strings.Split(item, "|")
+		if len(pieces) < 2 {
+			continue
+		}
+		key := strings.TrimSpace(pieces[0])
+		label := strings.TrimSpace(pieces[1])
+		typ := "text"
+		if len(pieces) >= 3 {
+			if t := strings.TrimSpace(pieces[2]); allowedExtraTypes[t] {
+				typ = t
+			}
+		}
+		if key == "" || label == "" {
+			continue
+		}
+		out = append(out, extraField{Key: key, LabelFa: label, Type: typ})
+	}
+	return out
+}
+
+// formatExtraFields فیلدهای سفارشی را به همان قالب ذخیره‌شدنی برمی‌گرداند.
+func formatExtraFields(fields []extraField) string {
+	parts := make([]string, 0, len(fields))
+	for _, f := range fields {
+		parts = append(parts, f.Key+"|"+f.LabelFa+"|"+f.Type)
+	}
+	return strings.Join(parts, "؛")
+}
+
+// extraFieldRequest ورودی افزودن/حذف فیلد سفارشی.
+type extraFieldRequest struct {
+	// Target قالب «ماژول|کلید نوع رکورد» فرم هدف.
+	Target  string `json:"target"`
+	Key     string `json:"key"`
+	LabelFa string `json:"labelFa"`
+	Type    string `json:"type"`
+	// Remove یعنی همین فیلد از فهرست سفارشی حذف شود (کاهش فیلد).
+	Remove bool `json:"remove"`
+}
+
+// saveExtraField فیلد سفارشی را به فرم می‌افزاید یا از آن کم می‌کند.
+//
+// قاعده‌ها:
+//   - هدف باید فرم ثبت‌شده در سامانه باشد (ماژول|نوع)؛ فیلد سفارشی روی فرم ناشناخته
+//     ساخته نمی‌شود.
+//   - کلید نباید با فیلد دامنهٔ همان فرم یکی باشد؛ بازنویسی فیلد رسمی مجاز نیست (برای
+//     تغییر برچسب، پارامتر «labels» است).
+//   - رکورد پارامتر فرم اگر نباشد ساخته و جاری می‌شود و اگر باشد به‌روزرسانی می‌شود؛ پس
+//     برای هر فرم یک رکورد کافی است و سابقهٔ تغییر در آن می‌ماند.
+func saveExtraField(ctx context.Context, deps modulekit.Deps, svc *recordkit.Service, in extraFieldRequest, actor string) (map[string]any, string) {
+	target := normalizeTarget(in.Target)
+	if target == "" {
+		return nil, "فرم هدف را انتخاب کنید."
+	}
+	moduleID, kindKey := "", ""
+	if parts := strings.SplitN(target, "|", 2); len(parts) == 2 {
+		moduleID, kindKey = parts[0], parts[1]
+	}
+	if moduleID == "" || kindKey == "" {
+		return nil, "قالب هدف باید «ماژول|کلید نوع رکورد» باشد."
+	}
+	port, ok := deps.Ports.RecordList(moduleID)
+	if !ok {
+		return nil, "ماژول انتخاب‌شده فرم رکوردی ندارد."
+	}
+	domainFields := map[string]bool{}
+	for _, kind := range port.Schema().Kinds {
+		if strings.ToLower(kind.Key) != kindKey {
+			continue
+		}
+		for _, f := range kind.Fields {
+			domainFields[f.Key] = true
+		}
+	}
+	if len(domainFields) == 0 {
+		return nil, "نوع رکورد انتخاب‌شده در آن ماژول یافت نشد."
+	}
+
+	// رکورد پارامتر همین فرم (اگر باشد) خوانده و فهرست سفارشی ویرایش می‌شود.
+	var existing *contracts.Record
+	if page, err := svc.List(ctx, contracts.RecordFilter{
+		Module: "settings", Kind: domain.KindFormParams, Scope: "all", Size: 500,
+	}); err == nil {
+		for i := range page.Items {
+			rec := page.Items[i]
+			if strings.TrimSpace(rec.Fields["scope"]) != "form" {
+				continue
+			}
+			if normalizeTarget(rec.Fields["target"]) != target {
+				continue
+			}
+			existing = &rec
+			break
+		}
+	}
+
+	current := []extraField{}
+	fields := map[string]string{"scope": "form", "target": target}
+	if existing != nil {
+		current = parseExtraFields(existing.Fields["extraFields"])
+		for k, v := range existing.Fields {
+			fields[k] = v
+		}
+	}
+
+	key := strings.TrimSpace(in.Key)
+	// final فهرست سفارشی پس از تغییر است؛ پاسخ سرور باید وضعیت تازه را نشان دهد، نه
+	// فهرست پیش از ویرایش (وگرنه کاربر گمان می‌کند حذف انجام نشده است).
+	final := current
+	if in.Remove {
+		if key == "" {
+			return nil, "کلید فیلدی که باید حذف شود را مشخص کنید."
+		}
+		kept := make([]extraField, 0, len(current))
+		for _, f := range current {
+			if f.Key != key {
+				kept = append(kept, f)
+			}
+		}
+		if len(kept) == len(current) {
+			return nil, "چنین فیلد سفارشی روی این فرم ثبت نشده است."
+		}
+		final = kept
+		fields["extraFields"] = formatExtraFields(kept)
+	} else {
+		if key == "" || strings.TrimSpace(in.LabelFa) == "" {
+			return nil, "کلید و برچسب فیلد سفارشی الزامی است."
+		}
+		if domainFields[key] {
+			return nil, "این کلید فیلد رسمی همین فرم است؛ برای تغییر برچسبش از پارامتر «برچسب فارسی سفارشی» استفاده کنید."
+		}
+		typ := strings.TrimSpace(in.Type)
+		if typ == "" {
+			typ = "text"
+		}
+		if !allowedExtraTypes[typ] {
+			return nil, "نوع فیلد سفارشی باید یکی از text، date، number، money یا select باشد."
+		}
+		updated := false
+		for i := range current {
+			if current[i].Key == key {
+				current[i] = extraField{Key: key, LabelFa: strings.TrimSpace(in.LabelFa), Type: typ}
+				updated = true
+			}
+		}
+		if !updated {
+			current = append(current, extraField{Key: key, LabelFa: strings.TrimSpace(in.LabelFa), Type: typ})
+		}
+		final = current
+		fields["extraFields"] = formatExtraFields(current)
+	}
+
+	if existing == nil {
+		rec, err := svc.Create(ctx, contracts.RecordInput{
+			Kind: domain.KindFormParams, Title: "پارامتر فرم " + target, Fields: fields,
+			NoteFa: "ساخت پارامتر فرم از پنل تنظیمات.",
+		}, actor)
+		if err != nil {
+			return nil, err.Error()
+		}
+		// پارامتر تازه بلافاصله اثر کند، نه فقط پس از تأیید دستی.
+		if _, err := svc.Act(ctx, rec.ID, contracts.RecordAction{
+			Action: "activate", NoteFa: "جاری‌سازی پارامتر فرم.",
+		}, actor); err != nil {
+			return nil, err.Error()
+		}
+	} else if _, err := svc.Update(ctx, existing.ID, contracts.RecordInput{
+		Kind: domain.KindFormParams, Title: existing.Title, Fields: fields,
+	}, actor); err != nil {
+		return nil, err.Error()
+	}
+
+	action := "افزوده"
+	if in.Remove {
+		action = "کم"
+	}
+	return map[string]any{
+		"target": target, "key": key, "customFields": final,
+		"noteFa": "فیلد «" + key + "» " + action + " شد؛ فرم‌های همین نوع از این پس با فهرست " +
+			"تازه نمایش داده می‌شوند و مقدار فیلد سفارشی در همان رکورد ذخیره می‌شود.",
+	}, ""
+}
+
+// reportDefView تعریف گزارش برای پنل پارامترها.
+type reportDefView struct {
+	ID       string `json:"id"`
+	TitleFa  string `json:"titleFa"`
+	Source   string `json:"source"`
+	Items    string `json:"items"`
+	GroupBy  string `json:"groupBy,omitempty"`
+	Limit    string `json:"limit,omitempty"`
+	Status   string `json:"status"`
+	StatusFa string `json:"statusFa"`
+}
+
+// buildReportDefs تعریف گزارش‌های موجود را از پورت ماژول گزارش‌ها می‌خواند.
+func buildReportDefs(ctx context.Context, deps modulekit.Deps) []reportDefView {
+	out := []reportDefView{}
+	port, ok := deps.Ports.RecordList("reports")
+	if !ok {
+		return out
+	}
+	page, err := port.List(ctx, contracts.RecordFilter{
+		Module: "reports", Kind: "reportDefs", Scope: "all", Size: 300,
+	})
+	if err != nil {
+		return out
+	}
+	for _, rec := range page.Items {
+		out = append(out, reportDefView{
+			ID: rec.ID, TitleFa: rec.Title,
+			Source:  strings.TrimSpace(rec.Fields["source"]),
+			Items:   strings.TrimSpace(rec.Fields["items"]),
+			GroupBy: strings.TrimSpace(rec.Fields["groupBy"]),
+			Limit:   strings.TrimSpace(rec.Fields["limit"]),
+			Status:  rec.Status, StatusFa: rec.StatusFa,
+		})
+	}
+	return out
+}
+
+// reportSourceOptions فهرست منابع دادهٔ گزارش برای ساخت تعریف تازه.
+func reportSourceOptions(deps modulekit.Deps) []map[string]string {
+	out := []map[string]string{}
+	for _, source := range deps.Ports.ReportSources() {
+		meta := source.Metadata()
+		fields := make([]string, 0, len(meta.Fields))
+		for _, f := range meta.Fields {
+			fields = append(fields, f.Key+"="+f.LabelFa)
+		}
+		out = append(out, map[string]string{
+			"key": meta.Key, "titleFa": meta.TitleFa, "fields": strings.Join(fields, "،"),
+		})
+	}
+	return out
+}
+
+// settingsActor نام کاربر جاری برای ثبت در رکورد پارامتر.
+func settingsActor(r *http.Request) string {
+	if user, ok := auth.UserFrom(r.Context()); ok {
+		return user.Username
+	}
+	return "ناشناس"
+}
+
 func statusTitleFa(status string) string {
 	switch status {
 	case "active":
@@ -245,6 +551,27 @@ func buildFormCatalog(r *http.Request, deps modulekit.Deps, svc *recordkit.Servi
 				Kind: kind.Key, TitleFa: kind.TitleFa, Target: target,
 				Fields: fields, FieldCount: len(fields),
 				VisibleCount: visibleCount, RequiredCount: requiredCount,
+			}
+			// فیلدهای سفارشی: افزوده‌های پنل پارامترها که در دامنهٔ ماژول نیستند. عمداً پس
+			// از فیلدهای دامنه می‌آیند تا ترتیب سند رسمی به‌هم نخورد، و همیشه نمایان‌اند
+			// (برای «کم کردن» یک فیلد سفارشی، همان فیلد از فهرست سفارشی حذف می‌شود).
+			if hasParams {
+				for _, custom := range parseExtraFields(record.Fields["extraFields"]) {
+					label := custom.LabelFa
+					if over, ok := labels[custom.Key]; ok && over != "" {
+						label = over
+					}
+					view.Fields = append(view.Fields, formFieldView{
+						Key: custom.Key, LabelFa: label, Type: custom.Type,
+						Required: required[custom.Key], Visible: true, Custom: true,
+					})
+					view.CustomCount++
+					view.FieldCount++
+					view.VisibleCount++
+					if required[custom.Key] {
+						view.RequiredCount++
+					}
+				}
 			}
 			if hasParams {
 				view.ParamsID = record.ID

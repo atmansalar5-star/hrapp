@@ -132,6 +132,10 @@ type ApprovalParams struct {
 	CEORank int `json:"ceoRank"`
 	// CommitteeForPromotion آیا هر ترفیع بی‌قید پله، تصویب کمیته می‌خواهد.
 	CommitteeForPromotion bool `json:"committeeForPromotion"`
+	// Qualification آستانه‌های شرایط احراز (شرایط معادل، کمبود تحصیلات و مازاد).
+	// همان پارامترهای شرکت است که فرم محاسباتی طبقه‌بندی مشاغل می‌خواند، تا یک سنجش
+	// دو عدد نسازد.
+	Qualification QualificationParams `json:"qualification"`
 }
 
 // DefaultApprovalParams مقادیر پیش‌فرض وقتی پارامتر شرکت تنظیم نشده است.
@@ -144,6 +148,7 @@ func DefaultApprovalParams() ApprovalParams {
 		CommitteeRank:         4,
 		CEORank:               5,
 		CommitteeForPromotion: true,
+		Qualification:         DefaultQualificationParams(),
 	}
 }
 
@@ -166,6 +171,21 @@ type AppointmentInput struct {
 	CommitmentMonths int `json:"commitmentMonths"`
 	// EffectiveDate تاریخ اجرای پیشنهادی (شمسی YYYY/MM/DD).
 	EffectiveDate string `json:"effectiveDate"`
+
+	// ---- شرایط احراز شغل (از شناسنامهٔ شغل) و سنجش متقاضی ----
+	//
+	// چرا در همین ورودی: انتصاب و ارتقا بدون سنجش شرایط احراز شغل، تصمیم سلیقه‌ای است.
+	// شرط شغل از شناسنامهٔ شغل می‌آید (کد شغل، مقطع، رشته و کمینهٔ سابقه) و مشخصات
+	// متقاضی از پروندهٔ او؛ سنجش با همان قاعدهٔ فرم محاسباتی انجام می‌شود.
+	JobCode string `json:"jobCode"`
+	// JobTitleFa عنوان شغل مرجع (از شناسنامهٔ شغل) برای نمایش در فرم و سند تصویب.
+	JobTitleFa                string `json:"jobTitleFa,omitempty"`
+	RequireDegreeLevel        string `json:"requireDegreeLevel"`
+	RequireFields             string `json:"requireFields"`
+	RequireMinExperienceYears int    `json:"requireMinExperienceYears"`
+	CandidateDegreeLevel      string `json:"candidateDegreeLevel"`
+	CandidateField            string `json:"candidateField"`
+	CandidateExperienceYears  int    `json:"candidateExperienceYears"`
 }
 
 // AppointmentCheck یک شرط بررسی‌شده در تصویب‌خواهی.
@@ -204,6 +224,11 @@ type ApprovalPlan struct {
 	// SummaryFa یک جملهٔ آمادهٔ نمایش: «۳ سطح تصویب، ۱ مانع».
 	SummaryFa string `json:"summaryFa"`
 	NoteFa    string `json:"noteFa,omitempty"`
+	// Qualification نتیجهٔ سنجش شرایط احراز شغل (فرم محاسباتی)؛ nil یعنی شرط شغل
+	// وارد نشده است و سنجشی انجام نگرفته.
+	Qualification *QualificationResult `json:"qualification,omitempty"`
+	// JobTitleFa عنوان شغل مرجع که شرط احراز از آن خوانده شده است.
+	JobTitleFa string `json:"jobTitleFa,omitempty"`
 }
 
 // PlanApproval تصویب‌خواهی انتصاب یا ترفیع را می‌سازد: شرط‌ها را می‌سنجد، مانع‌ها را
@@ -269,7 +294,25 @@ func PlanApproval(in AppointmentInput, params ApprovalParams) ApprovalPlan {
 			"از «"+GradeTitleFa(current)+"» به «"+GradeTitleFa(proposed)+"».",
 			"گروه شغلی فعلی و پیشنهادی را از فهرست نردبان گروه‌ها انتخاب کنید."))
 
-	// ۳ و ۴. جهت حرکت و اندازهٔ جهش، به تفکیک نوع درخواست.
+	// ۳. شرایط احراز شغل (شناسنامهٔ شغل) و شرایط معادل.
+	//
+	// چرا پیش از شرط‌های دیگر: «مازاد بر شرایط احراز» تخفیف دورهٔ انتظار ارتقا می‌سازد،
+	// پس باید پیش از سنجش سابقهٔ گروه محاسبه شود. اگر شرط شغل وارد نشده باشد، سنجش
+	// انجام نمی‌شود و تنها یک هشدار ثبت می‌گردد تا رکوردهای قدیمی بی‌دلیل قفل نشوند.
+	creditMonths := 0
+	qCheck, qBlocking, qResult, qCredit := planQualification(in, params)
+	if qCheck.Key != "" {
+		add(qCheck.Key, qCheck.TitleFa, qCheck.Passed, qBlocking, qCheck.MessageFa)
+		creditMonths = qCredit
+		plan.Qualification = qResult
+		plan.JobTitleFa = strings.TrimSpace(in.JobTitleFa)
+		if qResult != nil && qResult.EquivalenceApplied {
+			add("equivalence", "شرایط معادل", true, false,
+				"شرط تحصیلی با سابقهٔ مازاد جبران شد و باید در مستندات تصویب ثبت شود.")
+		}
+	}
+
+	// ۴ و ۵. جهت حرکت و اندازهٔ جهش، به تفکیک نوع درخواست.
 	switch kind {
 	case "promotion":
 		up := jump >= 1
@@ -294,13 +337,22 @@ func PlanApproval(in AppointmentInput, params ApprovalParams) ApprovalPlan {
 		})
 	}
 
-	// ۵. سابقهٔ گروه فعلی (در ترفیع مانع، در انتصاب هشدار).
+	// ۶. سابقهٔ گروه فعلی (در ترفیع مانع، در انتصاب هشدار). مازاد بر شرایط احراز، دورهٔ
+	// انتظار را کوتاه می‌کند (تخفیف ماه‌به‌ماه از پارامتر شرکت).
 	if kind == "promotion" {
-		enough := in.ServiceMonths >= params.MinServiceMonths
+		needed := params.MinServiceMonths - creditMonths
+		if needed < 0 {
+			needed = 0
+		}
+		enough := in.ServiceMonths >= needed
+		message := "سابقهٔ " + strconv.Itoa(in.ServiceMonths) + " ماه، شرط " + strconv.Itoa(needed) + " ماه را دارد."
+		if creditMonths > 0 {
+			message = "شمار ماه لازم " + strconv.Itoa(params.MinServiceMonths) + " است و با " +
+				strconv.Itoa(creditMonths) + " ماه تخفیف مازاد شرایط احراز، " + strconv.Itoa(needed) + " ماه شد."
+		}
 		add("serviceMonths", "سابقهٔ گروه فعلی", enough, true,
-			appointmentMessage(enough,
-				"سابقهٔ "+strconv.Itoa(in.ServiceMonths)+" ماه، شرط "+strconv.Itoa(params.MinServiceMonths)+" ماه را دارد.",
-				"حداقل سابقهٔ "+strconv.Itoa(params.MinServiceMonths)+" ماه در گروه فعلی لازم است؛ سابقهٔ ثبت‌شده "+
+			appointmentMessage(enough, message,
+				"حداقل سابقهٔ "+strconv.Itoa(needed)+" ماه در گروه فعلی لازم است؛ سابقهٔ ثبت‌شده "+
 					strconv.Itoa(in.ServiceMonths)+" ماه است."))
 	} else if in.ServiceMonths > 0 && in.ServiceMonths < params.MinServiceMonths {
 		add("serviceMonths", "سابقهٔ گروه فعلی", false, false,
@@ -377,6 +429,78 @@ func PlanApproval(in AppointmentInput, params ApprovalParams) ApprovalPlan {
 	plan.SummaryFa = persianDigits(plan.SummaryFa)
 	plan.NoteFa = persianDigits(plan.NoteFa)
 	return plan
+}
+
+// planQualification سنجش شرایط احراز شغل برای یک درخواست انتصاب یا ارتقا.
+//
+// قاعده‌ها:
+//   - شرط شغل باید از شناسنامهٔ شغل وارد شده باشد (کد شغل و مقطع لازم)؛ اگر نباشد،
+//     سنجشی انجام نمی‌شود و تنها یک هشدار غیرمانع ثبت می‌گردد (رکوردهای قدیمی که پیش از
+//     این قاعده ساخته شده‌اند نباید یک‌شبه قفل شوند).
+//   - مشخصات متقاضی باید مقطع داشته باشد؛ بدون مقطع، سنجش ممکن نیست و مانع است.
+//   - کمبود جبران‌نشده، مانع تصویب است؛ نتیجهٔ «برآورده با شرایط معادل» مانع نیست ولی
+//     در سند تصویب ثبت می‌شود.
+//   - مازاد بر شرایط احراز، ماه‌های تخفیف دورهٔ انتظار ارتقا را برمی‌گرداند.
+//
+// خروجی: سطر شرط (کلید خالی یعنی سنجشی لازم نبود)، مانع‌بودن، نتیجهٔ کامل و ماه‌های تخفیف.
+func planQualification(in AppointmentInput, params ApprovalParams) (AppointmentCheck, bool, *QualificationResult, int) {
+	requireDegree := strings.TrimSpace(in.RequireDegreeLevel)
+	if requireDegree == "" {
+		return AppointmentCheck{
+			Key: "qualification", TitleFa: "شرایط احراز شغل", Passed: false,
+			MessageFa: "شرایط احراز از شناسنامهٔ شغل وارد نشده است؛ برای سنجش دقیق، شغل مرجع " +
+				"(شناسنامهٔ شغل) را انتخاب کنید. این هشدار مانع تصویب نیست.",
+		}, false, nil, 0
+	}
+	if DegreeRankOf(requireDegree) == 0 {
+		return AppointmentCheck{
+			Key: "qualification", TitleFa: "شرایط احراز شغل", Passed: false,
+			MessageFa: "مقطع تحصیلی لازم در شرط شغل شناخته‌شده نیست؛ آن را از نردبان مدرک انتخاب کنید.",
+		}, true, nil, 0
+	}
+	candidateDegree := strings.TrimSpace(in.CandidateDegreeLevel)
+	if DegreeRankOf(candidateDegree) == 0 {
+		return AppointmentCheck{
+			Key: "qualification", TitleFa: "شرایط احراز شغل", Passed: false,
+			MessageFa: "مقطع تحصیلی متقاضی ثبت نشده است؛ بدون آن، شرایط احراز شغل سنجیدنی نیست.",
+		}, true, nil, 0
+	}
+	result := EvaluateQualification(
+		Candidate{
+			DegreeLevel:     candidateDegree,
+			Field:           strings.TrimSpace(in.CandidateField),
+			ExperienceYears: in.CandidateExperienceYears,
+		},
+		JobRequirement{
+			DegreeLevel:        requireDegree,
+			Fields:             splitFields(in.RequireFields),
+			MinExperienceYears: in.RequireMinExperienceYears,
+		},
+		params.Qualification,
+	)
+	message := result.SummaryFa
+	if result.EquivalenceApplied {
+		message += " نتیجهٔ شرایط معادل باید در صورت‌جلسهٔ تصویب ثبت شود."
+	}
+	if result.ExcessCreditMonths > 0 {
+		message += " مازاد شرایط، " + strconv.Itoa(result.ExcessCreditMonths) + " ماه تخفیف دورهٔ انتظار ارتقا می‌سازد."
+	}
+	return AppointmentCheck{
+		Key: "qualification", TitleFa: "شرایط احراز شغل", Passed: result.Eligible,
+		MessageFa: persianDigits(message),
+	}, true, &result, result.ExcessCreditMonths
+}
+
+// splitFields فهرست رشته‌های نوشته‌شده در یک فیلد را می‌شکند (ویرگول فارسی و لاتین).
+func splitFields(raw string) []string {
+	normalized := strings.NewReplacer("،", ",", "؛", ",", "\n", ",", "\r", ",").Replace(raw)
+	out := []string{}
+	for _, part := range strings.Split(normalized, ",") {
+		if v := strings.TrimSpace(part); v != "" {
+			out = append(out, v)
+		}
+	}
+	return out
 }
 
 // persianDigits ارقام لاتین یک متن فارسی را به ارقام فارسی تبدیل می‌کند.

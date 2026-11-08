@@ -76,6 +76,12 @@ function apaInput() {
     vacancyChecked: apaSelect('apaVacancy') !== '',
     commitmentMonths: apaNum('apaCommitment'),
     effectiveDate: apaText('apaEffectiveDate'),
+    // شرایط احراز: شغل مرجع از شناسنامهٔ شغل و مشخصات احراز متقاضی. سنجش در سرور با
+    // همان قاعدهٔ فرم محاسباتی طبقه‌بندی مشاغل انجام می‌شود.
+    jobCode: apaSelect('apaJobRef') || '',
+    candidateDegreeLevel: apaSelect('apaCandidateDegree') || '',
+    candidateField: apaText('apaCandidateField'),
+    candidateExperienceYears: apaNum('apaCandidateExperience'),
   };
 }
 
@@ -188,6 +194,15 @@ async function apaSave() {
     decreeNo: apaText('apaDecreeNo'),
     reason: apaText('apaReason'),
     approvalLevels: (plan.approvals || []).map(s => s.titleFa).join(' ← '),
+    // شرایط احراز سنجیده‌شده (سند تصویب باید بازتولیدشدنی باشد).
+    jobCode: apaSelect('apaJobRef') || '',
+    candidateDegree: apaSelect('apaCandidateDegree') || '',
+    candidateField: apaText('apaCandidateField'),
+    candidateExperience: String(apaNum('apaCandidateExperience')),
+    requireDegree: (apaJobRef() || {}).requireDegree || '',
+    requireFields: (apaJobRef() || {}).requireFields || '',
+    requireMinExperience: String((apaJobRef() || {}).minExperience || 0),
+    qualificationVerdict: (plan.qualification || {}).verdictFa || '',
   };
   const fields = recKind === 'promotions'
     ? Object.assign({}, base, { fromPosition: apaText('apaCurrentPosition'), toPosition: proposedTitle })
@@ -295,6 +310,34 @@ async function apaExecute(id) {
   apaLoadRecords();
 }
 
+/** امضای سطح بعدی تصویب: سطح و نقشش را سرور تعیین می‌کند. */
+async function apaSign(id) {
+  const res = await apiFetch('/api/v1/career/appointment-sign', { method: 'POST', body: { id: id } });
+  if (!res.ok) { toast(res.message || (res.data && res.data.message) || 'امضا انجام نشد', 'error'); return; }
+  toast((res.data && res.data.noteFa) || ('سطح تصویب امضا شد: ' + id));
+  apaLoadRecords();
+}
+
+/** بازگشت برای اصلاح: دلیل بازگشت الزامی است و در سابقهٔ رکورد می‌ماند. */
+async function apaReturn(id) {
+  const reason = (window.prompt('دلیل بازگشت برای اصلاح را بنویسید:') || '').trim();
+  if (!reason) { toast('بازگشت بدون دلیل انجام نمی‌شود', 'error'); return; }
+  const res = await apiFetch('/api/v1/career/appointment-return', { method: 'POST', body: { id: id, noteFa: reason } });
+  if (!res.ok) { toast(res.message || 'بازگشت انجام نشد', 'error'); return; }
+  toast('درخواست به پیش‌نویس بازگشت: ' + id);
+  apaLoadRecords();
+}
+
+/** ابطال ابلاغ اجراشده: تصدی تشکیلات بسته و پروندهٔ کارمند برمی‌گردد. */
+async function apaRevoke(id) {
+  const reason = (window.prompt('دلیل ابطال ابلاغ را بنویسید:') || '').trim();
+  if (!reason) { toast('ابطال بدون دلیل انجام نمی‌شود', 'error'); return; }
+  const res = await apiFetch('/api/v1/career/appointment-revoke', { method: 'POST', body: { id: id, noteFa: reason } });
+  if (!res.ok) { toast(res.message || 'ابطال انجام نشد', 'error'); return; }
+  toast('ابلاغ باطل شد: ' + id);
+  apaLoadRecords();
+}
+
 /** گزارش گام‌های اجرای ابلاغ: چه چیزی واقعاً انجام شد و چه چیزی نه. */
 function apaRenderSteps(id) {
   const box = document.getElementById('apaExec');
@@ -345,10 +388,19 @@ function apaRenderRecords() {
   const box = document.getElementById('apaRecords');
   if (!box) return;
   const rows = APA_RECORDS.map(r => {
-    const btns = apaLegalActions(r).map(a => a.value === 'issue'
-      ? `<button class="btn btn-sm btn-primary" onclick="apaExecute('${esc(r.id)}')">اجرا و ابلاغ</button>`
-      : `<button class="btn btn-sm ${a.style === 'primary' ? 'btn-primary' : 'btn-ghost'}"
-           onclick="apaAct('${esc(r.id)}','${esc(a.value)}')">${esc(a.labelFa)}</button>`).join(' ');
+    // هر اقدام قاعده‌سنج به مسیر خودش وصل است: امضای سطح، بازگشت برای اصلاح، اجرا و ابطال.
+    const handlers = {
+      sign: `apaSign('${esc(r.id)}')`,
+      return: `apaReturn('${esc(r.id)}')`,
+      issue: `apaExecute('${esc(r.id)}')`,
+      revoke: `apaRevoke('${esc(r.id)}')`,
+    };
+    const btns = apaLegalActions(r).map(a => {
+      const call = handlers[a.value] || `apaAct('${esc(r.id)}','${esc(a.value)}')`;
+      const style = a.value === 'issue' || a.value === 'sign' ? 'btn-primary'
+        : (a.style === 'primary' ? 'btn-primary' : (a.style === 'danger' ? 'btn-ghost' : 'btn-ghost'));
+      return `<button class="btn btn-sm ${style}" onclick="${call}">${esc(a.labelFa)}</button>`;
+    }).join(' ');
     // پس از تصویب، دکمهٔ «اجرا و ابلاغ» از همان فهرست اقدام‌های مجاز می‌آید و به مسیر
     // قاعده‌سنج وصل است (نه اقدام خام گردش‌کار). فقط «تکمیل در فرم» را اینجا اضافه
     // می‌کنیم: پیش‌نویسی که از راه رکورد تازه ساخته شده، بی آن هرگز از پیش‌نویس بیرون نمی‌آید.
@@ -360,11 +412,21 @@ function apaRenderRecords() {
       <td>${esc(r.employeeName || '—')}</td>
       <td>${statusChip(r.status, r.statusFa)}</td>
       <td class="num">${fa((r.fields || {}).effectiveDate || '—')}</td>
+      <td class="num">${apaProgressFa(r)}</td>
       <td>${[btns, editBtn].filter(Boolean).join(' ') || '<span class="muted">—</span>'}</td></tr>`;
   });
-  const head = ['شناسه', 'عنوان', 'کارمند', 'وضعیت', 'تاریخ اجرا', 'اقدام'];
+  const head = ['شناسه', 'عنوان', 'کارمند', 'وضعیت', 'تاریخ اجرا', 'پیشرفت تصویب', 'اقدام'];
   box.innerHTML = rows.length ? liveTable(head, rows, rows.length)
     : '<div class="muted" style="font-size:.78rem">درخواستی ثبت نشده است.</div>';
+}
+
+/** پیشرفت تصویب یک درخواست: «۲ از ۴ سطح» یا خط تیره وقتی زنجیره‌ای ثبت نشده است. */
+function apaProgressFa(rec) {
+  const fields = rec.fields || {};
+  const total = Number(fields.approvalTotal || 0);
+  const progress = Number(fields.approvalProgress || 0);
+  if (!total) return '—';
+  return fa(progress) + ' از ' + fa(total);
 }
 
 /* --------------------------- کمک‌های فهرست‌ها --------------------------- */
@@ -451,6 +513,16 @@ function pageAppointmentFormLive() {
     const posOpts = APA_POSITIONS.map(p =>
       `<option value="${esc(p.code)}">${esc(p.titleFa)} — ${esc(p.unit || '')}</option>`).join('');
     const midGrades = grades.map(g => `<option value="${esc(g.key)}">${esc(g.titleFa)}</option>`).join('');
+    const jobList = def.jobs || [];
+    // نخستین شناسنامهٔ تأییدشده به‌عنوان شغل مرجع پیش‌فرض (شناسنامهٔ پیش‌نویس مبنای سنجش نیست).
+    const firstApprovedJob = (jobList.find(j => j.approved) || {});
+    const defaultJob = firstApprovedJob.code || firstApprovedJob.titleFa || '';
+    const jobOpts = `<option value="">— بدون شغل مرجع —</option>` + jobList.map(j =>
+      `<option value="${esc(j.code || j.titleFa)}" data-degree="${esc(j.requireDegree || '')}"
+        data-fields="${esc(j.requireFields || '')}" data-exp="${esc(String(j.minExperience || 0))}">
+        ${esc(j.titleFa)}${j.approved ? '' : ' (پیش‌نویس)'}</option>`).join('');
+    const degreeOpts = (def.degreeLevels || []).map(d =>
+      `<option value="${esc(d.key)}">${esc(d.titleFa)}</option>`).join('');
     const defaultCurrent = (grades[1] && grades[1].key) || '';
     const defaultProposed = (grades[2] && grades[2].key) || '';
 
@@ -482,7 +554,21 @@ function pageAppointmentFormLive() {
         <div class="field full"><label>دلیل و ملاک تصویب <span class="req">*</span></label>
           <input id="apaReason" placeholder="مثلاً کسب امتیاز ارزیابی ۸۵ و خالی‌بودن پست مطابق تشکیلات"></div>
       </div>
+      <div class="card-title" style="margin:14px 0 6px">🎓 شرایط احراز شغل</div>
+      <div class="form-grid">
+        <div class="field"><label>شغل مرجع (شناسنامهٔ شغل)</label>
+          <select id="apaJobRef" onchange="apaOnJobRef()">${jobOpts}</select>
+          <span class="muted" style="font-size:.72rem">شرط مدرک، رشته و سابقه از شناسنامهٔ شغل تأییدشده خوانده می‌شود.</span></div>
+        <div class="field"><label>مقطع تحصیلی متقاضی</label>
+          <select id="apaCandidateDegree" onchange="apaPlanSoon()"><option value="">— ثبت نشده —</option>${degreeOpts}</select></div>
+        <div class="field"><label>رشتهٔ تحصیلی متقاضی</label>
+          <input id="apaCandidateField" oninput="apaPlanSoon()" placeholder="مثلاً مدیریت بازرگانی"></div>
+        ${apaField('apaCandidateExperience', 'سابقهٔ مرتبط متقاضی', '0', 'سال', 'مبنای شرایط معادل')}
+        <div class="field full"><label>شرط شغل انتخاب‌شده</label>
+          <div id="apaJobReq" class="muted" style="font-size:.78rem">—</div></div>
+      </div>
       <div class="muted" style="font-size:.74rem;margin-top:6px">${esc(def.noteFa || '').split('\n').join('<br>')}</div>
+      <div class="muted" style="font-size:.74rem;margin-top:4px">${esc(def.qualificationNoteFa || '')}</div>
     </div>
 
     <div class="card card-pad" style="margin-bottom:14px">
@@ -503,24 +589,49 @@ function pageAppointmentFormLive() {
       <div id="apaRecords"><div class="muted" style="font-size:.78rem">در حال خواندن...</div></div>
     </div>`;
 
-    const paramRows = (def.paramViews || []).map(p => `<tr>
-      <td>${esc(p.titleFa)}</td><td class="ltr" style="font-size:.72rem">${esc(p.key)}</td>
-      <td class="num">${fa(p.value)}</td><td>${esc(p.unitFa)}</td></tr>`);
+    const paramRows = (def.editableParams || []).map(p => `<tr>
+      <td>${esc(p.titleFa)}<div class="muted ltr" style="font-size:.68rem">${esc(p.key)}</div></td>
+      <td><span class="num">${fa(p.value)}</span></td>
+      <td>${esc(p.unitFa)}</td>
+      <td>${paramSourceChip(p)}</td>
+      <td><input class="inp num" id="apaParam_${esc(p.key)}" style="max-width:110px" value="${esc(String(p.value))}"></td>
+      <td><div class="row-actions">
+        <button class="btn btn-sm btn-primary" onclick="apaParamSave('${esc(p.key)}')">💾 ثبت</button>
+        ${p.source === 'record'
+          ? `<button class="btn btn-sm btn-ghost" onclick="apaParamRemove('${esc(p.key)}')">↩ بازگشت به پیش‌فرض</button>` : ''}
+      </div></td></tr>`);
 
     const shell = form + (paramRows.length ? `<div class="card card-pad">
-        <div class="card-title">پارامترهای تصویب شرکت فعال</div>
-        ${liveTable(['پارامتر', 'کلید', 'مقدار', 'واحد'], paramRows, paramRows.length)}
+        <div class="card-title">⚙️ پارامترهای انتصاب و ترفیع — قابل ویرایش از همین فرم</div>
+        <div class="muted" style="font-size:.76rem;line-height:2;margin-bottom:8px">${esc(def.paramsNoteFa || '')}</div>
+        ${liveTable(['پارامتر', 'مقدار مؤثر', 'واحد', 'منبع', 'مقدار تازه', 'اقدام'], paramRows, paramRows.length)}
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-top:10px">
+          <div class="field" style="min-width:260px"><label>افزودن/تغییر پارامتر دیگر</label>
+            <select id="apaParamKey">${(def.editableParams || []).map(p =>
+              `<option value="${esc(p.key)}">${esc(p.titleFa)}</option>`).join('')}</select></div>
+          <div class="field"><label>مقدار</label><input class="inp num" id="apaParamValue" placeholder="مثلاً 24"></div>
+          <div class="field" style="min-width:220px"><label>دلیل تغییر</label><input class="inp" id="apaParamReason" placeholder="مثلاً مصوبهٔ کمیتهٔ انتصابات"></div>
+          <button class="btn btn-primary" onclick="apaParamAdd()">➕ ثبت مقدار تازه</button>
+        </div>
+        <div id="apaParamMsg" style="margin-top:8px"></div>
       </div>` : '');
 
+    // مقدار پیش‌فرض گروه‌ها و نخستین شناسنامهٔ تأییدشده، سپس سنجش شرط‌ها.
     setTimeout(() => {
       const cur = document.getElementById('apaCurrentGrade');
       const prop = document.getElementById('apaProposedGrade');
       if (cur && defaultCurrent) cur.value = defaultCurrent;
       if (prop && defaultProposed) prop.value = defaultProposed;
+      // شغل مرجع پیش‌فرض: نخستین شناسنامهٔ تأییدشده تا شرط احراز از ابتدا در سنجش باشد
+      // (کاربر می‌تواند «بدون شغل مرجع» را انتخاب کند و سنجش تحصیلی انجام نشود).
+      const jobSel = document.getElementById('apaJobRef');
+      if (jobSel && !jobSel.value && defaultJob) jobSel.value = defaultJob;
       apaOnEmployee();
+      apaOnJobRef();
       apaPlanNow();
       apaLoadRecords();
-    }, 60);    return shell;
+    }, 60);
+    return shell;
   });
   return liveShell('فرم تصویب‌خواهی انتصاب و ترفیع',
     'سنجش شرط‌ها، زنجیرهٔ تصویب و اجرای ابلاغ در یک جا',
@@ -529,3 +640,73 @@ function pageAppointmentFormLive() {
 
 /* ثبت در مسیریاب زنده. */
 LIVE_PAGES.appointmentForm = pageAppointmentFormLive;
+
+/* ------------------- شرط شغل و پارامترهای قابل ویرایش ------------------- */
+
+/** شغل مرجع انتخاب‌شده از فهرست شناسنامه‌ها. */
+function apaJobRef() {
+  const code = apaSelect('apaJobRef');
+  if (!code) return null;
+  return ((APA_DEFAULTS && APA_DEFAULTS.jobs) || []).find(j => (j.code || j.titleFa) === code) || null;
+}
+
+/** با انتخاب شغل مرجع، شرط احراز همان شغل نشان داده و در سنجش به کار می‌رود. */
+function apaOnJobRef() {
+  const job = apaJobRef();
+  const box = document.getElementById('apaJobReq');
+  if (box) {
+    box.innerHTML = job
+      ? `${esc(job.requirementFa || '—')}${job.approved ? '' : ' <span class="chip c-wait">شناسنامه پیش‌نویس — مبنای انتصاب نیست</span>'}`
+      : 'شغل مرجع انتخاب نشده است؛ شرط تحصیلی سنجیده نمی‌شود.';
+  }
+  apaPlanSoon();
+}
+
+/** نشان منبع مقدار پارامتر. */
+function paramSourceChip(p) {
+  if (p.source === 'record') return '<span class="chip c-ok">مقدار ثبت‌شده در فرم</span>';
+  if (p.source === 'company') return '<span class="chip c-wait">پارامتر شرکت</span>';
+  return '<span class="chip">پیش‌فرض سامانه</span>';
+}
+
+/** پیام نتیجهٔ تغییر پارامتر در پنل. */
+function apaParamShow(payload, isError) {
+  const box = document.getElementById('apaParamMsg');
+  if (!box) return;
+  box.innerHTML = isError
+    ? liveErrorBox(payload)
+    : `<div class="card card-pad" style="font-size:.82rem;line-height:2">✅ ${esc(payload || 'ثبت شد')}</div>`;
+}
+
+/** ثبت مقدار یک پارامتر از ردیف جدول. */
+async function apaParamSave(key) {
+  const el = document.getElementById('apaParam_' + key);
+  await apaParamSubmit({key, value: el ? el.value.trim() : '', reasonFa: ''});
+}
+
+/** کنارگذاشتن مقدار ثبت‌شده و بازگشت به پارامتر شرکت/پیش‌فرض. */
+async function apaParamRemove(key) {
+  await apaParamSubmit({key, remove: true, reasonFa: 'بازگشت به مقدار شرکت/پیش‌فرض از فرم انتصابات.'});
+}
+
+/** افزودن/تغییر پارامتر از کادر پایین پنل. */
+async function apaParamAdd() {
+  const key = (document.getElementById('apaParamKey') || {}).value || '';
+  const value = ((document.getElementById('apaParamValue') || {}).value || '').trim();
+  const reasonFa = ((document.getElementById('apaParamReason') || {}).value || '').trim();
+  if (!key || !value) { toast('کلید و مقدار پارامتر را وارد کنید', 'error'); return; }
+  await apaParamSubmit({key, value, reasonFa});
+}
+
+/** فراخوانی سرور برای ثبت/کنارگذاشتن پارامتر و سپس بازخوانی فرم. */
+async function apaParamSubmit(body) {
+  const res = await apiFetch('/api/v1/career/appointment-params', {method: 'POST', body});
+  if (!res.ok) {
+    apaParamShow(res.message, true);
+    toast(res.message, 'error');
+    return;
+  }
+  APA_DEFAULTS = null;
+  toast((res.data && res.data.noteFa) || 'پارامتر ثبت شد');
+  go('appointmentForm');
+}

@@ -393,7 +393,9 @@ body.dark .login-err{background:#7F1D1D;color:#FECACA}
       <label>رمز عبور <span class="req">*</span></label>
       <input id="loginPass" type="password" placeholder="••••••••">
     </div>
-    <button id="loginBtn" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:6px">ورود به سامانه</button>
+    <!-- onclick عمدی است: اگر اتصال رویداد در ui.js دیرتر از نخستین کلیک انجام شود
+         (مسابقهٔ بارگذاری)، دکمه بی‌اثر می‌ماند؛ اتصال درون‌خطی این مسابقه را می‌بندد. -->
+    <button id="loginBtn" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:6px" onclick="tryLogin()">ورود به سامانه</button>
     <div class="login-hint">
       <b>حساب‌های آزمایشی (رمز همه: <span class="ltr">demo</span>):</b>
       <span class="muted">اگر سرور محلی Go بالا باشد، ورود واقعی با همین حساب‌ها انجام می‌شود
@@ -486,18 +488,20 @@ body.dark .login-err{background:#7F1D1D;color:#FECACA}
 <script src="js/pages3.js?v=38"></script>
 <script src="js/pages4.js?v=38"></script>
 <script src="js/pages5.js?v=38"></script>
-<script src="js/live_params.js?v=42"></script>
-<script src="js/live.js?v=39"></script>
+<script src="js/live_params.js?v=43"></script>
+<script src="js/live.js?v=40"></script>
 <script src="js/live_records.js?v=39"></script>
 <script src="js/live_stats.js?v=39"></script>
 <script src="js/live_stats_section.js?v=2"></script>
 <script src="js/live_mission.js?v=2"></script>
-<script src="js/live_appointment.js?v=2"></script>
+<script src="js/live_appointment.js?v=5"></script>
 <script src="js/live_oilpay.js?v=3"></script>
   <script src="js/live_people.js?v=41"></script>
 <script src="js/live_education.js?v=38"></script>
 <script src="js/live_org.js?v=38"></script>
 <script src="js/live_payroll.js?v=38"></script>
 <script src="js/live_service_bonus.js?v=38"></script>
+<script src="js/live_jobclass.js?v=1"></script>
+<script src="js/live_paygap.js?v=1"></script>
 </body>
 </html>

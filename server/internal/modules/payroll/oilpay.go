@@ -55,7 +55,7 @@ func oilPayDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
 		// جدول ۳ (پایهٔ سمت → حق جذب عمومی و حق مقام) و جدول‌های ۱ و ۲ (محل سکونت).
 		"jobGrades":   oilJobGradeOptions(params),
 		"residences":  oilResidenceOptions(params),
-		"employees":   oilEmployeeOptions(ctx, deps),
+		"employees":   oilEmployeeOptions(ctx, deps, params),
 		"paramViews":  oilParamViews(deps),
 		"period":      oilPeriod(deps),
 		"today":       oilToday(deps),
@@ -133,7 +133,34 @@ func oilPayParams(deps modulekit.Deps) rules.OilPayParams {
 		}
 	}
 	oilTableParams(deps, &params)
+	oilGradeMapParams(deps, &params)
 	return params
+}
+
+// oilGradeMapParams نگاشت «گروه شغلی → پایهٔ سمت» را از پارامترهای شرکت بازنویسی می‌کند.
+//
+// کلید پارامتر: oilpay.gradeMap.<کلید گروه شغلی> و مقدارش کلید پایهٔ سمت جدول ۳
+// (مثلاً oilpay.gradeMap.manager = A). فقط پیشنهاد فرم است؛ درصد هیچ قلمی از آن نمی‌آید.
+func oilGradeMapParams(deps modulekit.Deps, params *rules.OilPayParams) {
+	if params.GradeSiteMap == nil {
+		params.GradeSiteMap = map[string]string{}
+	}
+	for _, p := range deps.Org.Params {
+		parts := strings.Split(p.Key, ".")
+		if len(parts) != 3 || parts[0] != "oilpay" || parts[1] != "gradeMap" {
+			continue
+		}
+		grade := strings.TrimSpace(parts[2])
+		site := strings.TrimSpace(p.Value)
+		if grade == "" {
+			continue
+		}
+		if site == "" || site == "-" {
+			delete(params.GradeSiteMap, grade)
+			continue
+		}
+		params.GradeSiteMap[grade] = site
+	}
 }
 
 // oilTableParams خانه‌های جدول ۱، ۲ و ۳ آیین‌نامه را از پارامترهای شرکت بازنویسی می‌کند.
@@ -254,7 +281,7 @@ func oilResidenceOptions(params rules.OilPayParams) []map[string]any {
 }
 
 // oilEmployeeOptions کارکنان برای انتخاب در فرم (از پورت ماژول کارکنان).
-func oilEmployeeOptions(ctx context.Context, deps modulekit.Deps) []map[string]string {
+func oilEmployeeOptions(ctx context.Context, deps modulekit.Deps, params rules.OilPayParams) []map[string]string {
 	reader, ok := deps.Ports.Employees()
 	if !ok {
 		return []map[string]string{}
@@ -273,6 +300,12 @@ func oilEmployeeOptions(ctx context.Context, deps modulekit.Deps) []map[string]s
 			// محل سکونت پرونده: درصد جدول ۱ و ۲ را خودکار در فرم می‌گذارد.
 			"residenceSite":   e.ResidenceSite,
 			"residenceSiteFa": e.ResidenceSiteFa,
+			// گروه شغلی پرونده (اجرای ابلاغ آن را می‌نویسد) و پایهٔ سمت پیشنهادی جدول ۳
+			// برای همان گروه؛ فرم فیش با انتخاب کارمند، پایهٔ سمت را خودکار می‌گذارد.
+			"jobGrade":       e.JobGrade,
+			"jobGradeFa":     e.JobGradeFa,
+			"jobGradeSite":   rules.OilSiteForGrade(params, e.JobGrade),
+			"jobGradeSiteFa": rules.OilJobGradeTitleFa(rules.OilSiteForGrade(params, e.JobGrade)),
 		})
 	}
 	return out
@@ -322,7 +355,7 @@ func oilPayNoteFa() string {
 		"بسته می‌شوند.\n" +
 		"فوق‌العادهٔ نوبت‌کاری تنها برای نوبت‌کار پرداخت می‌شود و به نسبت روزهای نوبت‌کاری به " +
 		"روزهای ماه محاسبه می‌گردد. اضافه‌کار هر ساعت ۰٫۰۱۴ پایهٔ حقوق برای روزکار و ۰٫۰۱۶ برای " +
-		"نوبت‌کار است. کسور شامل سهم کارمند صندوق (۷٪)، بیمهٔ سهم کارمند (اگر پارامتر داشته " +
+		"نوبت‌کار است. کسور شامل سهم کارمند صندوق (۶٪)، بیمهٔ سهم کارمند (اگر پارامتر داشته " +
 		"باشد) و مالیات پله‌ای است.\n" +
 		"درصد هر قلم و هر خانهٔ جدول‌ها پارامتریک است (oilpay.allowance.<قلم>، " +
 		"oilpay.degree.<مقطع>، oilpay.site.<محل>.* و oilpay.grade.<پایه>.*)؛ پس تغییر مصوبه " +

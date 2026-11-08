@@ -31,6 +31,16 @@ type WageStructure struct {
 	// SalaryRepair مبلغ ترمیم حقوق مصوب (ریال در ماه)؛ ثابت و جزو مزد مبنا.
 	SalaryRepair int64 `json:"salaryRepair,omitempty"`
 
+	// PayGap تفاوت تطبیق ماهانه (ریال) در سند کارگزینی.
+	//
+	// چرا در همین ساختار: تفاوت تطبیق بخشی از «فرمت حقوق» است؛ در حکم ثبت می‌شود و فیش
+	// حقوق و اسناد چاپی آن را از همین‌جا می‌خوانند. مبلغ جذب‌شدنی است (با هر افزایش حقوق
+	// کم می‌شود) و **جزو مزد مبنا نیست**، پس مبنای اضافه‌کاری را بالا نمی‌برد؛ اما در جمع
+	// ناخالص حقوق می‌آید و مشمول بیمه و مالیات است.
+	PayGap int64 `json:"payGap,omitempty"`
+	// PayGapSince تاریخ شروع تفاوت تطبیق (شمسی YYYY/MM/DD) — مبدأ محاسبهٔ جذب و سابقهٔ حکم.
+	PayGapSince string `json:"payGapSince,omitempty"`
+
 	// ضرایب اقلیمی همین کارمند (۰٫۲۵ = ۲۵٪ مزد مبنا). صفر یعنی از پارامتر شرکت خوانده شود.
 	BadClimatePercent     float64 `json:"badClimatePercent,omitempty"`     // بدی آب و هوا
 	DeprivationPercent    float64 `json:"deprivationPercent,omitempty"`    // محرومیت از تسهیلات زندگی
@@ -47,8 +57,11 @@ func (w WageStructure) HasClimatePercent() bool {
 // HasWageComponents آیا سند کارگزینی جزء ثابت مزد (فراتر از پایه) دارد؟
 func (w WageStructure) HasWageComponents() bool {
 	return w.RankWage != 0 || w.SeniorityWage != 0 || w.PostAllowance != 0 ||
-		w.SacrificeAllowance != 0 || w.ClimateAllowance != 0
+		w.SacrificeAllowance != 0 || w.ClimateAllowance != 0 || w.PayGap != 0
 }
+
+// HasPayGap آیا این سند تفاوت تطبیق دارد؟
+func (w WageStructure) HasPayGap() bool { return w.PayGap != 0 }
 
 // Components اجزای مزد این سند کارگزینی را می‌سازد.
 //
@@ -99,6 +112,12 @@ func (w *WageStructure) ApplyOverride(in WageStructure) {
 	}
 	if in.SalaryRepair != 0 {
 		w.SalaryRepair = in.SalaryRepair
+	}
+	if in.PayGap != 0 {
+		w.PayGap = in.PayGap
+	}
+	if in.PayGapSince != "" {
+		w.PayGapSince = in.PayGapSince
 	}
 	if in.BadClimatePercent != 0 {
 		w.BadClimatePercent = in.BadClimatePercent

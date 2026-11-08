@@ -540,6 +540,11 @@ func computePayslip(ctx context.Context, deps modulekit.Deps, employee contracts
 		base = structure.BaseSalary
 	}
 	input := rules.PayrollInput{BaseSalary: base}
+	// تفاوت تطبیق از سند کارگزینی همان کارمند می‌آید (حکم ابلاغ‌شده یا قرارداد جاری)؛
+	// در جمع ناخالص می‌نشیند تا بیمه و مالیات هم آن را ببینند.
+	if structure.PayGap > 0 {
+		input.PayGap = structure.PayGap
+	}
 	result := rules.ComputePayroll(input, params)
 	info := PayslipInfo{
 		Period:            fmt.Sprintf("%04d/%02d", today.Year, today.Month),
@@ -549,6 +554,11 @@ func computePayslip(ctx context.Context, deps modulekit.Deps, employee contracts
 		Tax:               result.Tax,
 		Net:               result.Net,
 		WageSourceFa:      sourceFa,
+		PayGap:            input.PayGap,
+		PayGapSince:       strings.TrimSpace(structure.PayGapSince),
+	}
+	if info.PayGap != 0 {
+		info.PayGapFa = money(info.PayGap)
 	}
 	if provider, ok := deps.Ports.PayElements(); ok {
 		env, wages := elementEnvFor(ctx, deps, params, input, result, structure)
@@ -610,6 +620,20 @@ func wageStructure(ctx context.Context, deps modulekit.Deps, employee contracts.
 	})
 	if sourceFa != "" {
 		rows[0].DetailFa = rows[0].DetailFa + " — " + sourceFa
+	}
+	// تفاوت تطبیق: مبلغ ثابت جذب‌شدنی سند کارگزینی. عمداً **پس از** سطر جمع مزد مبنا
+	// می‌آید تا خواننده ببیند مزد مبنا آن را در بر نمی‌گیرد، ولی بخشی از پرداخت ماه است.
+	if structure.PayGap != 0 {
+		detail := "تفاوت تطبیق مصوب — مبلغ جذب‌شدنی، خارج از مزد مبنا"
+		if since := strings.TrimSpace(structure.PayGapSince); since != "" {
+			detail += "، از " + since
+		}
+		rows = append(rows, StructureRow{
+			TitleFa: "تفاوت تطبیق", KindFa: "مبلغ ثابت تطبیق (جذب‌شدنی)",
+			DetailFa: detail,
+			AmountFa: money(structure.PayGap),
+			GroupFa:  "فوقالعاده‌ها و پرداخت‌های دوره",
+		})
 	}
 	for _, line := range rules.ComputeElements(provider.PayElements(ctx), env) {
 		if strings.TrimSpace(line.Category) != "earning" || inBase[line.Code] {

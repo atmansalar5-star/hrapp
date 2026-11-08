@@ -59,6 +59,7 @@ import KaranaScreen from '../features/payroll/KaranaScreen';
 import PayReportsScreen from '../features/payroll/PayReportsScreen';
 import PayParamsScreen from '../features/payroll/PayParamsScreen';
 import ServiceBonusScreen from '../features/payroll/ServiceBonusScreen';
+import PayGapScreen from '../features/payroll/PayGapScreen';
 // فاز ۱: فایل قانونی بیمه/مالیات و فایل پرداخت بانکی (زیرکارهای ۱.۴ و ۱.۵).
 import StatutoryFilesScreen from '../features/payroll/StatutoryFilesScreen';
 import BankFilesScreen from '../features/payroll/BankFilesScreen';
@@ -147,6 +148,9 @@ import ArchiveDocumentsScreen from '../features/archive/ArchiveDocumentsScreen';
 import JobCategoriesScreen from '../features/jobclass/JobCategoriesScreen';
 import JobEvaluationScreen from '../features/jobclass/JobEvaluationScreen';
 import JobDescriptionsScreen from '../features/jobclass/JobDescriptionsScreen';
+import JobRegistryScreen from '../features/jobclass/JobRegistryScreen';
+import JobCardScreen from '../features/jobclass/JobCardScreen';
+import JobQualificationScreen from '../features/jobclass/JobQualificationScreen';
 
 // واحد امور کارکنان — امور وام و بازنشستگی
 import LoansScreen from '../features/loans_retirement/LoansScreen';
@@ -219,6 +223,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   PayItemsScreen,
   PayParamsScreen,
   ServiceBonusScreen,
+  PayGapScreen,
   StatutoryFilesScreen,
   BankFilesScreen,
   PayReportsScreen,
@@ -274,6 +279,9 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   JobCategoriesScreen,
   JobEvaluationScreen,
   JobDescriptionsScreen,
+  JobRegistryScreen,
+  JobCardScreen,
+  JobQualificationScreen,
   LoansScreen,
   LoanInstallmentsScreen,
   RetirementFilesScreen,

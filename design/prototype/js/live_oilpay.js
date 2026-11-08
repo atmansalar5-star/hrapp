@@ -204,6 +204,10 @@ function oilOnEmployee() {
   // محل سکونت پرونده: درصد جدول ۱ و ۲ از همین کلید خوانده می‌شود.
   const site = document.getElementById('oilResidence');
   if (hit && site) site.value = hit.residenceSite || '';
+  // گروه شغلی پرونده: پایهٔ سمت پیشنهادی جدول ۳ (نگاشت پارامتریک) در فرم می‌نشیند تا
+  // نتیجهٔ ابلاغ ترفیع خودکار در فیش دیده شود؛ کاربر هنوز می‌تواند آن را عوض کند.
+  const grade = document.getElementById('oilJobGrade');
+  if (hit && grade && hit.jobGradeSite) grade.value = hit.jobGradeSite;
   oilCalcSoon();
 }
 

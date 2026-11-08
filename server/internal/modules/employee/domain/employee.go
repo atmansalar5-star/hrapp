@@ -37,9 +37,13 @@ type Employee struct {
 	// ResidenceSite کلید محل سکونت (فهرست `rules.OilResidences`)؛ مبنای درصد جدول ۱ و ۲
 	// آیین‌نامهٔ فوق‌العاده‌های صندوق بازنشستگی نفت. خالی یعنی ثبت نشده.
 	ResidenceSite string
-	Email         string
-	ManagerName   string
-	Version       int
+	// JobGrade کلید گروه شغلی کارمند (نردبان `rules.DefaultGradeLadder`). اجرای ابلاغ
+	// انتصاب یا ترفیع آن را می‌نویسد و فیش حقوق صندوق نفت «پایهٔ سمت» را از همین گروه
+	// پیشنهاد می‌دهد؛ خالی یعنی ثبت نشده.
+	JobGrade    string
+	Email       string
+	ManagerName string
+	Version     int
 }
 
 // ToContract تبدیل به شکل انتقالی قرارداد API.
@@ -68,6 +72,8 @@ func (e Employee) ToContract() contracts.Employee {
 		Address:          e.Address,
 		ResidenceSite:    e.ResidenceSite,
 		ResidenceSiteFa:  rules.OilResidenceTitleFa(e.ResidenceSite),
+		JobGrade:         e.JobGrade,
+		JobGradeFa:       gradeTitleFa(e.JobGrade),
 		Email:            e.Email,
 		ManagerName:      e.ManagerName,
 		Version:          e.Version,
@@ -100,6 +106,7 @@ func FromInput(id string, in contracts.EmployeeInput, departmentName string) Emp
 		PostalCode:     calendar.NormalizeDigits(strings.TrimSpace(in.PostalCode)),
 		Address:        strings.TrimSpace(in.Address),
 		ResidenceSite:  resolveResidenceSite(in.ResidenceSite),
+		JobGrade:       resolveJobGrade(in.JobGrade),
 		Email:          in.Email,
 	}
 }
@@ -157,6 +164,9 @@ func (e Employee) Apply(in contracts.EmployeeInput) Employee {
 	if site := resolveResidenceSite(in.ResidenceSite); site != "" {
 		e.ResidenceSite = site
 	}
+	if grade := resolveJobGrade(in.JobGrade); grade != "" {
+		e.JobGrade = grade
+	}
 	if in.Email != "" {
 		e.Email = in.Email
 	}
@@ -184,6 +194,31 @@ func resolveEmploymentType(employmentType, contractType string) string {
 		return "contractor_current"
 	}
 	return "official_oil"
+}
+
+// gradeTitleFa عنوان فارسی گروه شغلی؛ گروه ثبت‌نشده خالی برمی‌گردد (نه «نامشخص») تا
+// رابط بتواند «ثبت نشده» را خودش بنویسد.
+func gradeTitleFa(key string) string {
+	if strings.TrimSpace(key) == "" {
+		return ""
+	}
+	return rules.GradeTitleFa(rules.GradeRankOf(key))
+}
+
+// ResolveJobGrade کلید معتبر گروه شغلی را برمی‌گرداند؛ کلید ناشناخته خالی می‌شود.
+//
+// صادرشده تا لایهٔ کاربرد (پورت تغییر سازمانی) همان اعتبارسنجی دامنه را به کار ببرد و
+// گروهی بیرون از نردبان گروه‌ها در پرونده ننشیند.
+func ResolveJobGrade(key string) string { return resolveJobGrade(key) }
+
+// resolveJobGrade کلید معتبر گروه شغلی را برمی‌گرداند؛ کلید ناشناخته خالی می‌شود تا
+// گروهی بیرون از نردبان گروه‌های سازمان در پرونده ثبت نشود.
+func resolveJobGrade(key string) string {
+	value := strings.TrimSpace(key)
+	if rules.GradeRankOf(value) == 0 {
+		return ""
+	}
+	return value
 }
 
 // resolveResidenceSite کلید معتبر محل سکونت را برمی‌گرداند؛ کلید ناشناخته خالی می‌شود تا

@@ -223,6 +223,12 @@ type OilPayParams struct {
 	JobGrades []OilJobGrade `json:"jobGrades"`
 	// Residences جدول ۱ و ۲ (محل سکونت → درصد محرومیت و صرف وقت).
 	Residences []OilResidence `json:"residences"`
+	// GradeSiteMap نگاشت «گروه شغلی کارمند» (نردبان `DefaultGradeLadder`) به «پایهٔ سمت»
+	// جدول ۳. تنها کاربردش پیشنهاد خودکار پایهٔ سمت در فرم فیش است؛ درصد هیچ قلمی از آن
+	// محاسبه نمی‌شود. پیش‌فرض این نگاشت پیشنهاد سازمان است و با پارامتر شرکت
+	// (oilpay.gradeMap.<گروه>) بازنویسی می‌شود؛ نبودِ نگاشت یعنی انتخاب پایهٔ سمت به
+	// کاربر واگذار می‌شود.
+	GradeSiteMap map[string]string `json:"gradeSiteMap,omitempty"`
 }
 
 // DefaultOilPayParams مقادیر پیش‌فرض (آیین‌نامهٔ فوق‌العاده‌ها) تا وقتی پارامتر شرکت
@@ -253,8 +259,9 @@ func DefaultOilPayParams() OilPayParams {
 				Percent: 35, Base: OilBaseAllowance, RequiresShift: true,
 				NoteFa: "ردیف ۱۷ آیین‌نامه — تنها برای نوبت‌کار؛ به نسبت روزهای نوبت‌کاری در ماه."},
 		},
-		FundEmployeePercent:      7,
-		FundEmployerPercent:      20,
+		// کسور صندوق بازنشستگی نفت: سهم کارمند ۶٪ و سهم کارفرما ۱۹٪ از جمع ناخالص.
+		FundEmployeePercent:      6,
+		FundEmployerPercent:      19,
 		InsuranceEmployeePercent: 0,
 		InsuranceCeiling:         0,
 		TaxExemption:             24_000_000,
@@ -278,6 +285,16 @@ func DefaultOilPayParams() OilPayParams {
 		},
 		JobGrades:  OilJobGrades(),
 		Residences: OilResidences(),
+		// نگاشت پیشنهادی گروه شغلی → پایهٔ سمت جدول ۳. این یک «پیشنهاد» است، نه قاعده:
+		// فرم فیش آن را پیش‌فرض می‌گذارد و کاربر میتواند پایهٔ سمت دیگری برگزیند.
+		GradeSiteMap: map[string]string{
+			"employee":       "6-10",
+			"expert":         "11-15",
+			"senior_expert":  "16",
+			"supervisor":     "17",
+			"manager":        "A",
+			"senior_manager": "B",
+		},
 	}
 }
 
@@ -609,6 +626,14 @@ const OilDegreeAllowance = "degreeSpecialty"
 // OilDegreeAllowanceTitleFa عنوان فارسی قلم فوق‌العادهٔ تخصصی.
 func OilDegreeAllowanceTitleFa() string {
 	return "فوق‌العادهٔ تخصصی بر اساس مدرک تحصیلی"
+}
+
+// OilSiteForGrade پایهٔ سمت پیشنهادی برای یک گروه شغلی (خالی = نگاشتی نیست).
+func OilSiteForGrade(params OilPayParams, grade string) string {
+	if params.GradeSiteMap == nil {
+		return ""
+	}
+	return strings.TrimSpace(params.GradeSiteMap[strings.TrimSpace(grade)])
 }
 
 // OilDegreePercent درصد فوق‌العادهٔ تخصصی یک مقطع از پارامترها (صفر = مشمول نیست).

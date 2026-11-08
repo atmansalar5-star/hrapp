@@ -42,9 +42,14 @@ type Employee struct {
 	// «فوقالعادهٔ محرومیت از تسهیلات زندگی» و «فوقالعادهٔ جبران صرف وقت اضافی».
 	ResidenceSite   string `json:"residenceSite,omitempty"`
 	ResidenceSiteFa string `json:"residenceSiteFa,omitempty"`
-	Email           string `json:"email"`
-	ManagerName     string `json:"managerName"`
-	Version         int    `json:"version"`
+	// JobGrade کلید گروه شغلی کارمند (نردبان `rules.DefaultGradeLadder`) و JobGradeFa
+	// عنوان فارسی آن. اجرای ابلاغ انتصاب/ترفیع آن را می‌نویسد و فیش حقوق صندوق نفت
+	// «پایهٔ سمت» را از همین گروه پیشنهاد می‌دهد.
+	JobGrade    string `json:"jobGrade,omitempty"`
+	JobGradeFa  string `json:"jobGradeFa,omitempty"`
+	Email       string `json:"email"`
+	ManagerName string `json:"managerName"`
+	Version     int    `json:"version"`
 	// PhotoURL نشانی سرو «عکس کارگزینی» این کارمند (امضاشده)؛ خالی یعنی عکس
 	// بارگذاری نشده است. عکس در پوشهٔ دادهٔ سرور نگه داشته می‌شود و این نشانی از
 	// خودِ همان فایل ساخته می‌شود، پس با بازآوری باینری از دست نمی‌رود.
@@ -96,7 +101,9 @@ type EmployeeInput struct {
 	// ResidenceSite کلید محل سکونت؛ درصد جدول ۱ و ۲ آیین‌نامهٔ فوق‌العاده‌های صندوق
 	// بازنشستگی نفت از همین کلید خوانده می‌شود (خالی = از پارامتر شرکت).
 	ResidenceSite string `json:"residenceSite,omitempty"`
-	Email         string `json:"email,omitempty"`
+	// JobGrade کلید گروه شغلی کارمند؛ اجرای ابلاغ انتصاب/ترفیع آن را می‌نویسد.
+	JobGrade string `json:"jobGrade,omitempty"`
+	Email    string `json:"email,omitempty"`
 }
 
 // EmployeePage صفحهٔ کارکنان همراه با شمارش کل رکوردها.

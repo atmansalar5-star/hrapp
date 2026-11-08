@@ -103,6 +103,7 @@ type Ports struct {
 	catalogs      contracts.CatalogReader
 	dependents    contracts.DependentReader
 	historySrcs   []contracts.HistorySource
+	jobs          contracts.JobRegistryReader
 }
 
 // NewPorts مجموعهٔ خالی portها.
@@ -121,6 +122,22 @@ func (p *Ports) Dependents() (contracts.DependentReader, bool) {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
 	return p.dependents, p.dependents != nil
+}
+
+// SetJobRegistry ثبت پورت شناسنامهٔ شغل (توسط ماژول طبقه‌بندی مشاغل) تا تصویب‌خواهی
+// انتصاب و ارتقا شرایط احراز شغل را از سند مرجع بخواند، نه از ورودی دستی کاربر.
+func (p *Ports) SetJobRegistry(r contracts.JobRegistryReader) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.jobs = r
+}
+
+// JobRegistry خواندن پورت شناسنامهٔ شغل؛ اگر ماژول ثبت نکرده باشد false برمی‌گردد و
+// مصرف‌کننده به شرط دستی برمی‌گردد.
+func (p *Ports) JobRegistry() (contracts.JobRegistryReader, bool) {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	return p.jobs, p.jobs != nil
 }
 
 // SetCatalogReader ثبت پورت کاتالوگ‌های مرجع (توسط ماژول تنظیمات) تا ماژول‌های وام و

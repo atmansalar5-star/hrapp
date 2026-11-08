@@ -189,10 +189,23 @@ func (s *Service) Assign(ctx context.Context, id string, in contracts.EmployeeAs
 	}
 
 	updated := current
-	result := contracts.EmployeeAssignmentResult{}
+	// عکس وضع پیشین همراه نتیجه برمی‌گردد تا ماژول انتصابات بتواند در «ابطال ابلاغ»
+	// پرونده را به همین مقدارها برگرداند؛ مالک پرونده تنها کسی است که وضع پیشین را می‌داند.
+	result := contracts.EmployeeAssignmentResult{Before: current.ToContract()}
 	if position := strings.TrimSpace(in.Position); position != "" && position != current.Position {
 		updated.Position = position
 		result.PositionChanged = true
+	}
+	// نشانهٔ «-» یعنی «گروه شغلی را خالی کن» (ابطال ابلاغی که گروهی به پرونده اضافه کرده
+	// بود)؛ فیلد خالی یعنی «تغییر نده».
+	if raw := strings.TrimSpace(in.JobGrade); raw == clearJobGrade {
+		if current.JobGrade != "" {
+			updated.JobGrade = ""
+			result.GradeChanged = true
+		}
+	} else if grade := resolveGrade(raw); grade != "" && grade != current.JobGrade {
+		updated.JobGrade = grade
+		result.GradeChanged = true
 	}
 	if name := strings.TrimSpace(in.DepartmentName); name != "" {
 		if dept, found := infra.DepartmentByName(name); found {
@@ -205,9 +218,9 @@ func (s *Service) Assign(ctx context.Context, id string, in contracts.EmployeeAs
 		}
 	}
 
-	if !result.PositionChanged && !result.DepartmentChanged {
+	if !result.PositionChanged && !result.DepartmentChanged && !result.GradeChanged {
 		result.Employee = current.ToContract()
-		result.NoteFa = "پروندهٔ کارمند با ابلاغ هم‌خوان است؛ پست و واحد تغییری لازم نداشت."
+		result.NoteFa = "پروندهٔ کارمند با ابلاغ هم‌خوان است؛ پست، واحد و گروه شغلی تغییری لازم نداشت."
 		return result, nil
 	}
 
@@ -225,6 +238,14 @@ func (s *Service) Assign(ctx context.Context, id string, in contracts.EmployeeAs
 	result.Employee = dto
 	result.NoteFa = assignmentNoteFa(result)
 	return result, nil
+}
+
+// clearJobGrade نشانهٔ صریح «گروه شغلی را پاک کن» در قرارداد تغییر سازمانی.
+const clearJobGrade = "-"
+
+// resolveGrade کلید گروه شغلی را می‌سنجد؛ گروه ناشناخته تغییر نمی‌کند (قاعدهٔ دامنه).
+func resolveGrade(key string) string {
+	return domain.ResolveJobGrade(key)
 }
 
 // recordAssign تغییر سازمانی را در دفتر حسابرسی و لاگ سینک ثبت می‌کند.
@@ -247,6 +268,9 @@ func assignmentNoteFa(result contracts.EmployeeAssignmentResult) string {
 	}
 	if result.DepartmentChanged {
 		parts = append(parts, "واحد سازمانی پرونده به‌روزرسانی شد")
+	}
+	if result.GradeChanged {
+		parts = append(parts, "گروه شغلی پرونده به‌روزرسانی شد")
 	}
 	if len(parts) == 0 {
 		return "پروندهٔ کارمند با ابلاغ هم‌خوان است."

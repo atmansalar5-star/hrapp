@@ -131,6 +131,9 @@ var All = []Module{
 			{Key: "jobCategories", Order: 1, Icon: "layers", TitleFa: "طبقه‌بندی و رتبه‌بندی مشاغل", Component: "JobCategoriesScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "jobEvaluation", Order: 2, Icon: "target", TitleFa: "ارزشیابی مشاغل", Component: "JobEvaluationScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "jobDescriptions", Order: 3, Icon: "file-text", TitleFa: "شرح شغل و شناسنامهٔ شغل", Component: "JobDescriptionsScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
+			{Key: "jobRegistry", Order: 4, Icon: "book-open", TitleFa: "شرح مشاغل", Component: "JobRegistryScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
+			{Key: "jobCard", Order: 5, Icon: "id-card", TitleFa: "شناسنامهٔ شغل", Component: "JobCardScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
+			{Key: "jobQualification", Order: 6, Icon: "calculator", TitleFa: "فرم محاسباتی شرایط احراز", Component: "JobQualificationScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
 		},
 	},
 	{
@@ -182,6 +185,7 @@ var All = []Module{
 			{Key: "payItems", Order: 3, Icon: "sliders", TitleFa: "اجزای حقوق", Component: "PayItemsScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "karana", Order: 4, Icon: "hand-coins", TitleFa: "کارانه و پرداخت‌های متغیر", Component: "KaranaScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "payReports", Order: 5, Icon: "bar-chart", TitleFa: "گزارش‌های مالی حقوق", Component: "PayReportsScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "payGap", Order: 7, Icon: "scale", TitleFa: "تطبیق حقوق و تفاوت تطبیق", Component: "PayGapScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "serviceBonus", Order: 6, Icon: "calculator", TitleFa: "پاداش پایان خدمت (سنوات)", Component: "ServiceBonusScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "payParams", Order: 7, Icon: "percent", TitleFa: "پارامترها و ضرائب حقوق", Component: "PayParamsScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "statutoryFiles", Order: 8, Icon: "file-check", TitleFa: "فایل قانونی بیمه و مالیات", Component: "StatutoryFilesScreen", Roles: []string{"admin", "hr_manager"}},

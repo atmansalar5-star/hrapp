@@ -124,12 +124,12 @@ func TestOilGrossAndDeductions(t *testing.T) {
 	if slip.Gross != 53_500_000 {
 		t.Fatalf("جمع ناخالص نادرست است: %d", slip.Gross)
 	}
-	// کسور صندوق ۷٪ = ۳٬۷۴۵٬۰۰۰
-	if slip.FundEmployee != 3_745_000 {
+	// کسور صندوق ۶٪ = ۳٬۲۱۰٬۰۰۰
+	if slip.FundEmployee != 3_210_000 {
 		t.Fatalf("کسور صندوق نادرست است: %d", slip.FundEmployee)
 	}
-	// سهم کارفرما ۲۰٪ = ۱۰٬۷۰۰٬۰۰۰
-	if slip.FundEmployer != 10_700_000 {
+	// سهم کارفرما ۱۹٪ = ۱۰٬۱۶۵٬۰۰۰
+	if slip.FundEmployer != 10_165_000 {
 		t.Fatalf("سهم کارفرما نادرست است: %d", slip.FundEmployer)
 	}
 	if slip.Net != slip.Gross-slip.Deductions || slip.Net <= 0 {

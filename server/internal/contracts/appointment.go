@@ -6,8 +6,9 @@
 // باریک می‌دهد و ماژول انتصابات فقط همان را صدا می‌زند. قاعده‌ها (چه کسی تصدی می‌گیرد،
 // چه زمانی، با چه شواهدی) در دامنهٔ همان مالک می‌ماند.
 //
-// این دو پورت همان «گام‌های اجرا»یی هستند که `career/domain.ExecutionSteps` اعلام می‌کند؛
-// پیش از این اعلام می‌شدند ولی اجرا نمی‌شدند و ابلاغ فقط وضعیت رکورد را عوض می‌کرد.
+// دو عملیات لازم است و هر دو در همین پورت‌ها اعلام شده‌اند:
+//   - اجرا (Appoint/Assign): ابلاغ تازه را روی پرونده و تشکیلات می‌نشاند.
+//   - ابطال (Release): ابلاغ اجراشده را برمی‌گرداند — تصدی بسته و پرونده به وضع پیشین.
 package contracts
 
 import "context"
@@ -16,11 +17,14 @@ import "context"
 
 // EmployeeAssignment تغییر سازمانی‌ای که اجرای یک ابلاغ روی پروندهٔ کارمند می‌نشاند.
 //
-// Position پست تازه و DepartmentName نام واحد تازه است (نام، نه شناسه: رکورد ابلاغ نام
-// واحد را نگه می‌دارد و تبدیل نام به شناسه کار مالک پرونده است).
+// Position پست تازه، DepartmentName نام واحد تازه و JobGrade گروه شغلی تازه است (نام و
+// کلید، نه شناسه: رکورد ابلاغ همین‌ها را نگه می‌دارد و تبدیل به شناسه کار مالک پرونده است).
+// فیلدهای خالی تغییر نمی‌کنند، پس همین ساختار برای «برگرداندن به وضع پیشین» هم به کار
+// می‌رود (ابطال ابلاغ).
 type EmployeeAssignment struct {
 	Position       string `json:"position,omitempty"`
 	DepartmentName string `json:"departmentName,omitempty"`
+	JobGrade       string `json:"jobGrade,omitempty"`
 	DecreeNo       string `json:"decreeNo,omitempty"`
 	EffectiveDate  string `json:"effectiveDate,omitempty"`
 	ReasonFa       string `json:"reasonFa,omitempty"`
@@ -31,9 +35,13 @@ type EmployeeAssignment struct {
 // DepartmentMatched می‌گوید نام واحد ابلاغ در فهرست واحدها پیدا شد یا نه؛ اگر نشد، واحد
 // کارمند دست‌نخورده می‌ماند و این پرچم false برمی‌گردد تا گزارش اجرا صادق بماند.
 type EmployeeAssignmentResult struct {
-	Employee          Employee `json:"employee"`
+	Employee Employee `json:"employee"`
+	// Before وضع کارمند پیش از این تغییر است؛ ابطال ابلاغ با همین مقدارها پرونده را
+	// برمی‌گرداند و لازم نیست ماژول انتصابات وضع پیشین را خودش نگه دارد.
+	Before            Employee `json:"before,omitempty"`
 	PositionChanged   bool     `json:"positionChanged"`
 	DepartmentChanged bool     `json:"departmentChanged"`
+	GradeChanged      bool     `json:"gradeChanged"`
 	DepartmentMatched bool     `json:"departmentMatched"`
 	NoteFa            string   `json:"noteFa,omitempty"`
 }
@@ -73,7 +81,25 @@ type PositionAppointmentResult struct {
 	NoteFa          string   `json:"noteFa,omitempty"`
 }
 
-// AppointmentApplier پورت «ثبت تصدی پست در تشکیلات».
+// PositionRelease درخواست ابطال یک تصدی ثبت‌شده.
+//
+// چرا شناسهٔ انتصاب و نه کد پست: ابطال باید همان رکوردی را ببندد که اجرای ابلاغ ساخته
+// است، نه هر تصدی فعال دیگری روی همان پست.
+type PositionRelease struct {
+	AssignmentID string
+	EmployeeID   string
+	DecreeNo     string
+	ReasonFa     string
+}
+
+// PositionReleaseResult نتیجهٔ ابطال تصدی.
+type PositionReleaseResult struct {
+	Released bool   `json:"released"`
+	NoteFa   string `json:"noteFa,omitempty"`
+}
+
+// AppointmentApplier پورت «تشکیلات»: ثبت تصدی پست و ابطال آن.
 type AppointmentApplier interface {
 	Appoint(ctx context.Context, in PositionAppointment, actor string) (PositionAppointmentResult, error)
+	Release(ctx context.Context, in PositionRelease, actor string) (PositionReleaseResult, error)
 }

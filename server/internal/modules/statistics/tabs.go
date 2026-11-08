@@ -349,6 +349,13 @@ func sharePct(part, total float64) float64 {
 	return math.Round(part/total*1000) / 10
 }
 
+// round2 جمع ساعت/روز/مبلغ را به دو رقم اعشار میبرد. جمع شناور روی رکوردهای اعشاری
+// دنبالهٔ دودویی میسازد (۷٫۱۷ + ۷٫۹۲ + ... = ۱۲۱٫۲۸۰۰۰۰۰۰۰۰۰۰۰۲) و اگر گرد نشود،
+// همان دنباله در کارتهای آماری رابط دیده میشود.
+func round2(v float64) float64 {
+	return math.Round(v*100) / 100
+}
+
 // statusLabelFa برچسب فارسی وضعیت‌های رایج رکوردها؛ اگر نبود، خود کلید نمایش داده می‌شود.
 func statusLabelFa(status string) (string, bool) {
 	labels := map[string]string{

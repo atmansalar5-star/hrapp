@@ -45,6 +45,9 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// نظام پرداخت صندوق بازنشستگی نفت: پایهٔ حقوق، فوق‌العادهٔ مناطق گرمسیری و
 	// فوق‌العاده‌های درصدی از «مبنای فوق‌العاده‌ها» (اقلیمی و نوبت‌کاری).
 	registerOilPayEndpoints(mux, deps, svc)
+	// تطبیق حقوق و «تفاوت تطبیق»: سنجش کاهش حقوق در زمان اجرای طرح تازه و ساخت فرم
+	// محاسباتی و نمودار جذب آن (قاعده در بستهٔ rules).
+	registerPayGapEndpoints(mux, deps, svc)
 
 	// منبع دادهٔ گزارش‌ساز: اقلام حقوق را به‌عنوان ستون‌های انتخاب‌شدنی معرفی می‌کند.
 	deps.Ports.RegisterReportSource(payrollReportSource{svc: svc})
