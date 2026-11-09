@@ -1,0 +1,844 @@
+{
+  "source": "دستورالعمل کمک هزینه‌های درمانی / اروتز و پروتز / دندانپزشکی — سازمان بهداشت و درمان صنعت نفت — اجرا از فروردین ۱۴۰۵",
+  "effectiveFrom": "1405/01/01",
+  "tariffs": [
+    {
+      "code": "MT-EQP-001",
+      "category": "equipment",
+      "titleFa": "الف) کمک هزینه سمعک یک گوش",
+      "unitFa": "هر 3 سال یکبار",
+      "amount": 390000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۴ سند",
+      "requirePrescription": true,
+      "noteFa": "با ارائه مستندات مربوطه (گزارش شنوایی سنجی، تجویز پزشک متخصص گوش و حلق و بینی و فاکتور معتبر)"
+    },
+    {
+      "code": "MT-EQP-002",
+      "category": "equipment",
+      "titleFa": "ب) کمک هزینه سمعک دو گوش - اطفال زیر 18 سال",
+      "unitFa": "بابت دو گوش هر 3 سال یکبار",
+      "amount": 780000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۴ سند",
+      "requirePrescription": true,
+      "noteFa": "با ارائه مستندات مربوطه (گزارش شنوایی سنجی، تجویز پزشک متخصص گوش و حلق و بینی و فاکتور معتبر)"
+    },
+    {
+      "code": "MT-EQP-003",
+      "category": "equipment",
+      "titleFa": "ب) کمک هزینه سمعک دو گوش - افراد بین 18 تا 60 سال",
+      "unitFa": "هر 3 سال یکبار",
+      "amount": 312000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۴ سند",
+      "orgSharePercent": 80.0,
+      "requirePrescription": true,
+      "noteFa": "با ارائه مستندات مربوطه (گزارش شنوایی سنجی، تجویز پزشک متخصص گوش و حلق و بینی و فاکتور معتبر)؛ درصورتیکه سمعک گوش اول دریافت شده باشد، برای دریافت سمعک گوش دوم تا 80% تعرفه کمک هزینه سمعک یک گوش (312000000 ریال معادل 80% مبلغ 390000000 ریال)"
+    },
+    {
+      "code": "MT-EQP-004",
+      "category": "equipment",
+      "titleFa": "ب) کمک هزینه سمعک دو گوش - افراد بالای 60 سال",
+      "unitFa": "بابت دو گوش هر 3 سال یکبار",
+      "amount": 780000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۴ سند",
+      "requirePrescription": true,
+      "noteFa": "با ارائه مستندات مربوطه (گزارش شنوایی سنجی، تجویز پزشک متخصص گوش و حلق و بینی و فاکتور معتبر) و تأیید شورای پزشکی منطقه"
+    },
+    {
+      "code": "MT-EQP-005",
+      "category": "equipment",
+      "titleFa": "ج) کمک هزینه تعمیر سمعک - حداکثر برای تعمیر هر سمعک",
+      "unitFa": "سالانه",
+      "amount": 60000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۴ سند"
+    },
+    {
+      "code": "MT-EQP-006",
+      "category": "equipment",
+      "titleFa": "ج) کمک هزینه باتری سمعک - حداکثر برای باتری سمعک",
+      "unitFa": "هر شش ماه",
+      "amount": 51000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۴ سند"
+    },
+    {
+      "code": "MT-EQP-007",
+      "category": "equipment",
+      "titleFa": "تعمیرات و باتری حلزون شنوایی - هزینه تعمیر و تعویض باتری تا سقف",
+      "unitFa": "هر شش ماه",
+      "amount": 51000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند",
+      "requirePrescription": true,
+      "noteFa": "با ارائه مستندات (تصویر رأی شورایعالی پزشکی مبنی بر کاشت حلزون) و فاکتور معتبر، بر عهده شرکتها/مدیرینها قابل پرداخت میباشد"
+    },
+    {
+      "code": "MT-GLD-001",
+      "category": "glasses",
+      "titleFa": "الف) کمک هزینه عینک بزرگسالان بالای 14 سال - فریم",
+      "unitFa": "هر 3 سال یکبار",
+      "amount": 63000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند"
+    },
+    {
+      "code": "MT-GLD-002",
+      "category": "glasses",
+      "titleFa": "الف) کمک هزینه عینک بزرگسالان بالای 14 سال - یک جفت شیشه (عدسی)",
+      "unitFa": "هر سال در صورت تغییر نمره عینک",
+      "amount": 39000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند"
+    },
+    {
+      "code": "MT-GLD-003",
+      "category": "glasses",
+      "titleFa": "ب) کمک هزینه عینک اطفال تا پایان 14 سالگی - فریم",
+      "unitFa": "هر سال یکبار",
+      "amount": 63000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند"
+    },
+    {
+      "code": "MT-GLD-004",
+      "category": "glasses",
+      "titleFa": "ب) کمک هزینه عینک اطفال تا پایان 14 سالگی - یک جفت شیشه (عدسی)",
+      "unitFa": "هر سال در صورت تغییر نمره عینک",
+      "amount": 39000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند"
+    },
+    {
+      "code": "MT-GLD-005",
+      "category": "glasses",
+      "titleFa": "ج) کمک هزینه عینک دو دید یا شیشه Progressive (تدریجی) به عنوان جایگزین موارد غیر دو دید - فریم",
+      "unitFa": "هر 2 سال یکبار",
+      "amount": 62000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند"
+    },
+    {
+      "code": "MT-GLD-006",
+      "category": "glasses",
+      "titleFa": "ج) کمک هزینه عینک دو دید یا شیشه Progressive (تدریجی) - یک جفت شیشه (عدسی)",
+      "unitFa": "هر سال در صورت تغیر نمره عینک",
+      "amount": 78000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند"
+    },
+    {
+      "code": "MT-GLD-007",
+      "category": "glasses",
+      "titleFa": "کمک هزینه یک جفت لنز تماسی نرم بزرگسالان",
+      "unitFa": "هر سال یکبار",
+      "amount": 51000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۴ سند"
+    },
+    {
+      "code": "MT-GLD-008",
+      "category": "glasses",
+      "titleFa": "کمک هزینه یک جفت لنز تماسی سخت",
+      "unitFa": "هر ۳ سال یکبار",
+      "amount": 102000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۴ سند"
+    },
+    {
+      "code": "MT-ORT-001",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه لنز داخل چشمی جهت اصلاح عیوب انکساری با رأی شورای پزشکی منطقه (مانند آرتیزان، آرتیفکس، وریسیس، وریفلکس و لنزهای فیکیک اتاق خلفی)",
+      "unitFa": "هر چشم",
+      "amount": 270000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند",
+      "requirePrescription": true,
+      "noteFa": "با رأی شورای پزشکی منطقه"
+    },
+    {
+      "code": "MT-ORT-002",
+      "category": "orthesis_prosthesis",
+      "titleFa": "پرداخت هزینه لنزهای تطابقی بای فوکال (دو کانونی) پس از ارسال به شورای پزشکی منطقه",
+      "unitFa": "سقف",
+      "amount": 300000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند",
+      "noteFa": "پس از ارسال به شورای پزشکی منطقه"
+    },
+    {
+      "code": "MT-ORT-003",
+      "category": "orthesis_prosthesis",
+      "titleFa": "تعرفه لنز داخل چشمی جهت جراحی کاتاراکت و فیکو مانند سایر پروتزهای جراحی",
+      "unitFa": "سقف",
+      "amount": 100000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۵ سند",
+      "noteFa": "به عهده شرکت‌ها / مدیریت‌ها"
+    },
+    {
+      "code": "MT-ORT-004",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه پروتز چشم مصنوعی",
+      "unitFa": "هر ۳ سال یکبار",
+      "amount": 270000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۶ سند"
+    },
+    {
+      "code": "MT-GLD-009",
+      "category": "glasses",
+      "titleFa": "کمک هزینه کلیه روش‌های جراحی لیزری برای رفع عیوب انکساری چشم (لیزیک، لازک، Zyoptix و ...)",
+      "unitFa": "هر چشم",
+      "amount": 270000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۶ سند",
+      "requirePrescription": true,
+      "noteFa": "با تأیید شورای پزشکی منطقه"
+    },
+    {
+      "code": "MT-DEN-001",
+      "category": "dental",
+      "titleFa": "پروتز کامل دو فک",
+      "unitFa": "هر ۵ سال یکبار",
+      "amount": 360000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-002",
+      "category": "dental",
+      "titleFa": "پروتز کامل یک فک",
+      "unitFa": "هر ۵ سال یکبار (یکبار برای فک بالا و یکبار برای فک پایین)",
+      "amount": 180000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-003",
+      "category": "dental",
+      "titleFa": "پروتز پارسیل کروم کبالت یک فک",
+      "unitFa": "هر ۵ سال (یکبار برای فک بالا و یکبار برای فک پایین)",
+      "amount": 360000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-004",
+      "category": "dental",
+      "titleFa": "پروتز پارسیل آکریلی یک فک بالای ۵ دندان",
+      "unitFa": "هر ۵ سال یکبار (یکبار برای فک بالا و یکبار برای فک پایین)",
+      "amount": 204000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-005",
+      "category": "dental",
+      "titleFa": "پروتز پارسیل آکریلی یک فک کمتر از ۵ دندان",
+      "unitFa": "هر ۵ سال یکبار (یکبار برای فک بالا و یکبار برای فک پایین)",
+      "amount": 135000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-006",
+      "category": "dental",
+      "titleFa": "روکش یک دندان از هر نوع",
+      "unitFa": "حداکثر تا ۲۴ واحد",
+      "amount": 120000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند",
+      "requirePrescription": true,
+      "noteFa": "با رؤیت رادیوگرافی PA (قبل و بعد درمان) توسط دندانپزشک معتمد"
+    },
+    {
+      "code": "MT-DEN-007",
+      "category": "dental",
+      "titleFa": "هزینه چسباندن روکش دندان (سمان کردن روکش) قدیمی",
+      "unitFa": "به ازاء هر واحد",
+      "amount": 12000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-008",
+      "category": "dental",
+      "titleFa": "روکش استیل اطفال (SSC)",
+      "unitFa": "ریال",
+      "amount": 48000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-009",
+      "category": "dental",
+      "titleFa": "انواع پست و کوربیرینگی (ونیر) و فایبرپست",
+      "unitFa": "حداکثر تا ۲۴ واحد",
+      "amount": 48000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-010",
+      "category": "dental",
+      "titleFa": "فضانگه دارنده متحرک در هر فک اطفال زیر ۱۴ سال (با هزینه لابراتوار)",
+      "unitFa": "در سال",
+      "amount": 81000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-011",
+      "category": "dental",
+      "titleFa": "فضانگه دارنده ثابت در ۱/۲ هر فک اطفال زیر ۱۴ سال (با هزینه لابراتوار)",
+      "unitFa": "در سال",
+      "amount": 81000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-012",
+      "category": "dental",
+      "titleFa": "آلوئوپلاستی در ۱/۲ هر فک (افزایش ریج استخوانی برای پروتز کامل فک)",
+      "unitFa": "هر ۵ سال یکبار",
+      "amount": 102000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-013",
+      "category": "dental",
+      "titleFa": "وستیبولوپلاستی در ۱/۲ هر فک (افزایش عمق وستیبول برای پروتز کامل فک)",
+      "unitFa": "هر ۵ سال یکبار",
+      "amount": 120000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-014",
+      "category": "dental",
+      "titleFa": "نایت گارد (محافظ دندانی) هر فک",
+      "unitFa": "هر دو سال یکبار",
+      "amount": 63000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-ORT-005",
+      "category": "orthesis_prosthesis",
+      "titleFa": "ری‌لاین (اصلاح پروتز قدیمی متحرک) هر فک",
+      "unitFa": "هر ۵ سال (یکبار برای فک بالا و یکبار برای فک پایین)",
+      "amount": 57000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-015",
+      "category": "dental",
+      "titleFa": "ریبس (اصلاح پروتز قدیمی متحرک) هر فک",
+      "unitFa": "هر ۵ سال (یکبار برای فک بالا و یکبار برای فک پایین)",
+      "amount": 63000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۸ سند"
+    },
+    {
+      "code": "MT-DEN-016",
+      "category": "dental",
+      "titleFa": "درمان ارتودنسی جامع سیستم دندانی به ازاء هر فک",
+      "unitFa": "هر فک",
+      "amount": 510000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۰ سند",
+      "requirePrescription": true,
+      "noteFa": "با تأیید دندانپزشک معتمد"
+    },
+    {
+      "code": "MT-DEN-017",
+      "category": "dental",
+      "titleFa": "درمان ارتودنسی متحرک (شامل وسایل مصرفی) به ازاء هر فک",
+      "unitFa": "هر فک",
+      "amount": 210000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۰ سند",
+      "requirePrescription": true,
+      "noteFa": "با تأیید دندانپزشک معتمد"
+    },
+    {
+      "code": "MT-DEN-018",
+      "category": "dental",
+      "titleFa": "فیکسچر و سایر هزینه ها",
+      "unitFa": "هر واحد",
+      "amount": 300000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۲ سند",
+      "noteFa": "حداکثر ۱۲ واحد"
+    },
+    {
+      "code": "MT-DEN-019",
+      "category": "dental",
+      "titleFa": "روکش برای ایمپلنت و سایر هزینه ها",
+      "unitFa": "هر واحد",
+      "amount": 150000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۲ سند",
+      "noteFa": "حداکثر ۱۲ واحد ( از ۲۴ واحد کلی )"
+    },
+    {
+      "code": "MT-DEN-020",
+      "category": "dental",
+      "titleFa": "اباتمنت",
+      "unitFa": "هر واحد",
+      "amount": 30000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۲ سند",
+      "noteFa": "حداکثر ۱۲ واحد"
+    },
+    {
+      "code": "MT-DEN-021",
+      "category": "dental",
+      "titleFa": "هر واحد اوردنچر معادل یک واحد روکش ایمپلنت",
+      "unitFa": "هر واحد (از ۲۴ واحد کلی)",
+      "amount": 150000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۳ سند"
+    },
+    {
+      "code": "MT-DEN-022",
+      "category": "dental",
+      "titleFa": "هر واحد فیکسچر اوردنچر",
+      "unitFa": "هر واحد (از ۱۲ واحد کلی)",
+      "amount": 30000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۳ سند"
+    },
+    {
+      "code": "MT-DEN-023",
+      "category": "dental",
+      "titleFa": "پروتز کامل اوردنچر یک فک طبق مقررات مربوطه",
+      "unitFa": "به ازاء هر فک",
+      "amount": 210000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۳ سند"
+    },
+    {
+      "code": "MT-DEN-024",
+      "category": "dental",
+      "titleFa": "پروتز کامل اوردنچر دو فک طبق مقررات مربوطه",
+      "unitFa": "دو فک",
+      "amount": 420000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۳ سند"
+    },
+    {
+      "code": "MT-ORT-006",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه جوراب واریس",
+      "unitFa": "یکبار در سال",
+      "amount": 42000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۴ سند",
+      "requirePrescription": true,
+      "noteFa": "با ارائه مستندات (نسخه پزشک متخصص و فاکتور معتبر) - با تجویز پزشک عمومی قابل پرداخت نیست"
+    },
+    {
+      "code": "MT-ORT-007",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه جوراب آنتی آمبولی",
+      "unitFa": "دو بار در سال",
+      "amount": 21000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۴ سند",
+      "requirePrescription": true,
+      "noteFa": "با ارائه مستندات بیمارستانی و فاکتور معتبر؛ در موارد سرپایی تأیید ضرورت استفاده بر عهده شورای پزشکی منطقه می‌باشد"
+    },
+    {
+      "code": "MT-ORT-008",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه آستین طبی",
+      "unitFa": "حداکثر دو بار در سال",
+      "amount": 42000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۴ سند",
+      "requirePrescription": true,
+      "noteFa": "با تجویز پزشک متخصص و فاکتور معتبر"
+    },
+    {
+      "code": "MT-ORT-009",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه یک ست پروتز سینه اکسترنال",
+      "unitFa": "یکبار در سال",
+      "amount": 27000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۴ سند",
+      "requirePrescription": true,
+      "noteFa": "پرداخت بر عهده شرکت‌ها / مدیریت‌ها؛ مستندات: شک + تصویر شرح عمل ماستکتومی + فاکتور معتبر"
+    },
+    {
+      "code": "MT-ORT-010",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه هر عدد پروتز سینه",
+      "unitFa": "هر سه سال یکبار",
+      "amount": 210000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۴ سند",
+      "requirePrescription": true,
+      "noteFa": "مستندات: شک + تصویر شرح عمل ماستکتومی + فاکتور معتبر"
+    },
+    {
+      "code": "MT-ORT-011",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه عصا",
+      "unitFa": "یکبار در سال",
+      "amount": 18000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۵ سند",
+      "requirePrescription": true,
+      "noteFa": "با ارائه مستندات (نسخه پزشک و فاکتور معتبر)"
+    },
+    {
+      "code": "MT-ORT-012",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه واکر",
+      "unitFa": "هر دو سال یکبار",
+      "amount": 27000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۵ سند",
+      "requirePrescription": true,
+      "noteFa": "با ارائه مستندات (نسخه پزشک و فاکتور معتبر)"
+    },
+    {
+      "code": "MT-ORT-013",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه کفش طبی و صندل طبی و کفی طبی مجموعاً",
+      "unitFa": "در سال",
+      "amount": 51000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۵ سند",
+      "requirePrescription": true,
+      "noteFa": "با تأیید واحد درمان غیرمستقیم و امور بیمه‌گری مناطق"
+    },
+    {
+      "code": "MT-ORT-014",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه کفش طبی ، صندل طبی و کفی های طبی مشروط بر عدم پیش ساخته بودن",
+      "unitFa": "حداکثر یکبار در سال",
+      "amount": 120000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۵ سند",
+      "requirePrescription": true,
+      "noteFa": "با تأیید شورای پزشکی منطقه؛ صرفاً جهت درمان شخص بیمار ساخته شده باشد"
+    },
+    {
+      "code": "MT-ORT-015",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه کفش طبی برای اطفال زیر ۱۴ سال",
+      "unitFa": "دوبار در سال",
+      "amount": 60000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۵ سند",
+      "noteFa": "هر بار تا سقف مبلغ مذکور"
+    },
+    {
+      "code": "MT-ORT-016",
+      "category": "orthesis_prosthesis",
+      "titleFa": "کمک هزینه انواع اروتزهای سرپایی مانند مج بند ، زانوبند ، کتف بند ، آرنج بند ، فتق بند ، شکم بند ، گردن بند (کولار) ، آویز دست ، استرنوم ، ساپورت و کف کفش کمری",
+      "unitFa": "در سال",
+      "amount": 84000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۵ سند",
+      "requirePrescription": true,
+      "noteFa": "مجموعاً تا سقف مبلغ مذکور؛ تجویز اروتز توسط پزشک عمومی قابل پرداخت نمی‌باشد"
+    },
+    {
+      "code": "MT-PAR-001",
+      "category": "paraclinic",
+      "titleFa": "کمک هزینه خدمات حمایتی و توانبخشی",
+      "unitFa": "ماهانه",
+      "amount": 300000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۱۷ سند"
+    },
+    {
+      "code": "MT-PAR-002",
+      "category": "paraclinic",
+      "titleFa": "کمک هزینه انجام ختنه اولاد — در مطب (به طور گلوبال، سطوح سنی)",
+      "unitFa": "سقف",
+      "amount": 45000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۰ سند"
+    },
+    {
+      "code": "MT-PAR-003",
+      "category": "paraclinic",
+      "titleFa": "کمک هزینه انجام ختنه اولاد — در بیمارستان و مرکز جراحی محدود",
+      "unitFa": "سقف",
+      "amount": 120000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۰ سند",
+      "noteFa": "به هر روش"
+    },
+    {
+      "code": "MT-EQP-008",
+      "category": "equipment",
+      "titleFa": "دستگاه گلوکومتر",
+      "unitFa": "هر 5 سال یکبار",
+      "amount": 20000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند"
+    },
+    {
+      "code": "MT-EQP-009",
+      "category": "equipment",
+      "titleFa": "منضمات گلوکومتر در بیمار تحت درمان داروی خوراکی",
+      "unitFa": "در ماه",
+      "amount": 9000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند"
+    },
+    {
+      "code": "MT-EQP-010",
+      "category": "equipment",
+      "titleFa": "منضمات گلوکومتر در بیمار تحت درمان انسولین",
+      "unitFa": "در ماه",
+      "amount": 18000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند"
+    },
+    {
+      "code": "MT-EQP-011",
+      "category": "equipment",
+      "titleFa": "پمپ زیر جلدی انسولین",
+      "unitFa": "هر 5 سال یکبار تا سقف",
+      "amount": 600000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند"
+    },
+    {
+      "code": "MT-EQP-012",
+      "category": "equipment",
+      "titleFa": "ست تزریق انسولین",
+      "unitFa": "برای هر عدد ماهانه 10 عدد تا سقف",
+      "amount": 150000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند"
+    },
+    {
+      "code": "MT-EQP-013",
+      "category": "equipment",
+      "titleFa": "مخزن انسولین",
+      "unitFa": "برای هر عدد ماهانه یک عدد تا سقف",
+      "amount": 900000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند"
+    },
+    {
+      "code": "MT-EQP-014",
+      "category": "equipment",
+      "titleFa": "پورت تزریق انسولین",
+      "unitFa": "برای هر عدد ماهانه 10 عدد تا سقف",
+      "amount": 600000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند"
+    },
+    {
+      "code": "MT-EQP-015",
+      "category": "equipment",
+      "titleFa": "سنسور دستگاه مانیتور مداوم قند خون برای بیماران زیر 16 سال",
+      "unitFa": "به ازاء هر سنسور ماهانه 2 عدد تا سقف",
+      "amount": 87000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۲ سند"
+    },
+    {
+      "code": "MT-EQP-016",
+      "category": "equipment",
+      "titleFa": "سنسور دستگاه مانیتور مداوم قند خون برای بیماران بالای 16 سال",
+      "unitFa": "به ازاء هر سنسور ماهیانه یک عدد",
+      "amount": 87000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۲ سند",
+      "noteFa": "صرفا با تزریق متعدد انسولین"
+    },
+    {
+      "code": "MT-EQP-017",
+      "category": "equipment",
+      "titleFa": "CPAP - با تائید شورای عالی پزشکی تا سقف",
+      "unitFa": "هر 5 سال یکبار",
+      "amount": 810000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-018",
+      "category": "equipment",
+      "titleFa": "BiPAP - با تائید شورای عالی پزشکی تا سقف",
+      "unitFa": "هر 5 سال یکبار",
+      "amount": 1200000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-019",
+      "category": "equipment",
+      "titleFa": "ونتیلاتور پرتابل - با تائید شورای عالی پزشکی تا سقف",
+      "unitFa": "هر 5 سال یکبار",
+      "amount": 1500000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-020",
+      "category": "equipment",
+      "titleFa": "کمک هزینه ماسک CPAP و BiPAP - تا سقف",
+      "unitFa": "هر سال یکبار",
+      "amount": 90000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-021",
+      "category": "equipment",
+      "titleFa": "پمپ دسفرال - با تائید شورای پزشکی منطقه تا سقف",
+      "unitFa": "ریال",
+      "amount": 150000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-022",
+      "category": "equipment",
+      "titleFa": "پالس اکسی متر - با تائید شورای پزشکی منطقه تا سقف",
+      "unitFa": "هر سال یکبار",
+      "amount": 30000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-023",
+      "category": "equipment",
+      "titleFa": "اکسیژن ساز - با تائید شورای عالی پزشکی تا سقف",
+      "unitFa": "هر 5 سال یکبار",
+      "amount": 660000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-024",
+      "category": "equipment",
+      "titleFa": "تشک مواج - با تائید شورای پزشکی منطقه تا سقف",
+      "unitFa": "هر 2 سال یکبار",
+      "amount": 240000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-025",
+      "category": "equipment",
+      "titleFa": "ساکشن - با تائید شورای پزشکی منطقه تا سقف",
+      "unitFa": "هر 5 سال یکبار",
+      "amount": 150000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-026",
+      "category": "equipment",
+      "titleFa": "دستگاه بخور سرد - با تائید شورای پزشکی منطقه تا سقف",
+      "unitFa": "هر 3 سال یکبار",
+      "amount": 30000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-027",
+      "category": "equipment",
+      "titleFa": "دستگاه نبولایزر - با تائید شورای پزشکی منطقه تا سقف",
+      "unitFa": "هر 3 سال یکبار",
+      "amount": 120000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-028",
+      "category": "equipment",
+      "titleFa": "کپسول اکسیژن و مانومتر - با تائید شورای پزشکی منطقه تا سقف",
+      "unitFa": "هر 5 سال یکبار",
+      "amount": 120000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-029",
+      "category": "equipment",
+      "titleFa": "هزینه شارژ کپسول تا سقف",
+      "unitFa": "در ماه",
+      "amount": 18000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-030",
+      "category": "equipment",
+      "titleFa": "ویلچر - با تائید شورای پزشکی منطقه تا سقف",
+      "unitFa": "هر 3 سال یکبار",
+      "amount": 150000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-031",
+      "category": "equipment",
+      "titleFa": "ویلچر برقی - با تائید شورای عالی پزشکی تا سقف",
+      "unitFa": "ریال",
+      "amount": 600000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-EQP-032",
+      "category": "equipment",
+      "titleFa": "تخت بستری بیمار - با تائید شورای عالی پزشکی تا سقف",
+      "unitFa": "فقط یکبار",
+      "amount": 360000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۳ سند"
+    },
+    {
+      "code": "MT-PAR-004",
+      "category": "paraclinic",
+      "titleFa": "رحم اجاره‌ای",
+      "unitFa": "ریال",
+      "amount": 1000000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند",
+      "requirePrescription": true,
+      "noteFa": "مستندات: مجوز شورای پزشکی، تصویر توافق‌نامهٔ حقوقی و فاکتور معتبر"
+    },
+    {
+      "code": "MT-PAR-005",
+      "category": "paraclinic",
+      "titleFa": "اهداء تخمک",
+      "unitFa": "ریال",
+      "amount": 100000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند",
+      "requirePrescription": true,
+      "noteFa": "مستندات: مجوز شورای پزشکی و فاکتور معتبر"
+    },
+    {
+      "code": "MT-PAR-006",
+      "category": "paraclinic",
+      "titleFa": "اهداء جنین",
+      "unitFa": "ریال",
+      "amount": 400000000,
+      "effectiveFrom": "1405/01/01",
+      "refFa": "دستورالعمل ۱۴۰۵ — صفحهٔ ۲۱ سند",
+      "requirePrescription": true,
+      "noteFa": "مستندات: مجوز شورای پزشکی و فاکتور معتبر"
+    }
+  ]
+}

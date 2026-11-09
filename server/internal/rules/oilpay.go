@@ -322,6 +322,12 @@ type OilPayInput struct {
 	OvertimeHours float64 `json:"overtimeHours"`
 	// OtherDeductions کسور دیگر (وام، مساعده، جریمه).
 	OtherDeductions int64 `json:"otherDeductions"`
+	// EmployeeID کارمند فیش؛ فقط برای این است که لایهٔ ماژول بتواند پروندهٔ ایثارگری همان
+	// کارمند را بخواند و امتیازش را در Veteran بگذارد. خودِ محاسبه به آن کاری ندارد.
+	EmployeeID string `json:"employeeId,omitempty"`
+	// Veteran امتیاز ایثارگری تأییدشدهٔ همین کارمند (از JSON خوانده نمی‌شود تا از درخواست
+	// HTTP قابل جعل نباشد).
+	Veteran *VeteranEntitlement `json:"-"`
 }
 
 // OilPayLine یک سطر فیش (فوق‌العاده یا کسر).
@@ -371,7 +377,13 @@ type OilPayslip struct {
 	// Residence و ResidenceFa محل سکونت مبنا (جدول ۱ و ۲) و عنوان فارسی آن.
 	Residence   string `json:"residence,omitempty"`
 	ResidenceFa string `json:"residenceFa,omitempty"`
-	NoteFa      string `json:"noteFa,omitempty"`
+	// امتیاز ایثارگری اعمال‌شده در همین فیش (خالی = بدون پروندهٔ تأییدشده).
+	VeteranApplied       bool   `json:"veteranApplied"`
+	VeteranTaxExempt     int64  `json:"veteranTaxExempt"`
+	VeteranPensionExempt int64  `json:"veteranPensionExempt"`
+	VeteranGroupFa       string `json:"veteranGroupFa,omitempty"`
+	VeteranNoteFa        string `json:"veteranNoteFa,omitempty"`
+	NoteFa               string `json:"noteFa,omitempty"`
 }
 
 // SchemeOil شناسهٔ نظام پرداخت صندوق بازنشستگی نفت.
@@ -585,9 +597,48 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 			DetailFa: numberFa(params.InsuranceEmployeePercent) + "٪ × جمع ناخالص"})
 	}
 
-	taxable := out.Gross - out.FundEmployee - out.InsuranceEmployee - params.TaxExemption
-	if taxable < 0 {
-		taxable = 0
+	taxableBefore := out.Gross - out.FundEmployee - out.InsuranceEmployee - params.TaxExemption
+	if taxableBefore < 0 {
+		taxableBefore = 0
+	}
+
+	// امتیاز ایثارگری: کاهش کسور سهم کارمند (صندوق/بیمه) و معافیت مالیاتی. مبنای هر دو
+	// تعدیل، عدد پیش از اعمال امتیاز است تا درصد معافیت روی همان مبنای قانونی بنشیند.
+	relief := VeteranReliefResult{}
+	if in.Veteran != nil {
+		relief = ApplyVeteranRelief(VeteranReliefInput{
+			TaxableIncome:     taxableBefore,
+			EmployeeDeduction: out.FundEmployee + out.InsuranceEmployee,
+		}, *in.Veteran)
+	}
+	if relief.PensionExemptAmount > 0 {
+		out.FundEmployee -= relief.PensionExemptAmount
+		if out.FundEmployee < 0 {
+			out.FundEmployee = 0
+		}
+		out.Lines = append(out.Lines, OilPayLine{Key: "veteranPensionExempt",
+			TitleFa: "معافیت کسور بازنشستگی (ایثارگری)", GroupFa: OilGroupDeduct,
+			Amount:   -relief.PensionExemptAmount,
+			DetailFa: "بر پایهٔ پروندهٔ تأییدشدهٔ امور ایثارگران"})
+	}
+
+	taxable := taxableBefore
+	if relief.TaxExemptAmount > 0 {
+		taxable -= relief.TaxExemptAmount
+		if taxable < 0 {
+			taxable = 0
+		}
+		out.Lines = append(out.Lines, OilPayLine{Key: "veteranTaxExempt",
+			TitleFa: "معافیت مالیاتی ایثارگری", GroupFa: OilGroupDeduct,
+			Amount:   -relief.TaxExemptAmount,
+			DetailFa: "ماده ۵۶ قانون جامع خدمات‌رسانی به ایثارگران"})
+	}
+	out.VeteranApplied = relief.Applied
+	out.VeteranTaxExempt = relief.TaxExemptAmount
+	out.VeteranPensionExempt = relief.PensionExemptAmount
+	out.VeteranNoteFa = relief.NoteFa
+	if in.Veteran != nil && in.Veteran.Approved {
+		out.VeteranGroupFa = in.Veteran.GroupFa
 	}
 	out.TaxableIncome = taxable
 	out.Tax = TaxFor(taxable, params.TaxBrackets)
@@ -615,6 +666,11 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	if gradeOK {
 		note += " درصد جذب عمومی و تخصصی شغل از جدول ۳ برای " + grade.TitleFa + " (" +
 			numberFa(grade.Total()) + "٪) گرفته شده است."
+	}
+	if relief.Applied {
+		note += " امتیاز ایثارگری (" + out.VeteranGroupFa + ") اعمال شد: معافیت مالیاتی " +
+			moneyFa(float64(relief.TaxExemptAmount)) + " ریال و معافیت کسور " +
+			moneyFa(float64(relief.PensionExemptAmount)) + " ریال."
 	}
 	out.NoteFa = note
 	return out

@@ -53,6 +53,9 @@ const RK_PAGES = {
   periodicExams: {kind: 'periodicExams'},
   medicalServices: {kind: 'medicalServices'},
   supplementaryInsurance: {kind: 'supplementaryInsurance'},
+  // تعرفه‌های کمک هزینهٔ درمانی و درخواست‌های کمک هزینه (صفحهٔ اختصاصی زنده هم دارند).
+  medicalTariffs: {kind: 'medicalTariffs'},
+  medicalAid: {kind: 'medicalAidClaims'},
   // امور ورزش
   sportsPrograms: {kind: 'sportsPrograms'},
   sportsEvents: {kind: 'sportsEvents'},
@@ -490,7 +493,7 @@ function rkSearch(page) {
 }
 function rkEdit(page, id) {
   const st = RK_STATE[page];
-  if (!st) return;
+  if (!st) { toast('شناسهٔ ماژول هنوز بارگذاری نشده است', 'error'); return; }
   apiFetch(st.mod.prefix + '/records/' + encodeURIComponent(id)).then(res => {
     if (!res.ok) { toast(res.message, 'error'); return; }
     rkOpenForm(page, st.kind, res.data);

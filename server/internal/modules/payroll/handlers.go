@@ -65,6 +65,8 @@ func registerFinanceEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *reco
 		params = applyOverrides(params, values)
 
 		input := body.input()
+		// امتیاز ایثارگری از پروندهٔ تأییدشدهٔ همین کارمند (نه از بدنهٔ درخواست) می‌آید.
+		input.Veteran = veteranEntitlement(r.Context(), deps, body.EmployeeID)
 		result := rules.ComputePayroll(input, params)
 		env, wages := simulateEnv(body, values, params, input, result)
 
@@ -117,6 +119,8 @@ func registerFinanceEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *reco
 		// و در نتیجه مزد مبنا ناقص و فوق‌العاده‌های اقلیمی سازمانی می‌ماند.
 		body, wageSource := payslipInput(r.Context(), deps, emp)
 		input := body.input()
+		// امتیاز ایثارگری این کارمند از پروندهٔ تأییدشدهٔ ماژول امور ایثارگران میآید.
+		input.Veteran = veteranEntitlement(r.Context(), deps, emp.ID)
 		result := rules.ComputePayroll(input, params)
 		env, wages := simulateEnv(body, values, params, input, result)
 
@@ -148,6 +152,9 @@ func registerFinanceEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *reco
 // ضرایب)، اقلام متغیر (کارانه، مأموریت) و ساعت‌های جمعه/تعطیل‌کاری هم گرفته می‌شود تا
 // همهٔ اقلام پارامتریک قابل محاسبه باشند و «مزد مبنا» کامل ساخته شود.
 type simulateInput struct {
+	// EmployeeID کد کارمند؛ شبیه‌ساز با آن پروندهٔ ایثارگری کارمند را می‌خواند تا امتیاز
+	// تأییدشده در همان شبیه‌سازی هم دیده شود (خالی = شبیه‌سازی بدون پرونده).
+	EmployeeID         string            `json:"employeeId,omitempty"`
 	BaseSalary         int64             `json:"baseSalary"`
 	Children           int               `json:"children"`
 	OvertimeHours      int64             `json:"overtimeHours"`

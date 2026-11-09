@@ -165,6 +165,12 @@ type PayslipInfo struct {
 	PayGapSince string
 	// PayGapFa همان مبلغ با جداکنندهٔ هزارگان برای چاپ (خالی = بدون تفاوت تطبیق).
 	PayGapFa string
+	// VeteranGroupFa گروه ایثارگری اعمال‌شده در همین فیش (خالی = بدون پروندهٔ تأییدشده).
+	VeteranGroupFa string
+	// VeteranTaxExemptFa و VeteranPensionExemptFa معافیت مالیاتی و معافیت کسور ایثارگری
+	// با جداکنندهٔ هزارگان برای چاپ (خالی = اعمال نشده).
+	VeteranTaxExemptFa     string
+	VeteranPensionExemptFa string
 }
 
 // PayslipElement یک سطر از تفکیک اقلام فیش حقوقی.
@@ -430,7 +436,7 @@ var defaultBodies = map[Kind][]string{
 	},
 	KindPayslip: {
 		"فیش حقوقی دورهٔ {{payslip.period}} برای {{employee.fullName}} در واحد {{employee.department}} صادر شده است.",
-		"جمع ناخالص {{payslip.grossFa}}، بیمهٔ سهم کارمند {{payslip.insuranceEmployeeFa}} و مالیات {{payslip.taxFa}} است.",
+		"جمع ناخالص {{payslip.grossFa}}، بیمهٔ سهم کارمند {{payslip.insuranceEmployeeFa}} و مالیات {{payslip.taxFa}} است.{{payslip.veteranClause}}",
 		"مبالغ بر پایهٔ پارامترهای حقوق و اقلام تعریف‌شدهٔ سامانه محاسبه شده و در سرور مرجع است.",
 	},
 	KindEmploymentCertificate: {
@@ -559,6 +565,7 @@ func PlaceholderVars(d Data) map[string]string {
 	vars["payslip.insuranceEmployerFa"] = ""
 	vars["payslip.taxFa"] = ""
 	vars["payslip.netFa"] = ""
+	vars["payslip.veteranClause"] = ""
 	if d.Contract != nil {
 		vars["contract.id"] = d.Contract.ID
 		if strings.TrimSpace(d.Contract.KindFa) != "" {
@@ -594,6 +601,14 @@ func PlaceholderVars(d Data) map[string]string {
 		vars["payslip.payGap"] = fmt.Sprintf("%d", d.Payslip.PayGap)
 		vars["payslip.payGapFa"] = money(d.Payslip.PayGap)
 		vars["payslip.payGapSince"] = d.Payslip.PayGapSince
+		// جملهٔ امتیاز ایثارگری فقط وقتی پر می‌شود که پروندهٔ تأییدشده‌ای اعمال شده باشد؛
+		// جای‌نگهدارش از پیش تعریف شده تا قالب، متن خام روی برگه چاپ نکند.
+		vars["payslip.veteranClause"] = ""
+		if strings.TrimSpace(d.Payslip.VeteranGroupFa) != "" {
+			vars["payslip.veteranClause"] = " با اعمال امتیاز ایثارگری (" + d.Payslip.VeteranGroupFa +
+				")، معافیت مالیاتی " + d.Payslip.VeteranTaxExemptFa + " ریال و معافیت کسور " +
+				d.Payslip.VeteranPensionExemptFa + " ریال لحاظ شده است."
+		}
 	}
 	if len(d.Structure) > 0 {
 		lines := make([]string, 0, len(d.Structure))

@@ -40,7 +40,7 @@ func registerOilPayEndpoints(mux *http.ServeMux, deps modulekit.Deps, _ *recordk
 				"ورودی محاسبهٔ فیش خوانده نشد.", nil)
 			return
 		}
-		httpx.WriteJSON(w, http.StatusOK, oilPayslip(deps, in))
+		httpx.WriteJSON(w, http.StatusOK, oilPayslip(r.Context(), deps, in))
 	}))
 }
 
@@ -71,7 +71,11 @@ func oilPayDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
 }
 
 // oilPayslip فیش را با پارامترهای شرکت می‌سازد و دورهٔ جاری را هم برمی‌گرداند.
-func oilPayslip(deps modulekit.Deps, in rules.OilPayInput) map[string]any {
+//
+// امتیاز ایثارگری از پروندهٔ تأییدشدهٔ همان کارمند خوانده می‌شود؛ خودِ محاسبه در
+// `rules.ComputeOilPayslip` است و این تابع فقط ورودی موتور را کامل می‌کند.
+func oilPayslip(ctx context.Context, deps modulekit.Deps, in rules.OilPayInput) map[string]any {
+	in.Veteran = veteranEntitlement(ctx, deps, in.EmployeeID)
 	slip := rules.ComputeOilPayslip(in, oilPayParams(deps))
 	return map[string]any{
 		"scheme":      rules.SchemeOil,

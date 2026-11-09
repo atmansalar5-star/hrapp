@@ -64,6 +64,9 @@ function oilAllowancePercents() {
 /** ساخت بدنهٔ درخواست محاسبه از فیلدهای فرم. */
 function oilInput() {
   return {
+    // کد کارمند برای خواندن پروندهٔ ایثارگری همان کارمند در سرور فرستاده می‌شود؛
+    // امتیاز از درخواست گرفته نمی‌شود، فقط پروندهٔ تأییدشدهٔ همین کارمند اعمال می‌گردد.
+    employeeId: oilSelect('oilEmployee'),
     baseSalary: oilNum('oilBaseSalary'),
     climatePercent: oilNum('oilClimatePercent'),
     allowancePercents: oilAllowancePercents(),
@@ -137,6 +140,11 @@ function oilRenderSlip() {
       <div class="muted" style="font-size:.74rem;margin-top:6px">
         کسور سهم کارفرما (صندوق بازنشستگی نفت): <b class="num">${fa(money(s.fundEmployer || 0))}</b> ریال
       </div>
+      ${s.veteranApplied ? `<div class="muted" style="font-size:.74rem;margin-top:6px">
+        🎖️ امتیاز ایثارگری (${esc(s.veteranGroupFa || '')}) اعمال شد — معافیت مالیاتی
+        <b class="num">${fa(money(s.veteranTaxExempt || 0))}</b> ریال و معافیت کسور
+        <b class="num">${fa(money(s.veteranPensionExempt || 0))}</b> ریال
+      </div>` : ''}
     </div>
     <div class="card card-pad" style="margin-top:10px;font-size:.8rem;line-height:1.9">
       ${esc(OIL_RESULT.noteFa || '').split('\n').join('<br>')}

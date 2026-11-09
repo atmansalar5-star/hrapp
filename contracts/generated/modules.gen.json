@@ -863,6 +863,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "استقرار مرجع سامانه؛ همهٔ ادارات فعال. مشاغل عملیاتی سخت و زیان‌آور و نیروهای ارکان ثالث زیر نظر واحد برون‌سپاری پایش می‌شوند."
@@ -1270,6 +1298,34 @@
           "value": "120",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "استقرار ستادی برای شرکت مادر: برنامه‌ریزی نیروی انسانی، مطالعات، آمار و گزارش‌های تجمیعی شرکت‌های زیرمجموعه. ادارات عملیاتی (امور کارکنان، روابط کار، آموزش و برون‌سپاری) در این استقرار غیرفعال‌اند تا سامانه با دادهٔ شرکت‌های زیرمجموعه کار کند."
@@ -1697,6 +1753,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "نمونهٔ شبیه‌سازی یک شرکت پتروشیمی دیگر: بدون واحد برون‌سپاری و مطالعات، و با دورهٔ کارانهٔ فصلی. برای دیدن اثر پارامتریک بودن سامانه ساخته شده است."
@@ -2114,6 +2198,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "شرکت پیمانکاری با نیروهای ارکان ثالث: تمرکز روی حضور و غیاب، حقوق پیمانکاران، مشاغل سخت و زیان‌آور و آمار. سال مالی از ابتدای تیر آغاز می‌شود و مهلت تأخیر مجاز صفر است."
@@ -2546,6 +2658,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "شرکت زیرمجموعهٔ هلدینگ خلیج فارس؛ تولید الفین و آروماتیک در بندر امام."
@@ -2978,6 +3118,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "تولید برق، بخار و آب صنعتی برای شرکت‌های منطقهٔ ماهشهر زیر هلدینگ خلیج فارس."
@@ -3410,6 +3578,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "تولید مواد اولیهٔ پلی‌استر و پلی‌اتیلن ترفتالات زیر هلدینگ خلیج فارس."
@@ -3842,6 +4038,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "بزرگ‌ترین مجتمع کلرآلکالی خاورمیانه در منطقهٔ ماهشهر زیر هلدینگ خلیج فارس."
@@ -4274,6 +4498,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "تولید آروماتیک‌ها (پارازایلین و بنزن) در عسلویه زیر هلدینگ خلیج فارس."
@@ -4706,6 +4958,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "تولید متانول و آمونیاک در بیدبلند خلیج فارس زیر هلدینگ خلیج فارس."
@@ -5138,6 +5418,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "تولید اتیلن و پلی‌اتیلن سنگین در گچساران زیر هلدینگ خلیج فارس."
@@ -5570,6 +5878,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "شرکت مهندسی و فنون (EPC) هلدینگ خلیج فارس."
@@ -6003,6 +6339,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "بازرگانی، فروش و صادرات محصولات پتروشیمی هلدینگ خلیج فارس."
@@ -6434,6 +6798,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "تأمین کالا و تجارت صنعتی هلدینگ خلیج فارس."
@@ -6866,6 +7258,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ],
       "notesFa": "بزرگ‌ترین تولیدکنندهٔ اتیلن کشور در منطقهٔ ماهشهر؛ هلدینگ مستقل پتروشیمی مارون، جدا از هلدینگ خلیج فارس."
@@ -8835,6 +9255,19 @@
           "order": 3,
           "titleFa": "خدمات درمانی و بیمه",
           "component": "MedicalServicesScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec",
+            "line_manager",
+            "employee"
+          ]
+        },
+        {
+          "key": "medicalAid",
+          "order": 5,
+          "titleFa": "کمک هزینهٔ درمانی و تعرفه‌ها",
+          "component": "MedicalAidScreen",
           "roles": [
             "admin",
             "hr_manager",

@@ -162,6 +162,8 @@ func workTimeRows(ctx context.Context, deps modulekit.Deps, svc *recordkit.Servi
 	}
 
 	out := make([]workTimeRow, 0, len(emps.Items))
+	// امتیاز ایثارگری همهٔ کارکنان یک‌بار خوانده می‌شود (نه یک پرس‌وجو برای هر کارمند).
+	veterans := veteranEntitlements(ctx, deps)
 	for _, emp := range emps.Items {
 		wtRow, hasWork := byEmployee[emp.ID]
 		if !hasWork {
@@ -173,6 +175,9 @@ func workTimeRows(ctx context.Context, deps modulekit.Deps, svc *recordkit.Servi
 			OvertimeHours:      int64(wtRow.OvertimeHours),
 			OvertimeHourlyRate: overRate,
 			OtherDeductions:    rules.UnpaidDeduction(wtRow.DeductibleDays, emp.BaseSalary, wt),
+			// امتیاز ایثارگری هر کارمند از پروندهٔ تأییدشدهٔ خودش می‌آید؛ جدول پردازش
+			// حقوق باید همان خالصی را نشان دهد که فیش همان کارمند نشان می‌دهد.
+			Veteran: veterans[emp.ID],
 		}
 		result := rules.ComputePayroll(input, params)
 
@@ -181,6 +186,12 @@ func workTimeRows(ctx context.Context, deps modulekit.Deps, svc *recordkit.Servi
 			note = "برای این کارمند در این دوره کارکردی ثبت نشده است؛ فقط مزد پایه محاسبه شد."
 		} else if wtRow.PendingRecords > 0 {
 			note = fmt.Sprintf("%d رکورد در گردش است و در این محاسبه اثر ندارد.", wtRow.PendingRecords)
+		}
+		if result.VeteranApplied {
+			if note != "" {
+				note += " "
+			}
+			note += "امتیاز ایثارگری (" + result.VeteranGroupFa + ") اعمال شد."
 		}
 
 		out = append(out, workTimeRow{

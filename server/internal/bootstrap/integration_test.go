@@ -589,3 +589,105 @@ func containsPersian(s string) bool {
 	}
 	return false
 }
+
+// payslipResult همان بخش نتیجهٔ فیش که این آزمون دربارهٔ آن است.
+type payslipResult struct {
+	VeteranApplied       bool   `json:"veteranApplied"`
+	VeteranGroupFa       string `json:"veteranGroupFa"`
+	VeteranTaxExempt     int64  `json:"veteranTaxExempt"`
+	VeteranPensionExempt int64  `json:"veteranPensionExempt"`
+	Tax                  int64  `json:"tax"`
+	Net                  int64  `json:"net"`
+}
+
+// TestVeteranEntitlementReachesPayslip سرتاسری: پروندهٔ ایثارگری «تأییدشدهٔ» کارمند
+// (دادهٔ نمونهٔ EMP-009، جانباز ۲۵٪) باید از ماژول امور ایثارگران تا فیش حقوقی همین
+// کارمند اثر بگذارد و کارمند بدون پرونده هیچ امتیازی نگیرد.
+func TestVeteranEntitlementReachesPayslip(t *testing.T) {
+	h := newTestServer(t)
+	session := login(t, h, "hr.manager", "demo")
+
+	payslip := func(employeeID string) payslipResult {
+		rec := call(t, h, http.MethodGet, "/api/v1/payroll/payslip?employee="+employeeID, session.AccessToken, nil)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("فیش کارمند %s خوانده نشد (کد %d): %s", employeeID, rec.Code, rec.Body.String())
+		}
+		var body struct {
+			Result payslipResult `json:"result"`
+		}
+		if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+			t.Fatalf("پاسخ فیش قابل تجزیه نیست: %v", err)
+		}
+		return body.Result
+	}
+
+	veteran := payslip("EMP-009")
+	if !veteran.VeteranApplied || veteran.VeteranGroupFa != "جانباز" {
+		t.Fatalf("فیش کارمند جانباز باید امتیاز ایثارگری را نشان دهد: %+v", veteran)
+	}
+	// معافیت ماده ۵۶ صددرصد است، پس مالیات این فیش صفر میشود.
+	if veteran.Tax != 0 || veteran.VeteranTaxExempt <= 0 {
+		t.Fatalf("معافیت مالیاتی ایثارگری اعمال نشده است: %+v", veteran)
+	}
+
+	plain := payslip("EMP-001")
+	if plain.VeteranApplied || plain.VeteranTaxExempt != 0 {
+		t.Fatalf("کارمند بدون پروندهٔ ایثارگری نباید امتیاز بگیرد: %+v", plain)
+	}
+}
+
+// TestVeteranEntitlementReachesOilPayslip سرتاسری فیش صندوق نفت: کد کارمند در ورودی،
+// پروندهٔ تأییدشدهٔ همان کارمند در خروجی (EMP-005 آزادهٔ نمونه).
+func TestVeteranEntitlementReachesOilPayslip(t *testing.T) {
+	h := newTestServer(t)
+	session := login(t, h, "hr.manager", "demo")
+
+	rec := call(t, h, http.MethodPost, "/api/v1/payroll/oil-payslip", session.AccessToken,
+		map[string]any{"employeeId": "EMP-005", "baseSalary": 120_000_000})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("محاسبهٔ فیش صندوق نفت ناموفق بود (کد %d): %s", rec.Code, rec.Body.String())
+	}
+	var body struct {
+		Slip struct {
+			VeteranApplied   bool   `json:"veteranApplied"`
+			VeteranGroupFa   string `json:"veteranGroupFa"`
+			VeteranTaxExempt int64  `json:"veteranTaxExempt"`
+			TaxableIncome    int64  `json:"taxableIncome"`
+			Tax              int64  `json:"tax"`
+		} `json:"slip"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("پاسخ فیش صندوق نفت قابل تجزیه نیست: %v", err)
+	}
+	if !body.Slip.VeteranApplied || body.Slip.VeteranGroupFa != "آزاده" {
+		t.Fatalf("فیش صندوق نفت باید امتیاز ایثارگری آزاده را نشان دهد: %+v", body.Slip)
+	}
+	if body.Slip.TaxableIncome != 0 || body.Slip.Tax != 0 {
+		t.Fatalf("با معافیت صددرصد، درآمد مشمول و مالیات باید صفر باشد: %+v", body.Slip)
+	}
+}
+
+// TestVeteranEntitlementWithoutFileOilPayslip کارمند بدون پرونده در فیش صندوق نفت هم
+// هیچ امتیازی نمی‌گیرد (پروندهٔ کارمند دیگر به این کارمند سرایت نمی‌کند).
+func TestVeteranEntitlementWithoutFileOilPayslip(t *testing.T) {
+	h := newTestServer(t)
+	session := login(t, h, "hr.manager", "demo")
+
+	rec := call(t, h, http.MethodPost, "/api/v1/payroll/oil-payslip", session.AccessToken,
+		map[string]any{"employeeId": "EMP-001", "baseSalary": 120_000_000})
+	if rec.Code != http.StatusOK {
+		t.Fatalf("محاسبهٔ فیش صندوق نفت ناموفق بود (کد %d): %s", rec.Code, rec.Body.String())
+	}
+	var body struct {
+		Slip struct {
+			VeteranApplied bool  `json:"veteranApplied"`
+			Tax            int64 `json:"tax"`
+		} `json:"slip"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+		t.Fatalf("پاسخ فیش صندوق نفت قابل تجزیه نیست: %v", err)
+	}
+	if body.Slip.VeteranApplied || body.Slip.Tax <= 0 {
+		t.Fatalf("کارمند بدون پرونده نباید معافیت بگیرد: %+v", body.Slip)
+	}
+}

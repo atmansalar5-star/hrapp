@@ -1,7 +1,7 @@
 // Package grievances ماژول شکایات و امور ایثارگران.
 //
 // پیاده‌سازی واقعی روی موتور مشترک `recordkit`: شکایت کارمند و پروندهٔ ایثارگری هر یک یک
-// نوع رکورد با گردش‌کار خودش است و قواعدش در بستهٔ domain اعلام شده.
+// نوع رکورد با گردشکار خودش است و قواعدش در بستهٔ domain اعلام شده.
 package grievances
 
 import (
@@ -21,7 +21,10 @@ func New() *Module { return &Module{} }
 // ID شناسهٔ ماژول.
 func (m *Module) ID() string { return "grievances" }
 
-// Register مسیرهای استاندارد رکوردهای شکایات را ثبت می‌کند.
+// Register مسیرهای استاندارد رکوردها و مسیرهای محاسبهٔ امتیاز ایثارگری را ثبت می‌کند.
 func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
-	recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/grievances")
+	svc := recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/grievances")
+	// مسیرهای اختصاصی امور ایثارگران روی همان سرویس رکورد سوار می‌شوند تا محاسبهٔ
+	// امتیازها یک‌جا انجام شود و رابط وب خودش قاعده نسازد.
+	registerVeteranEndpoints(mux, deps, svc)
 }

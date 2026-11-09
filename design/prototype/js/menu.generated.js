@@ -395,6 +395,7 @@ window.HRMS_MENU = [
         { page: "treatmentCases", label: "پروندهٔ درمان", icon: "stethoscope", roles: ['admin', 'hr_manager', 'hr_spec'] },
         { page: "periodicExams", label: "معاینات دوره‌ای", icon: "clipboard-plus", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager'] },
         { page: "medicalServices", label: "خدمات درمانی و بیمه", icon: "heart-pulse", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager', 'employee'] },
+        { page: "medicalAid", label: "کمک هزینهٔ درمانی و تعرفه‌ها", icon: "hand-heart", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager', 'employee'] },
         { page: "supplementaryInsurance", label: "بیمهٔ تکمیلی", icon: "shield-plus", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager', 'employee'] },
         ],
       },

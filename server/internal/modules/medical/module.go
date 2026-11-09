@@ -21,7 +21,9 @@ func New() *Module { return &Module{} }
 // ID شناسهٔ ماژول.
 func (m *Module) ID() string { return "medical" }
 
-// Register مسیرهای استاندارد رکوردهای درمان را ثبت می‌کند.
+// Register مسیرهای استاندارد رکوردهای درمان و مسیرهای کمک هزینهٔ درمانی (تعرفه، محاسبه و
+// ثبت درخواست) را ثبت می‌کند.
 func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
-	recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/medical")
+	svc := recordkit.Mount(mux, deps, domain.Descriptor(), domain.Seed(), "/api/v1/medical")
+	registerMedicalAidEndpoints(mux, deps, svc)
 }

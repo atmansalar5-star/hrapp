@@ -1139,6 +1139,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager, RoleKey::Employee],
         },
         ScreenPolicy {
+            key: "medicalAid",
+            title_fa: "کمک هزینهٔ درمانی و تعرفه‌ها",
+            component: "MedicalAidScreen",
+            icon: "hand-heart",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec, RoleKey::LineManager, RoleKey::Employee],
+        },
+        ScreenPolicy {
             key: "supplementaryInsurance",
             title_fa: "بیمهٔ تکمیلی",
             component: "SupplementaryInsuranceScreen",

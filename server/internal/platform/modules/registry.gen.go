@@ -500,6 +500,7 @@ var All = []Module{
 			{Key: "treatmentCases", Order: 1, Icon: "stethoscope", TitleFa: "پروندهٔ درمان", Component: "TreatmentCasesScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "periodicExams", Order: 2, Icon: "clipboard-plus", TitleFa: "معاینات دوره‌ای", Component: "PeriodicExamsScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager"}},
 			{Key: "medicalServices", Order: 3, Icon: "heart-pulse", TitleFa: "خدمات درمانی و بیمه", Component: "MedicalServicesScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager", "employee"}},
+			{Key: "medicalAid", Order: 5, Icon: "hand-heart", TitleFa: "کمک هزینهٔ درمانی و تعرفه‌ها", Component: "MedicalAidScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager", "employee"}},
 			{Key: "supplementaryInsurance", Order: 4, Icon: "shield-plus", TitleFa: "بیمهٔ تکمیلی", Component: "SupplementaryInsuranceScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "line_manager", "employee"}},
 		},
 	},

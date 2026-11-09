@@ -545,6 +545,9 @@ func computePayslip(ctx context.Context, deps modulekit.Deps, employee contracts
 	if structure.PayGap > 0 {
 		input.PayGap = structure.PayGap
 	}
+	// امتیاز ایثارگری از پروندهٔ تأییدشدهٔ همان کارمند می‌آید تا فیش چاپی و صفحهٔ فیش
+	// یک عدد بدهند (خواندن پرونده در لایهٔ پورت‌ها انجام می‌شود).
+	input.Veteran = deps.VeteranEntitlement(ctx, employee.ID)
 	result := rules.ComputePayroll(input, params)
 	info := PayslipInfo{
 		Period:            fmt.Sprintf("%04d/%02d", today.Year, today.Month),
@@ -556,6 +559,11 @@ func computePayslip(ctx context.Context, deps modulekit.Deps, employee contracts
 		WageSourceFa:      sourceFa,
 		PayGap:            input.PayGap,
 		PayGapSince:       strings.TrimSpace(structure.PayGapSince),
+	}
+	if result.VeteranApplied {
+		info.VeteranGroupFa = result.VeteranGroupFa
+		info.VeteranTaxExemptFa = money(result.VeteranTaxExempt)
+		info.VeteranPensionExemptFa = money(result.VeteranPensionExempt)
 	}
 	if info.PayGap != 0 {
 		info.PayGapFa = money(info.PayGap)
@@ -597,6 +605,9 @@ func wageStructure(ctx context.Context, deps modulekit.Deps, employee contracts.
 	}
 	params := rules.DefaultPayrollParams()
 	input := rules.PayrollInput{BaseSalary: base}
+	// همان پروندهٔ ایثارگری که فیش حقوقی می‌خواند، تا اقلام و جمع‌های سند حکم هم با فیش
+	// یک عدد بدهند.
+	input.Veteran = deps.VeteranEntitlement(ctx, employee.ID)
 	result := rules.ComputePayroll(input, params)
 	env, wages := elementEnvFor(ctx, deps, params, input, result, structure)
 

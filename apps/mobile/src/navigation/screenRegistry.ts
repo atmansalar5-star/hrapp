@@ -81,6 +81,7 @@ import TreatmentCasesScreen from '../features/medical/TreatmentCasesScreen';
 import PeriodicExamsScreen from '../features/medical/PeriodicExamsScreen';
 import MedicalServicesScreen from '../features/medical/MedicalServicesScreen';
 import SupplementaryInsuranceScreen from '../features/medical/SupplementaryInsuranceScreen';
+import MedicalAidScreen from '../features/medical/MedicalAidScreen';
 
 // آموزش (واحد هماهنگی آموزش)
 import TrainingPlanScreen from '../features/training/TrainingPlanScreen';
@@ -237,6 +238,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   PeriodicExamsScreen,
   MedicalServicesScreen,
   SupplementaryInsuranceScreen,
+  MedicalAidScreen,
   PerfCyclesScreen,
   PerfFormsScreen,
   PerfResultsScreen,

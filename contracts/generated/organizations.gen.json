@@ -443,6 +443,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -862,6 +890,34 @@
           "value": "120",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -1300,6 +1356,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -1730,6 +1814,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -2168,6 +2280,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -2606,6 +2746,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -3044,6 +3212,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -3482,6 +3678,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -3920,6 +4144,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -4358,6 +4610,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -4796,6 +5076,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -5234,6 +5542,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -5673,6 +6009,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -6110,6 +6474,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     },
@@ -6548,6 +6940,34 @@
           "value": "60",
           "unitFa": "ماه",
           "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "medical.aid.orgSharePercent",
+          "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی",
+          "value": "100",
+          "unitFa": "درصد تعرفه",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.annualCeiling",
+          "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.perItemCeiling",
+          "titleFa": "سقف پیش‌فرض هر قلم تعرفه",
+          "value": "0",
+          "unitFa": "ریال",
+          "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "medical.aid.requirePrescription",
+          "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "کمک هزینهٔ درمانی"
         }
       ]
     }

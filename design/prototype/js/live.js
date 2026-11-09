@@ -1491,6 +1491,9 @@ function pagePayslipLive() {
         محاسبهٔ مرجع موتور قواعد (مزد پایه و مزایای قانونی، بدون اقلام پارامتریک): جمع ناخالص
         <b class="num">${money(r.gross)}</b> — بیمهٔ سهم کارمند <b class="num">${money(r.insuranceEmployee)}</b> —
         بیمهٔ کارفرما <b class="num">${money(r.insuranceEmployer)}</b> — مالیات <b class="num">${money(r.tax)}</b>
+        ${r.veteranApplied ? `<br>🎖️ امتیاز ایثارگری (${esc(r.veteranGroupFa || '')}) اعمال شد — معافیت مالیاتی
+        <b class="num">${money(r.veteranTaxExempt || 0)}</b> ریال و معافیت کسور
+        <b class="num">${money(r.veteranPensionExempt || 0)}</b> ریال` : ''}
       </div>
     </div>`;
 
@@ -1894,7 +1897,7 @@ async function runPayrollSimulator() {
     ${statCard({ico: '🧾', tint: '#FEE2E2', accent: '#DC2626', val: money(Math.round(totals.deduction || 0)), label: 'جمع کسور اقلام'})}
     ${statCard({ico: '✅', tint: '#DCFCE7', accent: '#16A34A', val: money(Math.round(totals.net || 0)), label: 'خالص اقلام'})}
   </div>
-  <p class="muted" style="font-size:.75rem;margin:6px 0 0">محاسبهٔ مرجع موتور قواعد: جمع ناخالص ${money(r.gross)} — بیمهٔ سهم کارمند ${money(r.insuranceEmployee)} — مالیات ${money(r.tax)} — خالص ${money(r.net)}</p>`;
+  <p class="muted" style="font-size:.75rem;margin:6px 0 0">محاسبهٔ مرجع موتور قواعد: جمع ناخالص ${money(r.gross)} — بیمهٔ سهم کارمند ${money(r.insuranceEmployee)} — مالیات ${money(r.tax)} — خالص ${money(r.net)}${r.veteranApplied ? ' — 🎖️ امتیاز ایثارگری (' + esc(r.veteranGroupFa || '') + '): معافیت مالیاتی ' + money(r.veteranTaxExempt || 0) + ' ریال، معافیت کسور ' + money(r.veteranPensionExempt || 0) + ' ریال' : ''}</p>`;
   const rows = elements.map(e => `<tr>
     <td>${esc(e.titleFa)}</td>
     <td class="ltr num">${esc(e.code || '')}</td>

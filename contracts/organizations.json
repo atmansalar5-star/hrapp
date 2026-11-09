@@ -54,7 +54,11 @@
     { "key": "outsourcing.socialSecurityCheck", "titleFa": "کنترل انطباق تأمین اجتماعی پیمانکاران", "value": "on", "unitFa": "فعال/غیرفعال", "groupFa": "برون‌سپاری" },
     { "key": "outsourcing.hardshipReview", "titleFa": "بازنگری سالانهٔ مشاغل سخت و زیان‌آور", "value": "on", "unitFa": "فعال/غیرفعال", "groupFa": "برون‌سپاری" },
     { "key": "studies.surveyCycle", "titleFa": "دورهٔ نظرسنجی جو سازمانی", "value": "annual", "unitFa": "سالانه", "groupFa": "مطالعات منابع انسانی" },
-    { "key": "reports.retentionMonths", "titleFa": "نگهداری گزارش‌های تولیدشده", "value": "60", "unitFa": "ماه", "groupFa": "گزارش‌ها" }
+    { "key": "reports.retentionMonths", "titleFa": "نگهداری گزارش‌های تولیدشده", "value": "60", "unitFa": "ماه", "groupFa": "گزارش‌ها" },
+    { "key": "medical.aid.orgSharePercent", "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی", "value": "100", "unitFa": "درصد تعرفه", "groupFa": "کمک هزینهٔ درمانی" },
+    { "key": "medical.aid.annualCeiling", "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند", "value": "0", "unitFa": "ریال", "groupFa": "کمک هزینهٔ درمانی" },
+    { "key": "medical.aid.perItemCeiling", "titleFa": "سقف پیش‌فرض هر قلم تعرفه", "value": "0", "unitFa": "ریال", "groupFa": "کمک هزینهٔ درمانی" },
+    { "key": "medical.aid.requirePrescription", "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه", "value": "1", "unitFa": "۰ خیر، ۱ بله", "groupFa": "کمک هزینهٔ درمانی" }
   ],
   "organizations": [
     {

@@ -44,6 +44,11 @@ type PayrollInput struct {
 	// مالیات به آن تعلق می‌گیرد (مگر پارامتر شرکت خلافش را بگوید). ولی جزو «مزد مبنا»
 	// نیست و مبنای اضافه‌کاری و فوقالعاده‌های درصدی را بالا نمی‌برد.
 	PayGap int64 `json:"payGap"`
+	// Veteran امتیاز ایثارگری تأییدشدهٔ همین کارمند (اختیاری).
+	//
+	// چرا از JSON خوانده نمی‌شود: درصد معافیت و سایر امتیازها از پروندهٔ تأییدشده می‌آید و
+	// نباید از درخواست HTTP قابل جعل باشد؛ فقط لایهٔ ماژول آن را از پرونده پر می‌کند.
+	Veteran *VeteranEntitlement `json:"-"`
 }
 
 // PayrollResult خروجی محاسبهٔ فیش.
@@ -56,6 +61,12 @@ type PayrollResult struct {
 	TaxableIncome     int64 `json:"taxableIncome"`
 	Tax               int64 `json:"tax"`
 	Net               int64 `json:"net"`
+	// امتیاز ایثارگری اعمال‌شده در همین محاسبه (خالی = بدون پروندهٔ تأییدشده).
+	VeteranApplied       bool   `json:"veteranApplied"`
+	VeteranTaxExempt     int64  `json:"veteranTaxExempt"`
+	VeteranPensionExempt int64  `json:"veteranPensionExempt"`
+	VeteranGroupFa       string `json:"veteranGroupFa,omitempty"`
+	VeteranNoteFa        string `json:"veteranNoteFa,omitempty"`
 }
 
 // DefaultPayrollParams پارامترهای پیش‌فرض سامانه.
@@ -122,6 +133,9 @@ func TaxFor(income int64, brackets []TaxBracket) int64 {
 //
 // تفاوت تطبیق (اگر ثبت شده باشد) به جمع ناخالص اضافه می‌شود و در نتیجه مبنای بیمه و
 // مالیات هم آن را می‌بیند؛ ولی در PayrollResult جداگانه نمی‌آید چون بخشی از همان جمع است.
+//
+// اگر امتیاز ایثارگری تأییدشده به ورودی داده شود، معافیت مالیاتی و معافیت کسور سهم
+// کارمند اعمال می‌شود (قاعده در veteran.go)؛ بدون آن، خروجی عیناً همان گذشته است.
 func ComputePayroll(input PayrollInput, params PayrollParams) PayrollResult {
 	overtimePay := input.OvertimeHours * input.OvertimeHourlyRate
 	childrenPay := int64(input.Children) * params.ChildAllowancePerChild
@@ -138,18 +152,46 @@ func ComputePayroll(input PayrollInput, params PayrollParams) PayrollResult {
 	if taxable < 0 {
 		taxable = 0
 	}
+	// امتیاز ایثارگری: معافیت مالیاتی (ماده ۵۶ قانون جامع) درآمد مشمول را کم می‌کند و
+	// معافیت کسور، سهم کارمند از کسور را. مبنای محاسبه پیش از اعمال امتیاز گرفته می‌شود تا
+	// درصد معافیت روی همان عددی بنشیند که قانون می‌گوید.
+	relief := VeteranReliefResult{}
+	if input.Veteran != nil {
+		relief = ApplyVeteranRelief(VeteranReliefInput{
+			TaxableIncome:     taxable,
+			EmployeeDeduction: insuranceEmployee,
+		}, *input.Veteran)
+	}
+	if relief.TaxExemptAmount > 0 {
+		taxable -= relief.TaxExemptAmount
+		if taxable < 0 {
+			taxable = 0
+		}
+	}
+	employeeInsurance := insuranceEmployee - relief.PensionExemptAmount
+	if employeeInsurance < 0 {
+		employeeInsurance = 0
+	}
 	tax := TaxFor(taxable, params.TaxBrackets)
 
-	return PayrollResult{
-		OvertimePay:       overtimePay,
-		Gross:             gross,
-		InsuranceBase:     insuranceBase,
-		InsuranceEmployee: insuranceEmployee,
-		InsuranceEmployer: insuranceEmployer,
-		TaxableIncome:     taxable,
-		Tax:               tax,
-		Net:               gross - insuranceEmployee - tax - input.OtherDeductions,
+	result := PayrollResult{
+		OvertimePay:          overtimePay,
+		Gross:                gross,
+		InsuranceBase:        insuranceBase,
+		InsuranceEmployee:    employeeInsurance,
+		InsuranceEmployer:    insuranceEmployer,
+		TaxableIncome:        taxable,
+		Tax:                  tax,
+		Net:                  gross - employeeInsurance - tax - input.OtherDeductions,
+		VeteranApplied:       relief.Applied,
+		VeteranTaxExempt:     relief.TaxExemptAmount,
+		VeteranPensionExempt: relief.PensionExemptAmount,
+		VeteranNoteFa:        relief.NoteFa,
 	}
+	if input.Veteran != nil && input.Veteran.Approved {
+		result.VeteranGroupFa = input.Veteran.GroupFa
+	}
+	return result
 }
 
 // PayrollTotals جمع یک دورهٔ حقوق برای صفحهٔ «پردازش حقوق».
