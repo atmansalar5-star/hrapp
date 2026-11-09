@@ -379,7 +379,7 @@ func TestOilDegreePercentsParametric(t *testing.T) {
 // TestOilResidenceTables: جدول ۱ و ۲ آیین‌نامه (محل سکونت → درصدها).
 func TestOilResidenceTables(t *testing.T) {
 	want := map[string][3]float64{
-		"mahshahr":    {25, 9.5, 10.5},
+		"mahshahr":    {27.5, 16.5, 18},
 		"bandar_imam": {25, 9.5, 10.5},
 		"jarrahi":     {27.5, 16.5, 18},
 		"ramshir":     {30, 25, 27},
@@ -410,12 +410,12 @@ func TestOilResidenceDrivesPercentages(t *testing.T) {
 	in.Residence = "mahshahr"
 	slip := ComputeOilPayslip(in, DefaultOilPayParams())
 	deprivation, _ := lineOf(slip, OilAllowanceDeprivation)
-	if deprivation.Percent != 25 || deprivation.Amount != 6_250_000 {
-		t.Fatalf("محرومیت ماهشهر باید ۲۵٪ و ۶٬۲۵۰٬۰۰۰ باشد: %+v", deprivation)
+	if deprivation.Percent != 27.5 || deprivation.Amount != 6_875_000 {
+		t.Fatalf("محرومیت ماهشهر باید ۲۷٫۵٪ و ۶٬۸۷۵٬۰۰۰ باشد: %+v", deprivation)
 	}
 	timeConsumed, _ := lineOf(slip, OilAllowanceTimeConsumed)
-	if timeConsumed.Percent != 9.5 || timeConsumed.Amount != 2_375_000 {
-		t.Fatalf("صرف وقت روزکار ماهشهر باید ۹٫۵٪ و ۲٬۳۷۵٬۰۰۰ باشد: %+v", timeConsumed)
+	if timeConsumed.Percent != 16.5 || timeConsumed.Amount != 4_125_000 {
+		t.Fatalf("صرف وقت روزکار ماهشهر باید ۱۶٫۵٪ و ۴٬۱۲۵٬۰۰۰ باشد: %+v", timeConsumed)
 	}
 	if slip.Residence != "mahshahr" || slip.ResidenceFa == "" {
 		t.Fatalf("محل سکونت در فیش ثبت نشده است: %q", slip.Residence)

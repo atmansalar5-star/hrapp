@@ -56,6 +56,12 @@ type OilAllowance struct {
 	DrivenBy      string `json:"drivenBy,omitempty"`
 	RequiresShift bool   `json:"requiresShift,omitempty"`
 	NoteFa        string `json:"noteFa,omitempty"`
+	// Fixed یعنی این قلم «مبلغ ثابت ماهانه» است و درصد ندارد (کمک هزینهٔ عایله‌مندی، مسکن،
+	// حق اولاد و فوق‌العادهٔ خاص). مبلغش از پارامتر `oilpay.allowance.<کلید>` به ریال و یا
+	// از ورودی همان محاسبه می‌آید.
+	Fixed bool `json:"fixed,omitempty"`
+	// Amount مبلغ ثابت ماهانه (ریال) برای اقلام Fixed؛ در اقلام درصدی صفر است.
+	Amount int64 `json:"amount,omitempty"`
 }
 
 // گروه‌های اقلام فیش.
@@ -87,6 +93,16 @@ const (
 	OilAllowanceTimeConsumed = "timeConsumed"
 	// OilAllowanceAttraction قلم «جذب عمومی و تخصصی شغل» (ردیف ۷، جدول ۳).
 	OilAllowanceAttraction = "attractionSpecialty"
+	// OilAllowanceFamily کمک هزینهٔ عایله‌مندی (مبلغ ثابت ماهانه).
+	OilAllowanceFamily = "family"
+	// OilAllowanceHousing کمک هزینهٔ مسکن (مبلغ ثابت ماهانه).
+	OilAllowanceHousing = "housing"
+	// OilAllowanceChildren حق اولاد (مبلغ ثابت ماهانه؛ جمع فرزندان مشمول).
+	OilAllowanceChildren = "children"
+	// OilAllowanceExtra فوقالعادهٔ خاص (مبلغ ثابت ماهانه؛ مصوبهٔ همین سازمان).
+	OilAllowanceExtra = "extra"
+	// OilVeteranIncentive قلم «افزایش سنواتی تشویقی ایثارگر» (پایهٔ تشویقی × مبلغ هر پایه).
+	OilVeteranIncentive = "veteranIncentive"
 )
 
 // OilJobGrade یک ردیف از «جدول ۳» آیین‌نامه: درصد جذب و تخصصی شغل هر پایهٔ سمت.
@@ -150,7 +166,7 @@ type OilResidence struct {
 
 // oilResidenceCatalog جدول‌های ۱ و ۲ آیین‌نامه (محل سکونت → درصدها).
 var oilResidenceCatalog = []OilResidence{
-	{Key: "mahshahr", TitleFa: "ماهشهر", Deprivation: 25, TimeConsumedDay: 9.5, TimeConsumedShift: 10.5},
+	{Key: "mahshahr", TitleFa: "ماهشهر", Deprivation: 27.5, TimeConsumedDay: 16.5, TimeConsumedShift: 18},
 	{Key: "bandar_imam", TitleFa: "بندر امام خمینی", Deprivation: 25, TimeConsumedDay: 9.5, TimeConsumedShift: 10.5},
 	{Key: "jarrahi", TitleFa: "جراحی و شهرک بعثت", Deprivation: 27.5, TimeConsumedDay: 16.5, TimeConsumedShift: 18},
 	{Key: "ramshir", TitleFa: "رامشیر", Deprivation: 30, TimeConsumedDay: 25, TimeConsumedShift: 27},
@@ -208,6 +224,16 @@ type OilPayParams struct {
 	InsuranceEmployeePercent float64 `json:"insuranceEmployeePercent"`
 	// InsuranceCeiling سقف مبنای کسور (صفر = بی‌سقف).
 	InsuranceCeiling int64 `json:"insuranceCeiling"`
+	// FundBase مبنای دستی کسور صندوق (ریال)؛ صفر یعنی مبنای خودکار (جمع ناخالص).
+	//
+	// چرا پارامتر: در فیش رسمی سازمان، مبنای کسور همیشه جمع ناخالص نیست (سقف و اقلام
+	// مشمول دارد). تا وقتی تعریف رسمی در سامانه ثبت نشده، کارشناس می‌تواند مبنای همان دوره
+	// را از مصوبه وارد کند و کسور همان عدد را بدهد.
+	FundBase int64 `json:"fundBase,omitempty"`
+	// TaxBase مبنای دستی مالیات (ریال)؛ صفر یعنی مبنای خودکار (ناخالص − کسور − معافیت).
+	TaxBase int64 `json:"taxBase,omitempty"`
+	// VeteranIncentiveStep مبلغ هر پایهٔ تشویقی ایثارگری (ریال)؛ صفر یعنی پرداخت نشود.
+	VeteranIncentiveStep int64 `json:"veteranIncentiveStep,omitempty"`
 	// TaxExemption معافیت مالیاتی ماهانه و TaxBrackets پله‌های مالیات.
 	TaxExemption int64        `json:"taxExemption"`
 	TaxBrackets  []TaxBracket `json:"taxBrackets"`
@@ -306,6 +332,9 @@ type OilPayInput struct {
 	ClimatePercent float64 `json:"climatePercent"`
 	// AllowancePercents درصد دستی هر قلم (کلید قلم → درصد)؛ نبودِ کلید یعنی درصد مصوب.
 	AllowancePercents map[string]float64 `json:"allowancePercents,omitempty"`
+	// AllowanceAmounts مبلغ دستی اقلام «مبلغ ثابت» (کلید قلم → ریال)؛ نبودِ کلید یعنی
+	// مبلغ مصوب شرکت. اقلام درصدی از این فیلد خوانده نمی‌شوند.
+	AllowanceAmounts map[string]int64 `json:"allowanceAmounts,omitempty"`
 	// Degree کلید مدرک تحصیلی کارمند (diploma | associate | bachelor | master | phd | postdoc)؛
 	// مبنای فوق‌العادهٔ تخصصی است.
 	Degree string `json:"degree,omitempty"`
@@ -322,6 +351,14 @@ type OilPayInput struct {
 	OvertimeHours float64 `json:"overtimeHours"`
 	// OtherDeductions کسور دیگر (وام، مساعده، جریمه).
 	OtherDeductions int64 `json:"otherDeductions"`
+	// ParamOverrides بازنویسی پارامترهای همین نظام برای همین محاسبه (کلید `oilpay.*` →
+	// مقدار متنی). فرم فیش با این فیلد همهٔ ضرائب، نرخها و خانه‌های جدول‌ها را پیش از اجرا
+	// قابل تغییر می‌کند، بدون آنکه پروفایل شرکت دست بخورد؛ کلید غیر `oilpay.*` نادیده
+	// گرفته می‌شود تا این ورودی راهی برای تغییر پارامترهای دیگر نباشد.
+	ParamOverrides map[string]string `json:"paramOverrides,omitempty"`
+	// ExtraLines سطرهای دستی فیش (تطبیق سقف، وام، درمان، پس‌انداز، علی‌الحساب و ...) که
+	// در بند مربوط خودشان در جمع‌ها لحاظ می‌شوند.
+	ExtraLines []OilExtraLine `json:"extraLines,omitempty"`
 	// EmployeeID کارمند فیش؛ فقط برای این است که لایهٔ ماژول بتواند پروندهٔ ایثارگری همان
 	// کارمند را بخواند و امتیازش را در Veteran بگذارد. خودِ محاسبه به آن کاری ندارد.
 	EmployeeID string `json:"employeeId,omitempty"`
@@ -383,6 +420,9 @@ type OilPayslip struct {
 	VeteranPensionExempt int64  `json:"veteranPensionExempt"`
 	VeteranGroupFa       string `json:"veteranGroupFa,omitempty"`
 	VeteranNoteFa        string `json:"veteranNoteFa,omitempty"`
+	// Bands سه بند فیش رسمی: حقوق و فوق‌العاده‌ها و کسورات قانونی، کسورات تطبیق جهت رعایت
+	// سقف، و سایر پرداخت‌ها و کسورات مؤثر در خالص — هر بند با ستون بستانکار و بدهکار.
+	Bands []OilPayslipBand `json:"bands,omitempty"`
 	NoteFa               string `json:"noteFa,omitempty"`
 }
 
@@ -461,7 +501,24 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	if monthDays <= 0 {
 		monthDays = 30
 	}
-	for _, allowance := range params.Allowances {
+	for _, allowance := range OilAllowanceCatalog(params.Allowances) {
+		if allowance.Fixed {
+			amount := allowance.Amount
+			if manual, ok := in.AllowanceAmounts[allowance.Key]; ok {
+				amount = manual
+			}
+			if amount <= 0 {
+				continue
+			}
+			line := OilPayLine{
+				Key: allowance.Key, TitleFa: allowance.TitleFa, GroupFa: allowance.GroupFa,
+				Amount: amount, DetailFa: oilFixedDetailFa,
+			}
+			out.AllowanceLines = append(out.AllowanceLines, line)
+			out.Lines = append(out.Lines, line)
+			out.Allowances += amount
+			continue
+		}
 		percent, hasManual := oilAllowancePercentManual(in, allowance.Key)
 		if !hasManual {
 			percent = allowance.Percent
@@ -556,6 +613,17 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	}
 
 	// اضافه‌کار: پایهٔ حقوق × نرخ مصوب هر ساعت (روزکار ۰٫۰۱۴ / نوبت‌کار ۰٫۰۱۶) × ساعت‌ها.
+	if in.Veteran != nil && in.Veteran.Approved && in.Veteran.IncentiveSteps > 0 && params.VeteranIncentiveStep > 0 {
+		amount := int64(in.Veteran.IncentiveSteps) * params.VeteranIncentiveStep
+		line := OilPayLine{
+			Key: OilVeteranIncentive, TitleFa: OilVeteranIncentiveTitleFa(), GroupFa: OilGroupClimate,
+			Amount: amount, DetailFa: oilVeteranIncentiveDetailFa(in.Veteran.IncentiveSteps),
+		}
+		out.AllowanceLines = append(out.AllowanceLines, line)
+		out.Lines = append(out.Lines, line)
+		out.Allowances += amount
+	}
+
 	if in.OvertimeHours > 0 {
 		rate := params.OvertimeRateDay
 		kindFa := "روزکار"
@@ -580,6 +648,9 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 
 	// کسور: سهم کارمند صندوق (و بیمه، اگر پارامتر داشته باشد) با سقف مبنای کسور.
 	deductionBase := out.Gross
+	if params.FundBase > 0 {
+		deductionBase = params.FundBase
+	}
 	if params.InsuranceCeiling > 0 && deductionBase > params.InsuranceCeiling {
 		deductionBase = params.InsuranceCeiling
 	}
@@ -598,6 +669,9 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	}
 
 	taxableBefore := out.Gross - out.FundEmployee - out.InsuranceEmployee - params.TaxExemption
+	if params.TaxBase > 0 {
+		taxableBefore = params.TaxBase
+	}
 	if taxableBefore < 0 {
 		taxableBefore = 0
 	}
@@ -605,7 +679,9 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	// امتیاز ایثارگری: کاهش کسور سهم کارمند (صندوق/بیمه) و معافیت مالیاتی. مبنای هر دو
 	// تعدیل، عدد پیش از اعمال امتیاز است تا درصد معافیت روی همان مبنای قانونی بنشیند.
 	relief := VeteranReliefResult{}
-	if in.Veteran != nil {
+	// در حالت مالیات دستی (پله‌ها خالی) مالیات از سطرهای مصوبه می‌آید؛ اعمال معافیت
+	// ایثارگری روی مبنای خودکار، مالیات را دو بار تعدیل می‌کرد.
+	if in.Veteran != nil && len(params.TaxBrackets) > 0 {
 		relief = ApplyVeteranRelief(VeteranReliefInput{
 			TaxableIncome:     taxableBefore,
 			EmployeeDeduction: out.FundEmployee + out.InsuranceEmployee,
@@ -654,6 +730,11 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 
 	out.Deductions = out.FundEmployee + out.InsuranceEmployee + out.Tax + out.OtherDeductions
 	out.Net = out.Gross - out.Deductions
+	out.Bands = oilBuildBands(out.Lines, in.ExtraLines)
+	out.Net = 0
+	for _, band := range out.Bands {
+		out.Net += band.Net
+	}
 
 	note := "نظام پرداخت صندوق بازنشستگی نفت بر پایهٔ آیین‌نامهٔ فوق‌العاده‌ها: فوق‌العادهٔ بدی " +
 		"آب و هوا " + numberFa(climatePercent) + "٪ از پایهٔ حقوق است (A+B = " +
@@ -721,7 +802,7 @@ func oilAllowancePercent(in OilPayInput, params OilPayParams, key string) float6
 	if value, ok := oilAllowancePercentManual(in, key); ok {
 		return value
 	}
-	for _, allowance := range params.Allowances {
+	for _, allowance := range OilAllowanceCatalog(params.Allowances) {
 		if allowance.Key == key {
 			return allowance.Percent
 		}

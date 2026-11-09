@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -46,7 +47,7 @@ func registerOilPayEndpoints(mux *http.ServeMux, deps modulekit.Deps, _ *recordk
 
 // oilPayDefaults پارامترها و فهرست‌های مرجع نظام صندوق نفت.
 func oilPayDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
-	params := oilPayParams(deps)
+	params := oilPayParams(deps, nil)
 	return map[string]any{
 		"params":       params,
 		"allowances":   rules.OilAllowances(params),
@@ -56,7 +57,7 @@ func oilPayDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
 		"jobGrades":   oilJobGradeOptions(params),
 		"residences":  oilResidenceOptions(params),
 		"employees":   oilEmployeeOptions(ctx, deps, params),
-		"paramViews":  oilParamViews(deps),
+		"paramViews":  oilParamViews(deps, nil),
 		"period":      oilPeriod(deps),
 		"today":       oilToday(deps),
 		"daysInMonth": oilDaysInMonth(deps),
@@ -76,55 +77,79 @@ func oilPayDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
 // `rules.ComputeOilPayslip` است و این تابع فقط ورودی موتور را کامل می‌کند.
 func oilPayslip(ctx context.Context, deps modulekit.Deps, in rules.OilPayInput) map[string]any {
 	in.Veteran = veteranEntitlement(ctx, deps, in.EmployeeID)
-	slip := rules.ComputeOilPayslip(in, oilPayParams(deps))
+	params := oilPayParams(deps, in.ParamOverrides)
+	slip := rules.ComputeOilPayslip(in, params)
 	return map[string]any{
 		"scheme":      rules.SchemeOil,
 		"schemeFa":    "نظام پرداخت صندوق بازنشستگی نفت",
 		"slip":        slip,
 		"input":       in,
-		"params":      oilPayParams(deps),
+		"params":      params,
 		"noteFa":      oilPayNoteFa(),
 		"period":      oilPeriod(deps),
 		"daysInMonth": oilDaysInMonth(deps),
 	}
 }
 
-// oilPayParams آستانه‌ها و درصدهای نظام صندوق را از پروفایل شرکت فعال می‌خواند.
+// oilPayParams آستانه‌ها و درصدهای نظام صندوق را از پروفایل شرکت فعال می‌خواند و روی آن،
+// بازنویسی‌های همین محاسبه را می‌نشاند.
 //
 // هر کلید `oilpay.*` که در پارامترهای شرکت باشد همین‌جا خوانده می‌شود؛ پس تغییر مصوبه
 // نیاز به انتشار نسخهٔ تازه ندارد. خانه‌های جدول‌های آیین‌نامه هم کلید پارامتری خودشان را
 // دارند (`oilpay.grade.<پایه>.public|rank` و `oilpay.site.<محل>.deprivation|timeConsumedDay|
 // timeConsumedShift`) تا مصوبهٔ تازه بدون تغییر کد اعمال شود.
-func oilPayParams(deps modulekit.Deps) rules.OilPayParams {
+//
+// پارامتر overrides همان محاسبه را با اعداد دیگری اجرا می‌کند و پروفایل شرکت را تغییر
+// نمی‌دهد؛ فرم فیش با همین راه همهٔ ضرائب، نرخ‌ها و خانه‌های جدول‌ها را پیش از اجرا قابل
+// تغییر می‌کند.
+func oilPayParams(deps modulekit.Deps, overrides map[string]string) rules.OilPayParams {
+	values := oilParamValues(deps, overrides)
 	params := rules.DefaultOilPayParams()
-	if v, ok := oilParam(deps, "oilpay.climatePercent"); ok && v > 0 {
+	// اقلام «مبلغ ثابت» فیش رسمی (عایله‌مندی، مسکن، حق اولاد، فوق‌العادهٔ خاص) هم به فهرست
+	// می‌آیند تا مبلغ مصوبشان از پارامتر خوانده و در فیش نشان داده شود.
+	params.Allowances = rules.OilAllowanceCatalog(params.Allowances)
+	if v, ok := oilParamOf(values, "oilpay.climatePercent"); ok && v > 0 {
 		params.ClimatePercent = v
 	}
 	// فوق‌العاده‌های درصدی: درصد هر قلم از پارامتر همان قلم می‌آید
 	// (مثلاً oilpay.allowance.special = 30).
 	for i := range params.Allowances {
-		if v, ok := oilParam(deps, "oilpay.allowance."+params.Allowances[i].Key); ok && v >= 0 {
-			params.Allowances[i].Percent = v
+		if v, ok := oilParamOf(values, "oilpay.allowance."+params.Allowances[i].Key); ok && v >= 0 {
+			if params.Allowances[i].Fixed {
+				params.Allowances[i].Amount = int64(v)
+			} else {
+				params.Allowances[i].Percent = v
+			}
 		}
 	}
-	if v, ok := oilParam(deps, "oilpay.fund.employeePercent"); ok && v >= 0 {
+	if v, ok := oilParamOf(values, "oilpay.fund.employeePercent"); ok && v >= 0 {
 		params.FundEmployeePercent = v
 	}
-	if v, ok := oilParam(deps, "oilpay.fund.employerPercent"); ok && v >= 0 {
+	if v, ok := oilParamOf(values, "oilpay.fund.employerPercent"); ok && v >= 0 {
 		params.FundEmployerPercent = v
 	}
-	if v, ok := oilParam(deps, "oilpay.insurance.employeePercent"); ok && v >= 0 {
+	if v, ok := oilParamOf(values, "oilpay.insurance.employeePercent"); ok && v >= 0 {
 		params.InsuranceEmployeePercent = v
 	}
-	if v, ok := oilParam(deps, "oilpay.tax.exemption"); ok && v > 0 {
+	if v, ok := oilParamOf(values, "oilpay.tax.exemption"); ok && v >= 0 {
 		params.TaxExemption = int64(v)
 	}
 	// نرخ اضافه‌کار هر ساعت به نسبت پایهٔ حقوق (آیین‌نامه: روزکار ۰٫۰۱۴، نوبت‌کار ۰٫۰۱۶).
-	if v, ok := oilParam(deps, "oilpay.overtimeRate.day"); ok && v >= 0 {
+	if v, ok := oilParamOf(values, "oilpay.overtimeRate.day"); ok && v >= 0 {
 		params.OvertimeRateDay = v
 	}
-	if v, ok := oilParam(deps, "oilpay.overtimeRate.shift"); ok && v >= 0 {
+	if v, ok := oilParamOf(values, "oilpay.overtimeRate.shift"); ok && v >= 0 {
 		params.OvertimeRateShift = v
+	}
+	// مبنای دستی کسور و مالیات (صفر = مبنای خودکار) و مبلغ هر پایهٔ تشویقی ایثارگری.
+	if v, ok := oilParamOf(values, "oilpay.fund.base"); ok && v >= 0 {
+		params.FundBase = int64(v)
+	}
+	if v, ok := oilParamOf(values, "oilpay.tax.base"); ok && v >= 0 {
+		params.TaxBase = int64(v)
+	}
+	if v, ok := oilParamOf(values, "oilpay.veteran.incentiveStep"); ok && v >= 0 {
+		params.VeteranIncentiveStep = int64(v)
 	}
 	// فوق‌العادهٔ تخصصی بر اساس مدرک: درصد هر مقطع از پارامتر همان مقطع
 	// (مثلاً oilpay.degree.bachelor = 38.5). صفر یعنی مقطع مشمول نیست.
@@ -132,12 +157,18 @@ func oilPayParams(deps modulekit.Deps) rules.OilPayParams {
 		params.DegreeAllowancePercents = map[string]float64{}
 	}
 	for _, level := range contracts.DegreeLevels() {
-		if v, ok := oilParam(deps, "oilpay.degree."+level.Key); ok && v >= 0 {
+		if v, ok := oilParamOf(values, "oilpay.degree."+level.Key); ok && v >= 0 {
 			params.DegreeAllowancePercents[level.Key] = v
 		}
 	}
-	oilTableParams(deps, &params)
-	oilGradeMapParams(deps, &params)
+	oilTaxBrackets(values, &params)
+	// حالت دستی: وقتی مالیات از سطرهای مصوبه می‌آید، محاسبهٔ پله‌ای خاموش می‌شود تا
+	// مالیات دو بار کسر نشود (oilpay.tax.mode = manual).
+	if strings.EqualFold(strings.TrimSpace(values["oilpay.tax.mode"]), "manual") {
+		params.TaxBrackets = nil
+	}
+	oilTableParams(values, &params)
+	oilGradeMapParams(values, &params)
 	return params
 }
 
@@ -145,17 +176,17 @@ func oilPayParams(deps modulekit.Deps) rules.OilPayParams {
 //
 // کلید پارامتر: oilpay.gradeMap.<کلید گروه شغلی> و مقدارش کلید پایهٔ سمت جدول ۳
 // (مثلاً oilpay.gradeMap.manager = A). فقط پیشنهاد فرم است؛ درصد هیچ قلمی از آن نمی‌آید.
-func oilGradeMapParams(deps modulekit.Deps, params *rules.OilPayParams) {
+func oilGradeMapParams(values map[string]string, params *rules.OilPayParams) {
 	if params.GradeSiteMap == nil {
 		params.GradeSiteMap = map[string]string{}
 	}
-	for _, p := range deps.Org.Params {
-		parts := strings.Split(p.Key, ".")
+	for key, raw := range values {
+		parts := strings.Split(key, ".")
 		if len(parts) != 3 || parts[0] != "oilpay" || parts[1] != "gradeMap" {
 			continue
 		}
 		grade := strings.TrimSpace(parts[2])
-		site := strings.TrimSpace(p.Value)
+		site := strings.TrimSpace(raw)
 		if grade == "" {
 			continue
 		}
@@ -167,18 +198,19 @@ func oilGradeMapParams(deps modulekit.Deps, params *rules.OilPayParams) {
 	}
 }
 
-// oilTableParams خانه‌های جدول ۱، ۲ و ۳ آیین‌نامه را از پارامترهای شرکت بازنویسی می‌کند.
+// oilTableParams خانه‌های جدول ۱، ۲ و ۳ آیین‌نامه را از پارامترهای مؤثر بازنویسی می‌کند.
 //
 // چرا با پیشوند و نه با فهرست ثابت کلیدها: خانه‌های جدول‌ها ۳۵ عددند و افزودن همه به
 // پروفایل شرکت، فهرست پارامترها را ناخوانا می‌کرد. هر کلیدی که با این الگو بیاید اعمال
-// می‌شود و کلید ناشناخته بی‌اثر می‌ماند.
-func oilTableParams(deps modulekit.Deps, params *rules.OilPayParams) {
-	for _, p := range deps.Org.Params {
-		parts := strings.Split(p.Key, ".")
+// می‌شود و کلید ناشناخته بی‌اثر می‌ماند. چون ورودی این تابع «نقشهٔ مؤثر» است، بازنویسی فرم
+// فیش روی همین خانه‌ها هم اثر می‌گذارد.
+func oilTableParams(values map[string]string, params *rules.OilPayParams) {
+	for key, raw := range values {
+		parts := strings.Split(key, ".")
 		if len(parts) != 4 || parts[0] != "oilpay" {
 			continue
 		}
-		value, err := strconv.ParseFloat(strings.TrimSpace(p.Value), 64)
+		value, err := strconv.ParseFloat(strings.TrimSpace(raw), 64)
 		if err != nil || value < 0 {
 			continue
 		}
@@ -213,30 +245,112 @@ func oilTableParams(deps modulekit.Deps, params *rules.OilPayParams) {
 	}
 }
 
-// oilParam مقدار عددی یک پارامتر استقرار.
-func oilParam(deps modulekit.Deps, key string) (float64, bool) {
-	for _, p := range deps.Org.Params {
-		if p.Key != key {
-			continue
-		}
-		value, err := strconv.ParseFloat(strings.TrimSpace(p.Value), 64)
-		if err != nil {
-			return 0, false
-		}
-		return value, true
+// oilTaxBrackets پله‌های مالیات را از قالب متنی «سقف:نرخ,سقف:نرخ» بازنویسی می‌کند.
+//
+// چرا متنی: پله‌های مالیات فهرست‌اند و در پروفایل شرکت یک کلید عددی ندارند؛ این قالب کوتاه
+// اجازه می‌دهد کارشناس پیش از اجرا پله‌ها را عوض کند. نرخ بزرگ‌تر از ۱ درصد شمرده می‌شود
+// (۱۰ یعنی ۱۰٪)، سقف صفر یعنی «آخرین پله» و قالب نامعتبر نادیده گرفته می‌شود تا پیش‌فرض
+// قانونی بماند.
+func oilTaxBrackets(values map[string]string, params *rules.OilPayParams) {
+	raw, ok := values["oilpay.tax.brackets"]
+	if !ok || strings.TrimSpace(raw) == "" {
+		return
 	}
-	return 0, false
+	out := make([]rules.TaxBracket, 0, 4)
+	for _, part := range strings.Split(raw, ",") {
+		pair := strings.SplitN(strings.TrimSpace(part), ":", 2)
+		if len(pair) != 2 {
+			return
+		}
+		upto, err := strconv.ParseInt(strings.TrimSpace(pair[0]), 10, 64)
+		if err != nil || upto < 0 {
+			return
+		}
+		rate, err := strconv.ParseFloat(strings.TrimSpace(pair[1]), 64)
+		if err != nil || rate < 0 {
+			return
+		}
+		if rate > 1 {
+			rate /= 100
+		}
+		out = append(out, rules.TaxBracket{Upto: upto, Rate: rate})
+	}
+	if len(out) > 0 {
+		params.TaxBrackets = out
+	}
 }
 
-// oilParamViews پارامترهای نظام صندوق را برای نمایش در فرم برمی‌گرداند.
-func oilParamViews(deps modulekit.Deps) []map[string]string {
+// oilParamValues نقشهٔ مؤثر پارامترهای نظام صندوق: پروفایل شرکت + بازنویسی همین محاسبه.
+//
+// چرا فقط `oilpay.*` پذیرفته می‌شود: این نقشه از بدنهٔ درخواست HTTP پر می‌شود؛ با محدود
+// کردن پیشوند، فرم فیش نمی‌تواند پارامترهای نظام دیگر (مالیات عمومی، حضور و غیاب،
+// ایثارگری و ...) را دست بزند.
+func oilParamValues(deps modulekit.Deps, overrides map[string]string) map[string]string {
+	out := make(map[string]string, len(deps.Org.Params)+len(overrides))
+	for _, p := range deps.Org.Params {
+		if strings.HasPrefix(p.Key, "oilpay.") {
+			out[p.Key] = p.Value
+		}
+	}
+	for key, value := range overrides {
+		k := strings.TrimSpace(key)
+		if !strings.HasPrefix(k, "oilpay.") {
+			continue
+		}
+		out[k] = strings.TrimSpace(value)
+	}
+	return out
+}
+
+// oilParamOf مقدار عددی یک پارامتر از نقشهٔ مؤثر.
+func oilParamOf(values map[string]string, key string) (float64, bool) {
+	raw, ok := values[key]
+	if !ok {
+		return 0, false
+	}
+	value, err := strconv.ParseFloat(strings.TrimSpace(raw), 64)
+	if err != nil {
+		return 0, false
+	}
+	return value, true
+}
+
+// oilParamViews پارامترهای نظام صندوق را برای نمایش و ویرایش در فرم برمی‌گرداند.
+//
+// کلیدهای بازنویسی‌شده هم اگر در پروفایل شرکت نباشند در فهرست می‌آیند تا فرم همیشه همهٔ
+// ضرائب مؤثر همین محاسبه را نشان دهد.
+func oilParamViews(deps modulekit.Deps, overrides map[string]string) []map[string]string {
+	titles := map[string]map[string]string{}
+	for _, p := range deps.Org.Params {
+		if !strings.HasPrefix(p.Key, "oilpay.") {
+			continue
+		}
+		titles[p.Key] = map[string]string{"titleFa": p.TitleFa, "unitFa": p.UnitFa}
+	}
+	values := oilParamValues(deps, overrides)
 	out := []map[string]string{}
 	for _, p := range deps.Org.Params {
 		if !strings.HasPrefix(p.Key, "oilpay.") {
 			continue
 		}
 		out = append(out, map[string]string{
-			"key": p.Key, "titleFa": p.TitleFa, "value": p.Value, "unitFa": p.UnitFa,
+			"key": p.Key, "titleFa": p.TitleFa, "value": values[p.Key], "unitFa": p.UnitFa,
+		})
+	}
+	keys := make([]string, 0, len(values))
+	for key := range values {
+		if _, ok := titles[key]; !ok {
+			keys = append(keys, key)
+		}
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		title := map[string]string{}
+		if p, ok := titles[key]; ok {
+			title = p
+		}
+		out = append(out, map[string]string{
+			"key": key, "titleFa": title["titleFa"], "value": values[key], "unitFa": title["unitFa"],
 		})
 	}
 	return out

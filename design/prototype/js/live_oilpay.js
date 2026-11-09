@@ -52,11 +52,95 @@ function oilSelect(id) {
 function oilAllowancePercents() {
   const out = {};
   for (const a of ((OIL_DEFAULTS && OIL_DEFAULTS.allowances) || [])) {
-    if (a.drivenBy) continue;
+    if (a.fixed) continue;
     const el = document.getElementById('oilAllow_' + a.key);
+    if (!el) continue;
+    // قلم جدولی فقط وقتی فرستاده می‌شود که کاربر خودش عدد را عوض کرده باشد؛ وگرنه
+    // جدول ۱/۲/۳ سرور همان درصد را می‌دهد و بازنویسی دستی روی جدول نمی‌نشیند.
+    if (a.drivenBy && el.dataset.edited !== '1') continue;
+    const value = Number((el.value || '').replace(/[^0-9.\-]/g, ''));
+    if (!isNaN(value) && el.value !== '') out[a.key] = value;
+  }
+  return out;
+}
+
+/** مبلغ دستی اقلام ثابت (عایله‌مندی، مسکن، حق اولاد، فوق‌العادهٔ خاص) — صفر یعنی مصوب شرکت. */
+function oilAllowanceAmounts() {
+  const out = {};
+  for (const a of ((OIL_DEFAULTS && OIL_DEFAULTS.allowances) || [])) {
+    if (!a.fixed) continue;
+    const el = document.getElementById('oilAmount_' + a.key);
     if (!el) continue;
     const value = Number((el.value || '').replace(/[^0-9.\-]/g, ''));
     if (!isNaN(value) && el.value !== '') out[a.key] = value;
+  }
+  return out;
+}
+
+/** سطرهای دستی فیش (بند ۱/۲/۳) از جدول ویرایش‌پذیر. */
+function oilExtraLines() {
+  const out = [];
+  for (const row of document.querySelectorAll('#oilExtraRows tr[data-extra]')) {
+    const title = (row.querySelector('[data-f="title"]').value || '').trim();
+    const amount = Number((row.querySelector('[data-f="amount"]').value || '').replace(/[^0-9.\-]/g, '')) || 0;
+    if (!title || amount === 0) continue;
+    out.push({
+      titleFa: title,
+      amount: amount,
+      side: row.querySelector('[data-f="side"]').value,
+      band: Number(row.querySelector('[data-f="band"]').value) || 3,
+    });
+  }
+  return out;
+}
+
+/** افزودن یک سطر دستی خالی به جدول سطرهای فیش. */
+function oilAddExtraRow(band, side, title, amount) {
+  const body = document.getElementById('oilExtraRows');
+  if (!body) return;
+  const tr = document.createElement('tr');
+  tr.setAttribute('data-extra', '1');
+  tr.innerHTML = `
+    <td><select data-f="band" onchange="oilCalcSoon()">
+      <option value="1"${Number(band) === 1 ? ' selected' : ''}>۱ — حقوق و فوق‌العاده‌ها و کسورات قانونی</option>
+      <option value="2"${Number(band) === 2 ? ' selected' : ''}>۲ — کسورات تطبیق جهت رعایت سقف</option>
+      <option value="3"${Number(band) === 3 || !band ? ' selected' : ''}>۳ — سایر پرداخت‌ها و کسورات</option>
+    </select></td>
+    <td><input data-f="title" value="${esc(title || '')}" placeholder="شرح قلم" oninput="oilCalcSoon()"></td>
+    <td><input data-f="amount" class="num" value="${amount ? String(amount) : ''}" oninput="oilCalcSoon()"></td>
+    <td><select data-f="side" onchange="oilCalcSoon()">
+      <option value="credit"${side !== 'debit' ? ' selected' : ''}>بستانکار (پرداخت)</option>
+      <option value="debit"${side === 'debit' ? ' selected' : ''}>بدهکار (کسور)</option>
+    </select></td>
+    <td><button class="btn btn-sm btn-ghost" onclick="this.closest('tr').remove(); oilCalc()">✕</button></td>`;
+  body.appendChild(tr);
+}
+
+/** افزودن سطر دستی از خود فرم. */
+function oilExtraAdd() {
+  oilAddExtraRow(document.getElementById('oilExtraBand').value, 'debit', '', 0);
+  oilCalc();
+}
+
+/** ویرایش دستی درصد یک قلم جدولی؛ خالی‌کردن کادر یعنی بازگشت به جدول آیین‌نامه. */
+function oilOnAllowanceEdit(el) {
+  el.dataset.edited = (el.value || '').trim() === '' ? '0' : '1';
+  oilCalcSoon();
+}
+
+/** بازگشت همهٔ درصدهای جدولی به مقدار جدول ۱ تا ۳. */
+function oilResetDriven() {
+  for (const el of document.querySelectorAll('[data-driven="1"]')) el.dataset.edited = '0';
+  oilCalc();
+}
+
+/** بازنویسی پارامترهای نظام صندوق برای همین محاسبه (کلید oilpay.* → مقدار). */
+function oilParamOverrides() {
+  const out = {};
+  for (const el of document.querySelectorAll('[data-oilparam]')) {
+    const key = el.dataset.oilparam;
+    const value = (el.value || '').trim();
+    if (key && value !== '') out[key] = value;
   }
   return out;
 }
@@ -70,6 +154,8 @@ function oilInput() {
     baseSalary: oilNum('oilBaseSalary'),
     climatePercent: oilNum('oilClimatePercent'),
     allowancePercents: oilAllowancePercents(),
+    allowanceAmounts: oilAllowanceAmounts(),
+    extraLines: oilExtraLines(),
     degree: oilSelect('oilDegree'),
     jobGrade: oilSelect('oilJobGrade'),
     residence: oilSelect('oilResidence'),
@@ -78,6 +164,8 @@ function oilInput() {
     daysInMonth: oilNum('oilDaysInMonth'),
     overtimeHours: oilNum('oilOvertime'),
     otherDeductions: oilNum('oilDeductions'),
+    // ضرائب و نرخ‌های همین محاسبه؛ پروفایل شرکت دست نمی‌خورد.
+    paramOverrides: oilParamOverrides(),
   };
 }
 
@@ -106,18 +194,27 @@ function oilRenderSlip() {
   if (!box || !OIL_RESULT || !OIL_RESULT.slip) return;
   const s = OIL_RESULT.slip;
 
-  const rows = (s.lines || []).map(l => {
-    const isDeduct = l.groupFa === 'کسور';
-    const amount = isDeduct ? '-' + money(l.amount) : money(l.amount);
-    const color = isDeduct ? 'color:#dc2626' : '';
-    return `<tr>
-      <td>${esc(l.titleFa)}</td>
-      <td style="font-size:.72rem">${esc(l.groupFa || '')}</td>
-      <td class="num">${l.percent ? fa(Math.round(l.percent * 10) / 10) + '٪' : '—'}</td>
-      <td class="num">${l.base ? fa(money(l.base)) : '—'}</td>
-      <td class="num" style="${color}"><b>${fa(amount)}</b></td>
-      <td style="font-size:.74rem">${esc(l.detailFa || '—')}</td></tr>`;
-  });
+  // سه بند فیش رسمی: هر بند جدولی دو ستونی (بستانکار/بدهکار) با جمع خودش.
+  const bandHtml = (s.bands || []).map(band => {
+    const rows = (band.lines || []).map(l => {
+      const debit = l.groupFa === 'کسور';
+      return `<tr>
+        <td>${esc(l.titleFa)}</td>
+        <td style="font-size:.72rem">${esc(l.groupFa || '')}</td>
+        <td class="num">${l.percent ? fa(Math.round(l.percent * 10) / 10) + '٪' : '—'}</td>
+        <td class="num">${debit ? '' : fa(money(l.amount))}</td>
+        <td class="num" style="color:#dc2626">${debit ? fa(money(l.amount)) : ''}</td>
+        <td style="font-size:.74rem">${esc(l.detailFa || '—')}</td></tr>`;
+    });
+    rows.push(`<tr><td><b>جمع ${esc(band.titleFa)}</b></td><td></td><td></td>
+      <td class="num"><b>${fa(money(band.credit))}</b></td>
+      <td class="num" style="color:#dc2626"><b>${fa(money(band.debit))}</b></td>
+      <td class="num"><b>${fa(money(band.net))}</b></td></tr>`);
+    return `<div class="card card-pad" style="margin-top:10px">
+      <div class="card-title">${esc(band.titleFa)}</div>
+      ${liveTable(['شرح', 'گروه', 'درصد', 'بستانکار (ریال)', 'بدهکار (ریال)', 'خالص بند'], rows, rows.length)}
+    </div>`;
+  }).join('');
 
   box.innerHTML = `
     <div class="grid-stats">
@@ -133,10 +230,9 @@ function oilRenderSlip() {
       ${statCard({ico: '➖', tint: '#FEE2E2', accent: '#DC2626', val: fa(money(s.deductions)), label: 'جمع کسور (ریال)'})}
       ${statCard({ico: '💵', tint: '#DCFCE7', accent: '#16A34A', val: fa(money(s.net)), label: 'خالص پرداختی (ریال)'})}
     </div>
+    ${bandHtml}
     <div class="card card-pad" style="margin-top:10px">
-      <div class="card-title">تفکیک اقلام فیش — ${esc(s.schemeFa || '')}</div>
-      ${liveTable(['قلم', 'گروه', 'درصد', 'مبنای محاسبه (ریال)', 'مبلغ (ریال)', 'شرح'],
-        rows, rows.length)}
+      <div class="card-title">جمع‌های فیش</div>
       <div class="muted" style="font-size:.74rem;margin-top:6px">
         کسور سهم کارفرما (صندوق بازنشستگی نفت): <b class="num">${fa(money(s.fundEmployer || 0))}</b> ریال
       </div>
@@ -145,10 +241,20 @@ function oilRenderSlip() {
         <b class="num">${fa(money(s.veteranTaxExempt || 0))}</b> ریال و معافیت کسور
         <b class="num">${fa(money(s.veteranPensionExempt || 0))}</b> ریال
       </div>` : ''}
+      <div class="slip-total" style="margin-top:8px;font-size:1rem">
+        <span>خالص پرداختی (ریال)</span><span class="num"><b>${fa(money(s.net))}</b></span>
+      </div>
     </div>
     <div class="card card-pad" style="margin-top:10px;font-size:.8rem;line-height:1.9">
       ${esc(OIL_RESULT.noteFa || '').split('\n').join('<br>')}
     </div>`;
+  // سطرهای دستی همین محاسبه را در جدول ویرایش نشان می‌دهیم؛ فقط وقتی جدول خالی است تا
+  // هنگام تایپ، فوکوس از دست نرود.
+  const extraBody = document.getElementById('oilExtraRows');
+  const extraInput = (OIL_RESULT.input && OIL_RESULT.input.extraLines) || [];
+  if (extraBody && extraBody.children.length === 0 && extraInput.length) {
+    for (const line of extraInput) oilAddExtraRow(line.band, line.side, line.titleFa, line.amount);
+  }
   oilSyncDriven(s);
 }
 
@@ -161,6 +267,8 @@ function oilSyncDriven(slip) {
     if (!a.drivenBy) continue;
     const el = document.getElementById('oilAllow_' + a.key);
     if (!el) continue;
+    // درصدی که کاربر دستی عوض کرده، با مقدار جدول بازنویسی نمی‌شود.
+    if (el.dataset.edited === '1') continue;
     const line = (slip.lines || []).find(l => l.key === a.key);
     el.value = line ? String(Math.round(line.percent * 10) / 10) : '0';
   }
@@ -300,12 +408,21 @@ function oilPrint() {
   if (!OIL_RESULT || !OIL_RESULT.slip) { toast('ابتدا فیش محاسبه شود', 'error'); return; }
   const s = OIL_RESULT.slip;
   const employee = (OIL_EMPLOYEES.find(e => e.id === oilSelect('oilEmployee')) || {}).titleFa || '';
-  const rows = (s.lines || []).map(l => `<tr>
+  // چاپ هم مانند صفحه، ساختار سه‌بندی فیش رسمی را دارد: هر بند با دو ستون بستانکار/بدهکار.
+  const bandTables = (s.bands || []).map(band => {
+    const rows = (band.lines || []).map(l => `<tr>
     <td>${esc(l.titleFa)}</td>
     <td>${l.percent ? fa(Math.round(l.percent * 10) / 10) + '٪' : '—'}</td>
-    <td>${l.base ? fa(money(l.base)) : '—'}</td>
-    <td>${fa(l.groupFa === 'کسور' ? '-' + money(l.amount) : money(l.amount))}</td>
+    <td>${l.groupFa === 'کسور' ? '' : fa(money(l.amount))}</td>
+    <td>${l.groupFa === 'کسور' ? fa(money(l.amount)) : ''}</td>
     <td>${esc(l.detailFa || '')}</td></tr>`).join('');
+    return `<h2>${esc(band.titleFa)}</h2>
+    <table><thead><tr><th>شرح</th><th>درصد</th><th>بستانکار (ریال)</th><th>بدهکار (ریال)</th><th>توضیح</th></tr></thead>
+    <tbody>${rows}
+    <tr><td><b>جمع ${esc(band.titleFa)}</b></td><td></td>
+      <td><b>${fa(money(band.credit))}</b></td><td><b>${fa(money(band.debit))}</b></td>
+      <td><b>خالص بند: ${fa(money(band.net))}</b></td></tr></tbody></table>`;
+  }).join('');
   const win = window.open('', '_blank');
   if (!win) { toast('پنجرهٔ چاپ باز نشد', 'error'); return; }
   win.document.write(`<!doctype html><html dir="rtl" lang="fa"><head><meta charset="utf-8">
@@ -314,11 +431,11 @@ function oilPrint() {
     h1{font-size:18px;margin:0 0 4px} .sub{color:#555;font-size:12px;margin-bottom:14px}
     table{width:100%;border-collapse:collapse;margin-top:10px}
     th,td{border:1px solid #ccc;padding:6px;font-size:12px;text-align:right}
-    th{background:#f3f4f6} .tot{margin-top:12px;font-size:13px;line-height:2}</style></head><body>
+    th{background:#f3f4f6} h2{font-size:13px;margin:16px 0 4px}
+    .tot{margin-top:12px;font-size:13px;line-height:2}</style></head><body>
     <h1>فیش حقوقی — نظام پرداخت صندوق بازنشستگی نفت</h1>
     <div class="sub">${esc(employee)} | دورهٔ ${fa(oilText('oilPeriod'))}</div>
-    <table><thead><tr><th>قلم</th><th>درصد</th><th>مبنای محاسبه (ریال)</th><th>مبلغ (ریال)</th><th>شرح</th></tr></thead>
-    <tbody>${rows}</tbody></table>
+    ${bandTables}
     <div class="tot">
       پایهٔ حقوق: <b>${fa(money(s.baseSalary))}</b> ریال ·
       فوق‌العادهٔ بدی آب و هوا: <b>${fa(money(s.climate))}</b> ریال ·
@@ -355,15 +472,36 @@ function pageOilPayslipLive() {
     const empOpts = OIL_EMPLOYEES.map(e => `<option value="${esc(e.id)}">${esc(e.titleFa)}</option>`).join('');
     const firstBase = (OIL_EMPLOYEES[0] && OIL_EMPLOYEES[0].baseSalary) || 0;
 
+    // پله‌های مالیات به شکل «سقف:نرخ» برای ویرایش پیش از اجرا (نرخ درصدی نوشته می‌شود).
+    const bracketsText = (params.taxBrackets || [])
+      .map(b => `${b.upto}:${Math.round((b.rate || 0) * 10000) / 100}`).join(',');
+
+    // ضرائب و نرخ‌های قابل ویرایش: هر پارامتر oilpay.* که کادر اختصاصی ندارد به‌صورت
+    // کادر عددی می‌آید (درصد گرمسیری و درصد اقلام، کادر خودشان را در همین فرم دارند).
+    const hasDedicatedField = key => key === 'oilpay.climatePercent' || key.indexOf('oilpay.allowance.') === 0;
+    const coeffFields = (def.paramViews || []).filter(p => !hasDedicatedField(p.key)).map(p => `
+      <div class="field"><label>${esc(p.titleFa || p.key)} <span class="muted">(${esc(p.unitFa || '')})</span></label>
+        <input class="num" data-oilparam="${esc(p.key)}" value="${esc(p.value || '')}" oninput="oilCalcSoon()"
+          title="${esc(p.key)}"></div>`).join('') + `
+      <div class="field"><label>پله‌های مالیات <span class="muted">(سقف:نرخ با کاما — درصد)</span></label>
+        <input class="num" data-oilparam="oilpay.tax.brackets" value="${esc(bracketsText)}" oninput="oilCalcSoon()"
+          title="نمونه: 50000000:10,100000000:15,200000000:20,0:30 — سقف صفر یعنی آخرین پله"></div>`;
+
     // اقلام فوق‌العاده: قلم ثابت ورودی دارد و قلم جدولی (محل سکونت/پایهٔ سمت) خواندنی است.
     const allowanceFields = (def.allowances || []).map(a => {
       const baseFa = a.base === 'baseSalary' ? 'از پایهٔ حقوق'
         : (a.base === 'attractionBase' ? 'از مبنای جذب' : 'از مبنای فوق‌العاده‌ها');
+      if (a.fixed) {
+        return `<div class="field"><label>${esc(a.titleFa)} <span class="muted">(مبلغ ثابت ماهانه — ریال)</span></label>
+          <input id="oilAmount_${esc(a.key)}" class="num" value="${a.amount ? esc(String(a.amount)) : ''}"
+            placeholder="خالی = بدون این قلم" oninput="oilCalcSoon()"></div>`;
+      }
       if (a.drivenBy) {
         const fromFa = a.drivenBy === 'residence' ? 'از جدول ۱ و ۲ — محل سکونت' : 'از جدول ۳ — پایهٔ سمت';
         return `<div class="field"><label>${esc(a.titleFa)} <span class="muted">(${esc(baseFa)} · ${esc(fromFa)})</span></label>
-          <input id="oilAllow_${esc(a.key)}" class="num" value="${esc(String(a.percent))}" disabled
-            title="این درصد از جدول آیین‌نامه خوانده می‌شود؛ در انتخاب‌های بالا تغییر دهید"></div>`;
+          <input id="oilAllow_${esc(a.key)}" class="num" value="${esc(String(a.percent))}"
+            data-driven="1" data-edited="0" oninput="oilOnAllowanceEdit(this)"
+            title="پیش‌فرض از جدول آیین‌نامه می‌آید؛ اگر عدد را عوض کنید همان عدد در این محاسبه اعمال می‌شود و خالی‌کردن کادر آن را به جدول برمی‌گرداند"></div>`;
       }
       return `<div class="field">
       <label>${esc(a.titleFa)} <span class="muted">(${esc(baseFa)})</span></label>
@@ -418,6 +556,28 @@ function pageOilPayslipLive() {
       <div class="card-title">📊 جدول ۱ تا ۳: فوق‌العاده‌های مصوب (درصدی از مبنای فوق‌العاده‌ها)</div>
       <div class="form-grid">${allowanceFields || '<div class="muted">قلمی تعریف نشده است.</div>'}</div>
       <div class="muted" style="font-size:.74rem;margin-top:6px">${esc(def.noteFa || '').split('\n').join('<br>')}</div>
+      <div style="border-top:1px dashed #e2e8f0;margin:12px 0 10px"></div>
+      <div class="card-title" style="font-size:.86rem">⚙️ ضرائب و نرخ‌های این محاسبه (پیش از اجرا قابل تغییر است)</div>
+      <div class="form-grid">${coeffFields}</div>
+      <div style="border-top:1px dashed #e2e8f0;margin:12px 0 10px"></div>
+      <div class="card-title" style="font-size:.86rem">🧾 سطرهای دستی فیش (تطبیق سقف، وام، درمان، پس‌انداز و ...)</div>
+      <div class="muted" style="font-size:.74rem;margin-bottom:6px">هر سطر در جمع همان بند خودش می‌نشیند؛ مبلغ از مصوبه یا قرارداد همان دوره می‌آید و در رابط ساخته نمی‌شود.</div>
+      <div class="row-actions" style="margin-bottom:8px">
+        <select id="oilExtraBand" style="max-width:360px">
+          <option value="1">بند ۱ — حقوق و فوق‌العاده‌ها و کسورات قانونی</option>
+          <option value="2">بند ۲ — کسورات تطبیق جهت رعایت سقف</option>
+          <option value="3" selected>بند ۳ — سایر پرداخت‌ها و کسورات</option>
+        </select>
+        <button class="btn btn-sm btn-ghost" onclick="oilExtraAdd()">+ افزودن سطر</button>
+      </div>
+      <table class="table" style="width:100%">
+        <thead><tr>
+          <th style="width:230px">بند</th><th>شرح قلم</th>
+          <th style="width:150px">مبلغ (ریال)</th><th style="width:160px">نوع</th><th style="width:40px"></th>
+        </tr></thead>
+        <tbody id="oilExtraRows"></tbody>
+      </table>
+      <div class="muted" style="font-size:.74rem;margin-top:6px">این اعداد فقط برای همین محاسبه‌اند و پروفایل شرکت را تغییر نمی‌دهند؛ برای ماندگارکردن مصوبهٔ تازه، آن را در پارامترهای شرکت ثبت کنید.</div>
     </div>
 
     <div class="card card-pad" style="margin-bottom:14px">

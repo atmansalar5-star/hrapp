@@ -1,0 +1,60 @@
+{
+  "employeeId": "EMP-009",
+  "baseSalary": 626510600,
+  "residence": "mahshahr",
+  "allowancePercents": { "attractionSpecialty": 119.2 },
+  "allowanceAmounts": {
+    "family": 25208250,
+    "housing": 50112000,
+    "children": 61897554,
+    "extra": 30597600
+  },
+  "paramOverrides": {
+    "oilpay.fund.employeePercent": "7",
+    "oilpay.fund.base": "1053685314",
+    "oilpay.veteran.incentiveStep": "24764",
+    "oilpay.tax.mode": "manual"
+  },
+  "extraLines": [
+    { "titleFa": "بیمه صندوق تامین آتیه سهم کارمندان", "amount": 5090399, "side": "debit", "band": 1 },
+    { "titleFa": "بازنشستگی فوق العاده تخصصی شغل", "amount": 49580483, "side": "debit", "band": 1 },
+    { "titleFa": "بازنشستگی سنوات ایثارگر م 1701", "amount": 1485, "side": "debit", "band": 1 },
+    { "titleFa": "مالیات بردرآمد", "amount": 26698006, "side": "debit", "band": 1 },
+    { "titleFa": "مالیات بردرآمد", "amount": 366612479, "side": "debit", "band": 1 },
+
+    { "titleFa": "کسر مازاد بر سقف ماه جاری", "amount": 64045843, "side": "debit", "band": 2 },
+    { "titleFa": "کسر مازاد بر سقف ماه جاری", "amount": 879466642, "side": "debit", "band": 2 },
+    { "titleFa": "تطبیق مازاد بر سقف", "amount": 263839993, "side": "debit", "band": 2 },
+    { "titleFa": "تطبیق مازاد بر سقف", "amount": 19213753, "side": "debit", "band": 2 },
+
+    { "titleFa": "پاداش تحصیلی", "amount": 31172904, "side": "credit", "band": 3 },
+    { "titleFa": "هزینه درمان عهده سازمان بهداشت", "amount": 75360000, "side": "credit", "band": 3 },
+    { "titleFa": "هزینه درمان عهده سازمان بهداشت", "amount": 99999999, "side": "credit", "band": 3 },
+    { "titleFa": "هزینه درمان عهده سازمان بهداشت", "amount": 164001, "side": "credit", "band": 3 },
+    { "titleFa": "هزینه درمان عهده سازمان بهداشت", "amount": 34872000, "side": "credit", "band": 3 },
+    { "titleFa": "برگشت 19 درصد فوق العاده تخصصی شغل", "amount": 156987894, "side": "credit", "band": 3 },
+    { "titleFa": "برگشت 5507 سنوات ایثارگر", "amount": 4705, "side": "credit", "band": 3 },
+    { "titleFa": "ترمیم حقوق کارمندان", "amount": 20862000, "side": "credit", "band": 3 },
+
+    { "titleFa": "اقساط وام خرید مسکن", "amount": 83290, "side": "debit", "band": 3 },
+    { "titleFa": "وام درمانی خارج از کشور", "amount": 28000000, "side": "debit", "band": 3 },
+    { "titleFa": "اقساط وام خرید 2 مسکن", "amount": 311076, "side": "debit", "band": 3 },
+    { "titleFa": "پس انداز سهم کارمند", "amount": 65783613, "side": "debit", "band": 3 },
+    { "titleFa": "هزینه آب و برق منازل", "amount": 198900, "side": "debit", "band": 3 },
+    { "titleFa": "حق بیمه وام خرید مسکن", "amount": 4164, "side": "debit", "band": 3 },
+    { "titleFa": "حق بیمه وام خرید 2 مسکن", "amount": 15554, "side": "debit", "band": 3 },
+    { "titleFa": "حق بیمه وام تعمیر مسکن", "amount": 11972, "side": "debit", "band": 3 },
+    { "titleFa": "حق بیمه وام تبدیل به احسن", "amount": 1276407, "side": "debit", "band": 3 },
+    { "titleFa": "حق بیمه متمم وام تبدیل به احسن", "amount": 606663, "side": "debit", "band": 3 },
+    { "titleFa": "عضو قرض الحسنه بسیج شهید تندگویان", "amount": 40000000, "side": "debit", "band": 3 },
+    { "titleFa": "اقساط علی الحساب حقوق کارمندان", "amount": 433784583, "side": "debit", "band": 3 },
+    { "titleFa": "اقساط وام قرض الحسنه تندگویان", "amount": 29750000, "side": "debit", "band": 3 },
+    { "titleFa": "اقساط متمم وام تبدیل به احسن", "amount": 12133255, "side": "debit", "band": 3 },
+    { "titleFa": "قسط وام اضطراری از محل بانک مهر", "amount": 71430000, "side": "debit", "band": 3 },
+    { "titleFa": "اقساط وام پس انداز", "amount": 94106690, "side": "debit", "band": 3 },
+    { "titleFa": "اقساط وام تعمیر مسکن", "amount": 239431, "side": "debit", "band": 3 },
+    { "titleFa": "اقساط وام تبدیل به احسن", "amount": 25528136, "side": "debit", "band": 3 },
+    { "titleFa": "19 درصد سهم کارفرما سنوات ایثارگر", "amount": 4705, "side": "debit", "band": 3 },
+    { "titleFa": "بازنشستگی ف تخصصی شغل کارفرما", "amount": 156987894, "side": "debit", "band": 3 }
+  ]
+}
