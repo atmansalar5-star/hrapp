@@ -85,7 +85,7 @@ function rosterTableHTML(view, assignPage, prefix) {
         onclick="rosterEnd('${esc(prefix)}','${esc(holder.assignmentId)}')">⏹ پایان تصدی</button>` : ''}
     </div>`;
     return `<tr>
-      <td><b>${esc(p.title || '—')}</b><div class="muted ltr" style="font-size:.66rem">${esc(p.code || '')}</div></td>
+      <td><b>${esc(p.title || '—')}</b><div class="muted ltr" style="font-size:.66rem">${esc(p.code || '')}${p.postCode ? ' · ' + esc(p.postCode) : ''}</div></td>
       <td>${esc(p.unit || '—')}${p.grade ? `<div class="muted" style="font-size:.68rem">${esc(p.grade)}</div>` : ''}</td>
       <td style="font-size:.74rem;line-height:1.9;max-width:240px">${esc(p.requirements || '—')}</td>
       <td>${holderCell}</td>
@@ -325,8 +325,12 @@ function holderBasesHTML(holder, position) {
     ? `<b>${esc(org.grade || '—')}</b>
        <div class="muted" style="font-size:.66rem">پایهٔ سازمانی سمت${org.jobFamily ? ' — ' + esc(org.jobFamily) : ''}</div>`
     : '<span class="muted">گروه شغلی پست ثبت نشده</span>';
-  return `<div style="font-size:.72rem;line-height:1.9">${personText}</div>
-    <div style="font-size:.72rem;line-height:1.9;margin-top:4px">${orgText}</div>`;
+  // کدهای نمودار سازمانی کنار متن پایه‌ها می‌آیند: پایهٔ شخصی از شمارهٔ پرسنلی و پایهٔ
+  // سازمانی از شناسنامهٔ پست؛ هر دو با قالب rules/orgcode.go (پیش‌شمارهٔ سه رقمی + ده رقم).
+  const codeLine = code => (code
+    ? `<div class="muted ltr" style="font-size:.62rem">${esc(code)}</div>` : '');
+  return `<div style="font-size:.72rem;line-height:1.9">${personText}${codeLine(holder && holder.personalGradeCode)}</div>
+    <div style="font-size:.72rem;line-height:1.9;margin-top:4px">${orgText}${codeLine((position && position.orgGradeCode) || (holder && holder.orgGradeCode))}</div>`;
 }
 
 /** چیپ ایثارگری متصدی (مبنای معادل‌سازی یک مقطع بالاتر). */
@@ -420,7 +424,7 @@ function orgUnitCardHTML(unit, positions) {
       ? personPhotoCell(holder.employeeId, holder.fullName, holder.photoUrl, 'sm')
       : '<span class="muted">بلا تصدی</span>';
     return `<tr>
-      <td><b>${esc(p.title || '—')}</b><div class="muted ltr" style="font-size:.64rem">${esc(p.code || '')}</div></td>
+      <td><b>${esc(p.title || '—')}</b><div class="muted ltr" style="font-size:.64rem">${esc(p.code || '')}${p.postCode ? ' · ' + esc(p.postCode) : ''}</div></td>
       <td>${holderCell}</td>
       <td>${holder ? holderEducationHTML(holder) : '—'}</td>
       <td>${holder ? holderBasisHTML(holder) : '—'}</td>
@@ -494,12 +498,30 @@ function pageOrgLive() {
 
     return rosterStatsHTML(view) + warnings + note + tree +
       `<div class="card-title" style="margin:16px 0 6px">📋 جدول تفصیلی واحدها (دیتیل چارت)</div>` +
-      unitCards + historyCard;
+      unitCards + codeSchemeCard(view) + historyCard;
   });
 
   return liveShell('ساختار سازمانی',
     'درخت‌وارهٔ سازمانی با متصدی هر پست، تحصیلات، مدرک ملاک حقوق، پایه‌ها و عکس کارگزینی',
     `<button class="btn btn-primary" onclick="rosterAppoint('${esc(ORG_STATE.assignPage)}','','','')">➕ ثبت انتصاب</button>`);
+}
+
+/** کارت مقادیر مجاز کدهای نمودار سازمانی: شش نوع کد با پیش‌شمارهٔ مؤثر همین استقرار. */
+function codeSchemeCard(view) {
+  const rows = (view && view.codeScheme) || [];
+  if (!rows.length) return '';
+  const body = rows.map(k => `<tr>
+    <td>${esc(k.titleFa)}</td>
+    <td class="ltr">${esc(k.prefix)}</td>
+    <td class="ltr" style="font-size:.7rem">${esc(k.prefix)}.xxxxxxxxxx</td>
+    <td style="font-size:.72rem">${esc(k.noteFa || '')}</td></tr>`);
+  return `<div class="card card-pad" style="margin-top:16px">
+    <div class="card-title">🏷️ کدگذاری نمودار سازمانی — مقادیر مجاز</div>
+    ${liveTable(['نوع کد', 'پیش‌شماره', 'قالب', 'توضیح'], body, body.length)}
+    <div class="muted" style="font-size:.74rem;margin-top:6px">
+      پیش‌شمارهٔ هر کد پارامتری است (orgcode.prefix.*) و از پروفایل شرکت و پارامترهای سازمانی تغییر می‌کند.
+    </div>
+  </div>`;
 }
 
 LIVE_PAGES.org = () => pageOrgLive();

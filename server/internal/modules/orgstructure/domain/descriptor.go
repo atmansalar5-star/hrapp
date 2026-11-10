@@ -73,7 +73,7 @@ func QualificationTitleFa(key string) string {
 }
 
 // Descriptor شناسهٔ ماژول ساختار سازمانی.
-func Descriptor() recordkit.Descriptor {
+func descriptorBase() recordkit.Descriptor {
 	return recordkit.Descriptor{
 		Module:  "orgstructure",
 		TitleFa: "ساختار سازمانی و تشکیلات",
@@ -162,7 +162,7 @@ func appointmentRule(rec recordkit.Record, action string) error {
 }
 
 // Seed رکوردهای نمونهٔ سازمان.
-func Seed() []contracts.RecordInput {
+func seedBase() []contracts.RecordInput {
 	return []contracts.RecordInput{
 		{Kind: KindPositions, Title: "کارشناس ارشد مالی", SeedStatus: "active",
 			Fields: map[string]string{"code": "POS-201", "unit": "امور مالی", "jobFamily": "مالی و حسابداری", "grade": "کارشناسی ارشد", "requirements": "کارشناسی ارشد حسابداری، ۵ سال سابقه", "headcount": "2"},

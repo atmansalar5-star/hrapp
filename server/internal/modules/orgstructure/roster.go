@@ -27,6 +27,7 @@ import (
 	"hrms/internal/platform/httpx"
 	"hrms/internal/platform/modulekit"
 	"hrms/internal/platform/recordkit"
+	"hrms/internal/rules"
 )
 
 // holderEducation اطلاعات تحصیلی متصدی (آخرین مدرک) برای نمایش در ساختار سازمانی.
@@ -112,6 +113,10 @@ type rosterHolder struct {
 	Education *holderEducation `json:"education,omitempty"`
 	// DegreeBasis مدرک ملاک حقوق متصدی (اگر شورای تعدیل مدرک تعیین کرده باشد).
 	DegreeBasis *holderDegreeBasis `json:"degreeBasis,omitempty"`
+	// PersonalGradeCode کد پایهٔ شخصی فرد (103.xxxxxxxxxx) که از شمارهٔ پرسنلی ساخته میشود.
+	PersonalGradeCode string `json:"personalGradeCode,omitempty"`
+	// AssignmentCode شمارهٔ انتصاب (084.xxxxxxxxxx) از شناسهٔ رکورد انتصاب.
+	AssignmentCode string `json:"assignmentCode,omitempty"`
 	// PersonalBase پایهٔ شخصی فرد از حکم جاری، و OrgBase پایهٔ سازمانی سمت از پست.
 	PersonalBase *holderPersonalBase `json:"personalBase,omitempty"`
 	OrgBase      *holderOrgBase      `json:"orgBase,omitempty"`
@@ -123,17 +128,22 @@ type rosterHolder struct {
 
 // rosterPosition یک پست سازمانی با متصدی جاری و شمار انتصاب‌هایش.
 type rosterPosition struct {
-	ID           string        `json:"id"`
-	Code         string        `json:"code,omitempty"`
-	Title        string        `json:"title"`
-	Unit         string        `json:"unit,omitempty"`
-	JobFamily    string        `json:"jobFamily,omitempty"`
-	Grade        string        `json:"grade,omitempty"`
-	Requirements string        `json:"requirements,omitempty"`
-	Headcount    string        `json:"headcount,omitempty"`
-	Status       string        `json:"status"`
-	StatusFa     string        `json:"statusFa"`
-	Holder       *rosterHolder `json:"holder,omitempty"`
+	ID   string `json:"id"`
+	Code string `json:"code,omitempty"`
+	// PostCode شمارهٔ سمت و OrgGradeCode پایهٔ سمت سازمانی — قالب rules/orgcode.go.
+	PostCode      string        `json:"postCode,omitempty"`
+	OrgGradeCode  string        `json:"orgGradeCode,omitempty"`
+	UnitCode      string        `json:"unitCode,omitempty"`
+	JobFamilyCode string        `json:"jobFamilyCode,omitempty"`
+	Title         string        `json:"title"`
+	Unit          string        `json:"unit,omitempty"`
+	JobFamily     string        `json:"jobFamily,omitempty"`
+	Grade         string        `json:"grade,omitempty"`
+	Requirements  string        `json:"requirements,omitempty"`
+	Headcount     string        `json:"headcount,omitempty"`
+	Status        string        `json:"status"`
+	StatusFa      string        `json:"statusFa"`
+	Holder        *rosterHolder `json:"holder,omitempty"`
 	// OrgBase پایهٔ سازمانی خودِ سمت (گروه شغلی، خانوادهٔ شغلی و شرط‌های احراز پست).
 	OrgBase *holderOrgBase `json:"orgBase,omitempty"`
 	// HolderCount شمار متصدیان فعال (بیش از یک یعنی دادهٔ ناسازگار و هشدار).
@@ -202,8 +212,11 @@ type rosterView struct {
 	Summary     rosterSummary      `json:"summary"`
 	// QualificationOptions فهرست نتیجه‌های احراز (برچسب فارسی از دامنه).
 	QualificationOptions []domain.Qualification `json:"qualificationOptions"`
-	Warnings             []string               `json:"warnings,omitempty"`
-	NoteFa               string                 `json:"noteFa"`
+	// CodeScheme کارت مقادیر مجاز کدها: شش نوع کد با پیش‌شمارهٔ مؤثر همین استقرار و
+	// توضیح فارسی هر کدام (برای نمایش در نمودار سازمانی و سند راهنما).
+	CodeScheme []rules.OrgCodeKind `json:"codeScheme"`
+	Warnings   []string            `json:"warnings,omitempty"`
+	NoteFa     string              `json:"noteFa"`
 }
 
 // timelineEntry یک سطر «سابقهٔ تغییرات» سمت سازمانی.
@@ -302,13 +315,18 @@ func buildRoster(r *http.Request, deps modulekit.Deps, svc *recordkit.Service) (
 	// و پروندهٔ ایثارگری هم از پورت‌های خودِ ماژول‌های مالک (یک گذر برای همهٔ متصدیان).
 	employees := employeeLookup{r: r, reader: deps.Ports}
 	facts := collectHolderFacts(r, deps, activeEmployees(assignments))
+	scheme := orgCodeScheme(deps)
 	byUnit := map[string]*rosterUnit{}
 	for _, p := range positions {
 		code := strings.TrimSpace(p.Fields["code"])
 		unit := strings.TrimSpace(p.Fields["unit"])
 		item := rosterPosition{
 			ID: p.ID, Code: code, Title: p.Title, Unit: unit,
-			JobFamily: p.Fields["jobFamily"], Grade: p.Fields["grade"],
+			PostCode:      domain.PostCodeOf(scheme, p.Fields, p.ID),
+			OrgGradeCode:  domain.OrgGradeCodeOf(scheme, p.Fields, p.Fields["grade"]),
+			UnitCode:      domain.UnitCodeOf(scheme, p.Fields, p.ID),
+			JobFamilyCode: domain.JobFamilyCodeOf(scheme, p.Fields),
+			JobFamily:     p.Fields["jobFamily"], Grade: p.Fields["grade"],
 			Requirements: p.Fields["requirements"], Headcount: p.Fields["headcount"],
 			Status: p.Status, StatusFa: p.StatusFa,
 			// پایهٔ سازمانی خودِ سمت از شناسنامهٔ پست (مستقل از متصدی).
@@ -330,7 +348,7 @@ func buildRoster(r *http.Request, deps modulekit.Deps, svc *recordkit.Service) (
 		item.HolderCount = len(holders)
 		item.AssignmentCount = countAssignments(assignments, p)
 		if len(holders) > 0 {
-			holder := toHolder(holders[0], &employees, facts, p)
+			holder := toHolder(scheme, holders[0], &employees, facts, p)
 			item.Holder = &holder
 			item.HasPhoto = holder.HasPhoto
 			item.RequirementsMet = holder.Qualification == domain.QualificationMet
@@ -359,6 +377,7 @@ func buildRoster(r *http.Request, deps modulekit.Deps, svc *recordkit.Service) (
 
 	view.Units = sortedUnits(byUnit)
 	view.Tree = buildTree(r, deps, view.Positions)
+	view.CodeScheme = scheme.View()
 	view.Summary = summarize(positions, assignments, view.Positions)
 	view.Warnings = rosterWarnings(view)
 	return view, nil
@@ -559,7 +578,7 @@ func buildPositionHistory(r *http.Request, deps modulekit.Deps, svc *recordkit.S
 		Headcount:    rec.Fields["headcount"],
 		Requirements: rec.Fields["requirements"],
 	}
-	history.Position.Holder = firstActiveHolder(mine, &employees, facts)
+	history.Position.Holder = firstActiveHolder(orgCodeScheme(deps), mine, &employees, facts)
 	if history.Position.Holder != nil {
 		history.Position.HasPhoto = history.Position.Holder.HasPhoto
 		history.Position.RequirementsMet = history.Position.Holder.Qualification == domain.QualificationMet
@@ -682,7 +701,7 @@ func countAssignments(assignments []contracts.Record, p contracts.Record) int {
 //
 // position شناسنامهٔ پستی است که این متصدی روی آن نشسته؛ «پایهٔ سازمانی» از خودِ پست
 // خوانده می‌شود تا با گروه شغلی شخصی اشتباه نشود.
-func toHolder(a contracts.Record, employees *employeeLookup, facts holderFacts, position contracts.Record) rosterHolder {
+func toHolder(scheme rules.OrgCodeScheme, a contracts.Record, employees *employeeLookup, facts holderFacts, position contracts.Record) rosterHolder {
 	holder := rosterHolder{
 		AssignmentID:    a.ID,
 		AssignmentTitle: a.Title,
@@ -698,6 +717,8 @@ func toHolder(a contracts.Record, employees *employeeLookup, facts holderFacts, 
 		StatusFa:        a.StatusFa,
 	}
 	holder.QualificationFa = domain.QualificationTitleFa(holder.Qualification)
+	holder.PersonalGradeCode = domain.PersonalGradeCodeOf(scheme, a.EmployeeID)
+	holder.AssignmentCode = domain.AssignmentCodeOf(scheme, a.Fields, a.ID)
 	if employee, ok := employees.get(a.EmployeeID); ok {
 		if holder.FullName == "" {
 			holder.FullName = employee.FullName
@@ -728,7 +749,7 @@ func toHolder(a contracts.Record, employees *employeeLookup, facts holderFacts, 
 }
 
 // firstActiveHolder نوترین انتصاب «در حال تصدی» یک پست را به «متصدی» تبدیل می‌کند.
-func firstActiveHolder(assignments []contracts.Record, employees *employeeLookup, facts holderFacts) *rosterHolder {
+func firstActiveHolder(scheme rules.OrgCodeScheme, assignments []contracts.Record, employees *employeeLookup, facts holderFacts) *rosterHolder {
 	var best *contracts.Record
 	for i := range assignments {
 		a := assignments[i]
@@ -742,7 +763,7 @@ func firstActiveHolder(assignments []contracts.Record, employees *employeeLookup
 	if best == nil {
 		return nil
 	}
-	holder := toHolder(*best, employees, facts, contracts.Record{})
+	holder := toHolder(scheme, *best, employees, facts, contracts.Record{})
 	return &holder
 }
 

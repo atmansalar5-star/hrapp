@@ -422,8 +422,8 @@ type OilPayslip struct {
 	VeteranNoteFa        string `json:"veteranNoteFa,omitempty"`
 	// Bands سه بند فیش رسمی: حقوق و فوق‌العاده‌ها و کسورات قانونی، کسورات تطبیق جهت رعایت
 	// سقف، و سایر پرداخت‌ها و کسورات مؤثر در خالص — هر بند با ستون بستانکار و بدهکار.
-	Bands []OilPayslipBand `json:"bands,omitempty"`
-	NoteFa               string `json:"noteFa,omitempty"`
+	Bands  []OilPayslipBand `json:"bands,omitempty"`
+	NoteFa string           `json:"noteFa,omitempty"`
 }
 
 // SchemeOil شناسهٔ نظام پرداخت صندوق بازنشستگی نفت.

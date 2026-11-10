@@ -58,7 +58,13 @@
     { "key": "medical.aid.orgSharePercent", "titleFa": "سهم پیش‌فرض سازمان از تعرفهٔ کمک هزینهٔ درمانی", "value": "100", "unitFa": "درصد تعرفه", "groupFa": "کمک هزینهٔ درمانی" },
     { "key": "medical.aid.annualCeiling", "titleFa": "سقف سالانهٔ کمک هزینهٔ درمانی هر کارمند", "value": "0", "unitFa": "ریال", "groupFa": "کمک هزینهٔ درمانی" },
     { "key": "medical.aid.perItemCeiling", "titleFa": "سقف پیش‌فرض هر قلم تعرفه", "value": "0", "unitFa": "ریال", "groupFa": "کمک هزینهٔ درمانی" },
-    { "key": "medical.aid.requirePrescription", "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه", "value": "1", "unitFa": "۰ خیر، ۱ بله", "groupFa": "کمک هزینهٔ درمانی" }
+    { "key": "medical.aid.requirePrescription", "titleFa": "الزام نسخهٔ تأییدشده برای اقلام نیازمند نسخه", "value": "1", "unitFa": "۰ خیر، ۱ بله", "groupFa": "کمک هزینهٔ درمانی" },
+    { "key": "orgcode.prefix.post", "titleFa": "پیش‌شمارهٔ شمارهٔ سمت", "value": "080", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" },
+    { "key": "orgcode.prefix.orgGrade", "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی", "value": "081", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" },
+    { "key": "orgcode.prefix.personal", "titleFa": "پیش‌شمارهٔ پایهٔ شخصی", "value": "082", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" },
+    { "key": "orgcode.prefix.unit", "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی", "value": "083", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" },
+    { "key": "orgcode.prefix.assignment", "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب", "value": "084", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" },
+    { "key": "orgcode.prefix.jobFamily", "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی", "value": "085", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" }
   ],
   "organizations": [
     {

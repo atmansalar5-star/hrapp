@@ -471,6 +471,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -918,6 +960,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -1384,6 +1468,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -1842,6 +1968,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -2308,6 +2476,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -2774,6 +2984,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -3240,6 +3492,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -3706,6 +4000,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -4172,6 +4508,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -4638,6 +5016,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -5104,6 +5524,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -5570,6 +6032,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -6037,6 +6541,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -6502,6 +7048,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     },
@@ -6968,6 +7556,48 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "کمک هزینهٔ درمانی"
+        },
+        {
+          "key": "orgcode.prefix.post",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ سمت",
+          "value": "080",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.orgGrade",
+          "titleFa": "پیش‌شمارهٔ پایهٔ سمت سازمانی",
+          "value": "081",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.personal",
+          "titleFa": "پیش‌شمارهٔ پایهٔ شخصی",
+          "value": "082",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.unit",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی",
+          "value": "083",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.assignment",
+          "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب",
+          "value": "084",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "orgcode.prefix.jobFamily",
+          "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی",
+          "value": "085",
+          "unitFa": "سه رقم + نقطه + ده رقم",
+          "groupFa": "کدگذاری نمودار سازمانی"
         }
       ]
     }
