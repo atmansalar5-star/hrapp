@@ -120,9 +120,9 @@ func (d Deps) veteranParams() (rules.VeteranParams, bool) {
 // veteranEntitlementOf پرونده را به موتور می‌دهد و تنها امتیاز «تأییدشده» را برمی‌گرداند.
 func veteranEntitlementOf(rec contracts.Record, params rules.VeteranParams) *rules.VeteranEntitlement {
 	// خواندن فیلدها هم در موتور قواعد است تا ماژول امور ایثارگران و حقوق یک تفسیر
-	// مشترک داشته باشند؛ «تأییدشده» فقط وضعیت approved است.
-	profile := rules.VeteranProfileFromFields(rec.Fields, rec.Status == "approved")
-	ent := rules.ComputeVeteranEntitlements(profile, params)
+	// مشترک داشته باشند؛ «تأییدشده» فقط وضعیت approved است. مقادیر تأییدشدهٔ ذخیره‌شده
+	// (از جمله مصوبهٔ کمیتهٔ ایثارگری) هم روی پیش‌فرض قانونی می‌نشیند.
+	ent := rules.VeteranEntitlementOfFile(rec.Fields, rec.Status == "approved", params)
 	if !ent.Approved || !ent.IsVeteran {
 		return nil
 	}

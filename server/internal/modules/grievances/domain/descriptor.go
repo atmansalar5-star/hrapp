@@ -23,6 +23,9 @@ const (
 	KindVeteranRecords = "veteranRecords"
 	// KindVeteranServices تسهیلات و معرفی‌نامه‌های ایثارگران.
 	KindVeteranServices = "veteranServices"
+	// KindVeteranCommittee صورت‌جلسه و مصوبهٔ کمیتهٔ ایثارگری: تصمیم موردی دربارهٔ تعلق
+	// گرفتن یا نگرفتن هر امتیاز و میزان آن برای یک کارمند.
+	KindVeteranCommittee = "veteranCommittee"
 )
 
 // Descriptor شناسهٔ ماژول شکایات و امور ایثارگران.
@@ -56,6 +59,7 @@ func Descriptor() recordkit.Descriptor {
 			},
 			veteranRecordKind(),
 			veteranServiceKind(),
+			veteranCommitteeKind(),
 		},
 	}
 }
@@ -97,12 +101,16 @@ func veteranRecordKind() recordkit.Kind {
 		Initial: "draft",
 		Transitions: recordkit.Steps(
 			"draft|verified,rejected", "verified|approved,rejected", "rejected|draft",
+			// پروندهٔ تأییدشده قفل است، ولی مصوبهٔ تازهٔ کمیته (یا اصلاح مستندات) باید بتواند
+			// آن را با سابقه و یادداشت باز کند؛ بدون این مسیر، امتیاز مصوب کمیته هرگز به فیش
+			// نمی‌رسید.
+			"approved|draft",
 		),
 		Actions: recordkit.Actions(
 			"verify|بررسی مدارک|primary|verified|0",
 			"approve|تأیید پرونده|primary|approved|0",
 			"reject|رد پرونده|danger|rejected|1",
-			"reopen|بازگشت به پیش‌نویس|ghost|draft|0",
+			"reopen|بازگشت به پیش‌نویس|ghost|draft|1",
 		),
 		Validate: validateVeteranRecord,
 		// پرونده تا پیش از تأیید نهایی ویرایش‌پذیر است؛ پس از تأیید، تغییر امتیاز باید با
@@ -139,6 +147,125 @@ func veteranServiceKind() recordkit.Kind {
 		HistoryDate:      "requestDate",
 		EditableStatuses: []string{"draft"},
 	}
+}
+
+// veteranCommitteeKind مصوبهٔ کمیتهٔ ایثارگری.
+//
+// چرا یک نوع رکورد جدا: پروندهٔ ایثارگری «واقعیت» را نگه می‌دارد و موتور قواعد پیش‌فرض
+// قانونی را از آن می‌سازد؛ ولی در عمل کمیته برای هر فرد تصمیم می‌گیرد کدام امتیاز تعلق
+// بگیرد و به چه میزان. این مصوبه سند امضاشدهٔ همان تصمیم است و می‌تواند بر پیش‌فرض قانونی
+// مقدم شود (`rules.ApplyVeteranDecision`)؛ بنابراین هم برگهٔ امضاشدنی دارد و هم اثر مالی.
+func veteranCommitteeKind() recordkit.Kind {
+	return recordkit.Kind{
+		Key: KindVeteranCommittee, TitleFa: "مصوبهٔ کمیتهٔ ایثارگری", IDPrefix: "VCOM", EmployeeScoped: true,
+		Fields: recordkit.Fields(
+			"committeeNo|شمارهٔ صورت‌جلسه یا مصوبه|text|0",
+			"meetingDate|تاریخ جلسهٔ کمیته|date|1",
+			"members|اعضای کمیته|text|0",
+			"veteranGroup|گروه ایثارگری|text|1",
+			"basisDocs|مستندات بررسی‌شده|text|0",
+			// بندهای تصمیم: هر بند «تعلق می‌گیرد/نمی‌گیرد» و در صورت تعلق، میزان.
+			"eduUpgradeDecision|یک مقطع تحصیلی بالاتر|select|0",
+			"eduLevel|مقطع معادل‌شده|text|0",
+			"taxExemptDecision|معافیت مالیاتی حقوق|select|0",
+			"taxExemptPercent|درصد معافیت مالیاتی|number|0",
+			"pensionExemptDecision|معافیت کسور بازنشستگی|select|0",
+			"pensionExemptPercent|درصد معافیت کسور|number|0",
+			"workHourReduction|کاهش ساعت کار جانباز|select|0",
+			"reducedWeeklyHours|ساعت کار هفتگی مصوب|number|0",
+			"incentiveSteps|پایهٔ تشویقی مصوب|number|0",
+			"seniorityMonths|افزایش سنواتی مصوب (ماه)|number|0",
+			"seniorityBasis|مبنای افزایش سنواتی|select|0",
+			"leaveDays|مرخصی تشویقی مصوب (روز)|number|0",
+			"employmentQuotaDecision|سهمیهٔ استخدامی|select|0",
+			"otherBenefits|سایر امتیازات و توضیح|text|0",
+			"decisionFa|خلاصهٔ تصمیم کمیته|text|1",
+			"effectiveDate|تاریخ اجرای مصوبه|date|0",
+			"signOff|امضاکنندگان و تاریخ امضا|text|0",
+		),
+		Statuses: recordkit.Statuses(
+			"draft|پیش‌نویس مصوبه", "signed|امضاشده", "approved|مصوب و جاری", "rejected|ردشده",
+		),
+		Initial: "draft",
+		Transitions: recordkit.Steps(
+			"draft|signed,rejected", "signed|approved,rejected", "rejected|draft",
+		),
+		Actions: recordkit.Actions(
+			"sign|ثبت امضای اعضا|primary|signed|0",
+			"approve|تصویب و اجرا|primary|approved|1",
+			"reject|رد مصوبه|danger|rejected|1",
+			"reopen|بازگشت به پیش‌نویس|ghost|draft|0",
+		),
+		HistoryDate:      "meetingDate",
+		Validate:         validateVeteranCommittee,
+		EditableStatuses: []string{"draft", "signed"},
+	}
+}
+
+// validateVeteranCommittee قاعده‌های مصوبه: گروه معلوم، بندهای بله/خیر روشن، درصدها در بازه،
+// ساعت کاهش‌یافته معقول و خلاصهٔ تصمیم نوشته‌شده باشد؛ مصوبهٔ ناقص نباید امضا شود.
+func validateVeteranCommittee(in contracts.RecordInput) error {
+	f := in.Fields
+	if rules.VeteranGroupOf(f["veteranGroup"]) == rules.VeteranGroupNone {
+		return &recordkit.RuleError{Message: "گروه ایثارگری کارمند را در مصوبه مشخص کنید."}
+	}
+	for key, label := range map[string]string{
+		"eduUpgradeDecision":      "یک مقطع تحصیلی بالاتر",
+		"taxExemptDecision":       "معافیت مالیاتی",
+		"pensionExemptDecision":   "معافیت کسور بازنشستگی",
+		"workHourReduction":       "کاهش ساعت کار",
+		"employmentQuotaDecision": "سهمیهٔ استخدامی",
+	} {
+		value := strings.TrimSpace(f[key])
+		if value != "" && value != "yes" && value != "no" {
+			return &recordkit.RuleError{Message: "بند «" + label + "» باید «تعلق می‌گیرد» یا «تعلق نمی‌گیرد» باشد."}
+		}
+	}
+	if percent := numberValue(f["taxExemptPercent"]); percent < 0 || percent > 100 {
+		return &recordkit.RuleError{Message: "درصد معافیت مالیاتی باید بین صفر و ۱۰۰ باشد."}
+	}
+	if percent := numberValue(f["pensionExemptPercent"]); percent < 0 || percent > 100 {
+		return &recordkit.RuleError{Message: "درصد معافیت کسور بازنشستگی باید بین صفر و ۱۰۰ باشد."}
+	}
+	if steps := numberValue(f["incentiveSteps"]); steps < 0 || steps > 2 {
+		return &recordkit.RuleError{Message: "پایهٔ تشویقی مصوبه باید بین صفر و ۲ پایه باشد (سقف پارامتر شرکت)."}
+	}
+	if months := numberValue(f["seniorityMonths"]); months < 0 || months > 120 {
+		return &recordkit.RuleError{Message: "افزایش سنواتی مصوبه باید بین صفر و ۱۲۰ ماه باشد."}
+	}
+	if days := numberValue(f["leaveDays"]); days < 0 || days > 366 {
+		return &recordkit.RuleError{Message: "مرخصی تشویقی مصوبه باید بین صفر و ۳۶۶ روز باشد."}
+	}
+	if strings.TrimSpace(f["workHourReduction"]) == "yes" {
+		hours := numberValue(f["reducedWeeklyHours"])
+		if hours <= 0 || hours > 44 {
+			return &recordkit.RuleError{Message: "با تصویب کاهش ساعت کار، ساعت کار هفتگی مصوب را بین ۱ و ۴۴ وارد کنید."}
+		}
+	}
+	if basis := strings.TrimSpace(f["seniorityBasis"]); basis != "" {
+		known := false
+		for _, item := range rules.VeteranSeniorityBases() {
+			if item.Key == basis {
+				known = true
+			}
+		}
+		if !known {
+			return &recordkit.RuleError{Message: "مبنای افزایش سنواتی را از فهرست مصوب انتخاب کنید."}
+		}
+	}
+	for _, key := range []string{"meetingDate", "effectiveDate"} {
+		raw := calendar.NormalizeDigits(strings.TrimSpace(f[key]))
+		if raw == "" {
+			continue
+		}
+		if _, err := calendar.Parse(raw); err != nil {
+			return &recordkit.RuleError{Message: "تاریخ «" + key + "» معتبر نیست (قالب YYYY/MM/DD)."}
+		}
+	}
+	if strings.TrimSpace(in.Fields["decisionFa"]) == "" {
+		return &recordkit.RuleError{Message: "خلاصهٔ تصمیم کمیته را بنویسید؛ مصوبه بدون متن تصمیم امضا نمی‌شود."}
+	}
+	return nil
 }
 
 // validateVeteranRecord قاعده‌های پروندهٔ ایثارگری: هر گروه، مستندات و مبنای محاسبهٔ خودش را
@@ -225,6 +352,29 @@ func Seed() []contracts.RecordInput {
 			},
 			SeedStatus: "approved",
 			NoteFa:     "مدت اسارت ۲۴ ماه؛ احتساب دو برابری سابقه و مرخصی تشویقی ذخیره‌شده"},
+		// مصوبهٔ نمونهٔ کمیتهٔ ایثارگری: تصمیم موردی دربارهٔ بندهای امتیاز برای همان کارمند
+		// جانباز، تا برگهٔ چاپی و اثر مصوبه بر پرونده در نمونهٔ سازمان دیده شود.
+		{Kind: KindVeteranCommittee, Title: "مصوبهٔ کمیتهٔ ایثارگری — حسین موسوی",
+			EmployeeID: "EMP-009",
+			Fields: map[string]string{
+				"committeeNo": "۱۴۰۵/ک‌ا/۰۳۲", "meetingDate": "1405/08/12",
+				"members":            "مدیر منابع انسانی، کارشناس امور ایثارگران، نمایندهٔ بنیاد شهید",
+				"veteranGroup":       rules.VeteranGroupDisabled,
+				"basisDocs":          "کارت جانبازی ۲۵٪، حکم بنیاد شهید، سابقهٔ تحصیلی کارشناسی",
+				"eduUpgradeDecision": "yes", "eduLevel": "کارشناسی ارشد (معادل)",
+				"taxExemptDecision": "yes", "taxExemptPercent": "100",
+				"pensionExemptDecision": "no", "pensionExemptPercent": "0",
+				"workHourReduction": "yes", "reducedWeeklyHours": "36",
+				"incentiveSteps": "1", "seniorityMonths": "48", "seniorityBasis": rules.VeteranSeniorityCaptivity,
+				"leaveDays": "0", "employmentQuotaDecision": "yes",
+				"decisionFa": "با بررسی مستندات، امتیازهای موضوع مواد قانونی به شرح بندهای این مصوبه برای " +
+					"نامبرده برقرار است؛ افزایش سنواتی ۴۸ ماه بر مبنای مدت اسارت تصویب و کاهش ساعت کار به " +
+					"۳۶ ساعت در هفته (سیاست شرکت) پذیرفته شد. معافیت کسور بازنشستگی در این مصوبه بررسی و " +
+					"به دلیل نبود مصوبهٔ سازمانی، تعلق نگرفت.",
+				"effectiveDate": "1405/09/01", "signOff": "امضاشده در جلسهٔ ۱۴۰۵/۰۸/۱۲",
+			},
+			SeedStatus: "approved",
+			NoteFa:     "مصوبهٔ نمونه؛ بندهای آن با پیش‌فرض قانونی مقایسه و در برگهٔ چاپی نشان داده می‌شود"},
 		{Kind: KindVeteranServices, Title: "معرفی‌نامهٔ تسهیلات مسکن — خانوادهٔ شهید", EmployeeID: "EMP-009",
 			Fields: map[string]string{
 				"serviceType": "معرفی‌نامهٔ تسهیلات مسکن", "organizationFa": "بنیاد شهید و امور ایثارگران",

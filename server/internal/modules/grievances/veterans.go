@@ -206,7 +206,7 @@ func veteranSave(ctx context.Context, deps modulekit.Deps, svc *recordkit.Servic
 func veteranProfileOut(ctx context.Context, deps modulekit.Deps, svc *recordkit.Service, employeeID string) map[string]any {
 	params := rules.VeteranParamsFromValues(veteranParamValues(deps))
 	profile, rec, found := veteranFileOf(ctx, svc, employeeID)
-	ent := rules.ComputeVeteranEntitlements(profile, params)
+	ent := rules.VeteranEntitlementOfFile(rec.Fields, rec.Status == "approved", params)
 	out := map[string]any{
 		"employeeId":   employeeID,
 		"employeeName": employeeName(ctx, deps, employeeID),
@@ -241,8 +241,7 @@ func veteranReport(ctx context.Context, deps modulekit.Deps, svc *recordkit.Serv
 	rows := make([]row, 0, len(files))
 	approved, taxExempt, extraMonths := 0, 0, 0
 	for _, rec := range files {
-		profile := profileOfRecord(rec)
-		ent := rules.ComputeVeteranEntitlements(profile, params)
+		ent := rules.VeteranEntitlementOfFile(rec.Fields, rec.Status == "approved", params)
 		if ent.Approved {
 			approved++
 		}

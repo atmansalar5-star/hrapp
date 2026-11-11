@@ -595,6 +595,385 @@ func RoundHalfUpToInt(x float64) int {
 	return int(RoundHalfUp(x))
 }
 
+/* ------------------- مصوبهٔ کمیتهٔ ایثارگری (تصمیم موردی) ------------------- */
+
+// VeteranDecision مصوبهٔ کمیتهٔ ایثارگری برای یک کارمند.
+//
+// چرا جدا از پرونده: پروندهٔ ایثارگری «واقعیت» را ثبت می‌کند (گروه، درصد جانبازی، مدت
+// اسارت) و موتور قواعد «پیش‌فرض قانونی» را از آن می‌سازد؛ ولی در عمل، کمیته برای هر فرد
+// تصمیم می‌گیرد کدام امتیاز تعلق بگیرد و به چه میزان. هر بند این ساختار اگر خالی (nil)
+// باشد یعنی «همان پیش‌فرض قانونی» و اگر مقدار داشته باشد، مصوبهٔ کمیته بر پیش‌فرض مقدم است.
+type VeteranDecision struct {
+	// Group گروه ایثارگری که کمیته بر آن تصمیم گرفته است.
+	Group string
+	// EduUpgrade امتیاز «یک مقطع تحصیلی بالاتر».
+	EduUpgrade *bool
+	// TaxExempt تعلق معافیت مالیاتی و درصد آن.
+	TaxExempt        *bool
+	TaxExemptPercent *float64
+	// PensionExempt تعلق معافیت کسور بازنشستگی و درصد آن.
+	PensionExempt        *bool
+	PensionExemptPercent *float64
+	// WorkHourReduction و ReducedWeeklyHours کاهش ساعت کار جانباز (ساعت کار هفتگی مصوب).
+	WorkHourReduction  bool
+	ReducedWeeklyHours int
+	// IncentiveSteps تعداد پایهٔ تشویقی مصوب.
+	IncentiveSteps *int
+	// SeniorityMonths افزایش سنواتی مصوب (ماه) و مبنای آن.
+	SeniorityMonths *int
+	SeniorityBasis  string
+	// LeaveDays مرخصی تشویقی مصوب (روز).
+	LeaveDays *int
+	// EmploymentQuota سهمیهٔ استخدامی.
+	EmploymentQuota *bool
+}
+
+// کلیدهای مبنای افزایش سنواتی در مصوبهٔ کمیته.
+const (
+	VeteranSeniorityCaptivity = "captivity"
+	VeteranSeniorityErafaqi   = "erafaqi"
+	VeteranSeniorityBoth      = "both"
+)
+
+// VeteranSeniorityBases فهرست مبناهای افزایش سنواتی (خروجی فرم؛ فهرست در رابط ساخته نمی‌شود).
+func VeteranSeniorityBases() []VeteranGroup {
+	return []VeteranGroup{
+		{Key: VeteranSeniorityCaptivity, TitleFa: "مدت اسارت (ماده ۱۳ قانون آزادگان)"},
+		{Key: VeteranSeniorityErafaqi, TitleFa: "سنوات ارفاقی (قانون بازنشستگی جانبازان ۱۳۶۷)"},
+		{Key: VeteranSeniorityBoth, TitleFa: "هر دو مبنا"},
+	}
+}
+
+// VeteranSeniorityBasisTitleFa عنوان فارسی مبنای افزایش سنواتی.
+func VeteranSeniorityBasisTitleFa(key string) string {
+	value := strings.TrimSpace(key)
+	for _, base := range VeteranSeniorityBases() {
+		if base.Key == value {
+			return base.TitleFa
+		}
+	}
+	return value
+}
+
+// VeteranDecisionFromFields مصوبهٔ کمیته را از فیلدهای ذخیره‌شدهٔ فرم می‌خواند.
+//
+// قاعده: کلید نبود یا خالی ⇒ همان پیش‌فرض قانونی؛ مقدار «بله/خیر» (یا yes/no) ⇒ تصمیم
+// صریح کمیته. این‌گونه پروندهٔ قدیمی که بندهای تازه را ندارد، رفتار پیشینش را نگه می‌دارد.
+func VeteranDecisionFromFields(fields map[string]string) VeteranDecision {
+	dec := VeteranDecision{
+		Group:              VeteranGroupOf(fields["veteranGroup"]),
+		EduUpgrade:         yesNoPtr(fields["eduUpgradeDecision"]),
+		TaxExempt:          yesNoPtr(fields["taxExemptDecision"]),
+		PensionExempt:      yesNoPtr(fields["pensionExemptDecision"]),
+		EmploymentQuota:    yesNoPtr(fields["employmentQuotaDecision"]),
+		WorkHourReduction:  yesNo(fields["workHourReduction"]),
+		ReducedWeeklyHours: int(ParseFaNumber(fields["reducedWeeklyHours"])),
+		SeniorityBasis:     strings.TrimSpace(fields["seniorityBasis"]),
+	}
+	if v, ok := numberPtr(fields["taxExemptPercent"]); ok {
+		dec.TaxExemptPercent = v
+	}
+	if v, ok := numberPtr(fields["pensionExemptPercent"]); ok {
+		dec.PensionExemptPercent = v
+	}
+	if v, ok := numberPtr(fields["incentiveSteps"]); ok {
+		steps := int(*v)
+		dec.IncentiveSteps = &steps
+	}
+	if v, ok := numberPtr(fields["seniorityMonths"]); ok {
+		months := int(*v)
+		dec.SeniorityMonths = &months
+	}
+	if v, ok := numberPtr(fields["leaveDays"]); ok {
+		days := int(*v)
+		dec.LeaveDays = &days
+	}
+	return dec
+}
+
+// ApplyVeteranDecision پیش‌فرض قانونی را با مصوبهٔ کمیته می‌آمیزد.
+//
+// خروجی دوم «سطرهای تغییر» است: کدام بند را کمیته خلاف پیش‌فرض یا کم/زیاد از آن مصوب
+// کرده است. همین سطرها در صورت‌جلسه و در فرم چاپی می‌آیند تا امضاکنندگان بدانند تصمیمشان
+// کجا از قاعدهٔ عمومی فاصله گرفته است.
+func ApplyVeteranDecision(ent VeteranEntitlement, dec VeteranDecision) (VeteranEntitlement, []string) {
+	out := ent
+	out.Lines = append([]VeteranLine{}, ent.Lines...)
+	changes := []string{}
+
+	if dec.TaxExempt != nil {
+		switch {
+		case !*dec.TaxExempt && out.TaxExempt > 0:
+			changes = append(changes, "معافیت مالیاتی: کمیته «تعلق نمی‌گیرد» مصوب کرد (پیش‌فرض قانونی "+
+				IntFa(out.TaxExempt)+"٪).")
+			out.TaxExempt = 0
+			out.Lines = replaceVeteranLine(out.Lines, VeteranLine{
+				Key: "taxExempt", TitleFa: "معافیت مالیاتی حقوق و فوق‌العاده‌ها",
+				ValueFa: "تعلق نمی‌گیرد (مصوبهٔ کمیته)", RefFa: "مصوبهٔ کمیتهٔ ایثارگری",
+			})
+		case *dec.TaxExempt && out.TaxExempt == 0:
+			changes = append(changes, "معافیت مالیاتی: کمیته «تعلق می‌گیرد» مصوب کرد؛ پیش‌فرض قانونی برای این گروه معافیت نداشت.")
+			out.Lines = replaceVeteranLine(out.Lines, VeteranLine{
+				Key: "taxExempt", TitleFa: "معافیت مالیاتی حقوق و فوق‌العاده‌ها",
+				ValueFa: "تعلق می‌گیرد (مصوبهٔ کمیته)", RefFa: "مصوبهٔ کمیتهٔ ایثارگری",
+			})
+		}
+	}
+	if dec.TaxExemptPercent != nil && *dec.TaxExemptPercent >= 0 {
+		percent := *dec.TaxExemptPercent
+		if percent > 100 {
+			percent = 100
+		}
+		if percent != out.TaxExempt {
+			changes = append(changes, "درصد معافیت مالیاتی: کمیته "+IntFa(percent)+"٪ مصوب کرد (پیش‌فرض "+
+				IntFa(out.TaxExempt)+"٪).")
+			out.TaxExempt = percent
+			out.Lines = replaceVeteranLine(out.Lines, VeteranLine{
+				Key: "taxExempt", TitleFa: "معافیت مالیاتی حقوق و فوق‌العاده‌ها",
+				ValueFa: IntFa(percent) + "٪ (مصوبهٔ کمیته)", RefFa: "مصوبهٔ کمیتهٔ ایثارگری",
+			})
+		}
+	}
+
+	if dec.PensionExempt != nil && !*dec.PensionExempt && out.PensionExempt > 0 {
+		changes = append(changes, "معافیت کسور بازنشستگی: کمیته «تعلق نمی‌گیرد» مصوب کرد (پیش‌فرض "+
+			IntFa(out.PensionExempt)+"٪).")
+		out.PensionExempt = 0
+		out.Lines = removeVeteranLine(out.Lines, "pensionExempt")
+	}
+	if dec.PensionExemptPercent != nil && *dec.PensionExemptPercent >= 0 {
+		percent := *dec.PensionExemptPercent
+		if percent > 100 {
+			percent = 100
+		}
+		if dec.PensionExempt == nil || *dec.PensionExempt {
+			if percent != out.PensionExempt {
+				changes = append(changes, "درصد معافیت کسور بازنشستگی: کمیته "+IntFa(percent)+"٪ مصوب کرد (پیش‌فرض "+
+					IntFa(out.PensionExempt)+"٪).")
+			}
+			out.PensionExempt = percent
+			out.Lines = replaceVeteranLine(out.Lines, VeteranLine{
+				Key: "pensionExempt", TitleFa: "معافیت کسور بازنشستگی (مصوبهٔ کمیته)",
+				ValueFa: IntFa(percent) + "٪ از کسور سهم کارمند", RefFa: "مصوبهٔ کمیتهٔ ایثارگری",
+			})
+		}
+	}
+
+	if dec.EduUpgrade != nil && *dec.EduUpgrade != out.EducationUpgrade {
+		if *dec.EduUpgrade {
+			changes = append(changes, "یک مقطع تحصیلی بالاتر: کمیته «تعلق می‌گیرد» مصوب کرد؛ پیش‌فرض قانونی برای این گروه نداشت.")
+		} else {
+			changes = append(changes, "یک مقطع تحصیلی بالاتر: کمیته «تعلق نمی‌گیرد» مصوب کرد (پیش‌فرض قانونی مجاز بود).")
+		}
+		out.EducationUpgrade = *dec.EduUpgrade
+		out.Lines = replaceVeteranLine(out.Lines, VeteranLine{
+			Key: "educationUpgrade", TitleFa: "معادله‌سازی مدرک، یک مقطع تحصیلی بالاتر",
+			ValueFa: yesNoFa(*dec.EduUpgrade) + " (مصوبهٔ کمیته)", RefFa: "مصوبهٔ کمیتهٔ ایثارگری",
+		})
+	}
+
+	if dec.IncentiveSteps != nil {
+		steps := *dec.IncentiveSteps
+		if steps < 0 {
+			steps = 0
+		}
+		if steps != out.IncentiveSteps {
+			changes = append(changes, "پایهٔ تشویقی: کمیته "+IntFa(steps)+" پایه مصوب کرد (پیش‌فرض "+
+				IntFa(out.IncentiveSteps)+" پایه).")
+			out.IncentiveSteps = steps
+			out.Lines = replaceVeteranLine(out.Lines, VeteranLine{
+				Key: "incentiveSteps", TitleFa: "پایهٔ تشویقی (مصوبهٔ کمیته)",
+				ValueFa: IntFa(steps) + " پایه", RefFa: "مصوبهٔ کمیتهٔ ایثارگری",
+			})
+		}
+	}
+
+	if dec.SeniorityMonths != nil {
+		months := *dec.SeniorityMonths
+		if months < 0 {
+			months = 0
+		}
+		if months != out.TotalExtraServiceMonths {
+			basis := VeteranSeniorityBasisTitleFa(dec.SeniorityBasis)
+			if basis == "" {
+				basis = "مصوبهٔ کمیته"
+			}
+			changes = append(changes, "افزایش سنواتی: کمیته "+IntFa(months)+" ماه مصوب کرد (پیش‌فرض "+
+				IntFa(out.TotalExtraServiceMonths)+" ماه).")
+			out.TotalExtraServiceMonths = months
+			out.Lines = replaceVeteranLine(out.Lines, VeteranLine{
+				Key: "seniorityDecision", TitleFa: "افزایش سنواتی مصوب کمیته",
+				ValueFa: IntFa(months) + " ماه — مبنا: " + basis, RefFa: "مصوبهٔ کمیتهٔ ایثارگری",
+			})
+		}
+	}
+
+	if dec.LeaveDays != nil {
+		days := *dec.LeaveDays
+		if days < 0 {
+			days = 0
+		}
+		if days != out.LeaveDays {
+			changes = append(changes, "مرخصی تشویقی: کمیته "+IntFa(days)+" روز مصوب کرد (پیش‌فرض "+
+				IntFa(out.LeaveDays)+" روز).")
+			out.LeaveDays = days
+			out.Lines = replaceVeteranLine(out.Lines, VeteranLine{
+				Key: "leave", TitleFa: "مرخصی تشویقی (مصوبهٔ کمیته)",
+				ValueFa: IntFa(days) + " روز", RefFa: "مصوبهٔ کمیتهٔ ایثارگری",
+			})
+		}
+	}
+
+	if dec.WorkHourReduction {
+		hours := dec.ReducedWeeklyHours
+		if hours <= 0 {
+			hours = 36
+		}
+		changes = append(changes, "کاهش ساعت کار: کمیته "+IntFa(hours)+" ساعت در هفته مصوب کرد (سیاست شرکت؛ نیازمند معیار مصوب سازمان).")
+		out.Lines = append(out.Lines, VeteranLine{
+			Key: "workHourReduction", TitleFa: "کاهش ساعت کار جانباز",
+			ValueFa: IntFa(hours) + " ساعت در هفته", RefFa: "مصوبهٔ کمیتهٔ ایثارگری",
+		})
+	}
+
+	if dec.EmploymentQuota != nil && !*dec.EmploymentQuota && out.EmploymentQuotaPercent > 0 {
+		changes = append(changes, "سهمیهٔ استخدامی: کمیته «تعلق نمی‌گیرد» مصوب کرد.")
+		out.EmploymentQuotaPercent = 0
+		out.Lines = replaceVeteranLine(out.Lines, VeteranLine{
+			Key: "quota", TitleFa: "سهمیهٔ استخدامی ایثارگران",
+			ValueFa: "تعلق نمی‌گیرد (مصوبهٔ کمیته)", RefFa: "مصوبهٔ کمیتهٔ ایثارگران",
+		})
+	}
+
+	if len(changes) > 0 {
+		out.NoteFa = strings.TrimSpace(out.NoteFa + " مصوبهٔ کمیتهٔ ایثارگری بر پیش‌فرض قانونی مقدم شده است.")
+		out.SummaryFa = veteranSummaryFa(out)
+	}
+	return out, changes
+}
+
+// VeteranDecisionLines سطرهای «چه چیزی مصوب شد» برای فرم، صورت‌جلسه و گزارش.
+func VeteranDecisionLines(dec VeteranDecision) []VeteranLine {
+	lines := []VeteranLine{}
+	add := func(key, title, value string) {
+		if strings.TrimSpace(value) == "" || value == "—" {
+			return
+		}
+		lines = append(lines, VeteranLine{Key: key, TitleFa: title, ValueFa: value})
+	}
+	add("tax", "معافیت مالیاتی حقوق و فوق‌العاده‌ها", decisionPercentFa(dec.TaxExempt, dec.TaxExemptPercent))
+	add("pension", "معافیت کسور بازنشستگی", decisionPercentFa(dec.PensionExempt, dec.PensionExemptPercent))
+	add("edu", "یک مقطع تحصیلی بالاتر", DecisionYesNoFa(dec.EduUpgrade))
+	add("incentive", "پایهٔ تشویقی", decisionIntFa(dec.IncentiveSteps, " پایه"))
+	add("seniority", "افزایش سنواتی", decisionIntFa(dec.SeniorityMonths, " ماه"))
+	add("leave", "مرخصی تشویقی", decisionIntFa(dec.LeaveDays, " روز"))
+	if dec.WorkHourReduction {
+		hours := dec.ReducedWeeklyHours
+		if hours <= 0 {
+			hours = 36
+		}
+		add("hours", "کاهش ساعت کار", IntFa(hours)+" ساعت در هفته")
+	}
+	add("quota", "سهمیهٔ استخدامی", DecisionYesNoFa(dec.EmploymentQuota))
+	if strings.TrimSpace(dec.SeniorityBasis) != "" && dec.SeniorityMonths != nil {
+		add("basis", "مبنای افزایش سنواتی", VeteranSeniorityBasisTitleFa(dec.SeniorityBasis))
+	}
+	return lines
+}
+
+// decisionPercentFa متن «تعلق/عدم تعلق + درصد» یک بند درصدی.
+func decisionPercentFa(flag *bool, percent *float64) string {
+	if flag == nil && percent == nil {
+		return ""
+	}
+	if flag != nil && !*flag {
+		return "تعلق نمی‌گیرد (مصوبهٔ کمیته)"
+	}
+	if percent != nil {
+		return IntFa(*percent) + "٪ (مصوبهٔ کمیته)"
+	}
+	return "تعلق می‌گیرد (مصوبهٔ کمیته)"
+}
+
+// DecisionYesNoFa متن بند بله/خیر مصوبه برای فرم و صورت‌جلسه.
+func DecisionYesNoFa(flag *bool) string {
+	if flag == nil {
+		return ""
+	}
+	return yesNoFa(*flag) + " (مصوبهٔ کمیته)"
+}
+
+// decisionIntFa متن بند عددی با واحد.
+func decisionIntFa(value *int, unitFa string) string {
+	if value == nil {
+		return ""
+	}
+	return IntFa(*value) + unitFa
+}
+
+// yesNoPtr خواندن بند بله/خیر؛ خالی ⇒ nil (پیروی از پیش‌فرض قانونی).
+func yesNoPtr(raw string) *bool {
+	value := strings.TrimSpace(raw)
+	if value == "" {
+		return nil
+	}
+	result := yesNo(value)
+	return &result
+}
+
+// numberPtr خواندن عدد اختیاری؛ خالی ⇒ false (کلید تعیین نشده).
+func numberPtr(raw string) (*float64, bool) {
+	value := strings.TrimSpace(raw)
+	if value == "" {
+		return nil, false
+	}
+	if _, ok := parseFaNumberOK(value); !ok {
+		return nil, false
+	}
+	n := ParseFaNumber(value)
+	return &n, true
+}
+
+// yesNo برچسب متنی بله/خیر را می‌خواند (yes/بله/1 و no/خیر/0).
+func yesNo(raw string) bool {
+	switch strings.ToLower(strings.TrimSpace(raw)) {
+	case "yes", "y", "1", "true", "بله", "دارد":
+		return true
+	}
+	return false
+}
+
+// yesNoFa برچسب فارسی بولی.
+func yesNoFa(v bool) string {
+	if v {
+		return "بله"
+	}
+	return "خیر"
+}
+
+// replaceVeteranLine سطر هم‌کلید را جایگزین می‌کند و اگر نبود، می‌افزاید.
+func replaceVeteranLine(lines []VeteranLine, line VeteranLine) []VeteranLine {
+	for i := range lines {
+		if lines[i].Key == line.Key {
+			lines[i] = line
+			return lines
+		}
+	}
+	return append(lines, line)
+}
+
+// removeVeteranLine سطر هم‌کلید را برمی‌دارد.
+func removeVeteranLine(lines []VeteranLine, key string) []VeteranLine {
+	out := lines[:0]
+	for _, line := range lines {
+		if line.Key == key {
+			continue
+		}
+		out = append(out, line)
+	}
+	return out
+}
+
 /* ------------------- خواندن پرونده و پارامترها از دادهٔ ذخیره‌شده ------------------- */
 
 // VeteranProfileFromFields پروفایل ایثارگری را از فیلدهای ذخیره‌شدهٔ پرونده می‌سازد.
@@ -624,6 +1003,59 @@ func VeteranParamsFromText(values map[string]string) VeteranParams {
 		}
 	}
 	return VeteranParamsFromValues(numeric)
+}
+
+// VeteranDecisionFromApprovedFile مقادیر «تأییدشده» را از فیلدهای پرونده می‌خواند.
+//
+// چرا لازم است: پروندهٔ ایثارگری هم حقایق را نگه می‌دارد (گروه، درصد، مدت اسارت) و هم مقدار
+// تأییدشدهٔ هر امتیاز را که کارشناس یا کمیتهٔ ایثارگری تصویب کرده است. اگر فیش حقوق و گزارش
+// فقط حقایق را بخوانند، مصوبهٔ کمیته (مثلاً افزایش سنواتی ۶۰ ماه یا معافیت کسور ۵۰٪) هرگز اثر
+// نمی‌کرد. کلید نبود یا خالی ⇒ nil (پیروی از پیش‌فرض قانونی).
+func VeteranDecisionFromApprovedFile(fields map[string]string) VeteranDecision {
+	if fields == nil {
+		return VeteranDecision{}
+	}
+	dec := VeteranDecision{Group: VeteranGroupOf(fields["veteranType"])}
+	if value, ok := numberPtr(fields["taxExemptPercent"]); ok {
+		dec.TaxExemptPercent = value
+		flag := *value > 0
+		dec.TaxExempt = &flag
+	}
+	if value, ok := numberPtr(fields["pensionExemptPercent"]); ok {
+		dec.PensionExemptPercent = value
+		flag := *value > 0
+		dec.PensionExempt = &flag
+	}
+	if value, ok := numberPtr(fields["extraServiceMonths"]); ok {
+		months := int(*value)
+		dec.SeniorityMonths = &months
+	}
+	if value, ok := numberPtr(fields["incentiveSteps"]); ok {
+		steps := int(*value)
+		dec.IncentiveSteps = &steps
+	}
+	if value, ok := numberPtr(fields["leaveDays"]); ok {
+		days := int(*value)
+		dec.LeaveDays = &days
+	}
+	if raw := strings.TrimSpace(fields["educationUpgrade"]); raw != "" {
+		flag := yesNo(raw)
+		dec.EduUpgrade = &flag
+	}
+	return dec
+}
+
+// VeteranEntitlementOfFile امتیازهای یک پروندهٔ ذخیره‌شده را می‌سازد: پیش‌فرض قانونی از
+// حقایق، سپس مقادیر تأییدشدهٔ همان پرونده روی آن. پروندهٔ تأییدنشده فقط پیش‌فرض قانونی
+// می‌گیرد و مقادیر ذخیره‌شده‌اش اعمال نمی‌شود (پیش از تأیید، اثر مالی ندارد).
+func VeteranEntitlementOfFile(fields map[string]string, approved bool, params VeteranParams) VeteranEntitlement {
+	profile := VeteranProfileFromFields(fields, approved)
+	ent := ComputeVeteranEntitlements(profile, params)
+	if !approved {
+		return ent
+	}
+	merged, _ := ApplyVeteranDecision(ent, VeteranDecisionFromApprovedFile(fields))
+	return merged
 }
 
 // ParseFaNumber عدد را از متن فارسی می‌خواند (بی‌اعتبار ⇒ صفر).

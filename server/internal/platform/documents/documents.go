@@ -31,6 +31,9 @@ const (
 	// KindDegreeBasis فرم اداری «تعیین مدرک ملاک حقوق»: کدام مدرک، با چه ارتباطی و به
 	// استناد کدام صورت‌جلسهٔ شورای تعدیل مدرک مبنای گروه شغلی و پرداخت است.
 	KindDegreeBasis Kind = "degree_basis"
+	// KindVeteranCommittee صورت‌جلسه و مصوبهٔ کمیتهٔ ایثارگری: تصمیم موردی دربارهٔ تعلق
+	// گرفتن هر امتیاز ایثارگری و میزان آن برای یک کارمند.
+	KindVeteranCommittee Kind = "veteran_committee"
 )
 
 // ModuleOf ماژول مالک سند؛ دسترسی نقش روی همان ماژول سنجیده می‌شود.
@@ -46,6 +49,8 @@ func ModuleOf(kind Kind) (string, bool) {
 		return "payroll", true
 	case KindDegreeBasis:
 		return "archive", true
+	case KindVeteranCommittee:
+		return "grievances", true
 	default:
 		return "", false
 	}
@@ -64,6 +69,8 @@ func TitleFa(kind Kind) string {
 		return "فیش حقوقی"
 	case KindDegreeBasis:
 		return "فرم تعیین مدرک ملاک حقوق"
+	case KindVeteranCommittee:
+		return "صورت‌جلسه و مصوبهٔ کمیتهٔ ایثارگری"
 	default:
 		return string(kind)
 	}
@@ -327,7 +334,8 @@ func KindTextSlots(kind Kind) []TextSlot {
 }
 
 // docKindOrder ترتیب نمایش اسناد در پنل تنظیمات.
-var docKindOrder = []Kind{KindContract, KindSalaryDecree, KindEmploymentCertificate, KindPayslip, KindDegreeBasis}
+var docKindOrder = []Kind{KindContract, KindSalaryDecree, KindEmploymentCertificate, KindPayslip,
+	KindDegreeBasis, KindVeteranCommittee}
 
 // Catalog فهرست اسناد چاپی و بلوک‌های هر کدام.
 //
@@ -358,6 +366,8 @@ var kindBlocks = map[Kind][]string{
 	// مشخصات پایهٔ شغلی و اقلام حقوق.
 	KindPayslip:     {"employeeCard", "employeeInfo", "payslipElements", "body", "note", "signatures", "verify"},
 	KindDegreeBasis: {"employeeCard", "employeeInfo", "form", "body", "note", "signatures", "verify"},
+	// مصوبهٔ کمیتهٔ ایثارگری: برگهٔ فرم‌محور با امضاها؛ تحصیلات و تماس لازم نیست.
+	KindVeteranCommittee: {"employeeCard", "employeeInfo", "form", "body", "note", "signatures", "verify"},
 }
 
 // KindBlocks کلیدهای بلوک پشتیبانی‌شدهٔ یک سند به ترتیب کاتالوگ.

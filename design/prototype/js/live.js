@@ -18,7 +18,7 @@ function isLive() {
 }
 
 /** آدرس سرویس‌های چاپ سند (نوع سند → ماژول مالک در سرور بررسی می‌شود). */
-const DOC_KINDS = {contract: 'contract', salary_decree: 'salary_decree', employment_certificate: 'employment_certificate', payslip: 'payslip'};
+const DOC_KINDS = {contract: 'contract', salary_decree: 'salary_decree', employment_certificate: 'employment_certificate', payslip: 'payslip', degree_basis: 'degree_basis', veteran_committee: 'veteran_committee'};
 
 /** درخواست خام با هدر احراز هویت — برای دریافت بدنهٔ سند چاپی. */
 function apiRaw(path, opts = {}) {

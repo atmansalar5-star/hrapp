@@ -11681,7 +11681,8 @@
       "entities": [
         "Complaint",
         "ComplaintFollowUp",
-        "VeteranRecord"
+        "VeteranRecord",
+        "VeteranCommitteeDecision"
       ],
       "roles": {
         "admin": [

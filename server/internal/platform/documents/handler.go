@@ -169,6 +169,8 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 		contractID  string
 		// basisRec تصمیم «مدرک ملاک حقوق» برای ساخت فرم چاپی همان تصمیم.
 		basisRec *contracts.Record
+		// committeeRec مصوبهٔ کمیتهٔ ایثارگری برای ساخت برگهٔ امضاشدنی همان مصوبه.
+		committeeRec *contracts.Record
 	)
 
 	if kind == KindContract {
@@ -198,6 +200,17 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 		}
 		employeeID = basis.EmployeeID
 		basisRec = &basis
+	} else if kind == KindVeteranCommittee {
+		// برگهٔ مصوبه با شناسهٔ خودِ رکورد باز می‌شود (نه کد کارمند) تا سند به مصوبه گره بخورد.
+		committee, found, err := veteranCommitteeRecord(ctx, deps, id)
+		if err != nil {
+			return Data{}, err
+		}
+		if !found {
+			return Data{}, fmt.Errorf("مصوبهٔ کمیتهٔ ایثارگری با این شناسه یافت نشد")
+		}
+		employeeID = committee.EmployeeID
+		committeeRec = &committee
 	} else {
 		employeeID = id
 	}
@@ -283,6 +296,8 @@ func buildData(ctx context.Context, deps modulekit.Deps, kind Kind, id string) (
 		addBaseInfoForm(&data)
 	case KindDegreeBasis:
 		buildDegreeBasisForm(ctx, deps, &data, basisRec)
+	case KindVeteranCommittee:
+		buildVeteranCommitteeForm(ctx, deps, &data, committeeRec)
 	}
 
 	// متن پیش‌فرض قالب‌محور سند (پاراگراف متن و یادداشت پای سند) با دادهٔ واقعی پر
@@ -786,6 +801,8 @@ func serialOf(kind Kind, employeeID, contractID string, today calendar.Date) str
 		return fmt.Sprintf("PAY-%d-%s", today.Year, strings.TrimPrefix(employeeID, "EMP-"))
 	case KindDegreeBasis:
 		return fmt.Sprintf("DBAS-%d-%s", today.Year, strings.TrimPrefix(employeeID, "EMP-"))
+	case KindVeteranCommittee:
+		return fmt.Sprintf("VCOM-%d-%s", today.Year, strings.TrimPrefix(employeeID, "EMP-"))
 	default:
 		return fmt.Sprintf("CRT-%d-%s", today.Year, strings.TrimPrefix(employeeID, "EMP-"))
 	}

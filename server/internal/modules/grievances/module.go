@@ -27,4 +27,7 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// مسیرهای اختصاصی امور ایثارگران روی همان سرویس رکورد سوار می‌شوند تا محاسبهٔ
 	// امتیازها یک‌جا انجام شود و رابط وب خودش قاعده نسازد.
 	registerVeteranEndpoints(mux, deps, svc)
+	// فرم مصوبهٔ کمیتهٔ ایثارگری روی همان سرویس رکورد می‌نشیند تا تصمیم کمیته ثبت،
+	// چاپ و در صورت تأیید روی پروندهٔ کارمند اعمال شود.
+	registerVeteranCommitteeEndpoints(mux, deps, svc)
 }

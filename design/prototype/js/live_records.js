@@ -399,11 +399,24 @@ function pageRecordkitLive(page) {
           encodeURIComponent(window.VET.employeeId));
         veteransProfile = profileRes.ok ? profileRes.data : null;
       }
+      // مصوبه‌های کمیتهٔ ایثارگری و پیش‌فرض قانونی همان کارمند برای فرم تصمیم.
+      const committeeRes = await apiFetch(mod.prefix + '/records?kind=veteranCommittee&size=200&scope=all');
+      let committeeDefaults = null;
+      if (window.VET.committeeEmployee) {
+        const cdRes = await apiFetch(mod.prefix + '/veteran-committee-defaults?employeeId=' +
+          encodeURIComponent(window.VET.committeeEmployee));
+        committeeDefaults = cdRes.ok ? cdRes.data : null;
+      }
+      rkBindKind(page + '#committee', mod, (schema.kinds || []).find(k => k.key === 'veteranCommittee'));
+      rkSetModuleID(page + '#committee', schema.module);
       veteransView = {
         def,
         report: reportRes.ok ? reportRes.data : {},
         employeeSelect: await liveEmployeeSelect('vetEmployee', window.VET.employeeId || ''),
+        committeeEmployeeSelect: await liveEmployeeSelect('vcEmployee', window.VET.committeeEmployee || ''),
         profile: veteransProfile,
+        committee: committeeRes.ok ? ((committeeRes.data || {}).items || []) : [],
+        committeeDefaults,
       };
     }
 

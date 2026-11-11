@@ -451,7 +451,7 @@ var All = []Module{
 		FeatureFlag: "module.grievances",
 		DBSchema:    "hr_grievances",
 		Owner:       "hr-labor",
-		Entities:    []string{"Complaint", "ComplaintFollowUp", "VeteranRecord"},
+		Entities:    []string{"Complaint", "ComplaintFollowUp", "VeteranRecord", "VeteranCommitteeDecision"},
 		Roles:       map[string][]string{"admin": {"read", "write", "delete", "approve"}, "hr_manager": {"read", "write", "approve"}, "hr_spec": {"read", "write"}, "line_manager": {"read"}, "employee": {"read", "write"}},
 		Scopes:      map[string]string{"line_manager": "own_unit", "employee": "own"},
 		Screens: []Screen{
