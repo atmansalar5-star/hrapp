@@ -64,7 +64,26 @@
     { "key": "orgcode.prefix.personal", "titleFa": "پیش‌شمارهٔ پایهٔ شخصی", "value": "082", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" },
     { "key": "orgcode.prefix.unit", "titleFa": "پیش‌شمارهٔ شمارهٔ واحد سازمانی", "value": "083", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" },
     { "key": "orgcode.prefix.assignment", "titleFa": "پیش‌شمارهٔ شمارهٔ انتصاب", "value": "084", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" },
-    { "key": "orgcode.prefix.jobFamily", "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی", "value": "085", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" }
+    { "key": "orgcode.prefix.jobFamily", "titleFa": "پیش‌شمارهٔ کد خانوادهٔ شغلی", "value": "085", "unitFa": "سه رقم + نقطه + ده رقم", "groupFa": "کدگذاری نمودار سازمانی" },
+    { "key": "veteran.tax.exemptPercent", "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)", "value": "100", "unitFa": "٪ از حقوق و فوق‌العاده‌ها", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.tax.minFrontMonths", "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)", "value": "12", "unitFa": "ماه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.pension.exemptPercent", "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)", "value": "0", "unitFa": "٪ از کسور سهم کارمند", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.pension.captivityServiceFactor", "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)", "value": "2", "unitFa": "برابر مدت اسارت", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.pension.erafaqiMonthsOverride", "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)", "value": "0", "unitFa": "ماه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.pension.erafaqiMaxMonths", "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)", "value": "120", "unitFa": "ماه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.education.upgrade", "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)", "value": "1", "unitFa": "۰ خیر، ۱ بله", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.incentive.steps.martyrFamily", "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید", "value": "2", "unitFa": "پایه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.incentive.steps.disabled", "titleFa": "پایهٔ تشویقی ایثارگری — جانباز", "value": "1", "unitFa": "پایه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.incentive.steps.freed", "titleFa": "پایهٔ تشویقی ایثارگری — آزاده", "value": "1", "unitFa": "پایه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.incentive.steps.combatant", "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده", "value": "1", "unitFa": "پایه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.incentive.steps.martyrChild", "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید", "value": "1", "unitFa": "پایه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.incentive.steps.veteranChild", "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده", "value": "0", "unitFa": "پایه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.incentive.stepsMax", "titleFa": "سقف پایهٔ تشویقی در یک سال", "value": "2", "unitFa": "پایه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.leave.captivityRatio", "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)", "value": "0.1", "unitFa": "برابر مدت اسارت", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.leave.minMonths", "titleFa": "کف مرخصی تشویقی آزادگان", "value": "2", "unitFa": "ماه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.leave.maxMonths", "titleFa": "سقف مرخصی تشویقی آزادگان", "value": "6", "unitFa": "ماه", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.quota.employmentPercent", "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)", "value": "25", "unitFa": "٪", "groupFa": "امور ایثارگران" },
+    { "key": "veteran.payroll.apply", "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق", "value": "1", "unitFa": "۰ خیر، ۱ بله", "groupFa": "امور ایثارگران" }
   ],
   "organizations": [
     {

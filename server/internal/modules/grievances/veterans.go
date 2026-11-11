@@ -229,6 +229,7 @@ func veteranReport(ctx context.Context, deps modulekit.Deps, svc *recordkit.Serv
 	type row struct {
 		RecordID      string `json:"recordId"`
 		EmployeeID    string `json:"employeeId"`
+		EmployeeName  string `json:"employeeNameFa"`
 		GroupFa       string `json:"groupFa"`
 		StatusFa      string `json:"statusFa"`
 		TaxExemptFa   string `json:"taxExemptFa"`
@@ -236,6 +237,7 @@ func veteranReport(ctx context.Context, deps modulekit.Deps, svc *recordkit.Serv
 		EducationFa   string `json:"educationUpgradeFa"`
 		IncentiveFa   string `json:"incentiveStepsFa"`
 	}
+	names := employeeNames(ctx, deps)
 	rows := make([]row, 0, len(files))
 	approved, taxExempt, extraMonths := 0, 0, 0
 	for _, rec := range files {
@@ -249,7 +251,7 @@ func veteranReport(ctx context.Context, deps modulekit.Deps, svc *recordkit.Serv
 		}
 		extraMonths += ent.TotalExtraServiceMonths
 		rows = append(rows, row{
-			RecordID: rec.ID, EmployeeID: rec.EmployeeID,
+			RecordID: rec.ID, EmployeeID: rec.EmployeeID, EmployeeName: names[rec.EmployeeID],
 			GroupFa:     rules.VeteranGroupTitleFa(rules.VeteranGroupOf(rec.Fields["veteranType"])),
 			StatusFa:    rec.StatusFa,
 			TaxExemptFa: rules.IntFa(ent.TaxExempt), ExtraMonthsFa: rules.IntFa(ent.TotalExtraServiceMonths),
@@ -426,6 +428,26 @@ func employeeName(ctx context.Context, deps modulekit.Deps, employeeID string) s
 		return ""
 	}
 	return employee.FullName
+}
+
+// employeeNames نقشهٔ «کد کارمند → نام» با یک پرس‌وجو.
+//
+// چرا یکجا: گزارش جامعهٔ ایثارگران برای هر پرونده نام کارمند را نشان می‌دهد؛ خواندن نام
+// به‌تفکیک پرونده، به تعداد پرونده‌ها پرس‌وجو می‌فرستاد.
+func employeeNames(ctx context.Context, deps modulekit.Deps) map[string]string {
+	reader, ok := deps.Ports.Employees()
+	if !ok {
+		return nil
+	}
+	page, err := reader.List(ctx, contracts.EmployeeFilter{Size: 500})
+	if err != nil {
+		return nil
+	}
+	out := make(map[string]string, len(page.Items))
+	for _, employee := range page.Items {
+		out[employee.ID] = employee.FullName
+	}
+	return out
 }
 
 // yesNoOptions مقادیر مجاز فیلدهای بله/خیر (دامنه، نه رابط).

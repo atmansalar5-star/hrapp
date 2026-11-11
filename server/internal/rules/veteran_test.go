@@ -264,6 +264,62 @@ func TestVeteranParamsFromValues(t *testing.T) {
 	}
 }
 
+// TestVeteranIncentiveParamKeyForms نشان می‌دهد کلید پارامتر گروه‌های چندبخشی هم به شکل
+// camelCase (قاعدهٔ کلید پارامترهای شرکت) و هم به شکل قدیمی با زیرخط خوانده می‌شود.
+func TestVeteranIncentiveParamKeyForms(t *testing.T) {
+	camel := VeteranParamsFromText(map[string]string{
+		"veteran.incentive.steps.martyrFamily": "3",
+		"veteran.incentive.steps.martyrChild":  "2",
+		"veteran.incentive.steps.veteranChild": "1",
+	})
+	if camel.IncentiveSteps[VeteranGroupMartyrFamily] != 3 {
+		t.Fatalf("کلید camelCase خانوادهٔ شهید خوانده نشد: %+v", camel.IncentiveSteps)
+	}
+	if camel.IncentiveSteps[VeteranGroupMartyrChild] != 2 || camel.IncentiveSteps[VeteranGroupVeteranChild] != 1 {
+		t.Fatalf("کلید camelCase فرزندان خوانده نشد: %+v", camel.IncentiveSteps)
+	}
+	legacy := VeteranParamsFromText(map[string]string{"veteran.incentive.steps.martyr_family": "2"})
+	if legacy.IncentiveSteps[VeteranGroupMartyrFamily] != 2 {
+		t.Fatalf("کلید قدیمی با زیرخط نباید بی‌اثر شود: %+v", legacy.IncentiveSteps)
+	}
+	if got := incentiveParamKey(VeteranGroupMartyrFamily); got != "martyrFamily" {
+		t.Fatalf("تبدیل نام گروه به کلید پارامتر درست نیست: %q", got)
+	}
+	if got := incentiveParamKey(VeteranGroupDisabled); got != "disabled" {
+		t.Fatalf("نام گروه تک‌بخشی نباید تغییر کند: %q", got)
+	}
+}
+
+// TestVeteranParamsFromText پارامترهای شرکت را با ارقام فارسی، جداکننده و علامت درصد
+// می‌خواند و کلید بی‌مقدار یا ناخوانا را نادیده می‌گیرد.
+func TestVeteranParamsFromText(t *testing.T) {
+	params := VeteranParamsFromText(map[string]string{
+		"veteran.tax.exemptPercent":        "۱۰۰٪",
+		"veteran.quota.employmentPercent":  "۲۵",
+		"veteran.payroll.apply":            "",
+		"veteran.leave.captivityRatio":     "0.1",
+		"veteran.pension.erafaqiMaxMonths": "1,200",
+		"medical.aid.orgSharePercent":      "50",
+		"veteran.education.upgrade":        "0",
+		"veteran.incentive.stepsMax":       "۲",
+	})
+	if params.TaxExemptPercent != 100 {
+		t.Fatalf("درصد با ارقام فارسی و علامت درصد خوانده نشد: %v", params.TaxExemptPercent)
+	}
+	if params.EmploymentQuotaPercent != 25 || params.IncentiveStepsMax != 2 {
+		t.Fatalf("درصد سهمیه و سقف پایه خوانده نشد: %+v", params)
+	}
+	if !params.PayrollApply {
+		t.Fatal("کلید بی‌مقدار نباید پیش‌فرض «اعمال در فیش» را خاموش کند")
+	}
+	if params.ErafaqiMaxMonths != 1200 {
+		t.Fatalf("جداکنندهٔ هزارگان نباید عدد را خراب کند: %v", params.ErafaqiMaxMonths)
+	}
+	if params.EducationUpgrade {
+		t.Fatal("مقدار صفر باید امتیاز «یک مقطع بالاتر» را خاموش کند")
+	}
+}
+
 func TestVeteranSummaryAndInstruction(t *testing.T) {
 	params := DefaultVeteranParams()
 	ent := ComputeVeteranEntitlements(approved(VeteranGroupFreed, 0, 24, 0), params)

@@ -301,18 +301,22 @@ func TestOilDegreeSpecialty(t *testing.T) {
 		in := oilInput()
 		in.Degree = degree
 		slip := ComputeOilPayslip(in, DefaultOilPayParams())
-		line, ok := lineOf(slip, OilDegreeAllowance)
+		// بدون انتخاب پایهٔ سمت، همین یک سطر «فوقالعادهٔ تخصصی شغل» فقط سهم مدرک را دارد.
+		line, ok := lineOf(slip, OilAllowanceAttraction)
 		if !ok {
-			t.Fatalf("قلم تخصصی برای مدرک %s ساخته نشد", degree)
+			t.Fatalf("سطر تخصصی برای مدرک %s ساخته نشد", degree)
 		}
 		if line.Amount != want {
 			t.Fatalf("مبلغ تخصصی %s نادرست است: %d (انتظار %d)", degree, line.Amount, want)
 		}
 		if line.Base != 32_500_000 {
-			t.Fatalf("مبنای قلم تخصصی باید مبنای جذب باشد: %d", line.Base)
+			t.Fatalf("مبنای سطر تخصصی باید مبنای جذب باشد: %d", line.Base)
 		}
 		if slip.Degree != degree || slip.DegreePercent != line.Percent {
 			t.Fatalf("مدرک و درصد در فیش ثبت نشده است: %s / %v", slip.Degree, slip.DegreePercent)
+		}
+		if slip.SpecialtyPercent != line.Percent || slip.DegreeAmount != want {
+			t.Fatalf("درصد کل و سهم مدرک ثبت نشده است: %v / %d", slip.SpecialtyPercent, slip.DegreeAmount)
 		}
 		// جمع ناخالص باید شامل همین مبلغ باشد.
 		if slip.Gross != 53_500_000+want {
@@ -329,29 +333,72 @@ func TestOilRow7MatchesBylaw(t *testing.T) {
 	in.Degree = "bachelor" // Z = ۳۸٫۵
 	slip := ComputeOilPayslip(in, DefaultOilPayParams())
 
-	attraction, okAttraction := lineOf(slip, OilAllowanceAttraction)
-	degree, okDegree := lineOf(slip, OilDegreeAllowance)
-	if !okAttraction || !okDegree {
-		t.Fatal("ردیف ۷ باید دو سطر جذب و تخصصی مدرک داشته باشد")
+	// ردیف ۷ آییننامه یک سطر است: (A+B+C) × (Y+Z) = ۳۲٬۵۰۰٬۰۰۰ × ۷۱٫۵٪ = ۲۳٬۲۳۷٬۵۰۰
+	line, ok := lineOf(slip, OilAllowanceAttraction)
+	if !ok {
+		t.Fatal("ردیف ۷ باید سطر «فوقالعادهٔ تخصصی شغل» را بسازد")
 	}
-	// (A+B+C) × (Y+Z) = ۳۲٬۵۰۰٬۰۰۰ × ۷۱٫۵٪ = ۲۳٬۲۳۷٬۵۰۰
-	const wantRow7 = 23_237_500
-	if attraction.Amount+degree.Amount != wantRow7 {
-		t.Fatalf("جمع ردیف ۷ نادرست است: %d (انتظار %d)",
-			attraction.Amount+degree.Amount, wantRow7)
+	if _, extra := lineOf(slip, OilDegreeAllowance); extra {
+		t.Fatal("ضریب مدرک نباید سطر جداگانه بسازد؛ باید در همان سطر تخصصی جمع شود")
+	}
+	const want = 23_237_500
+	if line.Amount != want || line.Percent != 71.5 {
+		t.Fatalf("سطر تخصصی نادرست است: مبلغ %d درصد %v (انتظار %d / ۷۱٫۵)",
+			line.Amount, line.Percent, want)
+	}
+	// سهم پایهٔ سمت (Y) و سهم مدرک (Z) از همان یک مبلغ قابل تفکیک است.
+	gradePart := RoundHalfUp(float64(slip.AttractionBase) * 33 / 100)
+	if slip.DegreeAmount != 12_512_500 || line.Amount != gradePart+slip.DegreeAmount {
+		t.Fatalf("تفکیک سهم سمت و مدرک نادرست است: %d + %d ≠ %d",
+			gradePart, slip.DegreeAmount, line.Amount)
+	}
+}
+
+// TestOilSpecialtyMatchesSamplePayslip: فیش نمونهٔ صندوق نفت «فوقالعاده تخصصی» را یک
+// سطر با ۱۱۹٫۲٪ مبنای جذب نشان می‌دهد. درصد مصوب همان دوره، مبلغ کل است و ضریب مدرک دوباره به آن
+// اضافه نمی‌شود؛ وگرنه سطر فیش با فیش رسمی یکی نمی‌شد.
+func TestOilSpecialtyMatchesSamplePayslip(t *testing.T) {
+	in := OilPayInput{
+		BaseSalary: 626_510_600,
+		Residence:  "jarrahi",
+		Degree:     "bachelor", // ۳۸٫۵٪ — نباید روی درصد مصوب اضافه شود
+		AllowancePercents: map[string]float64{
+			OilAllowanceAttraction: 119.2,
+		},
+	}
+	slip := ComputeOilPayslip(in, DefaultOilPayParams())
+
+	line, ok := lineOf(slip, OilAllowanceAttraction)
+	if !ok {
+		t.Fatal("سطر «فوقالعادهٔ تخصصی شغل» در فیش نیست")
+	}
+	if line.Percent != 119.2 || line.Amount != 1_213_551_032 {
+		t.Fatalf("سطر تخصصی باید ۱٬۲۱۳٬۵۵۱٬۰۳۲ (۱۱۹٫۲٪ مبنای جذب) باشد: %+v", line)
+	}
+	if slip.SpecialtyPercent != 119.2 {
+		t.Fatalf("درصد کل قلم تخصصی نادرست است: %v", slip.SpecialtyPercent)
+	}
+	if slip.DegreeAmount != 0 {
+		t.Fatalf("درصد مصوب، مبلغ کل است؛ سهم مدرک نباید جدا شمرده شود: %d", slip.DegreeAmount)
+	}
+	if _, extra := lineOf(slip, OilDegreeAllowance); extra {
+		t.Fatal("سطر جداگانهٔ تخصصی مدرک نباید ساخته شود")
+	}
+	if slip.AttractionBase != 1_018_079_725 {
+		t.Fatalf("مبنای جذب باید ۱٬۰۱۸٬۰۷۹٬۷۲۵ باشد: %d", slip.AttractionBase)
 	}
 }
 
 // TestOilDegreeNotSet: بی‌مدرک یا مقطع بدون مصوبه، قلم تخصصی ندارد.
 func TestOilDegreeNotSet(t *testing.T) {
 	slip := ComputeOilPayslip(oilInput(), DefaultOilPayParams())
-	if _, ok := lineOf(slip, OilDegreeAllowance); ok {
+	if _, ok := lineOf(slip, OilAllowanceAttraction); ok {
 		t.Fatal("بدون مدرک نباید قلم تخصصی ساخته شود")
 	}
 	in := oilInput()
 	in.Degree = "postdoc" // مقطعی که درصد مصوب ندارد
 	slip = ComputeOilPayslip(in, DefaultOilPayParams())
-	if _, ok := lineOf(slip, OilDegreeAllowance); ok {
+	if _, ok := lineOf(slip, OilAllowanceAttraction); ok {
 		t.Fatal("مقطع بدون درصد مصوب نباید قلم تخصصی بسازد")
 	}
 	if slip.Gross != 53_500_000 {

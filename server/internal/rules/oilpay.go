@@ -275,9 +275,9 @@ func DefaultOilPayParams() OilPayParams {
 			{Key: "workshop", TitleFa: "فوق‌العادهٔ کارگاهی", GroupFa: OilGroupClimate,
 				Percent: 10, Base: OilBaseAllowance,
 				NoteFa: "ردیف ۵ آیین‌نامه — شرایط محیط کار، ۱۰٪ از مبنای فوق‌العاده‌ها."},
-			{Key: OilAllowanceAttraction, TitleFa: "فوق‌العادهٔ جذب عمومی و تخصصی شغل",
+			{Key: OilAllowanceAttraction, TitleFa: "فوقالعادهٔ تخصصی شغل",
 				GroupFa: OilGroupClimate, Percent: 0, Base: OilBaseAttraction, DrivenBy: "grade",
-				NoteFa: "ردیف ۷ آیین‌نامه — درصد از جدول ۳ بر پایهٔ پایهٔ سمت، روی مبنای جذب."},
+				NoteFa: "ردیف ۷ آییننامه — (A+B+C) × (Y+Z): درصد جدول ۳ بر پایهٔ پایهٔ سمت به‌همراه ضریب مدرک تحصیلی، در یک سطر روی مبنای جذب — همان سطر فیش رسمی."},
 			{Key: "production", TitleFa: "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
 				GroupFa: OilGroupClimate, Percent: 30, Base: OilBaseAllowance,
 				NoteFa: "ردیف ۸ آیین‌نامه — ۳۰٪ از مبنای فوق‌العاده‌ها."},
@@ -408,6 +408,11 @@ type OilPayslip struct {
 	// Degree و DegreePercent مدرک مبنای فوق‌العادهٔ تخصصی و درصد آن (خالی = مشمول نبود).
 	Degree        string  `json:"degree,omitempty"`
 	DegreePercent float64 `json:"degreePercent,omitempty"`
+	// SpecialtyPercent درصد کل «فوقالعادهٔ تخصصی شغل» (Y جدول ۳ + Z مدرک) و
+	// DegreeAmount سهم ضریب مدرک از همان مبلغ — برای نمایش ترکیب سطر؛ جمعشان یک
+	// مبلغ است و دوباره به فیش اضافه نمی‌شود.
+	SpecialtyPercent float64 `json:"specialtyPercent,omitempty"`
+	DegreeAmount     int64   `json:"degreeAmount,omitempty"`
 	// JobGrade و JobGradeFa پایهٔ سمت مبنا (جدول ۳) و عنوان فارسی آن.
 	JobGrade   string `json:"jobGrade,omitempty"`
 	JobGradeFa string `json:"jobGradeFa,omitempty"`
@@ -497,6 +502,17 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	)
 
 	// فوق‌العاده‌های درصدی مصوب.
+	// ضریب مدرک تحصیلی (Z) از پارامترهای شرکت؛ فرم فیش می‌تواند با کلید
+	// degreeSpecialty همین یک ضریب را برای آزمایش دستی بازنویسی کند
+	// (بازنویسی دستی کل قلم تخصصی، ضریب مدرک را دوباره اضافه نمی‌کند).
+	degreePercent := 0.0
+	if degree := strings.TrimSpace(in.Degree); degree != "" {
+		if manual, ok := in.AllowancePercents[OilDegreeAllowance]; ok && manual >= 0 {
+			degreePercent = manual
+		} else if percent, ok := params.DegreeAllowancePercents[degree]; ok && percent > 0 {
+			degreePercent = percent
+		}
+	}
 	monthDays := in.DaysInMonth
 	if monthDays <= 0 {
 		monthDays = 30
@@ -525,9 +541,13 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 			// درصدهای جدولی: جدول ۱/۲ بر پایهٔ محل سکونت، جدول ۳ بر پایهٔ پایهٔ سمت.
 			switch allowance.Key {
 			case OilAllowanceAttraction:
+				// ردیف ۷ آییننامه: (A+B+C) × (Y+Z). «Y» از جدول ۳ (پایهٔ سمت) و «Z»
+				// از ضریب مدرک تحصیلی می‌آید و هر دو در یک سطر «فوقالعادهٔ تخصصی
+				// شغل» جمع می‌شوند تا فیش عیناً همان سطر فیش رسمی سازمان را نشان دهد.
 				if gradeOK {
 					percent = grade.Total()
 				}
+				percent += degreePercent
 			case OilAllowanceDeprivation:
 				if residenceOK {
 					percent = residence.Deprivation
@@ -558,10 +578,8 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 		}
 		amount := float64(lineBase) * percent / 100
 		detail := numberFa(percent) + "٪ × " + baseFa + " (" + moneyFa(float64(lineBase)) + " ریال)"
-		if allowance.Key == OilAllowanceAttraction && !hasManual && gradeOK {
-			detail = "جدول ۳ — حق جذب عمومی " + numberFa(grade.PublicAttract) + "٪ + حق مقام " +
-				numberFa(grade.PositionRank) + "٪ (" + grade.TitleFa + ") = " +
-				numberFa(percent) + "٪ × " + baseFa + " (" + moneyFa(float64(lineBase)) + " ریال)"
+		if allowance.Key == OilAllowanceAttraction {
+			detail = oilSpecialtyDetailFa(in, grade, gradeOK, degreePercent, hasManual, percent, lineBase, baseFa)
 		}
 		if allowance.Key == OilAllowanceDeprivation && !hasManual && residenceOK {
 			detail = "جدول ۱ — محل سکونت " + residence.TitleFa + ": " + numberFa(percent) +
@@ -585,31 +603,19 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 			Key: allowance.Key, TitleFa: allowance.TitleFa, GroupFa: allowance.GroupFa,
 			Percent: percent, Base: lineBase, Amount: RoundHalfUp(amount), DetailFa: detail,
 		}
+		if allowance.Key == OilAllowanceAttraction {
+			out.SpecialtyPercent = percent
+			if degreePercent > 0 {
+				out.Degree = strings.TrimSpace(in.Degree)
+				out.DegreePercent = degreePercent
+				if !hasManual {
+					out.DegreeAmount = RoundHalfUp(float64(attractionBase) * degreePercent / 100)
+				}
+			}
+		}
 		out.AllowanceLines = append(out.AllowanceLines, line)
 		out.Lines = append(out.Lines, line)
 		out.Allowances += line.Amount
-	}
-
-	// فوق‌العادهٔ تخصصی بر اساس مدرک تحصیلی: ضریب Z × مبنای جذب.
-	//
-	// چرا روی «مبنای جذب» و نه مبنای فوق‌العاده‌ها: ردیف ۷ آیین‌نامه درصد جذب و تخصصی شغل را
-	// (A+B+C)×(Y+Z) می‌داند؛ Y از پایهٔ سمت و Z از مدرک تحصیلی. برای خوانایی فیش، این دو
-	// جزء در دو سطر جدا نمایش داده می‌شوند و جمعشان همان مبلغ ردیف ۷ است.
-	if degree := strings.TrimSpace(in.Degree); degree != "" {
-		if percent, ok := params.DegreeAllowancePercents[degree]; ok && percent > 0 {
-			amount := RoundHalfUp(float64(attractionBase) * percent / 100)
-			line := OilPayLine{
-				Key: OilDegreeAllowance, TitleFa: OilDegreeAllowanceTitleFa(),
-				GroupFa: OilGroupClimate, Percent: percent, Base: attractionBase, Amount: amount,
-				DetailFa: "ضریب مدرک (Z) " + numberFa(percent) + "٪ × مبنای جذب (" +
-					moneyFa(float64(attractionBase)) + " ریال)",
-			}
-			out.AllowanceLines = append(out.AllowanceLines, line)
-			out.Lines = append(out.Lines, line)
-			out.Allowances += amount
-			out.Degree = degree
-			out.DegreePercent = percent
-		}
 	}
 
 	// اضافه‌کار: پایهٔ حقوق × نرخ مصوب هر ساعت (روزکار ۰٫۰۱۴ / نوبت‌کار ۰٫۰۱۶) × ساعت‌ها.
@@ -657,16 +663,6 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	out.FundEmployee = RoundHalfUp(float64(deductionBase) * params.FundEmployeePercent / 100)
 	out.FundEmployer = RoundHalfUp(float64(deductionBase) * params.FundEmployerPercent / 100)
 	out.InsuranceEmployee = RoundHalfUp(float64(deductionBase) * params.InsuranceEmployeePercent / 100)
-	if out.FundEmployee > 0 {
-		out.Lines = append(out.Lines, OilPayLine{Key: "fundEmployee", TitleFa: "کسور صندوق بازنشستگی نفت",
-			GroupFa: OilGroupDeduct, Percent: params.FundEmployeePercent, Base: deductionBase, Amount: out.FundEmployee,
-			DetailFa: numberFa(params.FundEmployeePercent) + "٪ × جمع ناخالص"})
-	}
-	if out.InsuranceEmployee > 0 {
-		out.Lines = append(out.Lines, OilPayLine{Key: "insuranceEmployee", TitleFa: "بیمهٔ سهم کارمند",
-			GroupFa: OilGroupDeduct, Percent: params.InsuranceEmployeePercent, Base: deductionBase, Amount: out.InsuranceEmployee,
-			DetailFa: numberFa(params.InsuranceEmployeePercent) + "٪ × جمع ناخالص"})
-	}
 
 	taxableBefore := out.Gross - out.FundEmployee - out.InsuranceEmployee - params.TaxExemption
 	if params.TaxBase > 0 {
@@ -676,8 +672,12 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 		taxableBefore = 0
 	}
 
-	// امتیاز ایثارگری: کاهش کسور سهم کارمند (صندوق/بیمه) و معافیت مالیاتی. مبنای هر دو
-	// تعدیل، عدد پیش از اعمال امتیاز است تا درصد معافیت روی همان مبنای قانونی بنشیند.
+	// امتیاز ایثارگری: کاهش کسور سهم کارمند (صندوق/بیمه) و معافیت مالیاتی.
+	//
+	// مبنای هر دو تعدیل، عدد پیش از اعمال امتیاز است تا درصد معافیت روی همان مبنای قانونی
+	// بنشیند. تعدیل با «کم کردن از خودِ قلم» انجام می‌شود، نه با افزودن سطر اعتباری: بندهای
+	// فیش رسمی جمع بستانکار و بدهکار را با مبلغ مثبت می‌شمارند و سطر منفی، خالص بند را
+	// بیش از جمع ناخالص می‌کرد.
 	relief := VeteranReliefResult{}
 	// در حالت مالیات دستی (پله‌ها خالی) مالیات از سطرهای مصوبه می‌آید؛ اعمال معافیت
 	// ایثارگری روی مبنای خودکار، مالیات را دو بار تعدیل می‌کرد.
@@ -687,15 +687,23 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 			EmployeeDeduction: out.FundEmployee + out.InsuranceEmployee,
 		}, *in.Veteran)
 	}
+	exemptNoteFa := ""
 	if relief.PensionExemptAmount > 0 {
 		out.FundEmployee -= relief.PensionExemptAmount
 		if out.FundEmployee < 0 {
 			out.FundEmployee = 0
 		}
-		out.Lines = append(out.Lines, OilPayLine{Key: "veteranPensionExempt",
-			TitleFa: "معافیت کسور بازنشستگی (ایثارگری)", GroupFa: OilGroupDeduct,
-			Amount:   -relief.PensionExemptAmount,
-			DetailFa: "بر پایهٔ پروندهٔ تأییدشدهٔ امور ایثارگران"})
+		exemptNoteFa = " − معافیت کسور ایثارگری " + moneyFa(float64(relief.PensionExemptAmount)) + " ریال"
+	}
+	if out.FundEmployee > 0 {
+		out.Lines = append(out.Lines, OilPayLine{Key: "fundEmployee", TitleFa: "کسور صندوق بازنشستگی نفت",
+			GroupFa: OilGroupDeduct, Percent: params.FundEmployeePercent, Base: deductionBase, Amount: out.FundEmployee,
+			DetailFa: numberFa(params.FundEmployeePercent) + "٪ × مبنای کسور" + exemptNoteFa})
+	}
+	if out.InsuranceEmployee > 0 {
+		out.Lines = append(out.Lines, OilPayLine{Key: "insuranceEmployee", TitleFa: "بیمهٔ سهم کارمند",
+			GroupFa: OilGroupDeduct, Percent: params.InsuranceEmployeePercent, Base: deductionBase, Amount: out.InsuranceEmployee,
+			DetailFa: numberFa(params.InsuranceEmployeePercent) + "٪ × مبنای کسور"})
 	}
 
 	taxable := taxableBefore
@@ -704,10 +712,6 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 		if taxable < 0 {
 			taxable = 0
 		}
-		out.Lines = append(out.Lines, OilPayLine{Key: "veteranTaxExempt",
-			TitleFa: "معافیت مالیاتی ایثارگری", GroupFa: OilGroupDeduct,
-			Amount:   -relief.TaxExemptAmount,
-			DetailFa: "ماده ۵۶ قانون جامع خدمات‌رسانی به ایثارگران"})
 	}
 	out.VeteranApplied = relief.Applied
 	out.VeteranTaxExempt = relief.TaxExemptAmount
@@ -719,9 +723,13 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	out.TaxableIncome = taxable
 	out.Tax = TaxFor(taxable, params.TaxBrackets)
 	if out.Tax > 0 {
+		taxDetailFa := "پله‌ای بر درآمد مشمول " + moneyFa(float64(taxable)) + " ریال"
+		if relief.TaxExemptAmount > 0 {
+			taxDetailFa += " — معافیت مالیاتی ایثارگری " + moneyFa(float64(relief.TaxExemptAmount)) +
+				" ریال (ماده ۵۶ قانون جامع خدمات‌رسانی به ایثارگران)"
+		}
 		out.Lines = append(out.Lines, OilPayLine{Key: "tax", TitleFa: "مالیات",
-			GroupFa: OilGroupDeduct, Amount: out.Tax,
-			DetailFa: "پله‌ای بر درآمد مشمول " + moneyFa(float64(taxable)) + " ریال"})
+			GroupFa: OilGroupDeduct, Amount: out.Tax, DetailFa: taxDetailFa})
 	}
 	if out.OtherDeductions > 0 {
 		out.Lines = append(out.Lines, OilPayLine{Key: "otherDeductions", TitleFa: "سایر کسور",
@@ -744,9 +752,16 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	if residenceOK {
 		note += " درصد محرومیت و صرف وقت از جدول ۱ و ۲ برای محل سکونت " + residence.TitleFa + " آمده است."
 	}
-	if gradeOK {
-		note += " درصد جذب عمومی و تخصصی شغل از جدول ۳ برای " + grade.TitleFa + " (" +
-			numberFa(grade.Total()) + "٪) گرفته شده است."
+	if gradeOK || out.DegreePercent > 0 {
+		parts := []string{}
+		if gradeOK {
+			parts = append(parts, "درصد جدول ۳ برای "+grade.TitleFa+" ("+numberFa(grade.Total())+"٪)")
+		}
+		if out.DegreePercent > 0 {
+			parts = append(parts, "ضریب مدرک تحصیلی ("+numberFa(out.DegreePercent)+"٪)")
+		}
+		note += " فوقالعادهٔ تخصصی شغل از جمع " + strings.Join(parts, " + ") + " = " +
+			numberFa(out.SpecialtyPercent) + "٪ مبنای جذب ساخته شده است."
 	}
 	if relief.Applied {
 		note += " امتیاز ایثارگری (" + out.VeteranGroupFa + ") اعمال شد: معافیت مالیاتی " +
@@ -758,6 +773,29 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 }
 
 // OilDegreeAllowance عنوان قلم فوق‌العادهٔ تخصصی بر اساس مدرک تحصیلی.
+// oilSpecialtyDetailFa شرح سطر «فوقالعادهٔ تخصصی شغل» را می‌سازد.
+//
+// چرا یک سطر: فیش رسمی سازمان همین قلم را یک‌جا می‌آورد؛ درصدش جمع دو جزء است — «Y» از جدول ۳
+// (حق جذب عمومی + حق مقام) و «Z» از ضریب مدرک تحصیلی — و هر دو روی مبنای جذب بسته می‌شوند.
+// شرح، ترکیب را نشان می‌دهد تا کارشناس بتواند همان یک مبلغ را با فیش رسمی تطبیق دهد.
+func oilSpecialtyDetailFa(in OilPayInput, grade OilJobGrade, gradeOK bool, degreePercent float64, hasManual bool, percent float64, lineBase int64, baseFa string) string {
+	parts := []string{}
+	if gradeOK {
+		parts = append(parts, "جدول ۳ — حق جذب عمومی "+numberFa(grade.PublicAttract)+"٪ + حق مقام "+
+			numberFa(grade.PositionRank)+"٪ ("+grade.TitleFa+")")
+	}
+	if degreePercent > 0 {
+		parts = append(parts, "ضریب مدرک تحصیلی "+numberFa(degreePercent)+"٪")
+	}
+	if hasManual || len(parts) == 0 {
+		// درصد دستی همان مبلغ کل مصوبه است؛ ضریب مدرک دوباره اضافه نمی‌شود.
+		return "درصد مصوب همین دوره " + numberFa(percent) + "٪ × " + baseFa + " (" +
+			moneyFa(float64(lineBase)) + " ریال)"
+	}
+	return strings.Join(parts, " + ") + " = " + numberFa(percent) + "٪ × " + baseFa + " (" +
+		moneyFa(float64(lineBase)) + " ریال)"
+}
+
 const OilDegreeAllowance = "degreeSpecialty"
 
 // OilDegreeAllowanceTitleFa عنوان فارسی قلم فوق‌العادهٔ تخصصی.

@@ -933,6 +933,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "استقرار مرجع سامانه؛ همهٔ ادارات فعال. مشاغل عملیاتی سخت و زیان‌آور و نیروهای ارکان ثالث زیر نظر واحد برون‌سپاری پایش می‌شوند."
@@ -1410,6 +1543,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "استقرار ستادی برای شرکت مادر: برنامه‌ریزی نیروی انسانی، مطالعات، آمار و گزارش‌های تجمیعی شرکت‌های زیرمجموعه. ادارات عملیاتی (امور کارکنان، روابط کار، آموزش و برون‌سپاری) در این استقرار غیرفعال‌اند تا سامانه با دادهٔ شرکت‌های زیرمجموعه کار کند."
@@ -1907,6 +2173,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "نمونهٔ شبیه‌سازی یک شرکت پتروشیمی دیگر: بدون واحد برون‌سپاری و مطالعات، و با دورهٔ کارانهٔ فصلی. برای دیدن اثر پارامتریک بودن سامانه ساخته شده است."
@@ -2394,6 +2793,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "شرکت پیمانکاری با نیروهای ارکان ثالث: تمرکز روی حضور و غیاب، حقوق پیمانکاران، مشاغل سخت و زیان‌آور و آمار. سال مالی از ابتدای تیر آغاز می‌شود و مهلت تأخیر مجاز صفر است."
@@ -2896,6 +3428,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "شرکت زیرمجموعهٔ هلدینگ خلیج فارس؛ تولید الفین و آروماتیک در بندر امام."
@@ -3398,6 +4063,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "تولید برق، بخار و آب صنعتی برای شرکت‌های منطقهٔ ماهشهر زیر هلدینگ خلیج فارس."
@@ -3900,6 +4698,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "تولید مواد اولیهٔ پلی‌استر و پلی‌اتیلن ترفتالات زیر هلدینگ خلیج فارس."
@@ -4402,6 +5333,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "بزرگ‌ترین مجتمع کلرآلکالی خاورمیانه در منطقهٔ ماهشهر زیر هلدینگ خلیج فارس."
@@ -4904,6 +5968,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "تولید آروماتیک‌ها (پارازایلین و بنزن) در عسلویه زیر هلدینگ خلیج فارس."
@@ -5406,6 +6603,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "تولید متانول و آمونیاک در بیدبلند خلیج فارس زیر هلدینگ خلیج فارس."
@@ -5908,6 +7238,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "تولید اتیلن و پلی‌اتیلن سنگین در گچساران زیر هلدینگ خلیج فارس."
@@ -6410,6 +7873,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "شرکت مهندسی و فنون (EPC) هلدینگ خلیج فارس."
@@ -6913,6 +8509,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "بازرگانی، فروش و صادرات محصولات پتروشیمی هلدینگ خلیج فارس."
@@ -7414,6 +9143,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "تأمین کالا و تجارت صنعتی هلدینگ خلیج فارس."
@@ -7916,6 +9778,139 @@
           "value": "085",
           "unitFa": "سه رقم + نقطه + ده رقم",
           "groupFa": "کدگذاری نمودار سازمانی"
+        },
+        {
+          "key": "veteran.tax.exemptPercent",
+          "titleFa": "معافیت مالیاتی حقوق ایثارگران (ماده ۵۶ قانون جامع)",
+          "value": "100",
+          "unitFa": "٪ از حقوق و فوق‌العاده‌ها",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.tax.minFrontMonths",
+          "titleFa": "حداقل حضور در جبهه برای معافیت مالیاتی رزمنده (ماده ۵۶)",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.exemptPercent",
+          "titleFa": "کاهش کسور سهم کارمند ایثارگر (سیاست شرکت)",
+          "value": "0",
+          "unitFa": "٪ از کسور سهم کارمند",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.captivityServiceFactor",
+          "titleFa": "ضریب تبدیل هر سال اسارت به سابقهٔ خدمت (ماده ۱۳ قانون آزادگان)",
+          "value": "2",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMonthsOverride",
+          "titleFa": "سنوات ارفاقی جایگزین جانبازان (۰ = جدول قانونی)",
+          "value": "0",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.pension.erafaqiMaxMonths",
+          "titleFa": "سقف مجموع سنوات ارفاقی (آیین‌نامه: ۱۰ سال)",
+          "value": "120",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.education.upgrade",
+          "titleFa": "امتیاز «یک مقطع تحصیلی بالاتر» (تبصرهٔ مادهٔ ۲۱ قانون آزادگان)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrFamily",
+          "titleFa": "پایهٔ تشویقی ایثارگری — خانوادهٔ شهید",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.disabled",
+          "titleFa": "پایهٔ تشویقی ایثارگری — جانباز",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.freed",
+          "titleFa": "پایهٔ تشویقی ایثارگری — آزاده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.combatant",
+          "titleFa": "پایهٔ تشویقی ایثارگری — رزمنده",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.martyrChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند شهید",
+          "value": "1",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.steps.veteranChild",
+          "titleFa": "پایهٔ تشویقی ایثارگری — فرزند جانباز یا آزاده",
+          "value": "0",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.incentive.stepsMax",
+          "titleFa": "سقف پایهٔ تشویقی در یک سال",
+          "value": "2",
+          "unitFa": "پایه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.captivityRatio",
+          "titleFa": "نسبت مرخصی تشویقی به مدت اسارت (مواد ۸ و ۹ قانون آزادگان)",
+          "value": "0.1",
+          "unitFa": "برابر مدت اسارت",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.minMonths",
+          "titleFa": "کف مرخصی تشویقی آزادگان",
+          "value": "2",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.leave.maxMonths",
+          "titleFa": "سقف مرخصی تشویقی آزادگان",
+          "value": "6",
+          "unitFa": "ماه",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.quota.employmentPercent",
+          "titleFa": "سهمیهٔ استخدامی ایثارگران (ماده ۲۱ قانون جامع)",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "veteran.payroll.apply",
+          "titleFa": "اعمال امتیاز ایثارگری در محاسبهٔ فیش حقوق",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "امور ایثارگران"
         }
       ],
       "notesFa": "بزرگ‌ترین تولیدکنندهٔ اتیلن کشور در منطقهٔ ماهشهر؛ هلدینگ مستقل پتروشیمی مارون، جدا از هلدینگ خلیج فارس."

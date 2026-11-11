@@ -31,7 +31,9 @@ const RK_PAGES = {
   disciplineMeetings: {kind: 'disciplineMeetings'},
   // شکایات و ایثارگران
   complaints: {kind: 'complaints'},
-  veteransAffairs: {kind: 'veteranRecords'},
+  // پروندهٔ ایثارگری: جدول و گردشکار عمومی، به‌همراه پنل «محاسبهٔ امتیاز و گزارش
+  // جامعهٔ ایثارگران» که همهٔ عددهایش از سرور می‌آید (صفحهٔ اختصاصی live_veterans.js).
+  veteransAffairs: {kind: 'veteranRecords', panel: 'veterans'},
   // مطالعات منابع انسانی
   studies: {kind: 'studies'},
   // تب نظرسنجی: رکوردها برای ثبت و گردش‌کار، و پنل تحلیلِ برپایهٔ /surveys.
@@ -375,6 +377,36 @@ function pageRecordkitLive(page) {
       rkBindRosterOptions(rosterOptions);
     }
 
+    // پنل امور ایثارگران: گروه‌های ایثارگری، پارامترهای سیاستی شرکت، متن دستورالعمل و
+    // گزارش جامعهٔ ایثارگران از سرور می‌آید. فهرست‌های انتخابی فرم پرونده («گروه ایثارگری»
+    // و «یک مقطع تحصیلی بالاتر») هم از همین پاسخ می‌آید، نه از فهرست ثابت در رابط.
+    let veteransView = null;
+    if (cfg.panel === 'veterans') {
+      const [defRes, reportRes] = await Promise.all([
+        apiFetch(mod.prefix + '/veteran-defaults'),
+        apiFetch(mod.prefix + '/veterans-report'),
+      ]);
+      if (!defRes.ok) return liveErrorBox(defRes.message);
+      const def = defRes.data || {};
+      window.VET_DEF = def;
+      rkSetSelectOpts('veteranType', (def.groups || []).map(g => ({key: g.key, titleFa: g.titleFa})));
+      rkSetSelectOpts('educationUpgrade', def.yesNo || []);
+      // پروندهٔ کارمند انتخاب‌شده (اگر انتخاب شده باشد) از مسیر «وضعیت ایثارگری» خوانده
+      // می‌شود تا کارشناس وضعیت تأیید و امتیاز مؤثر همان کارمند را ببیند.
+      let veteransProfile = null;
+      if (window.VET.employeeId) {
+        const profileRes = await apiFetch(mod.prefix + '/veteran-profile?employeeId=' +
+          encodeURIComponent(window.VET.employeeId));
+        veteransProfile = profileRes.ok ? profileRes.data : null;
+      }
+      veteransView = {
+        def,
+        report: reportRes.ok ? reportRes.data : {},
+        employeeSelect: await liveEmployeeSelect('vetEmployee', window.VET.employeeId || ''),
+        profile: veteransProfile,
+      };
+    }
+
     // شمارش هر وضعیت برای کارت‌های آماری.
     const byStatus = {};
     for (const it of items) byStatus[it.status] = (byStatus[it.status] || 0) + 1;
@@ -429,7 +461,9 @@ function pageRecordkitLive(page) {
       // بعد پنل امتیازبندی و رتبه‌بندی تخصیص.
       : cfg.panel === 'loans' ? loanGrantPanelHTML(loanOptions) + loansPanelHTML(page, loanOptions)
       // پنل ساختار سازمانی: متصدی، عکس کارگزینی، احراز شرایط و سابقهٔ انتصاب‌ها.
-      : cfg.panel === 'roster' ? rosterPanelHTML(rosterView, page + '#assignments', mod.prefix) : '';
+      : cfg.panel === 'roster' ? rosterPanelHTML(rosterView, page + '#assignments', mod.prefix)
+      // پنل امور ایثارگران: محاسبهٔ امتیاز، گزارش جامعهٔ ایثارگران و پارامترهای شرکت.
+      : cfg.panel === 'veterans' ? veteransPanelHTML(veteransView) : '';
     // داشبورد گرافیکی وام: بالای پنل امتیازبندی می‌آید تا ترکیب و روند وام‌ها دیده شود.
     // داشبورد پاداش هم نمودارها و جدول «مبلغ هر نفر در هر مدیریت» را بالای رکوردها می‌آورد.
     const chart = cfg.panel === 'loans'

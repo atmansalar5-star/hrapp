@@ -2,6 +2,7 @@ package modulekit
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"hrms/internal/contracts"
@@ -206,4 +207,71 @@ func TestVeteranEntitlementWithoutPort(t *testing.T) {
 	if ent := (Deps{}).VeteranEntitlement(context.Background(), "EMP-001"); ent != nil {
 		t.Fatalf("بدون پورت هیچ امتیازی نباید ساخته شود: %+v", ent)
 	}
+}
+
+// TestVeteranParamsShippedInCompanyProfile پارامترهای امور ایثارگران باید در پروفایل شرکت
+// (تنظیمات) حاضر باشند؛ وگرنه شرکت نمیتواند سیاستش را ببیند و تغییر دهد. مقادیر پیشفرض
+// باید همان پیشفرضهای مستند به قانون باشند تا رفتار پیش از تغییر سیاست عوض نشود.
+func TestVeteranParamsShippedInCompanyProfile(t *testing.T) {
+	keys := []string{
+		"veteran.tax.exemptPercent", "veteran.tax.minFrontMonths",
+		"veteran.pension.exemptPercent", "veteran.pension.captivityServiceFactor",
+		"veteran.pension.erafaqiMonthsOverride", "veteran.pension.erafaqiMaxMonths",
+		"veteran.education.upgrade", "veteran.incentive.stepsMax",
+		"veteran.leave.captivityRatio", "veteran.leave.minMonths", "veteran.leave.maxMonths",
+		"veteran.quota.employmentPercent", "veteran.payroll.apply",
+		"veteran.incentive.steps.martyrFamily", "veteran.incentive.steps.disabled",
+		"veteran.incentive.steps.freed", "veteran.incentive.steps.combatant",
+		"veteran.incentive.steps.martyrChild", "veteran.incentive.steps.veteranChild",
+	}
+	for _, org := range []orgs.Organization{orgs.Default(), mustOrg(t, "bandar_imam")} {
+		byKey := map[string]string{}
+		for _, p := range org.Params {
+			byKey[p.Key] = p.Value
+			if strings.HasPrefix(p.Key, "veteran.") && p.GroupFa != "امور ایثارگران" {
+				t.Fatalf("پارامتر %q در گروه «امور ایثارگران» نیست: %q", p.Key, p.GroupFa)
+			}
+		}
+		for _, key := range keys {
+			value, ok := byKey[key]
+			if !ok {
+				t.Fatalf("پارامتر %q در پروفایل شرکت %q نیست", key, org.ID)
+			}
+			if strings.TrimSpace(value) == "" {
+				t.Fatalf("پارامتر %q در شرکت %q بی‌مقدار است", key, org.ID)
+			}
+		}
+		values := map[string]string{}
+		for key, value := range byKey {
+			if strings.HasPrefix(key, "veteran.") {
+				values[key] = value
+			}
+		}
+		params := rules.VeteranParamsFromText(values)
+		want := rules.DefaultVeteranParams()
+		if params.TaxExemptPercent != want.TaxExemptPercent ||
+			params.TaxMinFrontMonths != want.TaxMinFrontMonths ||
+			params.PensionExemptPercent != want.PensionExemptPercent ||
+			params.CaptivityServiceFactor != want.CaptivityServiceFactor ||
+			params.ErafaqiMaxMonths != want.ErafaqiMaxMonths ||
+			params.EducationUpgrade != want.EducationUpgrade ||
+			params.EmploymentQuotaPercent != want.EmploymentQuotaPercent ||
+			params.PayrollApply != want.PayrollApply {
+			t.Fatalf("مقادیر پارامتری شرکت %q با پیش‌فرض قانونی نمی‌خواند: %+v", org.ID, params)
+		}
+		if params.IncentiveSteps[rules.VeteranGroupMartyrFamily] != 2 ||
+			params.IncentiveSteps[rules.VeteranGroupVeteranChild] != 0 {
+			t.Fatalf("پایهٔ تشویقی شرکت %q از پروفایل خوانده نشد: %+v", org.ID, params.IncentiveSteps)
+		}
+	}
+}
+
+// mustOrg یک شرکت را از فهرست استقرارها می‌گیرد یا تست را می‌شکند.
+func mustOrg(t *testing.T, id string) orgs.Organization {
+	t.Helper()
+	org, ok := orgs.Lookup(id)
+	if !ok {
+		t.Fatalf("شرکت %q در استقرارها نیست", id)
+	}
+	return org
 }

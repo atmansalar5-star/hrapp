@@ -226,8 +226,17 @@ func VeteranParamsFromValues(values map[string]float64) VeteranParams {
 		VeteranGroupCombatant, VeteranGroupDisabled, VeteranGroupFreed,
 		VeteranGroupMartyrFamily, VeteranGroupMartyrChild, VeteranGroupVeteranChild,
 	} {
-		if v, ok := values["veteran.incentive.steps."+key]; ok && v >= 0 {
+		// کلید پارامتر شرکت با قاعدهٔ کلیدها سازگار است (حروف، رقم و نقطه)؛ پس نام گروه
+		// چندبخشی به شکل camelCase نوشته می‌شود. نوشتار قدیمی با زیرخط هم پذیرفته می‌شود تا
+		// استقرارهایی که کلید قدیم را دارند بی‌اثر نشوند.
+		names := []string{"veteran.incentive.steps." + incentiveParamKey(key), "veteran.incentive.steps." + key}
+		for _, name := range names {
+			v, ok := values[name]
+			if !ok || v < 0 {
+				continue
+			}
 			p.IncentiveSteps[key] = int(v)
+			break
 		}
 	}
 	if v, ok := values["veteran.incentive.stepsMax"]; ok && v > 0 {
@@ -621,6 +630,21 @@ func VeteranParamsFromText(values map[string]string) VeteranParams {
 func ParseFaNumber(raw string) float64 {
 	v, _ := parseFaNumberOK(raw)
 	return v
+}
+
+// incentiveParamKey بخش پایانی کلید پارامتر یک گروه را می‌سازد: «martyr_family» ⇒
+// «martyrFamily». قاعدهٔ کلید پارامترهای شرکت فقط حرف، رقم و نقطه را می‌پذیرد، پس نام
+// گروه چندبخشی به camelCase تبدیل می‌شود و نام گروه ماشین‌خوان در داده دست‌نخورده می‌ماند.
+func incentiveParamKey(group string) string {
+	parts := strings.Split(strings.TrimSpace(group), "_")
+	out := parts[0]
+	for _, part := range parts[1:] {
+		if part == "" {
+			continue
+		}
+		out += strings.ToUpper(part[:1]) + part[1:]
+	}
+	return out
 }
 
 // parseFaNumberOK عدد را از متن فارسی می‌خواند و می‌گوید مقدار خوانا بود یا نه.

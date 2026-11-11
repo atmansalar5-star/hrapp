@@ -284,8 +284,9 @@ function oilDegreeTitle() {
 
 /** مبلغ فوق‌العادهٔ تخصصی از سطرهای فیش (صفر اگر مدرک مشمول نباشد). */
 function oilDegreeAmount(slip) {
-  const line = (slip.lines || []).find(l => l.key === 'degreeSpecialty');
-  return line ? line.amount : 0;
+  // سهم ضریب مدرک از همان سطر «فوق‌العادهٔ تخصصی شغل» می‌آید؛ سطر جداگانه‌ای در فیش نیست
+  // (درصد مصوب همان دوره مبلغ کل است و ضریب مدرک دوباره به آن اضافه نمی‌شود).
+  return Number(slip.degreeAmount || 0);
 }
 
 /** عنوان فارسی پایهٔ سمت انتخاب‌شده (جدول ۳). */
@@ -304,7 +305,7 @@ function oilResidenceTitle() {
   return hit ? hit.titleFa : key;
 }
 
-/** سطر فوقالعادهٔ جذب عمومی و تخصصی شغل (درصد و مبلغ). */
+/** سطر فوق‌العادهٔ تخصصی شغل (جدول ۳ + ضریب مدرک) با درصد و مبلغ. */
 function oilAttractionLine(slip) {
   return (slip.lines || []).find(l => l.key === 'attractionSpecialty') || { percent: 0, amount: 0 };
 }
@@ -540,7 +541,7 @@ function pageOilPayslipLive() {
         ${oilField('oilDaysInMonth', 'روزهای ماه', String(def.daysInMonth || 30), 'روز')}
         <div class="field"><label>محل سکونت (جدول ۱ و ۲)</label>
           <select id="oilResidence" onchange="oilCalcSoon()">${residenceOpts}</select></div>
-        <div class="field"><label>پایهٔ سمت (جدول ۳ — جذب عمومی و تخصصی شغل)</label>
+        <div class="field"><label>پایهٔ سمت (جدول ۳ — حق جذب عمومی و حق مقام)</label>
           <select id="oilJobGrade" onchange="oilCalcSoon()">${gradeOpts}</select></div>
         <div class="field"><label>مدرک تحصیلی (ضریب Z جدول ۳)</label>
           <select id="oilDegree" onchange="oilCalcSoon()">${degreeOpts}</select></div>
