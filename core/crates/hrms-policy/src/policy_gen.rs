@@ -461,6 +461,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             icon: "banknote",
             roles: &[RoleKey::Admin, RoleKey::HrManager],
         },
+        ScreenPolicy {
+            key: "payMethods",
+            title_fa: "روش پرداخت کارکنان",
+            component: "PayMethodsScreen",
+            icon: "user-cog",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
         ],
     },
     ModulePolicy {

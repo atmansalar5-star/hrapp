@@ -43,6 +43,8 @@ func Descriptor() recordkit.Descriptor {
 			statutoryFilesKind(),
 			bankAccountsKind(),
 			bankFilesKind(),
+			// روش پرداخت هر کارمند: کدام موتور محاسبه مسئول این کارمند است.
+			employeePayModelKind(),
 		},
 	}
 }
@@ -376,7 +378,14 @@ func parseMoney(raw string) float64 {
 
 // Seed پارامترها، اقلام حقوق، دوره‌ها و کارانهٔ نمونه.
 func Seed() []contracts.RecordInput {
-	return append(append(payParamSeeds(), payItemSeeds()...), []contracts.RecordInput{
+	// روش پرداخت کارکنان نمونه در انتهای بذر می‌آید تا صفحهٔ «روش پرداخت کارکنان» در
+	// نصب تازه هم داده داشته باشد.
+	return append(append(append(payParamSeeds(), payItemSeeds()...), payrollSeedRecords()...), employeePayModelSeeds()...)
+}
+
+// payrollSeedRecords رکوردهای نمونهٔ دوره‌ها، کارانه و فایل‌های قانونی.
+func payrollSeedRecords() []contracts.RecordInput {
+	return []contracts.RecordInput{
 		{Kind: "payrollRuns", Title: "پردازش حقوق مهر ۱۴۰۴",
 			Fields: map[string]string{"period": "1404/07", "gross": "4820000000", "tax": "312000000", "insurance": "337400000", "net": "4170600000"},
 			NoteFa: "محاسبه انجام و آمادهٔ تأیید"},
@@ -446,7 +455,7 @@ func Seed() []contracts.RecordInput {
 				"attractionBonus": "0", "personalBonus": "0", "total": "0",
 			},
 			NoteFa: "نمونهٔ پیش‌نویس"},
-	}...)
+	}
 }
 
 // payParamSeeds ضرائب و پارامترهای پایهٔ حقوق (قابل ویرایش در صفحهٔ پارامترهای حقوق).

@@ -162,6 +162,11 @@ func oilPayParams(deps modulekit.Deps, overrides map[string]string) rules.OilPay
 		}
 	}
 	oilTaxBrackets(values, &params)
+	// سقف «افزایش ضریب تخصصی شغل» (پارامتر oilpay.specialty.maxExtraPercent)؛ صفر یعنی
+	// سازمان افزودن ضریب را مجاز نمی‌داند و هر درخواستی به صفر محدود می‌شود.
+	if v, ok := oilParamOf(values, "oilpay.specialty.maxExtraPercent"); ok && v >= 0 {
+		params.SpecialtyMaxExtraPercent = v
+	}
 	// حالت دستی: وقتی مالیات از سطرهای مصوبه می‌آید، محاسبهٔ پله‌ای خاموش می‌شود تا
 	// مالیات دو بار کسر نشود (oilpay.tax.mode = manual).
 	if strings.EqualFold(strings.TrimSpace(values["oilpay.tax.mode"]), "manual") {

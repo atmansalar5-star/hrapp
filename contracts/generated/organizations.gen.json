@@ -313,6 +313,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -443,6 +450,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -1089,6 +1103,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -1219,6 +1240,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "120",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -1885,6 +1913,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -2015,6 +2050,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -2673,6 +2715,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -2803,6 +2852,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -3469,6 +3525,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -3599,6 +3662,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -4265,6 +4335,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -4395,6 +4472,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -5061,6 +5145,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -5191,6 +5282,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -5857,6 +5955,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -5987,6 +6092,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -6653,6 +6765,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -6783,6 +6902,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -7449,6 +7575,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -7579,6 +7712,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -8245,6 +8385,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -8375,6 +8522,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -9041,6 +9195,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -9171,6 +9332,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -9838,6 +10006,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -9968,6 +10143,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -10633,6 +10815,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -10763,6 +10952,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {
@@ -11429,6 +11625,13 @@
           "groupFa": "نظام پرداخت صندوق نفت"
         },
         {
+          "key": "oilpay.specialty.maxExtraPercent",
+          "titleFa": "سقف افزایش ضریب تخصصی شغل روی Y+Z (۰ = افزودن مجاز نیست)",
+          "value": "50",
+          "unitFa": "واحد درصد",
+          "groupFa": "نظام پرداخت صندوق نفت"
+        },
+        {
           "key": "oilpay.allowance.production",
           "titleFa": "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
           "value": "30",
@@ -11559,6 +11762,13 @@
           "titleFa": "نگهداری گزارش‌های تولیدشده",
           "value": "60",
           "unitFa": "ماه",
+          "groupFa": "گزارش‌ها"
+        },
+        {
+          "key": "reports.print.showDescription",
+          "titleFa": "نمایش بخش توضیحات در گزارش چاپی (۰ = پنهان شود)",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "گزارش‌ها"
         },
         {

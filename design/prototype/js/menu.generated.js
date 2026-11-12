@@ -139,6 +139,7 @@ window.HRMS_MENU = [
         { page: "payParams", label: "پارامترها و ضرائب حقوق", icon: "percent", roles: ['admin', 'hr_manager', 'hr_spec'] },
         { page: "statutoryFiles", label: "فایل قانونی بیمه و مالیات", icon: "file-check", roles: ['admin', 'hr_manager'] },
         { page: "bankPayments", label: "فایل پرداخت بانکی", icon: "banknote", roles: ['admin', 'hr_manager'] },
+        { page: "payMethods", label: "روش پرداخت کارکنان", icon: "user-cog", roles: ['admin', 'hr_manager', 'hr_spec'] },
         ],
       },
       {

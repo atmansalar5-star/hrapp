@@ -158,6 +158,8 @@ function oilInput() {
     extraLines: oilExtraLines(),
     degree: oilSelect('oilDegree'),
     jobGrade: oilSelect('oilJobGrade'),
+    // افزایش ضریب تخصصی شغل: درصد افزودنی روی جمع پایهٔ سمت (Y) و مدرک (Z).
+    specialtyExtraPercent: oilNum('oilSpecialtyExtra'),
     residence: oilSelect('oilResidence'),
     shift: oilSelect('oilShift') === 'yes',
     shiftDays: oilNum('oilShiftDays'),
@@ -240,6 +242,10 @@ function oilRenderSlip() {
         🎖️ امتیاز ایثارگری (${esc(s.veteranGroupFa || '')}) اعمال شد — معافیت مالیاتی
         <b class="num">${fa(money(s.veteranTaxExempt || 0))}</b> ریال و معافیت کسور
         <b class="num">${fa(money(s.veteranPensionExempt || 0))}</b> ریال
+      </div>` : ''}
+      ${Number(s.specialtyExtraPercent || 0) > 0 ? `<div class="muted" style="font-size:.74rem;margin-top:6px">
+        ➕ افزایش ضریب تخصصی شغل اعمال شد: <b class="num">${fa(Math.round(s.specialtyExtraPercent * 10) / 10)}</b> واحد درصد
+        روی جمع پایهٔ سمت و مدرک${s.specialtyExtraCapped ? ' — <b style="color:#b45309">به سقف پارامتر شرکت محدود شد</b>' : ''}
       </div>` : ''}
       <div class="slip-total" style="margin-top:8px;font-size:1rem">
         <span>خالص پرداختی (ریال)</span><span class="num"><b>${fa(money(s.net))}</b></span>
@@ -545,6 +551,9 @@ function pageOilPayslipLive() {
           <select id="oilJobGrade" onchange="oilCalcSoon()">${gradeOpts}</select></div>
         <div class="field"><label>مدرک تحصیلی (ضریب Z جدول ۳)</label>
           <select id="oilDegree" onchange="oilCalcSoon()">${degreeOpts}</select></div>
+        <div class="field"><label>افزایش ضریب تخصصی شغل (درصد افزودنی روی Y+Z)</label>
+          <input id="oilSpecialtyExtra" class="num" value="0" oninput="oilCalcSoon()">
+          <div class="muted" style="font-size:.68rem">سقف این افزایش: ${fa(Math.round((params.specialtyMaxExtraPercent || 0) * 10) / 10)}٪ — پارامتر شرکت</div></div>
         <div class="field"><label>وضعیت نوبت‌کاری</label>
           <select id="oilShift" onchange="oilOnShift()">${shiftOpts}</select></div>
         ${oilField('oilShiftDays', 'روزهای نوبت‌کاری در ماه', String(def.daysInMonth || 30), 'روز')}

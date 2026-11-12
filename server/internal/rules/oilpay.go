@@ -217,6 +217,9 @@ type OilPayParams struct {
 	ClimatePercent float64 `json:"climatePercent"`
 	// Allowances فهرست فوق‌العاده‌های درصدی این نظام.
 	Allowances []OilAllowance `json:"allowances"`
+	// SpecialtyMaxExtraPercent سقف «افزایش ضریب تخصصی شغل» که کارشناس می‌تواند روی Y+Z
+	// اضافه کند (پارامتر oilpay.specialty.maxExtraPercent). صفر یعنی افزودن مجاز نیست.
+	SpecialtyMaxExtraPercent float64 `json:"specialtyMaxExtraPercent"`
 	// FundEmployeePercent و FundEmployerPercent کسور و سهم کارفرمای صندوق.
 	FundEmployeePercent float64 `json:"fundEmployeePercent"`
 	FundEmployerPercent float64 `json:"fundEmployerPercent"`
@@ -261,7 +264,10 @@ type OilPayParams struct {
 // تنظیم نشده است.
 func DefaultOilPayParams() OilPayParams {
 	return OilPayParams{
-		ClimatePercent: 25,
+		// سقف افزایش ضریب تخصصی شغل: ۵۰ واحد درصد روی Y+Z؛ بیشتر از این، مصوبهٔ
+		// سازمان لازم است و پارامتر شرکت آن را بالا می‌برد.
+		SpecialtyMaxExtraPercent: 50,
+		ClimatePercent:           25,
 		Allowances: []OilAllowance{
 			{Key: OilAllowanceDeprivation, TitleFa: "فوق‌العادهٔ محرومیت از تسهیلات زندگی",
 				GroupFa: OilGroupClimate, Percent: 27.5, Base: OilBaseAllowance, DrivenBy: "residence",
@@ -338,8 +344,15 @@ type OilPayInput struct {
 	// Degree کلید مدرک تحصیلی کارمند (diploma | associate | bachelor | master | phd | postdoc)؛
 	// مبنای فوق‌العادهٔ تخصصی است.
 	Degree string `json:"degree,omitempty"`
-	// JobGrade کلید پایهٔ سمت (جدول ۳ آیین‌نامه)؛ درصد «حق جذب عمومی و حق مقام» را می‌آورد.
+	// JobGrade کلید پایهٔ سمت (جدول ۳ آییننامه)؛ درصد «حق جذب عمومی و حق مقام» را می‌آورد.
 	JobGrade string `json:"jobGrade,omitempty"`
+	// SpecialtyExtraPercent افزایش ضریب تخصصی شغل (درصد افزودنی).
+	//
+	// چرا جدا از درصدهای جدول: درصد «فوقالعادهٔ تخصصی شغل» از دو منبع ساخته می‌شود — پایهٔ
+	// سمت (Y از جدول ۳) و مدرک تحصیلی (Z). گاه مصوبهٔ سازمان ضریب تازه‌ای هم اضافه می‌کند
+	// (مثلاً برای جذب تخصص نادر)؛ این فیلد همان «افزایش» است و روی جمع Y+Z می‌نشیند، نه
+	// جایگزین آن. سقفش پارامتر شرکت است (`oilpay.specialty.maxExtraPercent`).
+	SpecialtyExtraPercent float64 `json:"specialtyExtraPercent,omitempty"`
 	// Residence کلید محل سکونت (جدول ۱ و ۲ آیین‌نامه)؛ درصد محرومیت و صرف وقت را می‌آورد.
 	Residence string `json:"residence,omitempty"`
 	// Shift یعنی کارمند در این ماه نوبت‌کار است (قلم نوبت‌کار و ستون نوبت‌کار جدول ۲).
@@ -413,6 +426,10 @@ type OilPayslip struct {
 	// مبلغ است و دوباره به فیش اضافه نمی‌شود.
 	SpecialtyPercent float64 `json:"specialtyPercent,omitempty"`
 	DegreeAmount     int64   `json:"degreeAmount,omitempty"`
+	// SpecialtyExtraPercent افزایش ضریب تخصصی شغل که در این محاسبه اعمال شد و
+	// SpecialtyExtraCapped یعنی درخواست بیش از سقف پارامتر شرکت بود و به سقف محدود شد.
+	SpecialtyExtraPercent float64 `json:"specialtyExtraPercent,omitempty"`
+	SpecialtyExtraCapped  bool    `json:"specialtyExtraCapped,omitempty"`
 	// JobGrade و JobGradeFa پایهٔ سمت مبنا (جدول ۳) و عنوان فارسی آن.
 	JobGrade   string `json:"jobGrade,omitempty"`
 	JobGradeFa string `json:"jobGradeFa,omitempty"`
@@ -517,6 +534,20 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	if monthDays <= 0 {
 		monthDays = 30
 	}
+	// افزایش ضریب تخصصی شغل (درصد افزودنی): روی جمع پایهٔ سمت و مدرک می‌نشیند و سقفش
+	// پارامتر شرکت است. مقدار منفی پذیرفته نمی‌شود و بیش از سقف، به سقف محدود می‌شود تا
+	// یک ورودی اشتباه، فوقالعاده را بی‌حساب بالا نبرد.
+	specialtyExtra := in.SpecialtyExtraPercent
+	specialtyExtraCapped := false
+	if specialtyExtra < 0 {
+		specialtyExtra = 0
+	}
+	if max := params.SpecialtyMaxExtraPercent; specialtyExtra > 0 && max >= 0 && specialtyExtra > max {
+		specialtyExtra = max
+		specialtyExtraCapped = true
+	}
+	out.SpecialtyExtraPercent = specialtyExtra
+	out.SpecialtyExtraCapped = specialtyExtraCapped
 	for _, allowance := range OilAllowanceCatalog(params.Allowances) {
 		if allowance.Fixed {
 			amount := allowance.Amount
@@ -560,6 +591,11 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 					}
 				}
 			}
+		}
+		// «افزایش ضریب تخصصی شغل» روی نتیجهٔ پایه (چه از جدول‌ها و چه دستی) اضافه می‌شود؛
+		// پس همیشه افزودنی است و جایگزین Y یا Z نمی‌شود.
+		if allowance.Key == OilAllowanceAttraction && specialtyExtra > 0 {
+			percent += specialtyExtra
 		}
 		if percent == 0 {
 			continue

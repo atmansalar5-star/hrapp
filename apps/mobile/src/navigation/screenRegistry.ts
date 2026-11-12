@@ -63,6 +63,7 @@ import PayGapScreen from '../features/payroll/PayGapScreen';
 // فاز ۱: فایل قانونی بیمه/مالیات و فایل پرداخت بانکی (زیرکارهای ۱.۴ و ۱.۵).
 import StatutoryFilesScreen from '../features/payroll/StatutoryFilesScreen';
 import BankFilesScreen from '../features/payroll/BankFilesScreen';
+import PayMethodsScreen from '../features/payroll/PayMethodsScreen';
 
 // جبران خدمات — احکام حقوق و گواهی اشتغال
 import SalaryDecreesScreen from '../features/salary_admin/SalaryDecreesScreen';
@@ -236,6 +237,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   PayGapScreen,
   StatutoryFilesScreen,
   BankFilesScreen,
+  PayMethodsScreen,
   PayReportsScreen,
   SalaryDecreesScreen,
   EmploymentCertsScreen,
