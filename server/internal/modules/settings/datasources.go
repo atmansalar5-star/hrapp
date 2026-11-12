@@ -189,6 +189,40 @@ func registerDataSourceEndpoints(mux *http.ServeMux, deps modulekit.Deps) {
 		_, _ = io.WriteString(w, guide)
 	}))
 
+	// قالب ورود اطلاعات دستی: الگو، مقادیر مجاز و یک نمونه برای هر ستون یک جدول/فرم.
+	//
+	// چرا جدا از قالب اکسل: قالب اکسل فایل ساخته می‌شود تا پر و بارگذاری شود، ولی کارشناس
+	// باید پیش از ورود داده ببیند هر ستون را «چه شکلی» بنویسد. این مسیر همان ساختار را
+	// به‌صورت برگهٔ قابل نمایش و چاپ برمی‌گرداند؛ منبع هر دو یکی است.
+	mux.HandleFunc("GET /api/v1/settings/data-sources/entry-format", read(func(w http.ResponseWriter, r *http.Request) {
+		entities := manifestEntities(deps, r)
+		key := strings.TrimSpace(r.URL.Query().Get("entity"))
+		if key == "" {
+			// بدون شناسه: فهرست جدول‌های موجود برای انتخاب در فرم.
+			list := make([]map[string]any, 0, len(entities))
+			for _, entity := range entities {
+				list = append(list, map[string]any{
+					"key": entity.Key, "titleFa": entity.TitleFa, "moduleFa": entity.ModuleFa,
+					"groupFa": entity.GroupFa, "fields": len(entity.Fields),
+				})
+			}
+			httpx.WriteJSON(w, http.StatusOK, map[string]any{"entities": list, "total": len(list)})
+			return
+		}
+		entity, ok := datasource.FindEntity(entities, key)
+		if !ok {
+			httpx.WriteErrorMsg(w, http.StatusNotFound, contracts.CodeNotFound,
+				"جدول درخواستی در ساختار داده پیدا نشد؛ فهرست را از همین مسیر بدون پارامتر بگیرید.", nil)
+			return
+		}
+		sheet := datasource.EntrySheetOf(entity)
+		httpx.WriteJSON(w, http.StatusOK, map[string]any{
+			"sheet": sheet,
+			"noteFa": "هر ستون با الگوی ورود و یک مقدار نمونه آمده است؛ سطر نمونه همان ترتیب ستون‌هاست. " +
+				"داده‌های الزامی علامتدارند و رکورد بی‌آن‌ها ذخیره نمی‌شود.",
+		})
+	}))
+
 	// قالب اکسل: یک کارپوشه با برگهٔ «راهنما» و یک برگه برای هر جدول.
 	mux.HandleFunc("GET /api/v1/settings/data-sources/template.xlsx", read(func(w http.ResponseWriter, r *http.Request) {
 		entities := datasource.SelectEntities(manifestEntities(deps, r), splitQueryList(r.URL.Query().Get("entities")))

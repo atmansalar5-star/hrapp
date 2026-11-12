@@ -2002,10 +2002,13 @@ function pageReportBuilderLive() {
         </div>
         <div id="rbConds" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
-      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-primary" onclick="runReportBuilder()">▶ اجرای گزارش</button>
         <button class="btn btn-ghost" onclick="saveReportDefinition()">💾 ذخیرهٔ تعریف گزارش</button>
         <button class="btn btn-ghost" onclick="printReportBuilder()">🖨️ چاپ / PDF</button>
+        <label style="font-size:.78rem;display:flex;align-items:center;gap:6px">
+          <input type="checkbox" id="rbShowDesc" checked> نمایش بخش توضیحات در برگهٔ چاپی
+        </label>
       </div>
     </div>
     <div id="rbResult"></div>`;
@@ -2154,6 +2157,12 @@ function reportSelection() {
     filters,
     conditions,
     limit: Number(($('#rbLimit') || {}).value) || 200,
+    // «نمایش توضیحات در برگهٔ چاپی»: تصمیم هر اجرا؛ اگر کاربر انتخاب نکرده باشد کلید
+    // فرستاده نمی‌شود تا پارامتر شرکت (reports.print.showDescription) تصمیم بگیرد.
+    print: (() => {
+      const box = document.getElementById('rbShowDesc');
+      return box ? {showDescription: !!box.checked} : undefined;
+    })(),
   };
 }
 
@@ -2261,7 +2270,7 @@ function printReportBuilder() {
 </header>
 <table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>
 ${summary ? `<div class="sums">${summary}</div>` : ''}
-${d.noteFa ? `<p class="note">${esc(d.noteFa)}</p>` : ''}
+${(d.print && d.print.showDescription === false) ? '' : (d.noteFa ? `<p class="note">${esc(d.noteFa)}</p>` : '')}
 <footer>سامانه جامع منابع انسانی — ${esc(b.titleFa || '')} · این گزارش از دادهٔ سامانه تولید شده است.</footer>
 <script>window.addEventListener('load',()=>setTimeout(()=>window.print(),350));<\/script>
 </body></html>`;

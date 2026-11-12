@@ -2160,6 +2160,8 @@ function pageDataExchangeLive() {
 
   // فیلدهای پیکربندی پس از رندر شدن صفحه رسم می‌شوند.
   setTimeout(deRenderFields, 80);
+  // کارت «قالب ورود اطلاعات دستی» (فرم‌ها و گزارش‌ها) در live_entryformat.js ساخته می‌شود.
+  setTimeout(function () { if (typeof deRenderEntryFormat === 'function') deRenderEntryFormat(); }, 140);
   return liveShell('تبادل داده و قالب‌های بارگذاری',
     'اتصال به منابع داده (اکسل، CSV، SQL Server، Oracle، MySQL، Postgres) · ساختار داده · قالب آمادهٔ بارگذاری');
 }

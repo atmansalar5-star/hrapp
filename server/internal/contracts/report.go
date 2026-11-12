@@ -108,6 +108,26 @@ type ReportRequest struct {
 	Filters    map[string]string `json:"filters,omitempty"`
 	Conditions []ReportCondition `json:"conditions,omitempty"`
 	Limit      int               `json:"limit,omitempty"`
+	// Print تنظیمات چاپ همین اجرا (اختیاری). نبودنش یعنی تصمیم از پارامتر شرکت خوانده شود.
+	Print *ReportPrintChoice `json:"print,omitempty"`
+}
+
+// ReportPrintChoice انتخاب کاربر برای چاپ گزارش.
+//
+// چرا در درخواست اجرا و نه در قالب ثابت: «نمایش توضیحات در برگهٔ چاپی» تصمیم هر چاپ است؛
+// کاربر باید بتواند برای یک گزارش آن را خاموش کند، بی‌آنکه تنظیم شرکت را عوض کند.
+type ReportPrintChoice struct {
+	ShowDescription *bool `json:"showDescription,omitempty"`
+}
+
+// ReportPrint تصمیم نهایی چاپ که سرور اعلام می‌کند (پارامتر شرکت یا انتخاب همان اجرا).
+type ReportPrint struct {
+	// ShowDescription آیا بخش توضیحات در برگهٔ چاپی نمایش داده شود.
+	ShowDescription bool `json:"showDescription"`
+	// SourceFa منبع تصمیم: «انتخاب همین اجرا» یا «پارامتر شرکت reports.print.showDescription».
+	SourceFa string `json:"sourceFa,omitempty"`
+	// NoteFa توضیح فارسی برای نمایش در فرم چاپ.
+	NoteFa string `json:"noteFa,omitempty"`
 }
 
 // ReportConditionError خطای یک شرط نامعتبر در گزارش است (شمارهٔ شرط + پیام فارسی).
@@ -153,6 +173,8 @@ type ReportResult struct {
 	Brand *ReportBrand `json:"brand,omitempty"`
 	// Items اقلام انتخاب‌شده به ترتیب ستون‌ها؛ برای بازسازی همین گزارش در چاپ/خروجی.
 	Items []string `json:"items,omitempty"`
+	// Print تصمیم چاپ این گزارش (نمایش یا پنهان‌کردن بخش توضیحات).
+	Print *ReportPrint `json:"print,omitempty"`
 }
 
 // ReportSource یک منبع دادهٔ گزارش است که هر ماژول می‌تواند ثبت کند.
