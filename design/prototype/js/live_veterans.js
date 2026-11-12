@@ -54,6 +54,7 @@ function veteransPanelHTML(view) {
     ${statCard({ico: '📅', tint: '#EDE9FE', accent: '#7C3AED', val: fa(report.extraMonthsTotal || 0), label: 'جمع افزایش سنواتی (ماه)'})}
   </div>`;
   return stats + vetFormHTML(view) + '<div id="vetPlanBox"></div>' +
+    vetMembersHTML(view) +
     '<div id="vetCommitteeForm">' + vetCommitteeFormHTML(view) + '</div>' +
     vetCommitteeTableHTML(view) + '<div id="vetCommitteeResult"></div>' +
     vetProfileBoxHTML(view.profile) + vetReportHTML(report) + vetParamsHTML(def) +
@@ -341,7 +342,10 @@ async function vetCommitteeEmpChanged() {
 /** فرم مصوبهٔ کمیته: هر بند با تصمیم، مقدار و پیش‌فرض قانونی. */
 function vetCommitteeFormHTML(view) {
   const def = (view && view.def) || vetDef();
-  const groups = (def.groups || []).map(g => `<option value="${esc(g.key)}">${esc(g.titleFa)}</option>`).join('');
+  // گروه پیش‌فرض همان گروه پروندهٔ تأییدشدهٔ همین کارمند است تا کارشناس آن را دستی عوض نکند.
+  const sugNow = vetCommitteeSuggestion() || {};
+  const groups = (def.groups || []).map(g =>
+    `<option value="${esc(g.key)}"${sugNow.veteranGroup === g.key ? ' selected' : ''}>${esc(g.titleFa)}</option>`).join('');
   const yesNo = (def.yesNo || []).map(o => `<option value="${esc(o.key)}">${esc(o.titleFa)}</option>`).join('');
   const bases = (def.seniorityBases || []).map(b => `<option value="${esc(b.key)}">${esc(b.titleFa)}</option>`).join('');
   // با تغییر کارمند، «پیش‌فرض قانونی» همان کارمند از سرور خوانده و فرم بازسازی می‌شود.
@@ -363,7 +367,7 @@ function vetCommitteeFormHTML(view) {
       <div class="field"><label>گروه ایثارگری ✻</label><select id="vcGroup">${groups}</select></div>
       <div class="field"><label>شمارهٔ صورت‌جلسه یا مصوبه</label><input id="vcCommitteeNo" placeholder="مثلاً ۱۴۰۵/ک‌ا/۰۳۲"></div>
       <div class="field"><label>تاریخ جلسهٔ کمیته ✻</label><input id="vcMeetingDate" value="${esc((view && view.def && view.def.today) || def.today || '')}" placeholder="1405/08/12"></div>
-      <div class="field"><label>اعضای کمیته</label><input id="vcMembers" placeholder="مدیر منابع انسانی، کارشناس امور ایثارگران، نمایندهٔ بنیاد شهید"></div>
+      <div class="field"><label>اعضای کمیته</label><input id="vcMembers" value="${esc((view && view.committeeDefaults && view.committeeDefaults.membersText) || '')}" placeholder="مدیر منابع انسانی، کارشناس امور ایثارگران، نمایندهٔ بنیاد شهید"></div>
       <div class="field" style="grid-column:1/-1"><label>مستندات بررسی‌شده</label>
         <input id="vcBasisDocs" placeholder="کارت ایثارگری، حکم جانبازی، سند اسارت، سابقهٔ تحصیلی"></div>
     </div>
@@ -394,6 +398,7 @@ function vetCommitteeFormHTML(view) {
       <div class="field" style="grid-column:1/-1"><label>خلاصهٔ متن تصمیم کمیته ✻</label>
         <input id="vcDecisionFa" placeholder="با بررسی مستندات، امتیازها به شرح بندها برقرار است…"></div>
     </div>
+    ${vetSignatureBlockHTML(view)}
     <div class="row-actions" style="margin-top:8px">
       <button class="btn" onclick="vetCommitteeSave(false)">💾 ثبت مصوبه (بدون اعمال)</button>
       <button class="btn btn-primary" onclick="vetCommitteeSave(true)">✅ ثبت و اعمال بر پروندهٔ ایثارگری</button>
@@ -433,6 +438,8 @@ function vetCommitteeBody() {
     decisionFa: vetVal('vcDecisionFa'),
     effectiveDate: vetVal('vcEffectiveDate'),
     signOff: vetVal('vcSignOff'),
+    signedMemberIds: vetSignatureIDs(),
+    signDate: vetVal('vcSignDate'),
   };
 }
 
@@ -508,6 +515,182 @@ function vetCommitteeTableHTML(view) {
     <div class="muted" style="font-size:.78rem;margin-bottom:6px">هر مصوبه یک برگهٔ چاپی امضاشدنی دارد و با «اعمال بر پرونده» امتیازهای آن روی پروندهٔ کارمند می‌نشیند.</div>
     ${tbl(['شناسه', 'کارمند', 'صورت‌جلسه', 'گروه', 'بندهای مصوب', 'وضعیت', 'عملیات'], rows, {foot: false})}
   </div>`;
+}
+
+/** عنوان فارسی گروه ایثارگری از فهرست سرور. */
+/* ------------------ اعضای کمیتهٔ ایثارگری و بلوک امضا ------------------ */
+
+/** دادهٔ اعضای کمیته: از نمای صفحه، وگرنه از آخرین خواندهٔ سرور. */
+function vetMemberData(view) {
+  return (view && view.committeeMembers) || window.VET_MEMBER_DATA || {};
+}
+
+/** فهرست اعضای تعریف‌شدهٔ کمیته (فعال و غیرفعال). */
+function vetMemberItems(view) {
+  return vetMemberData(view).items || [];
+}
+
+/** اعضای فعال: همان‌هایی که پای صورت‌جلسه امضا می‌کنند. */
+function vetActiveMembers(view) {
+  return vetMemberItems(view).filter(m => m.active || m.status === 'active');
+}
+
+/** نقش‌های مصوب کمیته از سرور. */
+function vetMemberRoles(view) {
+  return vetMemberData(view).roles || (vetDef().roles || []);
+}
+
+/** پنل تعریف اعضای کمیتهٔ ایثارگری: فرم ثبت/ویرایش + فهرست اعضا. */
+function vetMembersHTML(view) {
+  const data = vetMemberData(view);
+  const items = vetMemberItems(view);
+  const active = vetActiveMembers(view);
+  const roles = vetMemberRoles(view).map(r =>
+    `<option value="${esc(r.key)}">${esc(r.titleFa)}</option>`).join('');
+  const rows = items.map(m => {
+    const toggle = m.active
+      ? `<button class="btn btn-sm btn-ghost" title="غیرفعال‌کردن عضویت" onclick="vetMemberToggle('${esc(m.id)}')">⏸️</button>`
+      : `<button class="btn btn-sm btn-ghost" title="فعال‌کردن عضویت" onclick="vetMemberToggle('${esc(m.id)}')">▶️</button>`;
+    return `<tr>
+      <td><span class="num ltr">${esc(m.id)}</span></td>
+      <td>${esc(m.fullName)}${m.positionTitle ? `<div class="muted" style="font-size:.7rem">${esc(m.positionTitle)}</div>` : ''}</td>
+      <td>${esc(m.roleFa)}</td>
+      <td>${esc(m.orderNo || '—')}${m.orderDate ? `<div class="muted" style="font-size:.7rem">${esc(m.orderDate)}</div>` : ''}</td>
+      <td class="num">${fa(m.sortOrder || 0)}</td>
+      <td>${statusChip(m.status, m.statusFa)}</td>
+      <td><div class="row-actions">
+        <button class="btn btn-sm btn-ghost" title="ویرایش در فرم" onclick="vetMemberEdit('${esc(m.id)}')">✏️</button>
+        ${toggle}
+        <button class="btn btn-sm btn-ghost" title="حذف عضو" onclick="vetMemberDelete('${esc(m.id)}')">🗑️</button>
+      </div></td></tr>`;
+  });
+  return `<div class="card card-pad" style="margin-bottom:12px">
+    <div class="card-title">👥 اعضای کمیتهٔ ایثارگری — تعریف اعضا و امضاکنندگان</div>
+    <div class="muted" style="font-size:.78rem;margin-bottom:8px">${esc(data.noteFa || 'اعضای فعال پای صورت‌جلسهٔ مصوبه امضا می‌کنند و در بلوک امضای پایین فرم و برگهٔ چاپی می‌آیند.')}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:8px">
+      <div class="field"><label>نام و نام خانوادگی ✻</label><input id="vmName" placeholder="مثلاً سارا محمدی"></div>
+      <div class="field"><label>نقش در کمیته ✻</label><select id="vmRole">${roles}</select></div>
+      <div class="field"><label>سمت سازمانی</label><input id="vmPosition" placeholder="مدیر منابع انسانی"></div>
+      <div class="field"><label>کد پرسنلی (اختیاری)</label><input id="vmEmployeeId" placeholder="EMP-001"></div>
+      <div class="field"><label>شمارهٔ ابلاغ عضویت</label><input id="vmOrderNo" placeholder="۱۴۰۵/ح/۱۰۲"></div>
+      <div class="field"><label>تاریخ ابلاغ</label><input id="vmOrderDate" placeholder="1405/01/05"></div>
+      <div class="field"><label>ترتیب امضا</label><input id="vmSortOrder" class="num" placeholder="۱"></div>
+      <div class="field"><label>عنوان امضا در برگه (اختیاری)</label><input id="vmSignTitle" placeholder="خالی یعنی عنوان نقش"></div>
+      <div class="field"><label><input type="checkbox" id="vmActive" checked> عضو فعال</label></div>
+    </div>
+    <div class="row-actions" style="margin-bottom:10px">
+      <button class="btn btn-primary" onclick="vetMemberSave()">💾 ثبت عضو کمیته</button>
+      <button class="btn btn-ghost" onclick="vetMemberReset()">↺ پاک‌کردن فرم</button>
+      <span class="muted" style="font-size:.74rem">مجموع: ${fa(items.length)} عضو — فعال: ${fa(active.length)}</span>
+    </div>
+    ${tbl(['شناسه', 'نام عضو', 'نقش', 'ابلاغ', 'ترتیب', 'وضعیت', 'عملیات'], rows, {foot: false})}
+  </div>`;
+}
+
+/** پاک‌کردن فرم تعریف عضو. */
+function vetMemberReset() {
+  window.VET.memberEditing = '';
+  ['vmName', 'vmPosition', 'vmEmployeeId', 'vmOrderNo', 'vmOrderDate', 'vmSortOrder', 'vmSignTitle']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const act = document.getElementById('vmActive');
+  if (act) act.checked = true;
+}
+
+/** بردن یک عضو به فرم برای ویرایش. */
+function vetMemberEdit(id) {
+  const m = vetMemberItems().find(x => x.id === id);
+  if (!m) return;
+  window.VET.memberEditing = id;
+  const set = (elId, val) => { const el = document.getElementById(elId); if (el) el.value = val || ''; };
+  set('vmName', m.fullName);
+  set('vmRole', m.role);
+  set('vmPosition', m.positionTitle);
+  set('vmEmployeeId', m.employeeId);
+  set('vmOrderNo', m.orderNo);
+  set('vmOrderDate', m.orderDate);
+  set('vmSortOrder', m.sortOrder || '');
+  set('vmSignTitle', m.signatureTitle);
+  const act = document.getElementById('vmActive');
+  if (act) act.checked = !!m.active;
+  toast('عضو ' + m.fullName + ' به فرم آمد؛ پس از تغییر «ثبت عضو کمیته» را بزنید');
+}
+
+/** ثبت یا ویرایش عضو کمیته. */
+async function vetMemberSave() {
+  const act = document.getElementById('vmActive');
+  const body = {
+    id: window.VET.memberEditing || '',
+    fullName: vetVal('vmName'),
+    role: vetVal('vmRole'),
+    positionTitle: vetVal('vmPosition'),
+    employeeId: vetVal('vmEmployeeId'),
+    orderNo: vetVal('vmOrderNo'),
+    orderDate: vetVal('vmOrderDate'),
+    signatureTitle: vetVal('vmSignTitle'),
+    sortOrder: vetNum('vmSortOrder'),
+    active: act ? !!act.checked : true,
+  };
+  if (!body.fullName) { toast('نام و نام خانوادگی عضو را بنویسید', 'error'); return; }
+  const res = await apiFetch(vetPrefix() + '/veteran-committee-members', {method: 'POST', body});
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  const rec = (res.data || {}).record || {};
+  toast('عضو کمیته ثبت شد: ' + (rec.id || ''));
+  window.VET.memberEditing = '';
+  liveReload();
+}
+
+/** فعال/غیرفعال‌کردن عضویت. */
+async function vetMemberToggle(id) {
+  const res = await apiFetch(vetPrefix() + '/veteran-committee-members/' +
+    encodeURIComponent(id) + '/toggle', {method: 'POST'});
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  toast('وضعیت عضویت تغییر کرد');
+  liveReload();
+}
+
+/** حذف عضو کمیته. */
+async function vetMemberDelete(id) {
+  if (!confirm('این عضو از فهرست اعضای کمیته حذف شود؟')) return;
+  const res = await apiFetch(vetPrefix() + '/veteran-committee-members/' +
+    encodeURIComponent(id), {method: 'DELETE'});
+  if (!res.ok) { toast(res.message, 'error'); return; }
+  toast('عضو کمیته حذف شد');
+  liveReload();
+}
+
+/** بلوک «امضاهای پایین فرم کمیته»: هر عضو فعال با کادر امضا و تاریخ امضا. */
+function vetSignatureBlockHTML(view) {
+  const items = vetActiveMembers(view);
+  const today = (vetDef().today) || '';
+  const rows = items.map(m => `<tr>
+      <td>${esc(m.roleFa)}</td>
+      <td>${esc(m.fullName)}${m.positionTitle ? `<div class="muted" style="font-size:.7rem">${esc(m.positionTitle)}</div>` : ''}</td>
+      <td class="muted" style="font-size:.74rem">${esc(m.orderNo || '—')}</td>
+      <td style="text-align:center"><input type="checkbox" id="vsig-${esc(m.id)}" checked></td>
+    </tr>`);
+  const note = items.length
+    ? 'اعضا از «پنل اعضای کمیتهٔ ایثارگری» می‌آیند؛ هر عضو که در جلسه امضا کرده تیک بخورد. متن «امضاکنندگان» را سرور از همین تیک‌ها می‌سازد.'
+    : 'هنوز عضوی برای کمیته تعریف نشده است؛ در پنل «اعضای کمیتهٔ ایثارگری» اعضا را تعریف کنید تا این بلوک پر شود.';
+  return `<div style="margin-top:12px;border-top:1px solid #E2E8F0;padding-top:10px">
+    <div class="card-title" style="font-size:.95rem">🔏 امضاهای پایین فرم کمیته</div>
+    <div class="muted" style="font-size:.76rem;margin-bottom:6px">${esc(note)}</div>
+    ${items.length ? tbl(['عنوان امضا', 'نام امضاکننده', 'شمارهٔ ابلاغ', 'امضا شد'], rows, {foot: false}) : ''}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:8px">
+      <div class="field"><label>تاریخ امضا</label><input id="vcSignDate" value="${esc(today)}" placeholder="1405/08/20"></div>
+      <div class="field"><label>یادداشت امضا</label><input id="vcSignNote" placeholder="مثلاً امضاشده در جلسهٔ کمیته"></div>
+    </div>
+  </div>`;
+}
+
+/** شناسهٔ اعضایی که در فرم امضا شده‌اند. */
+function vetSignatureIDs() {
+  return vetActiveMembers()
+    .filter(m => document.getElementById('vsig-' + m.id))
+    .filter(m => {
+      const el = document.getElementById('vsig-' + m.id);
+      return el && el.checked;
+    })
+    .map(m => m.id);
 }
 
 /** عنوان فارسی گروه ایثارگری از فهرست سرور. */

@@ -464,8 +464,86 @@ pub static POLICIES: &[ModulePolicy] = &[
         ],
     },
     ModulePolicy {
-        module_id: "salary_admin",
+        module_id: "compensation",
         order: 9,
+        title_fa: "نظام جبران خدمات ۴پی",
+        api_prefix: "/api/v1/compensation",
+        feature_flag: "module.compensation",
+        allowed: &[
+        (RoleKey::Admin, Action::Read),
+        (RoleKey::Admin, Action::Write),
+        (RoleKey::Admin, Action::Delete),
+        (RoleKey::Admin, Action::Approve),
+        (RoleKey::Admin, Action::Report),
+        (RoleKey::HrManager, Action::Read),
+        (RoleKey::HrManager, Action::Write),
+        (RoleKey::HrManager, Action::Approve),
+        (RoleKey::HrManager, Action::Report),
+        (RoleKey::HrSpec, Action::Read),
+        (RoleKey::HrSpec, Action::Write),
+        (RoleKey::HrSpec, Action::Report),
+        (RoleKey::LineManager, Action::Read),
+        (RoleKey::Employee, Action::Read),
+        ],
+        scopes: &[
+        (RoleKey::Employee, Scope::Own),
+        (RoleKey::LineManager, Scope::OwnUnit),
+        ],
+        screens: &[
+        ScreenPolicy {
+            key: "compModel",
+            title_fa: "مدل و پارامترهای جبران خدمات",
+            component: "CompModelScreen",
+            icon: "layers",
+            roles: &[RoleKey::Admin, RoleKey::HrManager],
+        },
+        ScreenPolicy {
+            key: "compJobPricing",
+            title_fa: "قیمت‌گذاری شغل (P1 — شغل)",
+            component: "CompJobPricingScreen",
+            icon: "scale",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ScreenPolicy {
+            key: "compCompetency",
+            title_fa: "سطح شایستگی فرد (P2 — شخص)",
+            component: "CompCompetencyScreen",
+            icon: "award",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ScreenPolicy {
+            key: "compPerformance",
+            title_fa: "ضریب عملکرد دوره (P3 — عملکرد)",
+            component: "CompPerformanceScreen",
+            icon: "target",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ScreenPolicy {
+            key: "compPayBands",
+            title_fa: "باند و پله‌های پرداخت (P4 — پرداخت)",
+            component: "CompPayBandsScreen",
+            icon: "bar-chart",
+            roles: &[RoleKey::Admin, RoleKey::HrManager],
+        },
+        ScreenPolicy {
+            key: "compDecision",
+            title_fa: "تصمیم چهارعاملی جبران خدمات",
+            component: "CompDecisionScreen",
+            icon: "calculator",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ScreenPolicy {
+            key: "compReadiness",
+            title_fa: "آمادگی داده و اولویت تکمیل جداول",
+            component: "CompReadinessScreen",
+            icon: "list-checks",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ],
+    },
+    ModulePolicy {
+        module_id: "salary_admin",
+        order: 10,
         title_fa: "احکام حقوق و گواهی اشتغال",
         api_prefix: "/api/v1/salary_admin",
         feature_flag: "module.salary_admin",
@@ -506,7 +584,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "welfare",
-        order: 10,
+        order: 11,
         title_fa: "رفاه، سرویس مدارس و اسکان",
         api_prefix: "/api/v1/welfare",
         feature_flag: "module.welfare",
@@ -570,7 +648,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "cards",
-        order: 11,
+        order: 12,
         title_fa: "کارت‌های رفاهی و شارژ (پتروکارت، نفت‌کارت)",
         api_prefix: "/api/v1/cards",
         feature_flag: "module.cards",
@@ -640,7 +718,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "education_bonus",
-        order: 12,
+        order: 13,
         title_fa: "پاداش تحصیلی فرزندان ممتاز",
         api_prefix: "/api/v1/education_bonus",
         feature_flag: "module.education_bonus",
@@ -689,7 +767,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "bonus",
-        order: 13,
+        order: 14,
         title_fa: "پاداش‌ها",
         api_prefix: "/api/v1/bonus",
         feature_flag: "module.bonus",
@@ -738,7 +816,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "loans_retirement",
-        order: 14,
+        order: 15,
         title_fa: "امور وام و بازنشستگی",
         api_prefix: "/api/v1/loans",
         feature_flag: "module.loans_retirement",
@@ -784,7 +862,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "orgstructure",
-        order: 15,
+        order: 16,
         title_fa: "ساختار سازمانی و تشکیلات",
         api_prefix: "/api/v1/orgstructure",
         feature_flag: "module.orgstructure",
@@ -824,7 +902,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "career",
-        order: 16,
+        order: 17,
         title_fa: "انتصابات، ترفیعات و کارراههٔ شغلی",
         api_prefix: "/api/v1/career",
         feature_flag: "module.career",
@@ -878,7 +956,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "recruitment",
-        order: 17,
+        order: 18,
         title_fa: "تأمین و جذب نیرو",
         api_prefix: "/api/v1/recruitment",
         feature_flag: "module.recruitment",
@@ -931,7 +1009,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "performance",
-        order: 18,
+        order: 19,
         title_fa: "مدیریت عملکرد",
         api_prefix: "/api/v1/performance",
         feature_flag: "module.performance",
@@ -978,7 +1056,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "discipline",
-        order: 19,
+        order: 20,
         title_fa: "کمیتهٔ انضباط کار",
         api_prefix: "/api/v1/discipline",
         feature_flag: "module.discipline",
@@ -1015,7 +1093,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "grievances",
-        order: 20,
+        order: 21,
         title_fa: "شکایات و امور ایثارگران",
         api_prefix: "/api/v1/grievances",
         feature_flag: "module.grievances",
@@ -1056,7 +1134,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "socialwork",
-        order: 21,
+        order: 22,
         title_fa: "مددکاری اجتماعی",
         api_prefix: "/api/v1/socialwork",
         feature_flag: "module.socialwork",
@@ -1095,7 +1173,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "medical",
-        order: 22,
+        order: 23,
         title_fa: "درمان، معاینات دوره‌ای و خدمات درمانی",
         api_prefix: "/api/v1/medical",
         feature_flag: "module.medical",
@@ -1156,7 +1234,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "training",
-        order: 23,
+        order: 24,
         title_fa: "هماهنگی آموزش",
         api_prefix: "/api/v1/training",
         feature_flag: "module.training",
@@ -1220,7 +1298,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "statistics",
-        order: 24,
+        order: 25,
         title_fa: "آمار و پایش اطلاعات پایه",
         api_prefix: "/api/v1/statistics",
         feature_flag: "module.statistics",
@@ -1297,7 +1375,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "staffing_moves",
-        order: 25,
+        order: 26,
         title_fa: "جابه‌جایی و معرفی کارکنان",
         api_prefix: "/api/v1/moves",
         feature_flag: "module.staffing_moves",
@@ -1335,7 +1413,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "reports",
-        order: 26,
+        order: 27,
         title_fa: "گزارش‌ها",
         api_prefix: "/api/v1/reports",
         feature_flag: "module.reports",
@@ -1384,7 +1462,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "outsourcing",
-        order: 27,
+        order: 28,
         title_fa: "برون‌سپاری و نیروهای ارکان ثالث",
         api_prefix: "/api/v1/outsourcing",
         feature_flag: "module.outsourcing",
@@ -1439,7 +1517,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "hrstudies",
-        order: 28,
+        order: 29,
         title_fa: "مطالعات منابع انسانی",
         api_prefix: "/api/v1/hrstudies",
         feature_flag: "module.hrstudies",
@@ -1497,7 +1575,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "settings",
-        order: 29,
+        order: 30,
         title_fa: "تنظیمات",
         api_prefix: "/api/v1/settings",
         feature_flag: "module.settings",
@@ -1604,7 +1682,7 @@ pub static POLICIES: &[ModulePolicy] = &[
     },
     ModulePolicy {
         module_id: "sports",
-        order: 30,
+        order: 31,
         title_fa: "امور ورزش",
         api_prefix: "/api/v1/sports",
         feature_flag: "module.sports",

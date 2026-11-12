@@ -26,6 +26,9 @@ const (
 	// KindVeteranCommittee صورت‌جلسه و مصوبهٔ کمیتهٔ ایثارگری: تصمیم موردی دربارهٔ تعلق
 	// گرفتن یا نگرفتن هر امتیاز و میزان آن برای یک کارمند.
 	KindVeteranCommittee = "veteranCommittee"
+	// KindVeteranCommitteeMember عضو کمیتهٔ ایثارگری: کسی که پای صورت‌جلسهٔ مصوبه امضا
+	// می‌کند. فهرست این اعضا هم فرم مصوبه را پیش‌پر می‌کند و هم بلوک امضای پایین برگه را.
+	KindVeteranCommitteeMember = "veteranCommitteeMember"
 )
 
 // Descriptor شناسهٔ ماژول شکایات و امور ایثارگران.
@@ -60,6 +63,7 @@ func Descriptor() recordkit.Descriptor {
 			veteranRecordKind(),
 			veteranServiceKind(),
 			veteranCommitteeKind(),
+			veteranCommitteeMemberKind(),
 		},
 	}
 }
@@ -325,7 +329,7 @@ func numberValue(value string) float64 {
 
 // Seed رکوردهای نمونهٔ سازمان.
 func Seed() []contracts.RecordInput {
-	return []contracts.RecordInput{
+	list := []contracts.RecordInput{
 		{Kind: KindComplaints, Title: "شکایت — نحوهٔ محاسبهٔ اضافه‌کاری", EmployeeID: "EMP-007",
 			Fields: map[string]string{"subject": "اختلاف در محاسبهٔ اضافه‌کاری شهریور", "filedDate": "1404/07/03", "channel": "سامانهٔ داخلی"},
 			NoteFa: "در حال رسیدگی"},
@@ -383,4 +387,5 @@ func Seed() []contracts.RecordInput {
 			},
 			SeedStatus: "issued"},
 	}
+	return append(list, committeeMemberSeeds()...)
 }

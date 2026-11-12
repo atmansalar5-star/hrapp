@@ -23,6 +23,7 @@ import (
 	"hrms/internal/modules/bonus"
 	"hrms/internal/modules/cards"
 	"hrms/internal/modules/career"
+	"hrms/internal/modules/compensation"
 	// نام پکیج قراردادهای DTO «contracts» است، پس ماژول قراردادها با نام مستعار می‌آید.
 	contractsmodule "hrms/internal/modules/contracts"
 	"hrms/internal/modules/dashboard"
@@ -181,6 +182,8 @@ func Modules() []modulekit.Module {
 		attendance.New(),
 		payroll.New(),
 		salary_admin.New(),
+		// نظام جبران خدمات ۴پی: مدل، قیمت‌گذاری شغل، شایستگی، عملکرد، باند و تصمیم
+		compensation.New(),
 		welfare.New(),
 		cards.New(),
 		education_bonus.New(),

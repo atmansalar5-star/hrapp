@@ -1,0 +1,191 @@
+{
+  "id": "compensation",
+  "order": 9,
+  "department": "staff_affairs",
+  "subUnit": "compensation",
+  "titleFa": "نظام جبران خدمات ۴پی",
+  "titleEn": "4P Compensation System",
+  "apiPrefix": "/api/v1/compensation",
+  "version": "1.0.0",
+  "featureFlag": "module.compensation",
+  "dbSchema": "hr_compensation",
+  "owner": "hr-compensation",
+  "entities": [
+    "CompensationModel",
+    "JobPricing",
+    "CompetencyLevel",
+    "PerformanceFactor",
+    "PayBand",
+    "CompensationDecision"
+  ],
+  "roles": {
+    "admin": [
+      "read",
+      "write",
+      "delete",
+      "approve",
+      "report"
+    ],
+    "hr_manager": [
+      "read",
+      "write",
+      "approve",
+      "report"
+    ],
+    "hr_spec": [
+      "read",
+      "write",
+      "report"
+    ],
+    "line_manager": [
+      "read"
+    ],
+    "employee": [
+      "read"
+    ]
+  },
+  "scopes": {
+    "employee": "own",
+    "line_manager": "own_unit"
+  },
+  "screens": [
+    {
+      "key": "compModel",
+      "order": 1,
+      "icon": "layers",
+      "titleFa": "مدل و پارامترهای جبران خدمات",
+      "component": "CompModelScreen",
+      "purposeFa": "تعریف و تصویب مدل چهارعاملی جبران خدمات: میانهٔ باند پایه، شیب و گسترهٔ باند، گام پله، امتیاز ارزشیابی هر پلهٔ گروه شغلی، کف و سقف ضریب شایستگی، ضریب هر سطح عملکرد، تعدیل بازار و سقف افزایش سالانه.",
+      "actionsFa": [
+        "تعریف مدل",
+        "ویرایش پارامترها",
+        "تصویب مدل",
+        "جاری‌سازی",
+        "بایگانی مدل پیشین"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager"
+      ]
+    },
+    {
+      "key": "compJobPricing",
+      "order": 2,
+      "icon": "scale",
+      "titleFa": "قیمت‌گذاری شغل (P1 — شغل)",
+      "component": "CompJobPricingScreen",
+      "purposeFa": "نگاشت امتیاز ارزشیابی شغل به پلهٔ گروه شغلی و باند پرداخت: امتیاز مصوب شغل از طبقه‌بندی مشاغل می‌آید، سامانه پله و میانهٔ باند را محاسبه می‌کند و کمیتهٔ ارزشیابی آن را تصویب می‌کند.",
+      "actionsFa": [
+        "ثبت قیمت‌گذاری شغل",
+        "محاسبهٔ پله و باند از امتیاز",
+        "ارسال به کمیتهٔ ارزشیابی",
+        "تصویب قیمت‌گذاری",
+        "بایگانی"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "compCompetency",
+      "order": 3,
+      "icon": "award",
+      "titleFa": "سطح شایستگی فرد (P2 — شخص)",
+      "component": "CompCompetencyScreen",
+      "purposeFa": "ثبت و تأیید سطح شایستگی هر کارمند بر پایهٔ مدل شایستگی خانوادهٔ شغلی او؛ ضریب شخص در محاسبهٔ بستهٔ پرداخت از همین سطح می‌آید و سابقهٔ سطح‌ها با تاریخ تعیین سطح نگه داشته می‌شود.",
+      "actionsFa": [
+        "ثبت سطح شایستگی",
+        "ثبت مستندات سنجش",
+        "تأیید سطح",
+        "پایان اعتبار سطح",
+        "مشاهدهٔ سابقهٔ سطح‌ها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "compPerformance",
+      "order": 4,
+      "icon": "target",
+      "titleFa": "ضریب عملکرد دوره (P3 — عملکرد)",
+      "component": "CompPerformanceScreen",
+      "purposeFa": "ثبت ضریب عملکرد هر کارمند برای هر دورهٔ ارزیابی بر پایهٔ امتیاز نهایی ارزیابی عملکرد؛ سطح و ضریب از آستانه‌های پارامتریک مدل ساخته می‌شود و پس از تأیید، مبنای پرداخت متغیر قرار می‌گیرد.",
+      "actionsFa": [
+        "ثبت ضریب دوره",
+        "خواندن امتیاز از ارزیابی عملکرد",
+        "تأیید ضریب",
+        "بستن دوره",
+        "گزارش ضرایب دوره"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "compPayBands",
+      "order": 5,
+      "icon": "bar-chart",
+      "titleFa": "باند و پله‌های پرداخت (P4 — پرداخت)",
+      "component": "CompPayBandsScreen",
+      "purposeFa": "ساخت و تصویب کف، میانه و سقف باند پرداخت هر گروه شغلی و گام پلهٔ درون باند؛ همین باندها سقف و کف پرداخت هدف هر کارمند را تعیین می‌کنند و از پارامترهای مصوب مدل ساخته می‌شوند.",
+      "actionsFa": [
+        "ساخت باندها از مدل جاری",
+        "ویرایش کف و میانه و سقف",
+        "تصویب باند",
+        "جاری‌سازی",
+        "مشاهدهٔ گسترهٔ باندها"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager"
+      ]
+    },
+    {
+      "key": "compDecision",
+      "order": 6,
+      "icon": "calculator",
+      "titleFa": "تصمیم چهارعاملی جبران خدمات",
+      "component": "CompDecisionScreen",
+      "purposeFa": "محاسبهٔ خط‌به‌خط بستهٔ جبران خدمات هر کارمند: پرداخت هدف از میانهٔ باند، ضریب شایستگی و ضریب عملکرد ساخته می‌شود، سقف باند و سقف افزایش سالانه اعمال می‌گردد، نسبت پرداخت به میانه سنجیده و تصمیم برای صدور حکم ثبت می‌شود.",
+      "actionsFa": [
+        "انتخاب کارمند",
+        "محاسبهٔ چهارعاملی",
+        "مشاهدهٔ فرم محاسباتی خط‌به‌خط",
+        "ثبت تصمیم",
+        "تصویب و اعلام برای صدور حکم"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "compReadiness",
+      "order": 7,
+      "icon": "list-checks",
+      "titleFa": "آمادگی داده و اولویت تکمیل جداول",
+      "component": "CompReadinessScreen",
+      "purposeFa": "راهنمای شروع به‌روزرسانی داده برای استقرار نظام ۴پی: ترتیب گام‌ها از ساختار سازمانی و طبقه‌بندی مشاغل تا تصمیم چهارعاملی، دادهٔ حیاتی هر جدول، دلیل اولویت هر گام و درصد تکمیل هر بخش بر پایهٔ دادهٔ واقعی سامانه.",
+      "actionsFa": [
+        "مشاهدهٔ ترتیب گام‌ها",
+        "مشاهدهٔ دادهٔ حیاتی هر جدول",
+        "مشاهدهٔ وضعیت تکمیل",
+        "رفتن به صفحهٔ همان گام",
+        "خروجی راهنما"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    }
+  ]
+}

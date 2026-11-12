@@ -13,6 +13,7 @@ package documents
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strings"
 
 	"hrms/internal/contracts"
@@ -40,18 +41,74 @@ func veteranCommitteeRecord(ctx context.Context, deps modulekit.Deps, id string)
 	return contracts.Record{}, false, nil
 }
 
+// veteranCommitteeSignatures بلوک امضای پایین برگه را از «اعضای تعریف‌شدهٔ» کمیته می‌سازد.
+//
+// چرا از رکوردهای عضو و نه از فهرست ثابت: ترکیب امضاکنندگان را سازمان تعریف می‌کند (پنل
+// اعضای کمیته) و برگهٔ چاپی باید همان ترکیب را با نام و نقش نشان دهد. اگر هیچ عضوی تعریف
+// نشده باشد، سه امضای متعارف برمی‌گردد تا برگه بی‌امضا نماند؛ مهر مدیریت منابع انسانی در
+// هر حالت آخرین امضاست و اگر عضوی با نقش «مهر و امضای مدیریت» تعریف شده باشد همان می‌آید.
+func veteranCommitteeSignatures(ctx context.Context, deps modulekit.Deps) []string {
+	body := []string{}
+	seal := "مهر و امضای مدیریت منابع انسانی"
+	if port, ok := deps.Ports.RecordList("grievances"); ok {
+		page, err := port.List(ctx, contracts.RecordFilter{
+			Module: "grievances", Kind: "veteranCommitteeMember", Scope: "all", Size: 200,
+		})
+		if err == nil {
+			active := make([]contracts.Record, 0, len(page.Items))
+			for _, rec := range page.Items {
+				if rec.Status == "active" {
+					active = append(active, rec)
+				}
+			}
+			sort.SliceStable(active, func(i, j int) bool {
+				oi, oj := committeeMemberSignatureSort(active[i].Fields), committeeMemberSignatureSort(active[j].Fields)
+				if oi != oj {
+					return oi < oj
+				}
+				return strings.TrimSpace(active[i].Fields["fullName"]) < strings.TrimSpace(active[j].Fields["fullName"])
+			})
+			for _, rec := range active {
+				role := rules.VeteranCommitteeRoleOf(rec.Fields["role"])
+				label := rules.VeteranCommitteeSignatureFa(role, rec.Fields["fullName"], rec.Fields["signatureTitle"])
+				if role == rules.VeteranCommitteeHRSeal {
+					seal = label
+					continue
+				}
+				body = append(body, label)
+			}
+		}
+	}
+	if len(body) == 0 {
+		body = []string{"رئیس کمیته", "دبیر کمیته", "نمایندهٔ امور ایثارگران"}
+	}
+	return append(body, seal)
+}
+
+// committeeMemberSignatureSort ترتیب نشستن امضا: «ترتیب امضا»ی ثبت‌شده، وگرنه ترتیب نقش.
+func committeeMemberSignatureSort(f map[string]string) int {
+	if value := strings.TrimSpace(f["sortOrder"]); value != "" {
+		n := 0
+		for _, ch := range value {
+			if ch < '0' || ch > '9' {
+				return rules.VeteranCommitteeRoleOrder(f["role"])
+			}
+			n = n*10 + int(ch-'0')
+		}
+		if n > 0 {
+			return n
+		}
+	}
+	return 100 + rules.VeteranCommitteeRoleOrder(f["role"])
+}
+
 // buildVeteranCommitteeForm دادهٔ برگهٔ «مصوبهٔ کمیتهٔ ایثارگری» را روی سند می‌نشاند.
 func buildVeteranCommitteeForm(ctx context.Context, deps modulekit.Deps, data *Data, committee *contracts.Record) {
 	if data == nil {
 		return
 	}
 	data.FormTitleFa = "مشخصات جلسهٔ کمیته و متن مصوبه"
-	data.Signatures = []string{
-		"رئیس کمیته",
-		"دبیر کمیته",
-		"نمایندهٔ امور ایثارگران",
-		"مهر و امضای مدیریت منابع انسانی",
-	}
+	data.Signatures = veteranCommitteeSignatures(ctx, deps)
 	if committee == nil {
 		data.NoteFa = "اطلاعات مصوبهٔ کمیته قابل خواندن نبود؛ این برگه را از کارتابل امور ایثارگران بازبینی کنید."
 		return

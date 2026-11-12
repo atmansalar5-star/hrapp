@@ -407,6 +407,9 @@ function pageRecordkitLive(page) {
           encodeURIComponent(window.VET.committeeEmployee));
         committeeDefaults = cdRes.ok ? cdRes.data : null;
       }
+      // اعضای کمیتهٔ ایثارگری: پنل تعریف اعضا و بلوک امضای پایین فرم از همین فهرست می‌آید.
+      const membersRes = await apiFetch(mod.prefix + '/veteran-committee-members');
+      window.VET_MEMBER_DATA = membersRes.ok ? (membersRes.data || {}) : {};
       rkBindKind(page + '#committee', mod, (schema.kinds || []).find(k => k.key === 'veteranCommittee'));
       rkSetModuleID(page + '#committee', schema.module);
       veteransView = {
@@ -417,6 +420,7 @@ function pageRecordkitLive(page) {
         profile: veteransProfile,
         committee: committeeRes.ok ? ((committeeRes.data || {}).items || []) : [],
         committeeDefaults,
+        committeeMembers: window.VET_MEMBER_DATA,
       };
     }
 

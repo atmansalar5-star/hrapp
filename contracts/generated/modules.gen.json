@@ -101,6 +101,8 @@
           "order": 4,
           "titleFa": "جبران خدمات",
           "dutiesFa": [
+            "نظام جبران خدمات ۴پی: شغل (P1)، شخص (P2)، عملکرد (P3) و پرداخت (P4)",
+            "طراحی بستهٔ پرداخت: باند و پله‌های پرداخت، عدالت درون‌سازمانی و رقابت با بازار کار",
             "حضور و غیاب، مرخصی، ماموریت و اضافه‌کاری",
             "حقوق و دستمزد، کارانه و پرداخت‌های متغیر",
             "احکام حقوق: صدور، اصلاح و ابلاغ حکم حقوقی کارکنان",
@@ -469,6 +471,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -1066,6 +1069,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "استقرار مرجع سامانه؛ همهٔ ادارات فعال. مشاغل عملیاتی سخت و زیان‌آور و نیروهای ارکان ثالث زیر نظر واحد برون‌سپاری پایش می‌شوند."
@@ -1676,6 +1833,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "استقرار ستادی برای شرکت مادر: برنامه‌ریزی نیروی انسانی، مطالعات، آمار و گزارش‌های تجمیعی شرکت‌های زیرمجموعه. ادارات عملیاتی (امور کارکنان، روابط کار، آموزش و برون‌سپاری) در این استقرار غیرفعال‌اند تا سامانه با دادهٔ شرکت‌های زیرمجموعه کار کند."
@@ -1712,6 +2023,7 @@
         "archive",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -2306,6 +2618,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "نمونهٔ شبیه‌سازی یک شرکت پتروشیمی دیگر: بدون واحد برون‌سپاری و مطالعات، و با دورهٔ کارانهٔ فصلی. برای دیدن اثر پارامتریک بودن سامانه ساخته شده است."
@@ -2341,6 +2807,7 @@
         "archive",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -2926,6 +3393,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "شرکت پیمانکاری با نیروهای ارکان ثالث: تمرکز روی حضور و غیاب، حقوق پیمانکاران، مشاغل سخت و زیان‌آور و آمار. سال مالی از ابتدای تیر آغاز می‌شود و مهلت تأخیر مجاز صفر است."
@@ -2964,6 +3585,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -3561,6 +4183,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "شرکت زیرمجموعهٔ هلدینگ خلیج فارس؛ تولید الفین و آروماتیک در بندر امام."
@@ -3599,6 +4375,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -4196,6 +4973,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "تولید برق، بخار و آب صنعتی برای شرکت‌های منطقهٔ ماهشهر زیر هلدینگ خلیج فارس."
@@ -4234,6 +5165,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -4831,6 +5763,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "تولید مواد اولیهٔ پلی‌استر و پلی‌اتیلن ترفتالات زیر هلدینگ خلیج فارس."
@@ -4869,6 +5955,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -5466,6 +6553,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "بزرگ‌ترین مجتمع کلرآلکالی خاورمیانه در منطقهٔ ماهشهر زیر هلدینگ خلیج فارس."
@@ -5504,6 +6745,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -6101,6 +7343,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "تولید آروماتیک‌ها (پارازایلین و بنزن) در عسلویه زیر هلدینگ خلیج فارس."
@@ -6139,6 +7535,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -6736,6 +8133,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "تولید متانول و آمونیاک در بیدبلند خلیج فارس زیر هلدینگ خلیج فارس."
@@ -6774,6 +8325,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -7371,6 +8923,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "تولید اتیلن و پلی‌اتیلن سنگین در گچساران زیر هلدینگ خلیج فارس."
@@ -7409,6 +9115,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -8006,6 +9713,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "شرکت مهندسی و فنون (EPC) هلدینگ خلیج فارس."
@@ -8046,6 +9907,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -8642,6 +10504,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "بازرگانی، فروش و صادرات محصولات پتروشیمی هلدینگ خلیج فارس."
@@ -8680,6 +10696,7 @@
         "archive",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -9276,6 +11293,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "تأمین کالا و تجارت صنعتی هلدینگ خلیج فارس."
@@ -9314,6 +11485,7 @@
         "jobclass",
         "attendance",
         "payroll",
+        "compensation",
         "salary_admin",
         "welfare",
         "cards",
@@ -9911,6 +12083,160 @@
           "value": "1",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "امور ایثارگران"
+        },
+        {
+          "key": "compensation.band.baseMidpoint",
+          "titleFa": "میانهٔ باند پرداخت پلهٔ ۱ (کارمند)",
+          "value": "200000000",
+          "unitFa": "ریال",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.slopePercent",
+          "titleFa": "شیب میانهٔ باند بین پله‌های گروه شغلی",
+          "value": "18",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.spreadPercent",
+          "titleFa": "گسترهٔ باند پرداخت (کف تا سقف نسبت به میانه)",
+          "value": "40",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.band.stepPercent",
+          "titleFa": "گام پله درون باند",
+          "value": "3",
+          "unitFa": "٪ از میانه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.pointsPerGrade",
+          "titleFa": "امتیاز ارزشیابی شغل برای هر پلهٔ گروه شغلی",
+          "value": "60",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.job.maxGrade",
+          "titleFa": "بالاترین پلهٔ گروه شغلی در نظام پرداخت",
+          "value": "6",
+          "unitFa": "پله",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.minFactor",
+          "titleFa": "کف ضریب شایستگی فرد (P2)",
+          "value": "0.9",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.maxFactor",
+          "titleFa": "سقف ضریب شایستگی فرد (P2)",
+          "value": "1.1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.person.levels",
+          "titleFa": "شمار سطوح مدل شایستگی",
+          "value": "5",
+          "unitFa": "سطح",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.excellentScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «عالی»",
+          "value": "90",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.goodScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «خوب»",
+          "value": "80",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.meetsScore",
+          "titleFa": "آستانهٔ امتیاز عملکرد «قابل قبول»",
+          "value": "65",
+          "unitFa": "از ۱۰۰",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorExcellent",
+          "titleFa": "ضریب پرداخت عملکرد «عالی» (P3)",
+          "value": "1.15",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorGood",
+          "titleFa": "ضریب پرداخت عملکرد «خوب» (P3)",
+          "value": "1.08",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorMeets",
+          "titleFa": "ضریب پرداخت عملکرد «قابل قبول» (P3)",
+          "value": "1",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.performance.factorBelow",
+          "titleFa": "ضریب پرداخت عملکرد «نیازمند بهبود» (P3)",
+          "value": "0.92",
+          "unitFa": "برابر",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.market.adjustPercent",
+          "titleFa": "تعدیل سالانهٔ بازار کار (فقط با درخواست در بازنگری)",
+          "value": "10",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.minPercent",
+          "titleFa": "کف نسبت پرداخت به میانهٔ باند",
+          "value": "80",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.compa.maxPercent",
+          "titleFa": "سقف نسبت پرداخت به میانهٔ باند",
+          "value": "120",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.increase.maxAnnualPercent",
+          "titleFa": "سقف افزایش سالانهٔ هر کارمند در بازنگری",
+          "value": "25",
+          "unitFa": "٪ پرداخت فعلی",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.review.months",
+          "titleFa": "دورهٔ بازنگری بستهٔ جبران خدمات",
+          "value": "12",
+          "unitFa": "ماه",
+          "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.payroll.apply",
+          "titleFa": "اعمال بستهٔ جبران خدمات در حکم و پرداخت",
+          "value": "1",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی"
         }
       ],
       "notesFa": "بزرگ‌ترین تولیدکنندهٔ اتیلن کشور در منطقهٔ ماهشهر؛ هلدینگ مستقل پتروشیمی مارون، جدا از هلدینگ خلیج فارس."
@@ -10720,8 +13046,137 @@
       ]
     },
     {
-      "id": "salary_admin",
+      "id": "compensation",
       "order": 9,
+      "department": "staff_affairs",
+      "subUnit": "compensation",
+      "sharedWith": [],
+      "titleFa": "نظام جبران خدمات ۴پی",
+      "titleEn": "4P Compensation System",
+      "apiPrefix": "/api/v1/compensation",
+      "version": "1.0.0",
+      "featureFlag": "module.compensation",
+      "dbSchema": "hr_compensation",
+      "owner": "hr-compensation",
+      "entities": [
+        "CompensationModel",
+        "JobPricing",
+        "CompetencyLevel",
+        "PerformanceFactor",
+        "PayBand",
+        "CompensationDecision"
+      ],
+      "roles": {
+        "admin": [
+          "read",
+          "write",
+          "delete",
+          "approve",
+          "report"
+        ],
+        "hr_manager": [
+          "read",
+          "write",
+          "approve",
+          "report"
+        ],
+        "hr_spec": [
+          "read",
+          "write",
+          "report"
+        ],
+        "line_manager": [
+          "read"
+        ],
+        "employee": [
+          "read"
+        ]
+      },
+      "scopes": {
+        "employee": "own",
+        "line_manager": "own_unit"
+      },
+      "screens": [
+        {
+          "key": "compModel",
+          "order": 1,
+          "titleFa": "مدل و پارامترهای جبران خدمات",
+          "component": "CompModelScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "compJobPricing",
+          "order": 2,
+          "titleFa": "قیمت‌گذاری شغل (P1 — شغل)",
+          "component": "CompJobPricingScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "compCompetency",
+          "order": 3,
+          "titleFa": "سطح شایستگی فرد (P2 — شخص)",
+          "component": "CompCompetencyScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "compPerformance",
+          "order": 4,
+          "titleFa": "ضریب عملکرد دوره (P3 — عملکرد)",
+          "component": "CompPerformanceScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "compPayBands",
+          "order": 5,
+          "titleFa": "باند و پله‌های پرداخت (P4 — پرداخت)",
+          "component": "CompPayBandsScreen",
+          "roles": [
+            "admin",
+            "hr_manager"
+          ]
+        },
+        {
+          "key": "compDecision",
+          "order": 6,
+          "titleFa": "تصمیم چهارعاملی جبران خدمات",
+          "component": "CompDecisionScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "compReadiness",
+          "order": 7,
+          "titleFa": "آمادگی داده و اولویت تکمیل جداول",
+          "component": "CompReadinessScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "salary_admin",
+      "order": 10,
       "department": "staff_affairs",
       "subUnit": "compensation",
       "sharedWith": [],
@@ -10794,7 +13249,7 @@
     },
     {
       "id": "welfare",
-      "order": 10,
+      "order": 11,
       "department": "staff_affairs",
       "subUnit": "compensation",
       "sharedWith": [],
@@ -10908,7 +13363,7 @@
     },
     {
       "id": "cards",
-      "order": 11,
+      "order": 12,
       "department": "staff_affairs",
       "subUnit": "compensation",
       "sharedWith": [],
@@ -11026,7 +13481,7 @@
     },
     {
       "id": "education_bonus",
-      "order": 12,
+      "order": 13,
       "department": "staff_affairs",
       "subUnit": "compensation",
       "sharedWith": [],
@@ -11109,7 +13564,7 @@
     },
     {
       "id": "bonus",
-      "order": 13,
+      "order": 14,
       "department": "staff_affairs",
       "subUnit": "compensation",
       "sharedWith": [],
@@ -11192,7 +13647,7 @@
     },
     {
       "id": "loans_retirement",
-      "order": 14,
+      "order": 15,
       "department": "staff_affairs",
       "subUnit": "loans_retirement",
       "sharedWith": [],
@@ -11272,7 +13727,7 @@
     },
     {
       "id": "orgstructure",
-      "order": 15,
+      "order": 16,
       "department": "hr_planning",
       "subUnit": "org_design",
       "sharedWith": [],
@@ -11341,7 +13796,7 @@
     },
     {
       "id": "career",
-      "order": 16,
+      "order": 17,
       "department": "hr_planning",
       "subUnit": "assignments",
       "sharedWith": [],
@@ -11439,7 +13894,7 @@
     },
     {
       "id": "recruitment",
-      "order": 17,
+      "order": 18,
       "department": "hr_planning",
       "subUnit": "talent_acquisition",
       "sharedWith": [],
@@ -11525,7 +13980,7 @@
     },
     {
       "id": "performance",
-      "order": 18,
+      "order": 19,
       "department": "hr_planning",
       "subUnit": "performance_management",
       "sharedWith": [],
@@ -11606,7 +14061,7 @@
     },
     {
       "id": "discipline",
-      "order": 19,
+      "order": 20,
       "department": "labor_relations",
       "subUnit": "discipline",
       "sharedWith": [],
@@ -11667,7 +14122,7 @@
     },
     {
       "id": "grievances",
-      "order": 20,
+      "order": 21,
       "department": "labor_relations",
       "subUnit": "complaints_veterans",
       "sharedWith": [],
@@ -11682,7 +14137,8 @@
         "Complaint",
         "ComplaintFollowUp",
         "VeteranRecord",
-        "VeteranCommitteeDecision"
+        "VeteranCommitteeDecision",
+        "VeteranCommitteeMember"
       ],
       "roles": {
         "admin": [
@@ -11740,7 +14196,7 @@
     },
     {
       "id": "socialwork",
-      "order": 21,
+      "order": 22,
       "department": "labor_relations",
       "subUnit": "social_work",
       "sharedWith": [],
@@ -11808,7 +14264,7 @@
     },
     {
       "id": "medical",
-      "order": 22,
+      "order": 23,
       "department": "labor_relations",
       "subUnit": "medical",
       "sharedWith": [],
@@ -11919,7 +14375,7 @@
     },
     {
       "id": "training",
-      "order": 23,
+      "order": 24,
       "department": "training_coordination",
       "subUnit": "training_cycle",
       "sharedWith": [],
@@ -12033,7 +14489,7 @@
     },
     {
       "id": "statistics",
-      "order": 24,
+      "order": 25,
       "department": "statistics",
       "subUnit": "data_control",
       "sharedWith": [],
@@ -12164,7 +14620,7 @@
     },
     {
       "id": "staffing_moves",
-      "order": 25,
+      "order": 26,
       "department": "statistics",
       "subUnit": "staffing_moves",
       "sharedWith": [],
@@ -12230,7 +14686,7 @@
     },
     {
       "id": "reports",
-      "order": 26,
+      "order": 27,
       "department": "statistics",
       "subUnit": "management_reports",
       "sharedWith": [],
@@ -12312,7 +14768,7 @@
     },
     {
       "id": "outsourcing",
-      "order": 27,
+      "order": 28,
       "department": "outsourcing",
       "subUnit": "third_party_payroll",
       "sharedWith": [],
@@ -12404,7 +14860,7 @@
     },
     {
       "id": "hrstudies",
-      "order": 28,
+      "order": 29,
       "department": "hr_studies",
       "subUnit": "research",
       "sharedWith": [],
@@ -12505,7 +14961,7 @@
     },
     {
       "id": "settings",
-      "order": 29,
+      "order": 30,
       "department": "platform",
       "subUnit": "org_params",
       "sharedWith": [],
@@ -12662,7 +15118,7 @@
     },
     {
       "id": "sports",
-      "order": 30,
+      "order": 31,
       "department": "sports",
       "subUnit": "sports_programs",
       "sharedWith": [],

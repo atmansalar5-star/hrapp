@@ -69,7 +69,7 @@ export const DIRECTORATES: DirectorateSpec[] = [
 
 export const DEPARTMENTS: DepartmentSpec[] = [
   { id: "core", order: 1, directorate: "corporate", titleFa: "داشبورد", titleEn: "Dashboard", dutiesFa: ["نمای کلی شاخص‌های سازمان و واحد بر پایهٔ نقش کاربر", "دسترسی سریع به اقدام‌های در انتظار تأیید"], subUnits: [] },
-  { id: "staff_affairs", order: 2, directorate: "hr_capital", titleFa: "واحد امور کارکنان", titleEn: "Staff Affairs Unit", dutiesFa: ["کارگزینی و خدمات پرسنلی: پرونده، مدارک، گواهی اشتغال، تسویه‌حساب و پاسخ به درخواست‌های کارکنان", "انعقاد، تمدید و پایان قرارداد کار بر پایهٔ قراردادهای مدت موقت و مدت دائم", "افراد تحت تکفل: ثبت وابستگان، پوشش بیمه و مدارک تکفل", "درخواست پرواز: ثبت درخواست سفر هوایی کارکنان، تأیید و پیگیری صدور بلیت", "بایگانی و شناسایی کارکنان: پروندهٔ پرسنلی، مدارک هویتی و کارت شناسایی", "جبران خدمات: حضور و غیاب، کارانه، مرخصی، اضافه‌کاری، حقوق و دستمزد، احکام حقوق، رفاه، سرویس مدارس و اسکان", "امور وام، بازنشستگی و پیگیری پرونده‌های بازنشستگی و تسویه", "طبقه‌بندی مشاغل با تعامل واحد برون‌سپاری"], subUnits: [{ id: "personnel_services", order: 1, titleFa: "کارگزینی و خدمات پرسنلی", dutiesFa: ["کارگزینی: نگهداری پرونده و انجام خدمت‌های پرسنلی کارکنان", "انعقاد، تمدید و پایان قرارداد کار (مدت موقت و مدت دائم) و صدور گواهی‌ها", "افراد تحت تکفل و درخواست‌های کارکنان مانند درخواست پرواز و تسویه‌حساب پایان همکاری"] }, { id: "records_identity", order: 2, titleFa: "بایگانی و شناسایی کارکنان", dutiesFa: ["بایگانی اسناد پرسنلی، امانت و تحویل مدارک", "شناسایی کارکنان، مدارک هویتی و کارت شناسایی"] }, { id: "job_classification", order: 3, titleFa: "طبقه‌بندی مشاغل", dutiesFa: ["طبقه‌بندی، رتبه‌بندی و ارزشیابی مشاغل سازمان", "تعامل با واحد برون‌سپاری برای مشاغل پیمانکاری و ارکان ثالث"] }, { id: "compensation", order: 4, titleFa: "جبران خدمات", dutiesFa: ["حضور و غیاب، مرخصی، ماموریت و اضافه‌کاری", "حقوق و دستمزد، کارانه و پرداخت‌های متغیر", "احکام حقوق: صدور، اصلاح و ابلاغ حکم حقوقی کارکنان", "گواهی اشتغال: صدور گواهی اشتغال به کار و تاییدیه‌های بانکی و سفارتی", "رفاه، سرویس مدارس، تورهای رفاهی و اسکان کارکنان"] }, { id: "loans_retirement", order: 5, titleFa: "امور وام و بازنشستگی", dutiesFa: ["وام کارکنان، اقساط و بازپرداخت", "پرونده‌های بازنشستگی و هماهنگی با صندوق و تأمین اجتماعی"] }] },
+  { id: "staff_affairs", order: 2, directorate: "hr_capital", titleFa: "واحد امور کارکنان", titleEn: "Staff Affairs Unit", dutiesFa: ["کارگزینی و خدمات پرسنلی: پرونده، مدارک، گواهی اشتغال، تسویه‌حساب و پاسخ به درخواست‌های کارکنان", "انعقاد، تمدید و پایان قرارداد کار بر پایهٔ قراردادهای مدت موقت و مدت دائم", "افراد تحت تکفل: ثبت وابستگان، پوشش بیمه و مدارک تکفل", "درخواست پرواز: ثبت درخواست سفر هوایی کارکنان، تأیید و پیگیری صدور بلیت", "بایگانی و شناسایی کارکنان: پروندهٔ پرسنلی، مدارک هویتی و کارت شناسایی", "جبران خدمات: حضور و غیاب، کارانه، مرخصی، اضافه‌کاری، حقوق و دستمزد، احکام حقوق، رفاه، سرویس مدارس و اسکان", "امور وام، بازنشستگی و پیگیری پرونده‌های بازنشستگی و تسویه", "طبقه‌بندی مشاغل با تعامل واحد برون‌سپاری"], subUnits: [{ id: "personnel_services", order: 1, titleFa: "کارگزینی و خدمات پرسنلی", dutiesFa: ["کارگزینی: نگهداری پرونده و انجام خدمت‌های پرسنلی کارکنان", "انعقاد، تمدید و پایان قرارداد کار (مدت موقت و مدت دائم) و صدور گواهی‌ها", "افراد تحت تکفل و درخواست‌های کارکنان مانند درخواست پرواز و تسویه‌حساب پایان همکاری"] }, { id: "records_identity", order: 2, titleFa: "بایگانی و شناسایی کارکنان", dutiesFa: ["بایگانی اسناد پرسنلی، امانت و تحویل مدارک", "شناسایی کارکنان، مدارک هویتی و کارت شناسایی"] }, { id: "job_classification", order: 3, titleFa: "طبقه‌بندی مشاغل", dutiesFa: ["طبقه‌بندی، رتبه‌بندی و ارزشیابی مشاغل سازمان", "تعامل با واحد برون‌سپاری برای مشاغل پیمانکاری و ارکان ثالث"] }, { id: "compensation", order: 4, titleFa: "جبران خدمات", dutiesFa: ["نظام جبران خدمات ۴پی: شغل (P1)، شخص (P2)، عملکرد (P3) و پرداخت (P4)", "طراحی بستهٔ پرداخت: باند و پله‌های پرداخت، عدالت درون‌سازمانی و رقابت با بازار کار", "حضور و غیاب، مرخصی، ماموریت و اضافه‌کاری", "حقوق و دستمزد، کارانه و پرداخت‌های متغیر", "احکام حقوق: صدور، اصلاح و ابلاغ حکم حقوقی کارکنان", "گواهی اشتغال: صدور گواهی اشتغال به کار و تاییدیه‌های بانکی و سفارتی", "رفاه، سرویس مدارس، تورهای رفاهی و اسکان کارکنان"] }, { id: "loans_retirement", order: 5, titleFa: "امور وام و بازنشستگی", dutiesFa: ["وام کارکنان، اقساط و بازپرداخت", "پرونده‌های بازنشستگی و هماهنگی با صندوق و تأمین اجتماعی"] }] },
   { id: "hr_planning", order: 3, directorate: "hr_capital", titleFa: "واحد برنامه‌ریزی نیروی انسانی", titleEn: "Human Resources Planning Unit", dutiesFa: ["انتصابات و ابلاغ‌های سازمانی", "ترفیعات و ارتقای گروه شغلی", "ساختار سازمانی، تشکیلات و شناسنامهٔ پست‌ها", "کارراههٔ شغلی و جانشین‌پروری", "تأمین و جذب نیرو و مدیریت عملکرد"], subUnits: [{ id: "org_design", order: 1, titleFa: "ساختار سازمانی و تشکیلات", dutiesFa: ["نمودار سازمانی، پست‌های مصوب و ظرفیت تشکیلاتی", "شناسنامهٔ پست و شرح شغل"] }, { id: "assignments", order: 2, titleFa: "انتصابات، ترفیعات و کارراههٔ شغلی", dutiesFa: ["صدور ابلاغ انتصاب، جابه‌جایی و پایان تصدی", "بررسی ترفیع و ارتقای گروه شغلی", "مسیر شغلی و جانشین‌پروری"] }, { id: "talent_acquisition", order: 3, titleFa: "تأمین و جذب نیرو", dutiesFa: ["نیازسنجی نیرو، مجوز استخدام و آگهی‌ها", "غربالگری، مصاحبه و فرایند جذب"] }, { id: "performance_management", order: 4, titleFa: "مدیریت عملکرد", dutiesFa: ["دوره‌های ارزیابی عملکرد و فرم‌های ارزیابی", "تحلیل نتایج و پیوند آن با ترفیع، آموزش و کارانه"] }] },
   { id: "labor_relations", order: 4, directorate: "hr_capital", titleFa: "واحد روابط کار و مددکاری اجتماعی", titleEn: "Labor Relations & Social Work Unit", dutiesFa: ["کمیتهٔ انضباط کار: پرونده‌ها، جلسات و آرای انضباطی", "شکایات کارکنان و امور ایثارگران", "مددکاری اجتماعی: پرونده‌های مددکاری و کمک‌های موردی", "درمان، معاینات دوره‌ای، طب کار و خدمات درمانی"], subUnits: [{ id: "discipline", order: 1, titleFa: "کمیتهٔ انضباط کار", dutiesFa: ["تشکیل پروندهٔ تخلف و ارجاع به کمیته", "صورت‌جلسه، رأی و پیگیری اجرای رأی"] }, { id: "complaints_veterans", order: 2, titleFa: "شکایات و امور ایثارگران", dutiesFa: ["ثبت و رسیدگی به شکایات کارکنان", "امور ایثارگران، جانبازان و خانوادهٔ شهدا"] }, { id: "social_work", order: 3, titleFa: "مددکاری اجتماعی", dutiesFa: ["پرونده‌های مددکاری و بررسی وضعیت رفاهی-اجتماعی", "کمک‌های موردی و معرفی به مراجع حمایتی"] }, { id: "medical", order: 4, titleFa: "درمان، معاینات دوره‌ای و خدمات درمانی", dutiesFa: ["پروندهٔ درمان و بازپرداخت هزینه‌های درمانی", "معاینات دوره‌ای و طب کار", "پوشش بیمهٔ درمان و خدمات تکمیلی"] }] },
   { id: "training_coordination", order: 5, directorate: "hr_capital", titleFa: "واحد هماهنگی آموزش", titleEn: "Training Coordination Unit", dutiesFa: ["از برنامه‌ریزی آموزشی تا اجرا و هماهنگی اجرای دوره‌های آموزشی", "نیازسنجی آموزشی و تعیین اولویت‌ها", "سوابق آموزشی و گواهی‌نامه‌ها"], subUnits: [{ id: "training_cycle", order: 1, titleFa: "چرخهٔ آموزش: برنامه‌ریزی، نیازسنجی، اجرا و سوابق", dutiesFa: ["تدوین برنامهٔ آموزشی سالانه و تقویم دوره‌ها", "نظارت بر اجرا، ارزشیابی اثربخشی و ثبت سوابق"] }] },
@@ -246,8 +246,31 @@ export const MODULES: ModuleSpec[] = [
     ],
   },
   {
-    id: "salary_admin",
+    id: "compensation",
     order: 9,
+    department: "staff_affairs",
+    departmentTitleFa: "واحد امور کارکنان",
+    subUnit: "compensation",
+    subUnitTitleFa: "جبران خدمات",
+    /** اداره‌های دیگری که این ماژول (مثل طبقه‌بندی مشاغل) در منوی آن‌ها هم دیده می‌شود. */
+    sharedDepartments: [],
+    titleFa: "نظام جبران خدمات ۴پی",
+    titleEn: "4P Compensation System",
+    apiPrefix: "/api/v1/compensation",
+    featureFlag: "module.compensation",
+    screens: [
+      { key: "compModel", order: 1, icon: "layers", titleFa: "مدل و پارامترهای جبران خدمات", purposeFa: "تعریف و تصویب مدل چهارعاملی جبران خدمات: میانهٔ باند پایه، شیب و گسترهٔ باند، گام پله، امتیاز ارزشیابی هر پلهٔ گروه شغلی، کف و سقف ضریب شایستگی، ضریب هر سطح عملکرد، تعدیل بازار و سقف افزایش سالانه.", component: "CompModelScreen", roles: ["admin", "hr_manager"] },
+      { key: "compJobPricing", order: 2, icon: "scale", titleFa: "قیمت‌گذاری شغل (P1 — شغل)", purposeFa: "نگاشت امتیاز ارزشیابی شغل به پلهٔ گروه شغلی و باند پرداخت: امتیاز مصوب شغل از طبقه‌بندی مشاغل می‌آید، سامانه پله و میانهٔ باند را محاسبه می‌کند و کمیتهٔ ارزشیابی آن را تصویب می‌کند.", component: "CompJobPricingScreen", roles: ["admin", "hr_manager", "hr_spec"] },
+      { key: "compCompetency", order: 3, icon: "award", titleFa: "سطح شایستگی فرد (P2 — شخص)", purposeFa: "ثبت و تأیید سطح شایستگی هر کارمند بر پایهٔ مدل شایستگی خانوادهٔ شغلی او؛ ضریب شخص در محاسبهٔ بستهٔ پرداخت از همین سطح می‌آید و سابقهٔ سطح‌ها با تاریخ تعیین سطح نگه داشته می‌شود.", component: "CompCompetencyScreen", roles: ["admin", "hr_manager", "hr_spec"] },
+      { key: "compPerformance", order: 4, icon: "target", titleFa: "ضریب عملکرد دوره (P3 — عملکرد)", purposeFa: "ثبت ضریب عملکرد هر کارمند برای هر دورهٔ ارزیابی بر پایهٔ امتیاز نهایی ارزیابی عملکرد؛ سطح و ضریب از آستانه‌های پارامتریک مدل ساخته می‌شود و پس از تأیید، مبنای پرداخت متغیر قرار می‌گیرد.", component: "CompPerformanceScreen", roles: ["admin", "hr_manager", "hr_spec"] },
+      { key: "compPayBands", order: 5, icon: "bar-chart", titleFa: "باند و پله‌های پرداخت (P4 — پرداخت)", purposeFa: "ساخت و تصویب کف، میانه و سقف باند پرداخت هر گروه شغلی و گام پلهٔ درون باند؛ همین باندها سقف و کف پرداخت هدف هر کارمند را تعیین می‌کنند و از پارامترهای مصوب مدل ساخته می‌شوند.", component: "CompPayBandsScreen", roles: ["admin", "hr_manager"] },
+      { key: "compDecision", order: 6, icon: "calculator", titleFa: "تصمیم چهارعاملی جبران خدمات", purposeFa: "محاسبهٔ خط‌به‌خط بستهٔ جبران خدمات هر کارمند: پرداخت هدف از میانهٔ باند، ضریب شایستگی و ضریب عملکرد ساخته می‌شود، سقف باند و سقف افزایش سالانه اعمال می‌گردد، نسبت پرداخت به میانه سنجیده و تصمیم برای صدور حکم ثبت می‌شود.", component: "CompDecisionScreen", roles: ["admin", "hr_manager", "hr_spec"] },
+      { key: "compReadiness", order: 7, icon: "list-checks", titleFa: "آمادگی داده و اولویت تکمیل جداول", purposeFa: "راهنمای شروع به‌روزرسانی داده برای استقرار نظام ۴پی: ترتیب گام‌ها از ساختار سازمانی و طبقه‌بندی مشاغل تا تصمیم چهارعاملی، دادهٔ حیاتی هر جدول، دلیل اولویت هر گام و درصد تکمیل هر بخش بر پایهٔ دادهٔ واقعی سامانه.", component: "CompReadinessScreen", roles: ["admin", "hr_manager", "hr_spec"] },
+    ],
+  },
+  {
+    id: "salary_admin",
+    order: 10,
     department: "staff_affairs",
     departmentTitleFa: "واحد امور کارکنان",
     subUnit: "compensation",
@@ -265,7 +288,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "welfare",
-    order: 10,
+    order: 11,
     department: "staff_affairs",
     departmentTitleFa: "واحد امور کارکنان",
     subUnit: "compensation",
@@ -286,7 +309,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "cards",
-    order: 11,
+    order: 12,
     department: "staff_affairs",
     departmentTitleFa: "واحد امور کارکنان",
     subUnit: "compensation",
@@ -308,7 +331,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "education_bonus",
-    order: 12,
+    order: 13,
     department: "staff_affairs",
     departmentTitleFa: "واحد امور کارکنان",
     subUnit: "compensation",
@@ -327,7 +350,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "bonus",
-    order: 13,
+    order: 14,
     department: "staff_affairs",
     departmentTitleFa: "واحد امور کارکنان",
     subUnit: "compensation",
@@ -346,7 +369,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "loans_retirement",
-    order: 14,
+    order: 15,
     department: "staff_affairs",
     departmentTitleFa: "واحد امور کارکنان",
     subUnit: "loans_retirement",
@@ -365,7 +388,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "orgstructure",
-    order: 15,
+    order: 16,
     department: "hr_planning",
     departmentTitleFa: "واحد برنامه‌ریزی نیروی انسانی",
     subUnit: "org_design",
@@ -383,7 +406,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "career",
-    order: 16,
+    order: 17,
     department: "hr_planning",
     departmentTitleFa: "واحد برنامه‌ریزی نیروی انسانی",
     subUnit: "assignments",
@@ -403,7 +426,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "recruitment",
-    order: 17,
+    order: 18,
     department: "hr_planning",
     departmentTitleFa: "واحد برنامه‌ریزی نیروی انسانی",
     subUnit: "talent_acquisition",
@@ -423,7 +446,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "performance",
-    order: 18,
+    order: 19,
     department: "hr_planning",
     departmentTitleFa: "واحد برنامه‌ریزی نیروی انسانی",
     subUnit: "performance_management",
@@ -442,7 +465,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "discipline",
-    order: 19,
+    order: 20,
     department: "labor_relations",
     departmentTitleFa: "واحد روابط کار و مددکاری اجتماعی",
     subUnit: "discipline",
@@ -460,7 +483,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "grievances",
-    order: 20,
+    order: 21,
     department: "labor_relations",
     departmentTitleFa: "واحد روابط کار و مددکاری اجتماعی",
     subUnit: "complaints_veterans",
@@ -478,7 +501,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "socialwork",
-    order: 21,
+    order: 22,
     department: "labor_relations",
     departmentTitleFa: "واحد روابط کار و مددکاری اجتماعی",
     subUnit: "social_work",
@@ -496,7 +519,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "medical",
-    order: 22,
+    order: 23,
     department: "labor_relations",
     departmentTitleFa: "واحد روابط کار و مددکاری اجتماعی",
     subUnit: "medical",
@@ -517,7 +540,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "training",
-    order: 23,
+    order: 24,
     department: "training_coordination",
     departmentTitleFa: "واحد هماهنگی آموزش",
     subUnit: "training_cycle",
@@ -538,7 +561,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "statistics",
-    order: 24,
+    order: 25,
     department: "statistics",
     departmentTitleFa: "واحد آمار و گزارشات",
     subUnit: "data_control",
@@ -561,7 +584,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "staffing_moves",
-    order: 25,
+    order: 26,
     department: "statistics",
     departmentTitleFa: "واحد آمار و گزارشات",
     subUnit: "staffing_moves",
@@ -579,7 +602,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "reports",
-    order: 26,
+    order: 27,
     department: "statistics",
     departmentTitleFa: "واحد آمار و گزارشات",
     subUnit: "management_reports",
@@ -598,7 +621,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "outsourcing",
-    order: 27,
+    order: 28,
     department: "outsourcing",
     departmentTitleFa: "واحد برون‌سپاری",
     subUnit: "third_party_payroll",
@@ -618,7 +641,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "hrstudies",
-    order: 28,
+    order: 29,
     department: "hr_studies",
     departmentTitleFa: "واحد مطالعات منابع انسانی",
     subUnit: "research",
@@ -638,7 +661,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "settings",
-    order: 29,
+    order: 30,
     department: "platform",
     departmentTitleFa: "تنظیمات سامانه",
     subUnit: "org_params",
@@ -666,7 +689,7 @@ export const MODULES: ModuleSpec[] = [
   },
   {
     id: "sports",
-    order: 30,
+    order: 31,
     department: "sports",
     departmentTitleFa: "واحد امور ورزش",
     subUnit: "sports_programs",

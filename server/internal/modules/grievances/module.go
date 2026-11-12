@@ -30,4 +30,6 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// فرم مصوبهٔ کمیتهٔ ایثارگری روی همان سرویس رکورد می‌نشیند تا تصمیم کمیته ثبت،
 	// چاپ و در صورت تأیید روی پروندهٔ کارمند اعمال شود.
 	registerVeteranCommitteeEndpoints(mux, deps, svc)
+	// پنل «اعضای کمیتهٔ ایثارگری»: تعریف رسمی امضاکنندگان پایین صورت‌جلسه.
+	registerVeteranCommitteeMemberEndpoints(mux, deps, svc)
 }

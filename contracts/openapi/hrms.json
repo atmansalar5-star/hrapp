@@ -3353,6 +3353,180 @@
         }
       }
     },
+    "/api/v1/compensation/records": {
+      "get": {
+        "summary": "فهرست رکوردهای جبران خدمات ۴پی",
+        "responses": {
+          "200": {
+            "description": "فهرست رکوردها بر پایهٔ نوع و وضعیت",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "ثبت رکورد جبران خدمات (مدل، قیمت‌گذاری شغل، شایستگی، عملکرد، باند، تصمیم)",
+        "responses": {
+          "201": {
+            "description": "رکورد ثبت‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compensation/records/{id}": {
+      "get": {
+        "summary": "خواندن یک رکورد جبران خدمات",
+        "responses": {
+          "200": {
+            "description": "رکورد",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "ویرایش رکورد در وضعیت قابل‌ویرایش",
+        "responses": {
+          "200": {
+            "description": "رکورد ویرایش‌شده",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "حذف رکورد در وضعیت آغازین",
+        "responses": {
+          "204": {
+            "description": "حذف شد"
+          }
+        }
+      }
+    },
+    "/api/v1/compensation/records/{id}/action": {
+      "post": {
+        "summary": "اقدام گردشکار: تصویب، جاری‌سازی، اعلام برای صدور حکم و بایگانی",
+        "responses": {
+          "200": {
+            "description": "رکورد با وضعیت تازه",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compensation/options": {
+      "get": {
+        "summary": "فهرست‌های مرجع، پارامترها، باندها و جدول ضریب‌های نظام ۴پی",
+        "responses": {
+          "200": {
+            "description": "پارامترهای مصوب شرکت، باندهای پرداخت، ضرایب شایستگی و عملکرد و فهرست‌های مرجع",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compensation/4p-defaults": {
+      "get": {
+        "summary": "پیش‌فرض‌های چهارعاملی یک کارمند (شغل، شایستگی، عملکرد و پرداخت فعلی)",
+        "responses": {
+          "200": {
+            "description": "پارامترها، باندها و دادهٔ پیش‌فرض کارمند از پرونده و آخرین حکم حقوق",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compensation/4p-calc": {
+      "post": {
+        "summary": "محاسبهٔ خط‌به‌خط بستهٔ جبران خدمات یک کارمند بر پایهٔ چهار عامل",
+        "responses": {
+          "200": {
+            "description": "پرداخت هدف، افزایش پیشنهادی، نسبت پرداخت به میانه و سطرهای محاسبه",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compensation/job-pricing-calc": {
+      "post": {
+        "summary": "محاسبهٔ امتیاز شغل، پلهٔ گروه شغلی و باند پرداخت از عامل‌های ارزشیابی شغل",
+        "responses": {
+          "200": {
+            "description": "امتیاز شغل، پلهٔ گروه شغلی و باند حاصل",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/compensation/data-readiness": {
+      "get": {
+        "summary": "راهنمای شروع به‌روزرسانی داده و وضعیت تکمیل جداول نظام ۴پی",
+        "responses": {
+          "200": {
+            "description": "گام‌های تکمیل داده به ترتیب اولویت، دادهٔ حیاتی هر جدول و درصد تکمیل",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/hrstudies/surveys": {
       "get": {
         "summary": "نظرسنجی و جو سازمانی",

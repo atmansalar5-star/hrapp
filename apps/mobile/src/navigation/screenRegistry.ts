@@ -191,6 +191,15 @@ import SuggestionsScreen from '../features/hrstudies/SuggestionsScreen';
 import SportsProgramsScreen from '../features/sports/SportsProgramsScreen';
 import SportsEventsScreen from '../features/sports/SportsEventsScreen';
 
+// واحد امور کارکنان — زیرواحد جبران خدمات: نظام جبران خدمات ۴پی
+import CompModelScreen from '../features/compensation/CompModelScreen';
+import CompJobPricingScreen from '../features/compensation/CompJobPricingScreen';
+import CompCompetencyScreen from '../features/compensation/CompCompetencyScreen';
+import CompPerformanceScreen from '../features/compensation/CompPerformanceScreen';
+import CompPayBandsScreen from '../features/compensation/CompPayBandsScreen';
+import CompDecisionScreen from '../features/compensation/CompDecisionScreen';
+import CompReadinessScreen from '../features/compensation/CompReadinessScreen';
+
 /** نگاشت نام کامپوننت مانیفست به کامپوننت واقعی. */
 export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   DashboardScreen,
@@ -309,6 +318,13 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   SuggestionsScreen,
   SportsProgramsScreen,
   SportsEventsScreen,
+  CompModelScreen,
+  CompJobPricingScreen,
+  CompCompetencyScreen,
+  CompPerformanceScreen,
+  CompPayBandsScreen,
+  CompDecisionScreen,
+  CompReadinessScreen,
   MissionsScreen,
   KaranaScreen,
   SchoolServiceScreen,

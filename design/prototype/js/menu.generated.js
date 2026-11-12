@@ -102,7 +102,7 @@ window.HRMS_MENU = [
     {
       id: "compensation",
       titleFa: "جبران خدمات",
-      dutiesFa: ["حضور و غیاب، مرخصی، ماموریت و اضافه‌کاری","حقوق و دستمزد، کارانه و پرداخت‌های متغیر","احکام حقوق: صدور، اصلاح و ابلاغ حکم حقوقی کارکنان","گواهی اشتغال: صدور گواهی اشتغال به کار و تاییدیه‌های بانکی و سفارتی","رفاه، سرویس مدارس، تورهای رفاهی و اسکان کارکنان"],
+      dutiesFa: ["نظام جبران خدمات ۴پی: شغل (P1)، شخص (P2)، عملکرد (P3) و پرداخت (P4)","طراحی بستهٔ پرداخت: باند و پله‌های پرداخت، عدالت درون‌سازمانی و رقابت با بازار کار","حضور و غیاب، مرخصی، ماموریت و اضافه‌کاری","حقوق و دستمزد، کارانه و پرداخت‌های متغیر","احکام حقوق: صدور، اصلاح و ابلاغ حکم حقوقی کارکنان","گواهی اشتغال: صدور گواهی اشتغال به کار و تاییدیه‌های بانکی و سفارتی","رفاه، سرویس مدارس، تورهای رفاهی و اسکان کارکنان"],
       shared: false,
       modules: [
       {
@@ -139,6 +139,22 @@ window.HRMS_MENU = [
         { page: "payParams", label: "پارامترها و ضرائب حقوق", icon: "percent", roles: ['admin', 'hr_manager', 'hr_spec'] },
         { page: "statutoryFiles", label: "فایل قانونی بیمه و مالیات", icon: "file-check", roles: ['admin', 'hr_manager'] },
         { page: "bankPayments", label: "فایل پرداخت بانکی", icon: "banknote", roles: ['admin', 'hr_manager'] },
+        ],
+      },
+      {
+        id: "compensation",
+        titleFa: "نظام جبران خدمات ۴پی",
+        apiPrefix: "/api/v1/compensation",
+        subUnitFa: "جبران خدمات",
+        shared: false,
+        screens: [
+        { page: "compModel", label: "مدل و پارامترهای جبران خدمات", icon: "layers", roles: ['admin', 'hr_manager'] },
+        { page: "compJobPricing", label: "قیمت‌گذاری شغل (P1 — شغل)", icon: "scale", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "compCompetency", label: "سطح شایستگی فرد (P2 — شخص)", icon: "award", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "compPerformance", label: "ضریب عملکرد دوره (P3 — عملکرد)", icon: "target", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "compPayBands", label: "باند و پله‌های پرداخت (P4 — پرداخت)", icon: "bar-chart", roles: ['admin', 'hr_manager'] },
+        { page: "compDecision", label: "تصمیم چهارعاملی جبران خدمات", icon: "calculator", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "compReadiness", label: "آمادگی داده و اولویت تکمیل جداول", icon: "list-checks", roles: ['admin', 'hr_manager', 'hr_spec'] },
         ],
       },
       {

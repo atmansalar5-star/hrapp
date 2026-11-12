@@ -1,6 +1,6 @@
 {
   "id": "grievances",
-  "order": 20,
+  "order": 21,
   "department": "labor_relations",
   "subUnit": "complaints_veterans",
   "titleFa": "شکایات و امور ایثارگران",
@@ -14,7 +14,8 @@
     "Complaint",
     "ComplaintFollowUp",
     "VeteranRecord",
-    "VeteranCommitteeDecision"
+    "VeteranCommitteeDecision",
+    "VeteranCommitteeMember"
   ],
   "roles": {
     "admin": [
@@ -76,6 +77,7 @@
       "actionsFa": [
         "ثبت پروندهٔ ایثارگری",
         "تشکیل کمیته و ثبت مصوبهٔ امتیازها",
+        "تعریف اعضای کمیته و امضاکنندگان صورت‌جلسه",
         "اعمال سهمیهٔ استخدامی",
         "صدور معرفی‌نامه",
         "پیگیری تسهیلات",

@@ -193,8 +193,34 @@ var All = []Module{
 		},
 	},
 	{
-		ID:          "salary_admin",
+		ID:          "compensation",
 		Order:       9,
+		Department:  "staff_affairs",
+		SubUnit:     "compensation",
+		SharedWith:  []string{},
+		TitleFa:     "نظام جبران خدمات ۴پی",
+		TitleEn:     "4P Compensation System",
+		APIPrefix:   "/api/v1/compensation",
+		Version:     "1.0.0",
+		FeatureFlag: "module.compensation",
+		DBSchema:    "hr_compensation",
+		Owner:       "hr-compensation",
+		Entities:    []string{"CompensationModel", "JobPricing", "CompetencyLevel", "PerformanceFactor", "PayBand", "CompensationDecision"},
+		Roles:       map[string][]string{"admin": {"read", "write", "delete", "approve", "report"}, "hr_manager": {"read", "write", "approve", "report"}, "hr_spec": {"read", "write", "report"}, "line_manager": {"read"}, "employee": {"read"}},
+		Scopes:      map[string]string{"employee": "own", "line_manager": "own_unit"},
+		Screens: []Screen{
+			{Key: "compModel", Order: 1, Icon: "layers", TitleFa: "مدل و پارامترهای جبران خدمات", Component: "CompModelScreen", Roles: []string{"admin", "hr_manager"}},
+			{Key: "compJobPricing", Order: 2, Icon: "scale", TitleFa: "قیمت‌گذاری شغل (P1 — شغل)", Component: "CompJobPricingScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "compCompetency", Order: 3, Icon: "award", TitleFa: "سطح شایستگی فرد (P2 — شخص)", Component: "CompCompetencyScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "compPerformance", Order: 4, Icon: "target", TitleFa: "ضریب عملکرد دوره (P3 — عملکرد)", Component: "CompPerformanceScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "compPayBands", Order: 5, Icon: "bar-chart", TitleFa: "باند و پله‌های پرداخت (P4 — پرداخت)", Component: "CompPayBandsScreen", Roles: []string{"admin", "hr_manager"}},
+			{Key: "compDecision", Order: 6, Icon: "calculator", TitleFa: "تصمیم چهارعاملی جبران خدمات", Component: "CompDecisionScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "compReadiness", Order: 7, Icon: "list-checks", TitleFa: "آمادگی داده و اولویت تکمیل جداول", Component: "CompReadinessScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+		},
+	},
+	{
+		ID:          "salary_admin",
+		Order:       10,
 		Department:  "staff_affairs",
 		SubUnit:     "compensation",
 		SharedWith:  []string{},
@@ -215,7 +241,7 @@ var All = []Module{
 	},
 	{
 		ID:          "welfare",
-		Order:       10,
+		Order:       11,
 		Department:  "staff_affairs",
 		SubUnit:     "compensation",
 		SharedWith:  []string{},
@@ -239,7 +265,7 @@ var All = []Module{
 	},
 	{
 		ID:          "cards",
-		Order:       11,
+		Order:       12,
 		Department:  "staff_affairs",
 		SubUnit:     "compensation",
 		SharedWith:  []string{},
@@ -264,7 +290,7 @@ var All = []Module{
 	},
 	{
 		ID:          "education_bonus",
-		Order:       12,
+		Order:       13,
 		Department:  "staff_affairs",
 		SubUnit:     "compensation",
 		SharedWith:  []string{},
@@ -286,7 +312,7 @@ var All = []Module{
 	},
 	{
 		ID:          "bonus",
-		Order:       13,
+		Order:       14,
 		Department:  "staff_affairs",
 		SubUnit:     "compensation",
 		SharedWith:  []string{},
@@ -308,7 +334,7 @@ var All = []Module{
 	},
 	{
 		ID:          "loans_retirement",
-		Order:       14,
+		Order:       15,
 		Department:  "staff_affairs",
 		SubUnit:     "loans_retirement",
 		SharedWith:  []string{},
@@ -330,7 +356,7 @@ var All = []Module{
 	},
 	{
 		ID:          "orgstructure",
-		Order:       15,
+		Order:       16,
 		Department:  "hr_planning",
 		SubUnit:     "org_design",
 		SharedWith:  []string{},
@@ -351,7 +377,7 @@ var All = []Module{
 	},
 	{
 		ID:          "career",
-		Order:       16,
+		Order:       17,
 		Department:  "hr_planning",
 		SubUnit:     "assignments",
 		SharedWith:  []string{},
@@ -374,7 +400,7 @@ var All = []Module{
 	},
 	{
 		ID:          "recruitment",
-		Order:       17,
+		Order:       18,
 		Department:  "hr_planning",
 		SubUnit:     "talent_acquisition",
 		SharedWith:  []string{},
@@ -397,7 +423,7 @@ var All = []Module{
 	},
 	{
 		ID:          "performance",
-		Order:       18,
+		Order:       19,
 		Department:  "hr_planning",
 		SubUnit:     "performance_management",
 		SharedWith:  []string{},
@@ -419,7 +445,7 @@ var All = []Module{
 	},
 	{
 		ID:          "discipline",
-		Order:       19,
+		Order:       20,
 		Department:  "labor_relations",
 		SubUnit:     "discipline",
 		SharedWith:  []string{},
@@ -440,7 +466,7 @@ var All = []Module{
 	},
 	{
 		ID:          "grievances",
-		Order:       20,
+		Order:       21,
 		Department:  "labor_relations",
 		SubUnit:     "complaints_veterans",
 		SharedWith:  []string{},
@@ -451,7 +477,7 @@ var All = []Module{
 		FeatureFlag: "module.grievances",
 		DBSchema:    "hr_grievances",
 		Owner:       "hr-labor",
-		Entities:    []string{"Complaint", "ComplaintFollowUp", "VeteranRecord", "VeteranCommitteeDecision"},
+		Entities:    []string{"Complaint", "ComplaintFollowUp", "VeteranRecord", "VeteranCommitteeDecision", "VeteranCommitteeMember"},
 		Roles:       map[string][]string{"admin": {"read", "write", "delete", "approve"}, "hr_manager": {"read", "write", "approve"}, "hr_spec": {"read", "write"}, "line_manager": {"read"}, "employee": {"read", "write"}},
 		Scopes:      map[string]string{"line_manager": "own_unit", "employee": "own"},
 		Screens: []Screen{
@@ -461,7 +487,7 @@ var All = []Module{
 	},
 	{
 		ID:          "socialwork",
-		Order:       21,
+		Order:       22,
 		Department:  "labor_relations",
 		SubUnit:     "social_work",
 		SharedWith:  []string{},
@@ -482,7 +508,7 @@ var All = []Module{
 	},
 	{
 		ID:          "medical",
-		Order:       22,
+		Order:       23,
 		Department:  "labor_relations",
 		SubUnit:     "medical",
 		SharedWith:  []string{},
@@ -506,7 +532,7 @@ var All = []Module{
 	},
 	{
 		ID:          "training",
-		Order:       23,
+		Order:       24,
 		Department:  "training_coordination",
 		SubUnit:     "training_cycle",
 		SharedWith:  []string{},
@@ -530,7 +556,7 @@ var All = []Module{
 	},
 	{
 		ID:          "statistics",
-		Order:       24,
+		Order:       25,
 		Department:  "statistics",
 		SubUnit:     "data_control",
 		SharedWith:  []string{},
@@ -556,7 +582,7 @@ var All = []Module{
 	},
 	{
 		ID:          "staffing_moves",
-		Order:       25,
+		Order:       26,
 		Department:  "statistics",
 		SubUnit:     "staffing_moves",
 		SharedWith:  []string{},
@@ -577,7 +603,7 @@ var All = []Module{
 	},
 	{
 		ID:          "reports",
-		Order:       26,
+		Order:       27,
 		Department:  "statistics",
 		SubUnit:     "management_reports",
 		SharedWith:  []string{},
@@ -599,7 +625,7 @@ var All = []Module{
 	},
 	{
 		ID:          "outsourcing",
-		Order:       27,
+		Order:       28,
 		Department:  "outsourcing",
 		SubUnit:     "third_party_payroll",
 		SharedWith:  []string{},
@@ -622,7 +648,7 @@ var All = []Module{
 	},
 	{
 		ID:          "hrstudies",
-		Order:       28,
+		Order:       29,
 		Department:  "hr_studies",
 		SubUnit:     "research",
 		SharedWith:  []string{},
@@ -645,7 +671,7 @@ var All = []Module{
 	},
 	{
 		ID:          "settings",
-		Order:       29,
+		Order:       30,
 		Department:  "platform",
 		SubUnit:     "org_params",
 		SharedWith:  []string{},
@@ -676,7 +702,7 @@ var All = []Module{
 	},
 	{
 		ID:          "sports",
-		Order:       30,
+		Order:       31,
 		Department:  "sports",
 		SubUnit:     "sports_programs",
 		SharedWith:  []string{},

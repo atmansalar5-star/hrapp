@@ -95,7 +95,11 @@ type veteranCommitteeRequest struct {
 	DecisionFa              string  `json:"decisionFa"`
 	EffectiveDate           string  `json:"effectiveDate"`
 	SignOff                 string  `json:"signOff"`
-	ApplyToFile             bool    `json:"applyToFile"`
+	// امضاکنندگان پایین فرم: شناسهٔ اعضای کمیته که در جلسه امضا کرده‌اند و تاریخ امضا.
+	// متن «امضاکنندگان» در سرور ساخته می‌شود تا عنوان امضا یک‌جا از فهرست اعضا بیاید.
+	SignedMemberIDs []string `json:"signedMemberIds"`
+	SignDate        string   `json:"signDate"`
+	ApplyToFile     bool     `json:"applyToFile"`
 }
 
 // veteranCommitteeDefaults فهرست‌های مرجع و پیش‌فرض قانونی همین کارمند.
@@ -110,6 +114,14 @@ func veteranCommitteeDefaults(ctx context.Context, deps modulekit.Deps, svc *rec
 		"employeeName":   employeeName(ctx, deps, employeeID),
 		"params":         veteranParamsView(params),
 	}
+	// اعضای کمیته: فهرست کامل برای پنل، فعال‌ها برای امضا، نقش‌های مصوب و متن پیش‌پر.
+	members, _ := committeeMemberViews(ctx, svc, false)
+	activeMembers, _ := committeeMemberViews(ctx, svc, true)
+	out["members"] = members
+	out["activeMembers"] = activeMembers
+	out["roles"] = rules.VeteranCommitteeRoles()
+	out["membersText"] = strings.Join(committeeActiveMemberNames(ctx, svc), "، ")
+	out["signatures"] = committeeActiveMemberSignatures(ctx, svc)
 	profile, rec, found := veteranFileOf(ctx, svc, employeeID)
 	if !found {
 		out["hasFile"] = false
@@ -158,6 +170,15 @@ func veteranCommitteeCreate(ctx context.Context, deps modulekit.Deps, svc *recor
 	group := rules.VeteranGroupOf(in.VeteranType)
 	if group == rules.VeteranGroupNone {
 		return nil, "گروه ایثارگری را در مصوبه مشخص کنید.", nil
+	}
+	// متن «اعضای کمیته» و «امضاکنندگان» از فهرست اعضای تعریف‌شده ساخته می‌شود؛ ورودی دستی
+	// فرم بر آن مقدم است تا کارشناس بتواند ترکیب همان جلسه را ثبت کند.
+	if strings.TrimSpace(in.Members) == "" {
+		in.Members = strings.Join(committeeActiveMemberNames(ctx, svc), "، ")
+	}
+	if len(in.SignedMemberIDs) > 0 {
+		in.SignOff = rules.VeteranCommitteeSignOffFa(
+			committeeSignedSignatures(ctx, svc, in.SignedMemberIDs), in.SignDate)
 	}
 	fields := committeeFields(in, group)
 	title := "مصوبهٔ کمیتهٔ ایثارگری"
