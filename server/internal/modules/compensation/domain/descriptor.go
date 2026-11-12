@@ -657,7 +657,7 @@ func validateCompensationDecision(in contracts.RecordInput) error {
 func Seed() []contracts.RecordInput {
 	model := contracts.RecordInput{
 		Kind: KindCompensationModel, Title: "مدل جبران خدمات ۴پی — استقرار ۱۴۰۵",
-		NoteFa: "مدل پایهٔ استقرار: باندهای پرداخت از همین پارامترها ساخته می‌شود",
+		NoteFa: "مدل پایهٔ استقرار (توسعه‌ای و اختیاری): باندهای پرداخت از همین پارامترها ساخته می‌شود و اعمال در پرداخت خاموش است",
 		Fields: map[string]string{
 			"modelName":                "مدل چهارعاملی ۱۴۰۵",
 			"policyScope":              "organization",
@@ -675,7 +675,9 @@ func Seed() []contracts.RecordInput {
 			"perfFactorBelow":          "0.92",
 			"marketAdjustPercent":      "10",
 			"maxAnnualIncreasePercent": "25",
-			"payrollApply":             "yes",
+			// مدل نمونه هم «خاموش» است: مدل ۴پی توسعه‌ای و اختیاری است و تا شرکت
+			// پارامتر را روشن نکند، خروجی آن به حکم و فیش راه نمی‌یابد.
+			"payrollApply": "no",
 		},
 		SeedStatus: "active",
 	}

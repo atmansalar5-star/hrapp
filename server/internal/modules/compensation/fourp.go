@@ -127,6 +127,10 @@ func registerFourPEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *record
 		out["result"] = result
 		out["employeeId"] = calc.EmployeeID
 		out["inputs"] = calc
+		// نتیجهٔ محاسبه، خودش هیچ اثری در پرداخت ندارد: ثبت تصمیم و سپس (در صورت روشن
+		// بودن پارامتر شرکت) صدور حکم، دو گام بعدی و اختیاری است.
+		out["applyNoteFa"] = "این محاسبه فقط پیشنهاد است: تا تصمیم ثبت و تصویب نشود و پارامتر " +
+			"«اعمال در پرداخت» شرکت روشن نباشد، هیچ تغییری در حکم یا فیش رخ نمی‌دهد."
 		httpx.WriteJSON(w, http.StatusOK, out)
 	}))
 
@@ -182,8 +186,21 @@ func optionsPayload(deps modulekit.Deps) map[string]any {
 		"policyScopes":      domain.PolicyScopes(),
 		"yesNo":             domain.YesNo(),
 		"today":             calendar.Format(nowOf(deps)),
-		"noteFa":            "باندها و ضریب‌ها از پارامترهای مصوب شرکت ساخته می‌شوند؛ تغییر پارامتر، همهٔ محاسبه‌های بعدی را عوض می‌کند و تصمیم‌های ثبت‌شده دست‌نخورده می‌مانند.",
+		// مرز مدل‌ها: مدل ۴پی مستقل و اختیاری است؛ این کلیدها همان چیزی است که رابط و سند
+		// نشان می‌دهند تا کسی گمان نکند پرداخت جاری یا مدل صندوق نفت عوض شده است.
+		"modelOptional":      !params.PayrollApply,
+		"modelStatusFa":      modelStatusFa(params.PayrollApply),
+		"independenceNoteFa": rules.CompensationIndependenceFa(params.PayrollApply),
+		"noteFa":             "باندها و ضریب‌ها از پارامترهای مصوب شرکت ساخته می‌شوند؛ تغییر پارامتر، همهٔ محاسبه‌های بعدی را عوض می‌کند و تصمیم‌های ثبت‌شده دست‌نخورده می‌مانند.",
 	}
+}
+
+// modelStatusFa وضعیت یک‌خطی مدل برای نشان بالای فرم‌ها و برگهٔ تصمیم.
+func modelStatusFa(apply bool) string {
+	if apply {
+		return "مدل توسعه‌ای ۴پی — در این استقرار «اعمال در پرداخت» روشن است؛ فقط تصمیم‌های تازه می‌توانند مبنای حکم شوند"
+	}
+	return "مدل توسعه‌ای و اختیاری ۴پی — «اعمال در پرداخت» خاموش است؛ هیچ عددی از این مدل به حکم و فیش راه نمی‌یابد و مدل‌های پیشین دست‌نخورده می‌مانند"
 }
 
 // nowOf زمان جاری سامانه با ساعت قابل تزریق (برای آزمون‌های قطعی).

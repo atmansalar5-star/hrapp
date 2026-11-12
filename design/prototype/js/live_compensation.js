@@ -225,7 +225,15 @@ function pageCompDecisionLive() {
         <td>${esc(l.titleFa)}</td><td>${esc(l.valueFa)}</td>
         <td class="muted" style="font-size:.74rem">${esc(l.refFa || '')}</td></tr>`);
 
-    return `<div class="card card-pad" style="margin-bottom:12px">
+    // نشان «استقلال مدل»: مدل ۴پی توسعه‌ای و اختیاری است و تا پارامتر شرکت روشن نشود،
+    // نتیجهٔ آن به حکم و فیش راه نمی‌یابد. متن از سرور می‌آید (موتور قواعد)، نه از رابط.
+    const modelBanner = `<div class="card card-pad" style="margin-bottom:12px;font-size:.82rem;line-height:2;
+        border-color:${opts.modelOptional ? '#fde68a' : '#bfdbfe'}">
+        <b>${opts.modelOptional ? '🧪' : '✅'} ${esc(opts.modelStatusFa || '')}</b>
+        <div class="muted" style="font-size:.78rem">${esc(opts.independenceNoteFa || '')}</div>
+      </div>`;
+
+    return modelBanner + `<div class="card card-pad" style="margin-bottom:12px">
         <div class="card-title">🧮 محاسبهٔ چهارعاملی — شغل، شخص، عملکرد، پرداخت</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
           <div class="field"><label>کارمند ✻</label>${employeeSelect}</div>
@@ -348,7 +356,11 @@ function pageCompReadinessLive() {
         ${statCard({ico: '📈', tint: '#FEF3C7', accent: '#D97706', val: fa(total ? Math.round(done / total * 100) : 0) + '٪', label: 'پیشرفت تکمیل داده'})}
       </div>`;
 
-    return top + tbl(['اولویت', 'گام', 'جدول/فهرست داده', 'دادهٔ حیاتی', 'چرا این اولویت', 'وضعیت', 'شمارش'],
+    return `<div class="card card-pad" style="margin-bottom:12px;font-size:.82rem;line-height:2;
+        border-color:${d.modelStatusFa && d.independenceNoteFa ? '#fde68a' : '#E2E8F0'}">
+        <b>${esc(d.modelStatusFa || '')}</b>
+        <div class="muted" style="font-size:.78rem">${esc(d.independenceNoteFa || '')}</div>
+      </div>` + top + tbl(['اولویت', 'گام', 'جدول/فهرست داده', 'دادهٔ حیاتی', 'چرا این اولویت', 'وضعیت', 'شمارش'],
         rows, {foot: false}) +
       `<div class="card card-pad" style="margin-top:12px;font-size:.82rem;line-height:2">
         <div class="card-title">🧭 ترتیب پیشنهادی شروع</div>

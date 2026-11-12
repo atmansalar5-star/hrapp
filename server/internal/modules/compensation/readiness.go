@@ -58,6 +58,9 @@ func (m *Module) registerReadinessEndpoints(mux *http.ServeMux, deps modulekit.D
 			"totalCount":  len(steps),
 			"progressFa":  rules.IntFa(done) + " از " + rules.IntFa(len(steps)) + " گام",
 			"instruction": rules.CompensationInstructionFa(),
+			// مرز مدل‌ها در همان صفحه‌ای که استقرار از آن شروع می‌شود اعلام می‌شود.
+			"modelStatusFa":      modelStatusFa(compensationParams(deps).PayrollApply),
+			"independenceNoteFa": rules.CompensationIndependenceFa(compensationParams(deps).PayrollApply),
 			"criticalNoteFa": "دادهٔ حیاتی هر گام، همان فیلدهای الزامی اعلام‌شده در دامنهٔ سرور است؛ " +
 				"رکوردی که این فیلدها را نداشته باشد ذخیره نمی‌شود، پس درصد تکمیل با همان قید سنجیده می‌شود.",
 			"orderNoteFa": "ترتیب گام‌ها عمدی است: هر گام ورودی گام بعد را می‌سازد؛ " +
@@ -108,7 +111,7 @@ func readinessSteps(ctx context.Context, deps modulekit.Deps, svc *recordkit.Ser
 			CriticalFa: []string{"نام مدل", "دامنهٔ اجرا", "تاریخ اجرا", "میانهٔ باند پلهٔ ۱",
 				"شیب و گسترهٔ باند", "امتیاز ارزشیابی هر پله", "کف و سقف ضریب شایستگی",
 				"ضریب عملکرد هر سطح", "سقف افزایش سالانه"},
-			WhyFa:   "همهٔ باندها و ضریب‌های نظام از همین مدل و پارامترها ساخته می‌شود؛ تا این گام مصوب نشود بقیهٔ محاسبه‌ها مبنای مصوب ندارند.",
+			WhyFa:   "همهٔ باندها و ضریب‌های نظام از همین مدل و پارامترها ساخته می‌شود؛ تا این گام مصوب نشود بقیهٔ محاسبه‌ها مبنای مصوب ندارند. این مدل مستقل و اختیاری است و تا پارامتر «اعمال در پرداخت» روشن نشود در حکم و فیش اثری ندارد.",
 			Status:  readinessStatus(activeModels > 0, activeModels > 0, activeModels > 0),
 			CountFa: countFa(rules.IntFa(activeModels)+" مدل جاری", rules.IntFa(len(models))+" مدل ثبت‌شده"),
 			Done:    activeModels > 0,

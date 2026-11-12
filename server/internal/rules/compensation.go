@@ -57,7 +57,12 @@ type CompensationParams struct {
 	MaxAnnualIncreasePercent float64 `json:"maxAnnualIncreasePercent"`
 	// ReviewMonths دورهٔ بازنگری بسته (ماه).
 	ReviewMonths int `json:"reviewMonths"`
-	// PayrollApply آیا پرداخت هدف در صدور حکم/فیش مصرف شود.
+	// PayrollApply آیا خروجی این مدل در صدور حکم و محاسبهٔ فیش مصرف شود.
+	//
+	// پیش‌فرض «خاموش» است و عمدی است: مدل ۴پی یک مدل «توسعه‌ای و اختیاری» است که در
+	// کنار مدل‌های پیشین (حقوق و دستمزد جاری و مدل صندوق نفت) و مستقل از آن‌ها زندگی
+	// می‌کند. تا وقتی شرکت این پارامتر را روشن نکند، هیچ عددی از این مدل به حکم یا فیش
+	// راه نمی‌یابد؛ و حتی با روشن شدنش، احکام صادرشدهٔ پیشین دست‌نخورده می‌مانند.
 	PayrollApply bool `json:"payrollApply"`
 }
 
@@ -86,12 +91,30 @@ func DefaultCompensationParams() CompensationParams {
 		CompaMaxPercent:          120,
 		MaxAnnualIncreasePercent: 25,
 		ReviewMonths:             12,
-		PayrollApply:             true,
+		// «خاموش» یعنی مدل ۴پی اثری در پرداخت ندارد: مدل توسعه‌ای اختیاری است.
+		PayrollApply: false,
 	}
 }
 
 // CompensationParamsFromValues پارامترهای شرکت (عدد) را روی پیش‌فرض می‌نشاند؛ کلید
 // نبوده یا خارج از بازهٔ معقول، پیش‌فرض را دست‌نخورده می‌گذارد.
+// CompensationIndependenceFa متن رسمی «استقلال مدل ۴پی» — همان چیزی که در فرم، سند و
+// مستندات تکرار می‌شود تا مرز سه مدل پرداخت در سازمان روشن بماند.
+//
+// چرا در کد و نه فقط در مستند: این جمله یک «قاعدهٔ طراحی» است؛ متن روشن‌بودن پارامتر هم
+// می‌گوید از کجا اثر می‌گذارد و احکام پیشین چه وضعی دارند.
+func CompensationIndependenceFa(apply bool) string {
+	common := "مدل جبران خدمات ۴پی مستقل از مدل حقوق و دستمزد جاری و مدل صندوق نفت است؛ " +
+		"باندها، ضرایب و تصمیم‌های آن جداگانه محاسبه و نگهداری می‌شوند."
+	if apply {
+		return common + " در این استقرار پارامتر «اعمال در پرداخت» روشن است، پس از این پس " +
+			"تصمیم مصوب می‌تواند مبنای صدور حکم تازه شود؛ احکام و پرداخت‌های پیشین بر پایهٔ " +
+			"مدل پیشین خودشان معتبر می‌مانند و بازنویسی نمی‌شوند."
+	}
+	return common + " اکنون «اعمال در پرداخت» خاموش است: این مدل توسعه‌ای و اختیاری است و " +
+		"هیچ عددی از آن به حکم یا فیش راه نمی‌یابد تا شرکت خودش آن را روشن کند."
+}
+
 func CompensationParamsFromValues(values map[string]float64) CompensationParams {
 	p := DefaultCompensationParams()
 	set := func(key string, apply func(float64)) {

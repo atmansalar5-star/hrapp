@@ -133,7 +133,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -262,7 +262,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -391,7 +391,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -520,7 +520,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -649,7 +649,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -778,7 +778,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -907,7 +907,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -1036,7 +1036,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -1165,7 +1165,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -1294,7 +1294,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -1423,7 +1423,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -1552,7 +1552,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -1681,7 +1681,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -1810,7 +1810,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 	{
@@ -1939,7 +1939,7 @@ var All = []Organization{
 			{Key: "compensation.compa.maxPercent", TitleFa: "سقف نسبت پرداخت به میانهٔ باند", Value: "120", UnitFa: "٪", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.increase.maxAnnualPercent", TitleFa: "سقف افزایش سالانهٔ هر کارمند در بازنگری", Value: "25", UnitFa: "٪ پرداخت فعلی", GroupFa: "نظام جبران خدمات ۴پی"},
 			{Key: "compensation.review.months", TitleFa: "دورهٔ بازنگری بستهٔ جبران خدمات", Value: "12", UnitFa: "ماه", GroupFa: "نظام جبران خدمات ۴پی"},
-			{Key: "compensation.payroll.apply", TitleFa: "اعمال بستهٔ جبران خدمات در حکم و پرداخت", Value: "1", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
+			{Key: "compensation.payroll.apply", TitleFa: "اعمال اختیاری مدل ۴پی در حکم و پرداخت (مدل توسعه‌ای — پیش‌فرض خاموش)", Value: "0", UnitFa: "۰ خیر، ۱ بله", GroupFa: "نظام جبران خدمات ۴پی"},
 		},
 	},
 }
