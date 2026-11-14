@@ -122,7 +122,8 @@ function efPrint() {
 <title>${esc(EF_STATE.titleFa)}</title>
 <style>
   @page{size:A4 portrait;margin:12mm}
-  body{font-family:Vazirmatn,Tahoma,sans-serif;color:#1F2937;margin:0}
+  ${printFontFacesSafe()}
+  body{font-family:Vazirmatn,Vazirmatn-fallback,Tahoma,sans-serif;color:#1F2937;margin:0}
   h1{font-size:1rem;margin:0 0 4px}
   .sub{font-size:.76rem;color:#6B7280;margin-bottom:10px}
   table{width:100%;border-collapse:collapse;font-size:.76rem}

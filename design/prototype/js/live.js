@@ -2215,6 +2215,29 @@ function reportBrandHeader(d) {
 }
 
 /**
+ * قاعده‌های فونت فارسی برای پنجره‌های چاپ (گزارش، الگوی ورود، فیش).
+ *
+ * چرا آدرس مطلق: این سندها از یک blob/درباره:خالی باز می‌شوند، پس مسیر نسبی به مبدأ
+ * برنامه نمی‌چسبد و فونت بار نمی‌شود (متن به تاهوما و «سریف» سیستم می‌افتد و شکل
+ * حروف فارسی درست نیست). هر جا پنجرهٔ چاپ می‌سازید، این رشته را در <style> بگذارید
+ * و در font-family هم «Vazirmatn,Vazirmatn-fallback» را اول بیاورید.
+ */
+function printFontFaces() {
+  const u = (f) => new URL('assets/fonts/' + f, location.href).href;
+  return `@font-face{font-family:Vazirmatn;font-style:normal;font-weight:100 900;font-display:swap;
+    src:url("${u('Vazirmatn-var.woff2')}") format("woff2-variations")}
+  @font-face{font-family:Vazirmatn-fallback;font-style:normal;font-weight:400;font-display:swap;
+    src:url("${u('Vazirmatn-Regular.woff2')}") format("woff2")}
+  @font-face{font-family:Vazirmatn-fallback;font-style:normal;font-weight:700;font-display:swap;
+    src:url("${u('Vazirmatn-Bold.woff2')}") format("woff2")}`;
+}
+
+/** همان قاعده‌ها برای فایل‌هایی که پیش از این تابع بار نمی‌شوند (بدون خطا). */
+function printFontFacesSafe() {
+  return typeof printFontFaces === 'function' ? printFontFaces() : '';
+}
+
+/**
  * چاپ گزارش با همان سرصفحهٔ برند.
  *
  * خروجی در زبانهٔ تازه ساخته می‌شود و بدون وابستگی به رابط برنامه چاپ (یا ذخیره به
@@ -2243,10 +2266,9 @@ function printReportBuilder() {
   const html = `<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
 <title>${esc(d.titleFa || 'گزارش')} — ${esc(b.titleFa || '')}</title>
 <style>
-  @font-face{font-family:Vazirmatn;font-style:normal;font-weight:100 900;font-display:swap;
-    src:url("${esc(abs('assets/fonts/Vazirmatn-var.woff2'))}") format("woff2-variations")}
+  ${printFontFaces()}
   @page{size:A4 landscape;margin:12mm}
-  body{font-family:Vazirmatn,Tahoma,'Iranian Sans',sans-serif;color:#1F2937;margin:0}
+  body{font-family:Vazirmatn,Vazirmatn-fallback,Tahoma,'Iranian Sans',sans-serif;color:#1F2937;margin:0}
   header{display:flex;align-items:center;gap:12px;border-bottom:3px solid ${accent};padding-bottom:10px;margin-bottom:14px}
   header .logo{width:58px;height:58px;object-fit:contain;background:#fff;border-radius:10px}
   header h1{font-size:1.05rem;margin:0 0 4px}

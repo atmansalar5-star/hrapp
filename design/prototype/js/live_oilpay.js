@@ -434,7 +434,8 @@ function oilPrint() {
   if (!win) { toast('پنجرهٔ چاپ باز نشد', 'error'); return; }
   win.document.write(`<!doctype html><html dir="rtl" lang="fa"><head><meta charset="utf-8">
     <title>فیش حقوقی صندوق نفت</title>
-    <style>body{font-family:Vazirmatn,Tahoma,sans-serif;padding:24px;color:#111}
+    <style>${printFontFacesSafe()}
+    body{font-family:Vazirmatn,Vazirmatn-fallback,Tahoma,sans-serif;padding:24px;color:#111}
     h1{font-size:18px;margin:0 0 4px} .sub{color:#555;font-size:12px;margin-bottom:14px}
     table{width:100%;border-collapse:collapse;margin-top:10px}
     th,td{border:1px solid #ccc;padding:6px;font-size:12px;text-align:right}
