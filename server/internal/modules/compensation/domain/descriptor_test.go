@@ -19,7 +19,8 @@ func kindOf(t *testing.T, key string) (string, bool) {
 	return "", false
 }
 
-// TestCompensationKindsAreDefined شش نوع رکورد نظام ۴پی با پیشوند شناسهٔ یکتا اعلام شده‌اند.
+// TestCompensationKindsAreDefined هشت نوع رکورد (شش نوع ۴پی و دو نوع جی‌بیست) با پیشوند
+// شناسهٔ یکتا اعلام شده‌اند.
 func TestCompensationKindsAreDefined(t *testing.T) {
 	want := map[string]string{
 		KindCompensationModel:    "CMOD",
@@ -28,6 +29,8 @@ func TestCompensationKindsAreDefined(t *testing.T) {
 		KindPerformanceFactor:    "CPRF",
 		KindPayBand:              "CBND",
 		KindCompensationDecision: "CDEC",
+		KindG20Index:             "CG20",
+		KindG20Assessment:        "CG2A",
 	}
 	seen := map[string]string{}
 	for key, prefix := range want {

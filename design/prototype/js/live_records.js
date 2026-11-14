@@ -288,6 +288,17 @@ function pageRecordkitLive(page) {
       if (attendanceOpts.ok) rkApplyAttendanceOptions(attendanceOpts.data || {});
     }
 
+    // فهرست‌های مرجع جبران خدمات: خانوادهٔ چهارگانه و منبع دادهٔ شاخص‌های جی‌بیست، تا ستون
+    // «خانوادهٔ چهارگانه» به‌جای کلید لاتین، عنوان فارسی نشان دهد.
+    if (mod.prefix === '/api/v1/compensation') {
+      const compOpts = await apiFetch(mod.prefix + '/options');
+      if (compOpts.ok) {
+        const o = compOpts.data || {};
+        rkSetSelectOpts('family', (o.g20Families || []).map(f => ({key: f.key, titleFa: f.titleFa})));
+        rkSetSelectOpts('sourceFa', (o.g20Sources || []).map(s => ({key: s.key, titleFa: s.titleFa})));
+      }
+    }
+
     // پنل شارژ کارت‌های رفاهی: گزینه‌ها (کارت‌ها، بخش‌ها با نرخ جاری و
     // مناسبت‌های فعال) از خود سرور می‌آید، پس نرخ تازه بدون تغییر کد دیده می‌شود.
     let cardOptions = null;

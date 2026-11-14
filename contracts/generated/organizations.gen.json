@@ -815,6 +815,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -1605,6 +1682,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -2415,6 +2569,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -3217,6 +3448,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -4027,6 +4335,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -4837,6 +5222,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -5647,6 +6109,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -6457,6 +6996,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -7267,6 +7883,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -8077,6 +8770,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -8887,6 +9657,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -9697,6 +10544,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -10508,6 +11432,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -11317,6 +12318,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     },
@@ -12127,6 +13205,83 @@
           "value": "0",
           "unitFa": "۰ خیر، ۱ بله",
           "groupFa": "نظام جبران خدمات ۴پی"
+        },
+        {
+          "key": "compensation.g20.family.person",
+          "titleFa": "وزن خانوادهٔ پرسن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.position",
+          "titleFa": "وزن خانوادهٔ پوزیشن در امتیاز کل جی‌بیست",
+          "value": "25",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.performance",
+          "titleFa": "وزن خانوادهٔ پرفورمنس در امتیاز کل جی‌بیست",
+          "value": "30",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.family.partnership",
+          "titleFa": "وزن خانوادهٔ پارتنرشیپ در امتیاز کل جی‌بیست",
+          "value": "20",
+          "unitFa": "٪",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.index.max",
+          "titleFa": "سقف امتیاز هر شاخص جی‌بیست",
+          "value": "100",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.a",
+          "titleFa": "آستانهٔ طبقهٔ A (ممتاز) در جی‌بیست",
+          "value": "85",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.b",
+          "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست",
+          "value": "70",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.c",
+          "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست",
+          "value": "55",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.cut.d",
+          "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست",
+          "value": "40",
+          "unitFa": "امتیاز",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.partnership.maxFactor",
+          "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی",
+          "value": "1.00",
+          "unitFa": "ضریب",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
+        },
+        {
+          "key": "compensation.g20.payroll.apply",
+          "titleFa": "اعمال نتیجهٔ مدل جی‌بیست در پرداخت (۰ خیر، ۱ بله)",
+          "value": "0",
+          "unitFa": "۰ خیر، ۱ بله",
+          "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست"
         }
       ]
     }

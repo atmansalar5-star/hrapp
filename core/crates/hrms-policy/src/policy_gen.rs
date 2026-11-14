@@ -546,6 +546,20 @@ pub static POLICIES: &[ModulePolicy] = &[
             icon: "list-checks",
             roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
         },
+        ScreenPolicy {
+            key: "g20Indices",
+            title_fa: "شاخص‌های مدل جی‌بیست (G20)",
+            component: "G20IndexScreen",
+            icon: "list-checks",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ScreenPolicy {
+            key: "g20Board",
+            title_fa: "طبقه‌بندی جی‌بیست کارکنان و شرکت",
+            component: "G20BoardScreen",
+            icon: "gauge",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
         ],
     },
     ModulePolicy {

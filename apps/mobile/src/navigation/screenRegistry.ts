@@ -200,6 +200,8 @@ import CompPerformanceScreen from '../features/compensation/CompPerformanceScree
 import CompPayBandsScreen from '../features/compensation/CompPayBandsScreen';
 import CompDecisionScreen from '../features/compensation/CompDecisionScreen';
 import CompReadinessScreen from '../features/compensation/CompReadinessScreen';
+import G20IndexScreen from '../features/compensation/G20IndexScreen';
+import G20BoardScreen from '../features/compensation/G20BoardScreen';
 
 /** نگاشت نام کامپوننت مانیفست به کامپوننت واقعی. */
 export const SCREEN_REGISTRY: Record<string, ComponentType> = {
@@ -327,6 +329,8 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   CompPayBandsScreen,
   CompDecisionScreen,
   CompReadinessScreen,
+  G20IndexScreen,
+  G20BoardScreen,
   MissionsScreen,
   KaranaScreen,
   SchoolServiceScreen,

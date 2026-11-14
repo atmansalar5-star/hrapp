@@ -156,6 +156,8 @@ window.HRMS_MENU = [
         { page: "compPayBands", label: "باند و پله‌های پرداخت (P4 — پرداخت)", icon: "bar-chart", roles: ['admin', 'hr_manager'] },
         { page: "compDecision", label: "تصمیم چهارعاملی جبران خدمات", icon: "calculator", roles: ['admin', 'hr_manager', 'hr_spec'] },
         { page: "compReadiness", label: "آمادگی داده و اولویت تکمیل جداول", icon: "list-checks", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "g20Indices", label: "شاخص‌های مدل جی‌بیست (G20)", icon: "list-checks", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "g20Board", label: "طبقه‌بندی جی‌بیست کارکنان و شرکت", icon: "gauge", roles: ['admin', 'hr_manager', 'hr_spec'] },
         ],
       },
       {

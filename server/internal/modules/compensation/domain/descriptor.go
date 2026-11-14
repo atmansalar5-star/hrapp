@@ -53,11 +53,14 @@ func Descriptor() recordkit.Descriptor {
 			performanceFactorKind(),
 			payBandKind(),
 			compensationDecisionKind(),
+			G20IndexKind(),
+			G20AssessmentKind(),
 		},
 		Summaries: []string{
 			"نظام جبران خدمات چهارعاملی: شغل (P1)، شخص (P2)، عملکرد (P3) و پرداخت (P4).",
 			"باند و پلهٔ پرداخت هر گروه شغلی از پارامترهای مصوب شرکت ساخته می‌شود.",
 			"تصمیم چهارعاملی، پرداخت هدف و افزایش پیشنهادی هر کارمند را با شرح خط‌به‌خط ثبت می‌کند.",
+			"مدل جی‌بیست (G20): بیست شاخص در چهار خانوادهٔ پرسن، پوزیشن، پرفورمنس و پارتنرشیپ برای سنجش و طبقه‌بندی کارمند و شرکت.",
 		},
 	}
 }
@@ -841,5 +844,8 @@ func Seed() []contracts.RecordInput {
 	out = append(out, competencies...)
 	out = append(out, performances...)
 	out = append(out, decisions...)
+	// مدل جی‌بیست: بیست شاخص پیش‌فرض و چهار امتیاز نمونه (مستقل از مدل ۴پی).
+	out = append(out, G20IndexSeeds()...)
+	out = append(out, G20AssessmentSeeds()...)
 	return out
 }

@@ -32,7 +32,12 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	//   /4p-defaults      پارامترها، باندها، ضرایب و داده‌های پیش‌فرض یک کارمند
 	//   /4p-calc          محاسبهٔ خط‌به‌خط بستهٔ جبران خدمات و ثبت تصمیم
 	//   /data-readiness   راهنمای شروع به‌روزرسانی داده و وضعیت تکمیل جداول
+	//   /g20-options      بیست شاخص، چهار خانواده و جدول طبقه‌بندی مدل جی‌بیست
+	//   /g20-defaults     پارامترها و آخرین امتیاز یک کارمند در مدل جی‌بیست
+	//   /g20-calc         محاسبهٔ امتیاز کل و طبقه از چهار امتیاز خانواده
+	//   /g20-board        طبقه‌بندی همهٔ کارکنان و طبقهٔ کل شرکت
 	registerFourPEndpoints(mux, deps, svc)
 	m.registerReadinessEndpoints(mux, deps, svc)
-	deps.Logger(m.ID()).Info("ماژول جبران خدمات ۴پی ثبت شد", "routes", 7)
+	registerG20Endpoints(mux, deps, svc)
+	deps.Logger(m.ID()).Info("ماژول جبران خدمات ۴پی ثبت شد", "routes", 11)
 }

@@ -206,7 +206,7 @@ var All = []Module{
 		FeatureFlag: "module.compensation",
 		DBSchema:    "hr_compensation",
 		Owner:       "hr-compensation",
-		Entities:    []string{"CompensationModel", "JobPricing", "CompetencyLevel", "PerformanceFactor", "PayBand", "CompensationDecision"},
+		Entities:    []string{"CompensationModel", "JobPricing", "CompetencyLevel", "PerformanceFactor", "PayBand", "CompensationDecision", "G20Index", "G20Assessment"},
 		Roles:       map[string][]string{"admin": {"read", "write", "delete", "approve", "report"}, "hr_manager": {"read", "write", "approve", "report"}, "hr_spec": {"read", "write", "report"}, "line_manager": {"read"}, "employee": {"read"}},
 		Scopes:      map[string]string{"employee": "own", "line_manager": "own_unit"},
 		Screens: []Screen{
@@ -217,6 +217,8 @@ var All = []Module{
 			{Key: "compPayBands", Order: 5, Icon: "bar-chart", TitleFa: "باند و پله‌های پرداخت (P4 — پرداخت)", Component: "CompPayBandsScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "compDecision", Order: 6, Icon: "calculator", TitleFa: "تصمیم چهارعاملی جبران خدمات", Component: "CompDecisionScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "compReadiness", Order: 7, Icon: "list-checks", TitleFa: "آمادگی داده و اولویت تکمیل جداول", Component: "CompReadinessScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "g20Indices", Order: 8, Icon: "list-checks", TitleFa: "شاخص‌های مدل جی‌بیست (G20)", Component: "G20IndexScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "g20Board", Order: 9, Icon: "gauge", TitleFa: "طبقه‌بندی جی‌بیست کارکنان و شرکت", Component: "G20BoardScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 		},
 	},
 	{

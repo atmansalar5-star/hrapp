@@ -16,10 +16,11 @@ Object.assign(RK_PAGES, {
   compCompetency: {kind: 'competencyLevel'},
   compPerformance: {kind: 'performanceFactor'},
   compPayBands: {kind: 'payBand'},
+  g20Indices: {kind: 'g20Index'},
 });
 
 /* صفحه‌های رکوردی این ماژول؛ همان موتور عمومی، بدون قاعدهٔ تازه. */
-for (const compRecordPage of ['compModel', 'compCompetency', 'compPerformance', 'compPayBands']) {
+for (const compRecordPage of ['compModel', 'compCompetency', 'compPerformance', 'compPayBands', 'g20Indices']) {
   LIVE_PAGES[compRecordPage] = () => pageRecordkitLive(compRecordPage);
 }
 

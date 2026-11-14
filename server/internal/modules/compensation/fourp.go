@@ -185,7 +185,10 @@ func optionsPayload(deps modulekit.Deps) map[string]any {
 		"performanceLevels": domain.PerformanceLevels(),
 		"policyScopes":      domain.PolicyScopes(),
 		"yesNo":             domain.YesNo(),
-		"today":             calendar.Format(nowOf(deps)),
+		// فهرست مرجع مدل جی‌بیست: خانوادهٔ چهارگانه و منبع دادهٔ شاخص‌ها.
+		"g20Families": domain.G20Families(),
+		"g20Sources":  domain.G20Sources(),
+		"today":       calendar.Format(nowOf(deps)),
 		// مرز مدل‌ها: مدل ۴پی مستقل و اختیاری است؛ این کلیدها همان چیزی است که رابط و سند
 		// نشان می‌دهند تا کسی گمان نکند پرداخت جاری یا مدل صندوق نفت عوض شده است.
 		"modelOptional":      !params.PayrollApply,
