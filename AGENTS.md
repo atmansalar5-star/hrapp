@@ -35,6 +35,25 @@
     و اسکریپت‌های نصب/آزمون سرویس‌ها با پیشوند `install-/finalize-/test-hrms-` در همان پوشه.
   - پیش‌نیاز این طرح: `hrmsd.exe` باید وجود داشته باشد؛ پس بعد از هر تغییر کد یا یک‌بار
     `start-HRMS.bat` اجرا شود یا باینری با `go build` تازه شود.
+  - **دام باتری لپ‌تاپ (دیده‌شده در دورهٔ v2.10):** تسک `HRMS Server` با تنظیم‌های پیش‌فرض ویندوز
+    ساخته شده بود (`DisallowStartIfOnBatteries = True` و `StopIfGoingOnBatteries = True`)؛ یعنی
+    با رفتن لپ‌تاپ روی باتری، ویندوز سرور را «خاموشی نرم» می‌دهد و بعد هم اجازهٔ شروع دوباره
+    نمی‌دهد (نشانه: `/readyz` جواب نمی‌دهد، `Get-ScheduledTask` وضعیت `Queued` نشان می‌دهد و
+    `Get-Process hrmsd` خالی است؛ در حالی که سرویس PostgreSQL و پایگاه‌داده سالم‌اند).
+    رفع دائمی، نیازمند یک‌بار اجرای PowerShell با دسترسی **مدیر** است:
+
+        $t = Get-ScheduledTask -TaskName 'HRMS Server'
+        $t.Settings.DisallowStartIfOnBatteries = $false
+        $t.Settings.StopIfGoingOnBatteries = $false
+        Set-ScheduledTask -TaskName 'HRMS Server' -Settings $t.Settings
+
+    بدون دسترسی مدیر (`Access is denied`)، راه موقت این است که سرور را در نشست کاربر با همان
+    فرمان تسک بالا آورد (که با بستن نشست از بین می‌رود):
+
+        cd /d "D:\hrapp\server" && "D:\hrapp\server\bin\hrmsd.exe" -addr 127.0.0.1:8099 -org bandar_imam -web "..\design\prototype" -root . -env .env -data data
+
+    پیش از هر عیب‌یابی رابط، **اول** `/readyz` را ببینید؛ «صفحه باز نمی‌شود» در بیشتر دوره‌ها
+    یعنی همین: سرور بالا نیست، نه اینکه کد خراب است.
 
 ## ۳. قواعد کاری که همیشه برقرار است
 
