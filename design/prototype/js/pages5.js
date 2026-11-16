@@ -845,10 +845,71 @@ function pageNeedsServer(key) {
     </div>`;
 }
 
+/**
+ * صفحهٔ «نمای ساختار» برای صفحههای زنده در حالت بدون سرور.
+ *
+ * چرا: صفحههایی که فقط نسخهٔ زنده دارند در حالت بدون سرور نمیتوانند رکورد نشان دهند.
+ * پیشتر فقط پیام «نیازمند سرور» داشتند؛ اکنون همان ساختار واقعی صفحه — فیلدها، وضعیتها و
+ * اقدامها — از فایل تولیدشدهٔ `js/demo-schema.generated.js` نشان داده میشود. آن فایل از
+ * `/schema` خودِ سرور ساخته شده است، پس هیچ فیلد یا قاعدهای اینجا ساخته نمیشود و عدد
+ * نمایشی هم در کار نیست.
+ */
+function pageDemoFromSchema(key) {
+  const all = (typeof window !== 'undefined' && window.HRMS_DEMO_SCHEMAS) || {};
+  const s = all[key];
+  if (!s) return pageNeedsServer(key);
+  const title = s.labelFa || String(key);
+
+  const typeFa = {text: 'متن', date: 'تاریخ', number: 'عدد', money: 'مبلغ', select: 'انتخابی'};
+  const fieldRows = (s.fields || []).map((f) => `<tr>
+    <td>${esc(f.l)}</td>
+    <td class="ltr muted" style="font-size:.7rem">${esc(f.k)}</td>
+    <td>${esc(typeFa[f.t] || f.t || '—')}</td>
+    <td>${f.r ? '<span class="chip c-wait">اجباری</span>' : '<span class="muted">اختیاری</span>'}</td></tr>`);
+
+  const statusChipList = (s.statuses || []).map((st) =>
+    `<span class="chip ${String(st.v) === String(s.initialStatus) ? 'c-ok' : ''}">${esc(st.l)}${
+      String(st.v) === String(s.initialStatus) ? ' · وضعیت آغازین' : ''}</span>`).join(' ')
+    || '<span class="muted">وضعیت تعریفشدهای ندارد.</span>';
+
+  const actionRows = (s.actions || []).map((a) => `<tr>
+    <td>${esc(a.l)}</td>
+    <td class="ltr muted" style="font-size:.7rem">${esc(a.to || '—')}</td>
+    <td class="ltr muted" style="font-size:.7rem">${esc((a.roles || []).join(', ') || '—')}</td></tr>`);
+
+  return `${pageHead(title, `${esc(s.moduleFa || '')} — نمای ساختار (بدون سرور، بدون رکورد)`)}
+
+  <div class="card card-pad" style="font-size:.82rem;line-height:2.1">
+    <b>این صفحه فقط با سرور رکورد نشان میدهد.</b>
+    ساختار زیر (فیلدها، وضعیتها و اقدامهای گردشکار) از خود سرور محلی خوانده شده است؛
+    برای دیدن داده، سامانه را با <span class="ltr">start-HRMS.bat</span> یا
+    <span class="ltr">npm run server</span> بالا بیاورید.
+  </div>
+
+  <div class="db-sec"><h3>وضعیتها و گردشکار</h3>
+    <span class="muted">${esc(s.titleFa || '')}</span></div>
+  <div class="card card-pad" style="line-height:2.2">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${statusChipList}</div>
+  </div>
+
+  <div class="db-sec"><h3>فیلدهای فرم</h3>
+    <span class="muted">${fa((s.fields || []).length)} فیلد</span></div>
+  ${tbl(['برچسب', 'کلید', 'نوع', 'الزام'], fieldRows, {foot: false})}
+
+  ${actionRows.length ? `
+  <div class="db-sec"><h3>اقدامهای گردشکار</h3>
+    <span class="muted">نقشهای مجاز از سرور</span></div>
+  ${tbl(['اقدام', 'وضعیت مقصد', 'نقشها'], actionRows, {foot: false})}` : ''}`;
+}
+
 /** ساخت صفحه از مشخصه — قالب واحد کارت‌های آماری، جدول و اقدام‌ها. */
 function pageFromSpec(key) {
   const s = SPEC_SCREENS[key];
   if (!s) {
+    // صفحهٔ زندهٔ بدون الگوی نمایشی: اگر نمای ساختار از سرور موجود است، همان نشان داده میشود.
+    if (typeof window !== 'undefined' && window.HRMS_DEMO_SCHEMAS && window.HRMS_DEMO_SCHEMAS[key]) {
+      return pageDemoFromSchema(key);
+    }
     return `${pageHead('صفحهٔ ناشناخته', `کلید «${esc(String(key))}» در نمونهٔ رابط ساخته نشده است`)}
       <div class="card card-pad" style="line-height:2">
         این صفحه در مانیفست ماژول‌ها هست ولی صفحهٔ نمایشی‌اش هنوز نوشته نشده است.

@@ -3,7 +3,7 @@
 # «make check» همان چیزی است که CI اجرا می‌کند: انحراف قرارداد، مرز ماژول، تطبیق
 # قواعد و آزمون‌های سرور و هسته. پیش از هر کامیت همین را اجرا کنید.
 
-.PHONY: help gen check verify test-go test-core conformance smoke-postgres run-server run-bonusd bonusd bonusd-386 bonusapp bonusapp-386 run-bonusapp fmt mobile-setup mobile-test android-libs pentest skills-check
+.PHONY: help gen gen-demo-schema check verify test-go test-core conformance smoke-postgres run-server run-bonusd bonusd bonusd-386 bonusapp bonusapp-386 run-bonusapp fmt mobile-setup mobile-test android-libs pentest skills-check
 
 # مسیرهای بستهٔ بازبینی امنیتی (پنتست)؛ در خط فرمان قابل تغییرند:
 #   make pentest PENTEST_OUT=D:/hrapptest PENTEST_ZIP=D:/hrapptest.zip
@@ -13,6 +13,7 @@ PENTEST_ZIP ?= dist-pentest/hrapp-pentest.zip
 help:
 	@echo "دستورهای موجود:"
 	@echo "  make gen           بازتولید خروجی‌ها از مانیفست ماژول‌ها و قرارداد"
+	@echo "  make gen-demo-schema  نمای ساختار صفحههای زنده در نمونهٔ وب (نیازمند سرور بالا)"
 	@echo "  make verify        دروازه‌های معماری، مرز ماژول و انحراف قرارداد"
 	@echo "  make test-core     آزمون‌های هستهٔ Rust"
 	@echo "  make test-go       آزمون‌های سرور Go (شامل تطبیق قواعد)"
@@ -32,6 +33,13 @@ help:
 
 gen:
 	node tools/gen/gen.mjs
+
+# نمای ساختار صفحههای زنده برای نمونهٔ وبِ بدون سرور: از /schema خودِ سرور خوانده میشود،
+# پس سرور محلی باید بالا باشد (start-HRMS.bat یا make run-server).
+#   make gen-demo-schema           ساخت/بهروزرسانی فایل تولیدشده
+#   make gen-demo-schema CHECK=--check   فقط بررسی همخوانی با سرور
+gen-demo-schema:
+	node tools/gen/demo-schema.mjs $(CHECK)
 
 verify:
 	node tools/gen/gen.mjs --check

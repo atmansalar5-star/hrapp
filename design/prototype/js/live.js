@@ -149,6 +149,9 @@ function offlineFallback(page) {
   if (typeof staticPages === 'function' && staticPages()[page]) return notice + staticPages()[page]();
   if (typeof SPEC_SCREENS !== 'undefined' && SPEC_SCREENS[page]
       && typeof pageFromSpec === 'function') return notice + pageFromSpec(page);
+  // نمای ساختار از فایل تولیدشدهٔ demo-schema.generated.js: فیلد/وضعیت/اقدام واقعی صفحه.
+  if (typeof pageDemoFromSchema === 'function' && typeof window !== 'undefined'
+      && window.HRMS_DEMO_SCHEMAS && window.HRMS_DEMO_SCHEMAS[page]) return pageDemoFromSchema(page);
   if (typeof pageNeedsServer === 'function') return notice + pageNeedsServer(page);
   return notice + (typeof pageFromSpec === 'function' ? pageFromSpec(page) : '');
 }

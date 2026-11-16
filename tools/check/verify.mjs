@@ -99,6 +99,34 @@ for (const file of walk(modulesRoot).filter(f => f.endsWith('.go'))) {
 for (const v of violations) fail('arch', `نقض مرز ماژول: ${v}`);
 notes.push(`مرز معماری: ${walk(modulesRoot).filter(f => f.endsWith('.go')).length} فایل Go ماژول بررسی شد`);
 
+// ---------- ۳ب. پوشش حالت بدون سرور در نمونهٔ رابط ----------
+// چه چیزی سنجیده میشود: هر صفحهٔ منو در حالت بدون سرور باید یکی از اینها را داشته باشد —
+// صفحهٔ نمایشی ثابت (js/pages3.js)، الگوی مشخصه (SPEC_SCREENS) یا نمای ساختار تولیدشده از
+// سرور (js/demo-schema.generated.js). صفحهٔ بی هیچکدام، «نیازمند سرور» میشود؛ این سنجش فقط
+// گزارش میکند (شکست نمیدهد) تا هنگام افزودن صفحهٔ تازه، عقبماندگی دیده شود.
+const protoDir = join(ROOT, 'design', 'prototype', 'js');
+const staticSrc = readFileSync(join(protoDir, 'pages3.js'), 'utf8');
+const staticKeys = new Set([...staticSrc.matchAll(/([A-Za-z0-9_]+):\s*page[A-Za-z0-9_]+/g)].map(m => m[1]));
+const specSrc = readFileSync(join(protoDir, 'pages5.js'), 'utf8');
+const specKeys = new Set([...specSrc.matchAll(/^\s{2}([A-Za-z0-9_]+):\s*\{\s*$/gm)].map(m => m[1]));
+const demoPath = join(protoDir, 'demo-schema.generated.js');
+const demoKeys = existsSync(demoPath)
+  ? new Set([...readFileSync(demoPath, 'utf8').matchAll(/^ {2}"([A-Za-z0-9_]+)":/gm)].map(m => m[1]))
+  : new Set();
+const menuSrc = readFileSync(join(protoDir, 'menu.generated.js'), 'utf8');
+const menuKeys = new Set([...menuSrc.matchAll(/page:\s*"([A-Za-z0-9_]+)"/g)].map(m => m[1]));
+let offDemo = 0; let offSchema = 0; const offServer = [];
+for (const k of menuKeys) {
+  if (staticKeys.has(k) || specKeys.has(k)) offDemo++;
+  else if (demoKeys.has(k)) offSchema++;
+  else offServer.push(k);
+}
+notes.push(`حالت بدون سرور: ${offDemo} صفحهٔ نمایشی + ${offSchema} نمای ساختار + ` +
+  `${offServer.length} صفحهٔ نیازمند سرور (از ${menuKeys.size} صفحهٔ منو)`);
+if (offServer.length && process.env.HRMS_VERIFY_STRICT === '1') {
+  fail('offline', `صفحههای بدون نمایش آفلاین: ${offServer.join(', ')}`);
+}
+
 // ---------- ۴. انحراف قرارداد با OpenAPI ----------
 const specPath = join(ROOT, 'contracts', 'openapi', 'hrms.json');
 const spec = JSON.parse(readFileSync(specPath, 'utf8'));
