@@ -3,7 +3,12 @@
 # «make check» همان چیزی است که CI اجرا می‌کند: انحراف قرارداد، مرز ماژول، تطبیق
 # قواعد و آزمون‌های سرور و هسته. پیش از هر کامیت همین را اجرا کنید.
 
-.PHONY: help gen check verify test-go test-core conformance smoke-postgres run-server run-bonusd bonusd bonusd-386 bonusapp bonusapp-386 run-bonusapp fmt mobile-setup mobile-test android-libs
+.PHONY: help gen check verify test-go test-core conformance smoke-postgres run-server run-bonusd bonusd bonusd-386 bonusapp bonusapp-386 run-bonusapp fmt mobile-setup mobile-test android-libs pentest skills-check
+
+# مسیرهای بستهٔ بازبینی امنیتی (پنتست)؛ در خط فرمان قابل تغییرند:
+#   make pentest PENTEST_OUT=D:/hrapptest PENTEST_ZIP=D:/hrapptest.zip
+PENTEST_OUT ?= dist-pentest/hrms-pentest-src
+PENTEST_ZIP ?= dist-pentest/hrapp-pentest.zip
 
 help:
 	@echo "دستورهای موجود:"
@@ -22,6 +27,8 @@ help:
 	@echo "  make run-bonusapp  اجرای اپ دسکتاپ روی همین ویندوز"
 	@echo "  make mobile-test   آزمون‌های کلاینت React Native"
 	@echo "  make android-libs  ساخت کتابخانهٔ بومی هسته برای اندروید"
+	@echo "  make pentest       بستهٔ تست نفوذ: رونویسی تمیز + زیپ استاندارد + چک‌سام"
+	@echo "  make skills-check  اعتبارسنجی کتابخانهٔ اسکیل‌های عامل (.claude/skills)"
 
 gen:
 	node tools/gen/gen.mjs
@@ -29,6 +36,11 @@ gen:
 verify:
 	node tools/gen/gen.mjs --check
 	node tools/check/verify.mjs
+	node tools/skills/check-skills.mjs
+
+# اعتبارسنجی قالب اسکیل‌های پروژه بر پایهٔ استاندارد Agent Skills (name/description/ساختار).
+skills-check:
+	node tools/skills/check-skills.mjs
 
 check: verify test-go test-core conformance
 
@@ -100,3 +112,13 @@ mobile-test:
 
 android-libs:
 	cd core && cargo ndk -t arm64-v8a -t x86_64 -o ../apps/mobile/android/app/src/main/jniLibs build -p hrms-ffi --release
+
+# بستهٔ بازبینی امنیتی (تست نفوذ) برای تحویل به ابزارها و مدل‌های دیگر.
+#
+# سه گام: رونویسی تمیز مخزن (بدون اسرار، لاگ، باینری و دادهٔ زمان اجرا) → زیپ استاندارد
+# با جداکنندهٔ «/» و پرچم UTF-8 (DEFLATE جایی که سود دارد) → چک‌سام SHA-256 کنار زیپ.
+# خروجی پیش‌فرض داخل مخزن و در gitignore است؛ برای مسیر دیگر با PENTEST_OUT/PENTEST_ZIP بدهید.
+pentest:
+	node tools/pentest/build-pentest.mjs --out $(PENTEST_OUT)
+	node tools/pentest/zip-folder.mjs $(PENTEST_OUT) $(PENTEST_ZIP) --deflate
+	node -e "const c=require('crypto'),f=require('fs'),p=require('path');const z=process.argv[1];f.writeFileSync(z+'.sha256',c.createHash('sha256').update(f.readFileSync(z)).digest('hex')+'  '+p.basename(z)+'\n');console.log('sha256: '+p.basename(z)+'.sha256')" "$(PENTEST_ZIP)"
