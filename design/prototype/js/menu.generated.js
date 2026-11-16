@@ -140,6 +140,7 @@ window.HRMS_MENU = [
         { page: "statutoryFiles", label: "فایل قانونی بیمه و مالیات", icon: "file-check", roles: ['admin', 'hr_manager'] },
         { page: "bankPayments", label: "فایل پرداخت بانکی", icon: "banknote", roles: ['admin', 'hr_manager'] },
         { page: "payMethods", label: "روش پرداخت کارکنان", icon: "user-cog", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "comp34006", label: "نظام جبران خدمات ۳۴۰۰۶", icon: "calculator", roles: ['admin', 'hr_manager', 'hr_spec'] },
         ],
       },
       {

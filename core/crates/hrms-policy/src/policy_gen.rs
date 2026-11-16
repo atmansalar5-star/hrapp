@@ -468,6 +468,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             icon: "user-cog",
             roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
         },
+        ScreenPolicy {
+            key: "comp34006",
+            title_fa: "نظام جبران خدمات ۳۴۰۰۶",
+            component: "Comp34006Screen",
+            icon: "calculator",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
         ],
     },
     ModulePolicy {

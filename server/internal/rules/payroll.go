@@ -129,6 +129,75 @@ func TaxFor(income int64, brackets []TaxBracket) int64 {
 	return RoundHalfUp(tax)
 }
 
+// StatutoryDeductionsResult کسور قانونی محاسبه‌شده از جمع ناخالص.
+type StatutoryDeductionsResult struct {
+	InsuranceBase        int64  `json:"insuranceBase"`
+	InsuranceEmployee    int64  `json:"insuranceEmployee"`
+	InsuranceEmployer    int64  `json:"insuranceEmployer"`
+	TaxableIncome        int64  `json:"taxableIncome"`
+	Tax                  int64  `json:"tax"`
+	VeteranApplied       bool   `json:"veteranApplied"`
+	VeteranTaxExempt     int64  `json:"veteranTaxExempt"`
+	VeteranPensionExempt int64  `json:"veteranPensionExempt"`
+	VeteranNoteFa        string `json:"veteranNoteFa,omitempty"`
+}
+
+// StatutoryDeductions کسور قانونی (بیمه و مالیات) از جمع ناخالص.
+//
+// چرا یک تابع مشترک و نه تکرار در هر نظام: سازمان سه نظام پرداخت دارد و ناخالص هر کدام
+// ساختار خودش را دارد، ولی قاعدهٔ بیمه و مالیات در هر سه یکی است (سقف بیمه، نرخ سهم
+// کارمند و کارفرما، معافیت و پله‌های مالیات). اگر روزی نرخ یا پله‌ای عوض شود، باید هر سه
+// نظام با هم عوض شوند؛ پس قاعده یک‌جا نشسته و «مدل جاری»، «صندوق نفت» و «۳۴۰۰۶» از همان
+// یک تابع می‌خوانند.
+//
+// امتیاز ایثارگری (در صورت وجود پروندهٔ تأییدشده) درآمد مشمول و کسور سهم کارمند را کم
+// می‌کند؛ مبنای محاسبه پیش از اعمال امتیاز گرفته می‌شود تا درصد معافیت روی همان عددی بنشیند
+// که قانون می‌گوید.
+func StatutoryDeductions(gross int64, params PayrollParams, veteran *VeteranEntitlement) StatutoryDeductionsResult {
+	if gross < 0 {
+		gross = 0
+	}
+	insuranceBase := gross
+	if params.InsuranceCeiling > 0 && gross > params.InsuranceCeiling {
+		insuranceBase = params.InsuranceCeiling
+	}
+	insuranceEmployee := RoundHalfUp(float64(insuranceBase) * params.InsuranceEmployeeRate)
+	insuranceEmployer := RoundHalfUp(float64(insuranceBase) * params.InsuranceEmployerRate)
+
+	taxable := gross - insuranceEmployee - params.TaxExemption
+	if taxable < 0 {
+		taxable = 0
+	}
+	relief := VeteranReliefResult{}
+	if veteran != nil {
+		relief = ApplyVeteranRelief(VeteranReliefInput{
+			TaxableIncome:     taxable,
+			EmployeeDeduction: insuranceEmployee,
+		}, *veteran)
+	}
+	if relief.TaxExemptAmount > 0 {
+		taxable -= relief.TaxExemptAmount
+		if taxable < 0 {
+			taxable = 0
+		}
+	}
+	employeeInsurance := insuranceEmployee - relief.PensionExemptAmount
+	if employeeInsurance < 0 {
+		employeeInsurance = 0
+	}
+	return StatutoryDeductionsResult{
+		InsuranceBase:        insuranceBase,
+		InsuranceEmployee:    employeeInsurance,
+		InsuranceEmployer:    insuranceEmployer,
+		TaxableIncome:        taxable,
+		Tax:                  TaxFor(taxable, params.TaxBrackets),
+		VeteranApplied:       relief.Applied,
+		VeteranTaxExempt:     relief.TaxExemptAmount,
+		VeteranPensionExempt: relief.PensionExemptAmount,
+		VeteranNoteFa:        relief.NoteFa,
+	}
+}
+
 // ComputePayroll محاسبهٔ کامل یک فیش.
 //
 // تفاوت تطبیق (اگر ثبت شده باشد) به جمع ناخالص اضافه می‌شود و در نتیجه مبنای بیمه و
@@ -141,52 +210,22 @@ func ComputePayroll(input PayrollInput, params PayrollParams) PayrollResult {
 	childrenPay := int64(input.Children) * params.ChildAllowancePerChild
 	gross := input.BaseSalary + params.HousingAllowance + childrenPay + overtimePay + nonNegative64(input.PayGap)
 
-	insuranceBase := gross
-	if params.InsuranceCeiling > 0 && gross > params.InsuranceCeiling {
-		insuranceBase = params.InsuranceCeiling
-	}
-	insuranceEmployee := RoundHalfUp(float64(insuranceBase) * params.InsuranceEmployeeRate)
-	insuranceEmployer := RoundHalfUp(float64(insuranceBase) * params.InsuranceEmployerRate)
-
-	taxable := gross - insuranceEmployee - params.TaxExemption
-	if taxable < 0 {
-		taxable = 0
-	}
-	// امتیاز ایثارگری: معافیت مالیاتی (ماده ۵۶ قانون جامع) درآمد مشمول را کم می‌کند و
-	// معافیت کسور، سهم کارمند از کسور را. مبنای محاسبه پیش از اعمال امتیاز گرفته می‌شود تا
-	// درصد معافیت روی همان عددی بنشیند که قانون می‌گوید.
-	relief := VeteranReliefResult{}
-	if input.Veteran != nil {
-		relief = ApplyVeteranRelief(VeteranReliefInput{
-			TaxableIncome:     taxable,
-			EmployeeDeduction: insuranceEmployee,
-		}, *input.Veteran)
-	}
-	if relief.TaxExemptAmount > 0 {
-		taxable -= relief.TaxExemptAmount
-		if taxable < 0 {
-			taxable = 0
-		}
-	}
-	employeeInsurance := insuranceEmployee - relief.PensionExemptAmount
-	if employeeInsurance < 0 {
-		employeeInsurance = 0
-	}
-	tax := TaxFor(taxable, params.TaxBrackets)
+	// کسور قانونی در تابع مشترک سه نظام پرداخت محاسبه می‌شود.
+	statutory := StatutoryDeductions(gross, params, input.Veteran)
 
 	result := PayrollResult{
 		OvertimePay:          overtimePay,
 		Gross:                gross,
-		InsuranceBase:        insuranceBase,
-		InsuranceEmployee:    employeeInsurance,
-		InsuranceEmployer:    insuranceEmployer,
-		TaxableIncome:        taxable,
-		Tax:                  tax,
-		Net:                  gross - employeeInsurance - tax - input.OtherDeductions,
-		VeteranApplied:       relief.Applied,
-		VeteranTaxExempt:     relief.TaxExemptAmount,
-		VeteranPensionExempt: relief.PensionExemptAmount,
-		VeteranNoteFa:        relief.NoteFa,
+		InsuranceBase:        statutory.InsuranceBase,
+		InsuranceEmployee:    statutory.InsuranceEmployee,
+		InsuranceEmployer:    statutory.InsuranceEmployer,
+		TaxableIncome:        statutory.TaxableIncome,
+		Tax:                  statutory.Tax,
+		Net:                  gross - statutory.InsuranceEmployee - statutory.Tax - input.OtherDeductions,
+		VeteranApplied:       statutory.VeteranApplied,
+		VeteranTaxExempt:     statutory.VeteranTaxExempt,
+		VeteranPensionExempt: statutory.VeteranPensionExempt,
+		VeteranNoteFa:        statutory.VeteranNoteFa,
 	}
 	if input.Veteran != nil && input.Veteran.Approved {
 		result.VeteranGroupFa = input.Veteran.GroupFa

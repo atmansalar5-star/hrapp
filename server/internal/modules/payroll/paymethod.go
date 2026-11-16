@@ -163,6 +163,11 @@ func registerPayMethodEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *re
 			noteFa = "روش ۴پی انتخاب شد، ولی پارامتر «اعمال در پرداخت» مدل ۴پی در تنظیمات شرکت خاموش است؛ " +
 				"تا روشن‌شدن آن، محاسبهٔ حقوق با مدل پیشین انجام می‌شود."
 		}
+		if payModel == domain.PayModelComp34006 && !comp34006Applied(deps) {
+			noteFa = "روش «دستورالعمل ۳۴۰۰۶» انتخاب شد، ولی پارامتر «اعمال در پرداخت» این مدل در " +
+				"تنظیمات شرکت خاموش است؛ تا روشن‌شدن آن، محاسبهٔ این کارمند پیشنهادی است و فیش ماهانه " +
+				"با مدل پیشین محاسبه می‌شود."
+		}
 		rows, err := payMethodRows(r.Context(), deps, svc, "")
 		if err != nil {
 			httpx.WriteErrorMsg(w, http.StatusInternalServerError, contracts.CodeInternal, err.Error(), nil)
@@ -181,15 +186,32 @@ func registerPayMethodEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *re
 // payMethodOptions فهرست روش‌های مصوب و وضعیت مدل ۴پی.
 func payMethodOptions(deps modulekit.Deps) map[string]any {
 	return map[string]any{
-		"methods":      domain.PayModelChoices(),
-		"grades":       nil,
-		"fourPEnabled": fourPEnabled(deps),
-		"fourPApplied": fourPApplied(deps),
-		"today":        payTodayFa(deps),
-		"independenceNoteFa": "انتخاب روش پرداخت، محاسبهٔ موجود را عوض نمی‌کند: مدل حقوق و دستمزد جاری و مدل " +
-			"صندوق نفت مستقل و جاری‌اند و مدل ۴پی توسعه‌ای و اختیاری است. این انتخاب تعیین می‌کند " +
-			"کارشناس کدام فرم و کدام موتور محاسبه را برای این کارمند به‌کار ببرد.",
+		"methods":          domain.PayModelChoices(),
+		"grades":           nil,
+		"fourPEnabled":     fourPEnabled(deps),
+		"fourPApplied":     fourPApplied(deps),
+		"comp34006Applied": comp34006Applied(deps),
+		"today":            payTodayFa(deps),
+		"independenceNoteFa": "انتخاب روش پرداخت، محاسبهٔ موجود را عوض نمی‌کند: مدل حقوق و دستمزد جاری، " +
+			"مدل صندوق نفت و مدل دستورالعمل ۳۴۰۰۶ مستقل و جدا از هم‌اند و مدل ۴پی توسعه‌ای و " +
+			"اختیاری است. این انتخاب تعیین می‌کند کارشناس کدام فرم و کدام موتور محاسبه را برای این " +
+			"کارمند به‌کار ببرد.",
 	}
+}
+
+// comp34006Applied آیا پارامتر شرکت، اعمال مدل دستورالعمل ۳۴۰۰۶ در پرداخت را روشن کرده است.
+//
+// چرا جدا از fourPApplied: هر مدل پارامتر خاموشی خودش را دارد تا روشن‌کردن یکی، دیگری را
+// ناخواسته فعال نکند.
+func comp34006Applied(deps modulekit.Deps) bool {
+	for _, p := range deps.Org.Params {
+		if p.Key != "comp34006.payroll.apply" {
+			continue
+		}
+		v := strings.TrimSpace(p.Value)
+		return v == "1" || strings.EqualFold(v, "yes") || strings.EqualFold(v, "true")
+	}
+	return false
 }
 
 // payTodayFa تاریخ امروز به شمسی (YYYY/MM/DD) بر پایهٔ ساعت سامانه.

@@ -24,6 +24,8 @@ const (
 	PayModelPayroll = "payroll"
 	// PayModelOil نظام پرداخت صندوق بازنشستگی نفت.
 	PayModelOil = "oil"
+	// PayModelComp34006 نظام جبران خدمات دستورالعمل IMS-HR-34006 (مستقل و اختیاری).
+	PayModelComp34006 = "comp34006"
 	// PayModelFourP مدل توسعه‌ای و اختیاری جبران خدمات ۴پی.
 	PayModelFourP = "fourp"
 )
@@ -47,6 +49,8 @@ func PayModelChoices() []PayModelChoice {
 			NoteFa: "محاسبهٔ ماهانه با پردازش حقوق و اقلام پارامتری همین ماژول."},
 		{Key: PayModelOil, TitleFa: "نظام پرداخت صندوق بازنشستگی نفت",
 			NoteFa: "فیش صندوق نفت با جدول‌های ۱ تا ۳ آیین‌نامه و ضرایب همان نظام."},
+		{Key: PayModelComp34006, TitleFa: "نظام جبران خدمات دستورالعمل ۳۴۰۰۶", Optional: true,
+			NoteFa: "مدل مستقل با جدول‌های امتیاز و ضریب ریالی خودش؛ محاسبه‌اش در فرم همین نظام انجام می‌شود."},
 		{Key: PayModelFourP, TitleFa: "مدل توسعه‌ای جبران خدمات ۴پی", Optional: true,
 			NoteFa: "مدل مستقل و اختیاری؛ اثرش در حکم و فیش فقط با روشن‌بودن پارامتر «اعمال در پرداخت» است."},
 	}

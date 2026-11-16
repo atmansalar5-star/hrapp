@@ -64,6 +64,8 @@ import PayGapScreen from '../features/payroll/PayGapScreen';
 import StatutoryFilesScreen from '../features/payroll/StatutoryFilesScreen';
 import BankFilesScreen from '../features/payroll/BankFilesScreen';
 import PayMethodsScreen from '../features/payroll/PayMethodsScreen';
+// نظام جبران خدمات دستورالعمل ۳۴۰۰۶ (IMS-HR-34006) — سومین نظام پرداخت سازمان.
+import Comp34006Screen from '../features/payroll/Comp34006Screen';
 
 // جبران خدمات — احکام حقوق و گواهی اشتغال
 import SalaryDecreesScreen from '../features/salary_admin/SalaryDecreesScreen';
@@ -240,6 +242,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   StatutoryFilesScreen,
   BankFilesScreen,
   PayMethodsScreen,
+  Comp34006Screen,
   PayReportsScreen,
   SalaryDecreesScreen,
   EmploymentCertsScreen,

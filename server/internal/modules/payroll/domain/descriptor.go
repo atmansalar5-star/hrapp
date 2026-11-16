@@ -39,6 +39,8 @@ func Descriptor() recordkit.Descriptor {
 			serviceBonusKind(),
 			// نظام پرداخت صندوق بازنشستگی نفت: فیش ماهانهٔ کارکنان تابع صندوق.
 			oilPayslipsKind(),
+			// نظام جبران خدمات دستورالعمل ۳۴۰۰۶: فیش ماهانهٔ سومین نظام پرداخت سازمان.
+			comp34006PayslipsKind(),
 			// فاز ۱: فایل قانونی بیمه/مالیات، حساب بانکی کارمند و فایل پرداخت بانکی.
 			statutoryFilesKind(),
 			bankAccountsKind(),
@@ -258,6 +260,55 @@ func oilPayslipsKind() recordkit.Kind {
 			"degreeName|مدرک تحصیلی مبنا|text|0",
 			"degreePercent|ضریب فوق‌العادهٔ تخصصی (٪)|number|0",
 			"degreeAllowance|فوق‌العادهٔ تخصصی بر اساس مدرک (ریال)|money|0",
+			"overtimeHours|ساعت اضافه‌کاری|number|0",
+			"note|یادداشت محاسبه|text|0",
+		),
+		Statuses: recordkit.Statuses(
+			"draft|پیش‌نویس", "approved|تأییدشده", "issued|صادرشده", "paid|پرداخت‌شده", "cancelled|لغوشده",
+		),
+		Initial: "draft",
+		Transitions: recordkit.Steps(
+			"draft|approved,cancelled", "approved|issued,cancelled", "issued|paid",
+		),
+		Actions: recordkit.Actions(
+			"approve|تأیید فیش|primary|approved|0|hr_manager",
+			"issue|صدور فیش|primary|issued|0|hr_manager,hr_spec",
+			"pay|ثبت پرداخت|primary|paid|0|hr_manager",
+			"cancel|لغو|danger|cancelled|1|hr_manager",
+		),
+		HistoryDate: "period",
+	}
+}
+
+/* ------------------ نظام جبران خدمات دستورالعمل ۳۴۰۰۶ ------------------ */
+
+// comp34006PayslipsKind فیش ماهانهٔ نظام جبران خدمات دستورالعمل ۳۴۰۰۶.
+//
+// چرا نوع رکورد جدا از فیش نظام جاری و فیش صندوق نفت: هر سه نظام ساختار اقلام خودشان را
+// دارند و مبالغشان یکی نیست، ولی هر سه باید سابقهٔ ماه، تأیید، صدور، پرداخت و جستجو را با
+// همان موتور بقیهٔ ماژول‌ها داشته باشند. خودِ محاسبه در `rules.Comp34006PayslipFor` است و
+// اینجا فقط نتیجه ثبت می‌شود.
+func comp34006PayslipsKind() recordkit.Kind {
+	return recordkit.Kind{
+		Key: "comp34006Payslips", TitleFa: "فیش حقوقی نظام ۳۴۰۰۶", IDPrefix: "C346", EmployeeScoped: true,
+		Fields: recordkit.Fields(
+			"period|دورهٔ فیش (ماه)|text|1",
+			"jobGrade|گرید شغلی|number|1",
+			"personalGrade|گرید شخصی|number|0",
+			"baseSalary|حقوق پایه (مبنا) — ریال|money|0",
+			"jobGradeAllowance|حق گرید شغلی (ریال)|money|0",
+			"strategicAllowance|فوق‌العادهٔ پست استراتژیک (ریال)|money|0",
+			"personalAllowance|فوق‌العادهٔ گرید شخصی (ریال)|money|0",
+			"roleAllowance|فوق‌العادهٔ نقش (ریال)|money|0",
+			"regionAllowance|فوق‌العادهٔ منطقه (ریال)|money|0",
+			"gross|جمع ناخالص (ریال)|money|0",
+			"insuranceEmployee|بیمهٔ سهم کارمند (ریال)|money|0",
+			"tax|مالیات بر درآمد (ریال)|money|0",
+			"otherDeductions|سایر کسور (ریال)|money|0",
+			"totalDeductions|جمع کسور (ریال)|money|0",
+			"net|خالص پرداختی (ریال)|money|0",
+			"shiftPattern|ترکیب شیفت|select|0",
+			"shiftDays|روزهای نوبت‌کاری|number|0",
 			"overtimeHours|ساعت اضافه‌کاری|number|0",
 			"note|یادداشت محاسبه|text|0",
 		),

@@ -191,6 +191,7 @@ var All = []Module{
 			{Key: "statutoryFiles", Order: 8, Icon: "file-check", TitleFa: "فایل قانونی بیمه و مالیات", Component: "StatutoryFilesScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "bankPayments", Order: 9, Icon: "banknote", TitleFa: "فایل پرداخت بانکی", Component: "BankFilesScreen", Roles: []string{"admin", "hr_manager"}},
 			{Key: "payMethods", Order: 10, Icon: "user-cog", TitleFa: "روش پرداخت کارکنان", Component: "PayMethodsScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "comp34006", Order: 11, Icon: "calculator", TitleFa: "نظام جبران خدمات ۳۴۰۰۶", Component: "Comp34006Screen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 		},
 	},
 	{
