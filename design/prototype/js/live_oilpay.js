@@ -232,6 +232,13 @@ function oilRenderSlip() {
       ${statCard({ico: '➖', tint: '#FEE2E2', accent: '#DC2626', val: fa(money(s.deductions)), label: 'جمع کسور (ریال)'})}
       ${statCard({ico: '💵', tint: '#DCFCE7', accent: '#16A34A', val: fa(money(s.net)), label: 'خالص پرداختی (ریال)'})}
     </div>
+      <div class="row-actions" style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="oilSaveProfile()">💾 ذخیرهٔ مشخصات پرسنلی در پرونده</button>
+        <span id="oilProfileState" class="muted" style="font-size:.74rem;line-height:2">
+          پایهٔ حقوق و محل سکونت در پروندهٔ کارمند ذخیره میشوند؛ مدرک، پایهٔ سمت، نوبتکاری و
+          ضریب تخصصی همراه فیش همین دوره ثبت میشوند و بار بعد از همان فیش پر میشوند.
+        </span>
+      </div>
     ${bandHtml}
     <div class="card card-pad" style="margin-top:10px">
       <div class="card-title">جمع‌های فیش</div>
@@ -331,6 +338,9 @@ function oilOnEmployee() {
   // نتیجهٔ ابلاغ ترفیع خودکار در فیش دیده شود؛ کاربر هنوز می‌تواند آن را عوض کند.
   const grade = document.getElementById('oilJobGrade');
   if (hit && grade && hit.jobGradeSite) grade.value = hit.jobGradeSite;
+  // ورودیهای پرسنلی دیگر (مدرک، پایهٔ سمت، نوبتکاری، ضریب تخصصی) از آخرین فیش
+  // ثبتشدهٔ همین کارمند پر میشوند تا با هر بار بازکردن صفحه به پیشفرض برنگردند.
+  oilPrefillSaved(oilSelect('oilEmployee'));
   oilCalcSoon();
 }
 
@@ -351,6 +361,9 @@ async function oilSave() {
   if (!OIL_RESULT || !OIL_RESULT.slip) { toast('ابتدا فیش محاسبه شود', 'error'); return; }
   const employeeId = oilSelect('oilEmployee');
   if (!employeeId) { toast('انتخاب کارمند الزامی است', 'error'); return; }
+  // ثبت فیش بدون ذخیرهٔ مشخصات پرسنلی، همان ایراد پیشین را برمیگرداند: ارقام ماه بعد
+  // از پرونده خوانده میشوند، پس اول پرونده بهروز میشود و بعد فیش ثبت میگردد.
+  await oilSaveProfile({silent: true});
   const s = OIL_RESULT.slip;
   const period = oilText('oilPeriod') || OIL_RESULT.period || '';
   const employeeName = (OIL_EMPLOYEES.find(e => e.id === employeeId) || {}).titleFa || employeeId;
@@ -375,6 +388,9 @@ async function oilSave() {
         shiftDays: String(oilNum('oilShiftDays')),
         overtimeHours: String(oilNum('oilOvertime')),
         degreeName: oilDegreeTitle(),
+        degreeKey: oilSelect('oilDegree'),
+        jobGradeSite: oilSelect('oilJobGrade'),
+        specialtyExtraPercent: String(oilNum('oilSpecialtyExtra')),
         degreePercent: String(s.degreePercent || 0),
         degreeAllowance: String(oilDegreeAmount(s)),
         jobGradeName: oilGradeTitle(),
@@ -597,7 +613,7 @@ function pageOilPayslipLive() {
       <div class="row-actions" style="margin-top:10px">
         <button class="btn btn-primary" onclick="oilCalc()">🧮 محاسبهٔ مجدد</button>
         <button class="btn btn-ghost" onclick="oilPrint()">🖨️ چاپ فیش</button>
-        <button class="btn btn-ghost" onclick="oilSave()">💾 ثبت فیش در پرونده</button>
+        <button class="btn btn-ghost" onclick="oilSave()">💾 ثبت فیش + ذخیرهٔ مشخصات پرسنلی</button>
       </div>
       <div id="oilSaved"></div>
     </div>`;
@@ -621,4 +637,100 @@ function pageOilPayslipLive() {
 }
 
 /* ثبت در مسیریاب زنده. */
+/* ------------------- ماندگاری مشخصات پرسنلی ------------------- */
+
+/**
+ * خواندن ورودی‌های پرسنلی از آخرین فیش ثبت‌شدهٔ همین کارمند.
+ *
+ * چرا لازم است: پیش‌تر با انتخاب کارمند فقط پایهٔ حقوق و محل سکونت از پرونده می‌آمد و
+ * مدرک، پایهٔ سمت، نوبتکاری و ضریب تخصصی هر بار به پیش‌فرض برمی‌گشتند؛ یعنی محاسبهٔ
+ * ماه بعد با همان ارقام ماه پیش انجام نمی‌شد. اینجا همان مقادیر از رکورد فیش قبلی
+ * (که خودش با همین فرم ثبت شده) در فرم می‌نشیند.
+ */
+async function oilPrefillSaved(employeeId) {
+  const state = document.getElementById('oilProfileState');
+  if (!employeeId) { if (state) state.innerHTML = ''; return; }
+  const res = await apiFetch('/api/v1/payroll/records?kind=oilPayslips&employeeId=' +
+    encodeURIComponent(employeeId) + '&size=3');
+  const items = (res.ok && res.data && res.data.items) || [];
+  if (!items.length) {
+    if (state) state.innerHTML = 'برای این کارمند فیشی ثبت نشده است؛ مقادیر از پروندهٔ کارمند پر شده‌اند.';
+    return;
+  }
+  const last = items[0];
+  const f = last.fields || {};
+  const put = (id, value) => {
+    const el = document.getElementById(id);
+    if (el && value !== undefined && value !== null && String(value) !== '') el.value = String(value);
+  };
+  put('oilDegree', f.degreeKey);
+  put('oilJobGrade', f.jobGradeSite);
+  put('oilShift', f.shift);
+  put('oilShiftDays', f.shiftDays);
+  put('oilSpecialtyExtra', f.specialtyExtraPercent);
+  if (state) {
+    state.innerHTML = `آخرین فیش این کارمند: <b class="ltr">${esc(last.id)}</b> (` +
+      `دورهٔ ${esc(f.period || '—')}) — مدرک، پایهٔ سمت، نوبتکاری و ضریب تخصصی از همان فیش پر شد.`;
+  }
+  oilCalcSoon();
+}
+
+/**
+ * ذخیرهٔ مشخصات پرسنلی در پروندهٔ کارمند.
+ *
+ * چرا PATCH کامل: مسیر ویرایش کارمند کل پرونده را اعتبارسنجی می‌کند (نام، کد ملی، واحد،
+ * پست و تاریخ استخدام اجباری‌اند). پس رکورد فعلی خوانده و همان بدنه با دو مقدار تازه
+ * («حقوق پایه» و «محل سکونت») فرستاده می‌شود؛ بدین‌ترتیب فرم فیش، پروندهٔ کارمند را
+ * به‌روز می‌کند و بار بعد همان ارقام از پرونده خوانده می‌شود.
+ */
+async function oilSaveProfile(options) {
+  const silent = !!(options && options.silent);
+  const employeeId = oilSelect('oilEmployee');
+  if (!employeeId) { if (!silent) toast('انتخاب کارمند الزامی است', 'error'); return false; }
+  const cur = await apiFetch('/api/v1/employee/employees/' + encodeURIComponent(employeeId));
+  if (!cur.ok || !cur.data) {
+    if (!silent) toast(cur.message || 'پروندهٔ کارمند خوانده نشد', 'error');
+    return false;
+  }
+  const e = cur.data;
+  const body = {
+    fullName: e.fullName || '',
+    nationalId: e.nationalId || '',
+    gender: e.gender || '',
+    birthDate: e.birthDate || '',
+    mobile: e.mobile || '',
+    homePhone: e.homePhone || '',
+    postalCode: e.postalCode || '',
+    phone: e.phone || '',
+    address: e.address || '',
+    residenceSite: oilSelect('oilResidence') || e.residenceSite || '',
+    email: e.email || '',
+    departmentId: e.departmentId || '',
+    position: e.position || '',
+    contractType: e.contractType || '',
+    employmentType: e.employmentType || '',
+    hireDate: e.hireDate || '',
+    baseSalary: oilNum('oilBaseSalary') || Number(e.baseSalary || 0),
+    jobGrade: e.jobGrade || '',
+    status: e.status || '',
+  };
+  const res = await apiFetch('/api/v1/employee/employees/' + encodeURIComponent(employeeId),
+    {method: 'PATCH', body: body});
+  if (!res.ok) {
+    if (!silent) toast(res.message || 'ذخیره در پرونده انجام نشد', 'error');
+    return false;
+  }
+  // فهرست کارکنان همین صفحه هم به‌روز می‌شود تا انتخاب دوباره همان مقدار را بدهد.
+  const hit = OIL_EMPLOYEES.find(x => x.id === employeeId);
+  if (hit) { hit.baseSalary = String(body.baseSalary); hit.residenceSite = body.residenceSite; }
+  const state = document.getElementById('oilProfileState');
+  if (state) {
+    state.innerHTML = `در پروندهٔ کارمند ذخیره شد — حقوق پایه ` +
+      `<b class="num">${money(body.baseSalary)}</b> ریال، محل سکونت ` +
+      `<b>${esc(oilResidenceTitle())}</b>.`;
+  }
+  if (!silent) toast('مشخصات پرسنلی در پروندهٔ کارمند ذخیره شد');
+  return true;
+}
+
 LIVE_PAGES.oilPayslip = pageOilPayslipLive;

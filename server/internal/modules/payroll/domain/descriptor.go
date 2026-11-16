@@ -260,6 +260,11 @@ func oilPayslipsKind() recordkit.Kind {
 			"degreeName|مدرک تحصیلی مبنا|text|0",
 			"degreePercent|ضریب فوق‌العادهٔ تخصصی (٪)|number|0",
 			"degreeAllowance|فوق‌العادهٔ تخصصی بر اساس مدرک (ریال)|money|0",
+			// کلیدهای ورودی‌های پرسنلی همان فیش: عنوان‌ها برای نمایش‌اند و این کلیدها برای آنکه
+			// بار بعد فرم با همان انتخاب‌ها باز شود (پیش از این هر بار به پیش‌فرض برمی‌گشت).
+			"degreeKey|کلید مدرک تحصیلی مبنا|text|0",
+			"jobGradeSite|کلید پایهٔ سمت مبنا|text|0",
+			"specialtyExtraPercent|درصد افزایش ضریب تخصصی شغل|number|0",
 			"overtimeHours|ساعت اضافه‌کاری|number|0",
 			"note|یادداشت محاسبه|text|0",
 		),

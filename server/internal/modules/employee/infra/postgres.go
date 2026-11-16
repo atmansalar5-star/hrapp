@@ -311,7 +311,7 @@ func (s *PgStore) Save(ctx context.Context, e domain.Employee) (domain.Employee,
 		strings.TrimSpace(e.Position), e.ContractType, e.EmploymentType, e.Status,
 		hireDate, e.BaseSalary, e.LeaveBalance, e.Phone, e.Email, e.ManagerName,
 		e.Mobile, e.HomePhone, e.PostalCode, e.Address, e.Gender,
-		birthDateValue(e.BirthDate), e.ResidenceSite)
+		birthDateValue(e.BirthDate), e.ResidenceSite, strings.TrimSpace(e.JobGrade))
 	if err != nil {
 		return domain.Employee{}, err
 	}

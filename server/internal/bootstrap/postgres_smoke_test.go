@@ -333,6 +333,93 @@ func smokeKindCycle(t *testing.T, h http.Handler, token, moduleID, prefix string
 	}
 }
 
+// TestPostgresSmokeEmployeeUpdatePersists ویرایش پروندهٔ کارمند را روی Postgres می‌سنجد.
+//
+// چرا این آزمون: درج/به‌روزرسانی کارمند یک دستور upsert است و یک بار شمار پارامترهایش با
+// ستون‌ها نمی‌خواند («got 21 parameters but the statement requires 22»)، پس هر ویرایش
+// پرونده با خطای ۵۰۰ برمی‌گشت و تغییرهای پرسنلی (حقوق پایه، محل سکونت) ذخیره نمی‌شد.
+// انبار درون‌حافظه‌ای این ایراد را نشان نمی‌داد و فقط آزمون روی Postgres می‌گیردش.
+//
+// نکتهٔ بهداشت دادهٔ آزمون: PATCH مقدار خالی را «بدون تغییر» می‌خواند، پس تنها فیلدی که
+// می‌شود امن عوض و بازگرداند «حقوق پایه» است؛ محل سکونت فقط وقتی عوض می‌شود که از پیش
+// مقدار داشته باشد تا بازگردانی‌اش ممکن باشد. گروه شغلی دست‌نخورده می‌ماند و تنها
+// حفظ‌شدنش سنجیده می‌شود.
+func TestPostgresSmokeEmployeeUpdatePersists(t *testing.T) {
+	h, _ := smokeHandler(t)
+	smokeReady(t, h)
+	admin := login(t, h, "admin", "demo")
+
+	list := call(t, h, http.MethodGet, "/api/v1/employee/employees?size=50", admin.AccessToken, nil)
+	if list.Code != http.StatusOK {
+		t.Fatalf("فهرست کارکنان کد %d داد: %s", list.Code, smokeClip(list.Body.String()))
+	}
+	var page contracts.EmployeePage
+	decodeInto(t, list, &page)
+	if len(page.Items) == 0 {
+		t.Fatal("کارمندی برای این آزمون نیست؛ دادهٔ نمونهٔ کارکنان خالی است")
+	}
+	original := page.Items[0]
+	for _, item := range page.Items {
+		if item.ResidenceSite != "" {
+			original = item
+			break
+		}
+	}
+
+	// بدنهٔ ویرایش همان چیزی است که رابط کاربری می‌فرستد: کل پرونده با مقدار تازه.
+	edited := contracts.EmployeeInput{
+		FullName: original.FullName, NationalID: original.NationalID,
+		DepartmentID: original.DepartmentID, Position: original.Position,
+		ContractType: original.ContractType, EmploymentType: original.EmploymentType,
+		Gender: original.Gender, BirthDate: original.BirthDate, Phone: original.Phone,
+		Mobile: original.Mobile, HomePhone: original.HomePhone,
+		PostalCode: original.PostalCode, Address: original.Address, Email: original.Email,
+		HireDate: original.HireDate, Status: original.Status,
+		BaseSalary:    original.BaseSalary + 1000000,
+		ResidenceSite: original.ResidenceSite,
+		JobGrade:      original.JobGrade,
+	}
+	alteredSite := ""
+	if original.ResidenceSite != "" {
+		alteredSite = "abadan"
+		if original.ResidenceSite == alteredSite {
+			alteredSite = "mahshahr"
+		}
+		edited.ResidenceSite = alteredSite
+	}
+
+	path := "/api/v1/employee/employees/" + original.ID
+	patched := call(t, h, http.MethodPatch, path, admin.AccessToken, edited)
+	if patched.Code != http.StatusOK {
+		t.Fatalf("ویرایش پروندهٔ کارمند ناموفق بود (کد %d): %s — دستور درج/به‌روزرسانی کارمند باید همهٔ ستون‌ها را با پارامترهایش هم‌خوان نگه دارد.", patched.Code, smokeClip(patched.Body.String()))
+	}
+
+	read := call(t, h, http.MethodGet, path, admin.AccessToken, nil)
+	if read.Code != http.StatusOK {
+		t.Fatalf("بازخوانی پروندهٔ ویرایش‌شده کد %d داد: %s", read.Code, smokeClip(read.Body.String()))
+	}
+	var saved contracts.Employee
+	decodeInto(t, read, &saved)
+	if saved.BaseSalary != edited.BaseSalary {
+		t.Errorf("حقوق پایه پس از ویرایش %d است، انتظار %d بود", saved.BaseSalary, edited.BaseSalary)
+	}
+	if alteredSite != "" && saved.ResidenceSite != alteredSite {
+		t.Errorf("محل سکونت پس از ویرایش %q است، انتظار %q بود", saved.ResidenceSite, alteredSite)
+	}
+	if saved.JobGrade != original.JobGrade {
+		t.Errorf("گروه شغلی نباید بی‌دلیل عوض شود: %q در برابر %q", saved.JobGrade, original.JobGrade)
+	}
+
+	// بازگرداندن مقدارهای اولیه تا دادهٔ نمونه برای اجراهای بعدی دست‌نخورده بماند.
+	restore := edited
+	restore.BaseSalary = original.BaseSalary
+	restore.ResidenceSite = original.ResidenceSite
+	restore.JobGrade = original.JobGrade
+	if back := call(t, h, http.MethodPatch, path, admin.AccessToken, restore); back.Code != http.StatusOK {
+		t.Fatalf("بازگرداندن مقدارهای اولیه ناموفق بود (کد %d): %s", back.Code, smokeClip(back.Body.String()))
+	}
+}
+
 // TestPostgresSmokeRecordsSurviveSecondInstance دو نمونهٔ سرور روی همان پایگاه‌داده
 // بالا می‌آورد: رکوردی که با نمونهٔ اول ساخته می‌شود باید با نمونهٔ دوم خوانده شود.
 //

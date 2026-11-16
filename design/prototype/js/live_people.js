@@ -357,6 +357,8 @@ function pageProfileLive(id) {
       ['مدیر مستقیم', esc(e.managerName || '—')],
       ['تاریخ استخدام', `<span class="num">${esc(e.hireDate || '—')}</span>`],
       ['حقوق پایه', `<span class="num">${money(e.baseSalary || 0)}</span> ریال`],
+      ['گروه شغلی', esc(e.jobGradeFa || e.jobGrade || '—')],
+      ['محل سکونت (مبنای فوقالعادهها)', esc(e.residenceSiteFa || e.residenceSite || '—')],
       ['مانده مرخصی', `<span class="num">${fa(e.leaveBalance || 0)}</span> روز`],
     ]) + `<div class="row-actions" style="margin-top:10px">
       <button class="btn btn-ghost" onclick="liveOpenDoc('salary_decree','${esc(e.id)}')">📜 حکم کارگزینی</button>
