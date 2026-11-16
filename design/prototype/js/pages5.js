@@ -811,6 +811,40 @@ const SPEC_SCREENS = {
   },
 };
 
+/**
+ * صفحهٔ راهنمای «نیازمند سرور» برای صفحههایی که فقط نسخهٔ زنده دارند.
+ *
+ * چرا لازم است: پیشتر چنین صفحههایی در حالت بدون سرور با عنوان «صفحهٔ ناشناخته» دیده
+ * میشدند و کاربر نتیجه میگرفت صفحه ساخته نشده است؛ در حالی که صفحه وجود دارد و فقط
+ * دادهاش از سرور Go میآید. اینجا همان صفحه با راه روشنکردن سرور و نام دقیق جایش در منو
+ * معرفی میشود تا منوی درختی در دمو به بنبست نرسد.
+ */
+function pageNeedsServer(key) {
+  const list = typeof sidebarPages === 'function' ? sidebarPages() : [];
+  const p = typeof sidebarPageOf === 'function' ? sidebarPageOf(list, key) : null;
+  const title = p ? p.label : String(key);
+  const where = p ? `${p.dirFa} › ${p.deptFa} › ${p.moduleFa}` : 'مانیفست ماژولها';
+  return `${pageHead(title, 'این صفحه به سرور محلی نیاز دارد')}
+    <div class="card card-pad" style="line-height:2.1">
+      <p style="margin-top:0">
+        صفحهٔ «<b>${esc(title)}</b>» در مسیر <span class="muted">${esc(where)}</span> هست و
+        مسیر <span class="ltr">${esc(key)}</span> آن در سامانه ساخته شده است؛ فقط دادهاش از
+        سرور <b>Go</b> میآید و نسخهٔ نمایشی جدا ندارد.
+      </p>
+      <p>برای دیدن این صفحه، سرور محلی را بالا بیاورید:</p>
+      <ul class="list-tight">
+        <li><span class="ltr">npm run server</span> — سرور نمونهٔ همراه رابط</li>
+        <li><span class="ltr">start-HRMS.bat</span> یا
+          <span class="ltr">cd server &amp;&amp; go run ./cmd/hrmsd -web ../design/prototype</span> —
+          سرور واقعی Go</li>
+      </ul>
+      <p class="muted" style="margin-bottom:0">
+        صفحههایی که در همین حالت بدون سرور کار میکنند، در منو پررنگاند؛ صفحههای کمرنگ
+        همین وضعیت را دارند.
+      </p>
+    </div>`;
+}
+
 /** ساخت صفحه از مشخصه — قالب واحد کارت‌های آماری، جدول و اقدام‌ها. */
 function pageFromSpec(key) {
   const s = SPEC_SCREENS[key];

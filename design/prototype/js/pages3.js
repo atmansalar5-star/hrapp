@@ -389,8 +389,24 @@ function pageAudit() {
 /* =====================================================================
    مسیریاب مرکزی صفحات
    ===================================================================== */
-function renderPage(page, ...args) {
-  const map = {
+
+/**
+ * نگاشت صفحههای نمایشی ثابت (کار در حالت بدون سرور).
+ *
+ * این نگاشت یکجا و بیرون از `renderPage` نگه داشته میشود، چون لایهٔ زنده هم به آن
+ * نیاز دارد: `offlineFallback` در live.js وقتی سرور بالا نیست، همین صفحهٔ نمایشی را
+ * نشان میدهد. پیشتر نگاشت داخل تابع بود و صفحههای زندهای که نسخهٔ نمایشی آماده
+ * داشتند (کارکنان، فیش، تقویم، کاربران و ...) در حالت بدون سرور به «صفحهٔ ناشناخته»
+ * میافتادند.
+ *
+ * ساخت تنبل است: بخشی از صفحههای نمایشی در pages4.js و pages5.js تعریف شدهاند که
+ * بعد از این فایل بار میآیند، پس ساختن زودهنگام نگاشت خطای «تعریفنشده» میدهد.
+ */
+let STATIC_PAGES_CACHE = null;
+
+function staticPages() {
+  if (STATIC_PAGES_CACHE) return STATIC_PAGES_CACHE;
+  STATIC_PAGES_CACHE = {
     // داشبورد
     dashboard:pageDashboard,
     // واحد امور کارکنان
@@ -416,11 +432,15 @@ function renderPage(page, ...args) {
     users:pageUsers, roles:pageRoles, orgSettings:pageOrgSettings,
     sysParams:pageSysParams, audit:pageAudit,
   };
+  return STATIC_PAGES_CACHE;
+}
+
+function renderPage(page, ...args) {
   // صفحه‌های زنده (live.js / live_records.js) پیش از قالب‌های ثابت بررسی می‌شوند: اینها
   // همان منوهای نمایشی‌اند که به API واقعی سرور وصل شده‌اند و اگر سرور نباشد، خودشان
   // به صفحهٔ نمایشی برمی‌گردند. پس ترتیب مهم است.
   if (typeof LIVE_PAGES !== 'undefined' && LIVE_PAGES[page]) { $('#main').innerHTML = livePage(page, ...args); return; }
-  if (map[page]) { $('#main').innerHTML = map[page](...args); return; }
+  if (staticPages()[page]) { $('#main').innerHTML = staticPages()[page](...args); return; }
   // صفحهٔ ناموجود هم جای خودش را نشان می‌دهد تا گم شدن صفحه در سکوت نماند.
   const fn = (typeof pageFromSpec === 'function' ? () => pageFromSpec(page) : pageDashboard);
   $('#main').innerHTML = fn(...args);

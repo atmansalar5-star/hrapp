@@ -140,6 +140,16 @@ function offlineFallback(page) {
     <b>حالت نمایشی</b> — سرور محلی در دسترس نیست، پس داده‌های نمونه نشان داده می‌شود.
     برای کار با دادهٔ واقعی، سامانه را با <span class="ltr">npm run server</span> بالا بیاورید و از حساب نمونه وارد شوید.
   </div>`;
+  // ترتیب سهگانهٔ زیر مهم است و «شلوغی» حالت نمایشی را کم میکند:
+  //   ۱. صفحهٔ نمایشی ثابت همان صفحه وجود دارد → همان نشان داده میشود (کارکنان، فیش، تقویم و ...).
+  //   ۲. الگوی مشخصه برای آن صفحه ساخته شده → همان الگو نشان داده میشود.
+  //   ۳. هیچکدام → صفحهٔ راهنمای «نیازمند سرور» (نه «صفحهٔ ناشناخته»).
+  // پیشتر همهٔ صفحههای زنده در نبود سرور به «صفحهٔ ناشناخته» میافتادند، حتی وقتی
+  // صفحهٔ نمایشی آماده داشتند؛ نتیجه این بود که بیشتر منوی درخت در دمو به بنبست میرسید.
+  if (typeof staticPages === 'function' && staticPages()[page]) return notice + staticPages()[page]();
+  if (typeof SPEC_SCREENS !== 'undefined' && SPEC_SCREENS[page]
+      && typeof pageFromSpec === 'function') return notice + pageFromSpec(page);
+  if (typeof pageNeedsServer === 'function') return notice + pageNeedsServer(page);
   return notice + (typeof pageFromSpec === 'function' ? pageFromSpec(page) : '');
 }
 

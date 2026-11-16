@@ -14,44 +14,107 @@ function pageDashboard() {
 }
 
 /* ---------- داشبورد مدیر/کارشناس HR و Admin ---------- */
+/**
+ * داشبورد با چهار بخش روشن ساخته می‌شود تا شلوغی کم شود:
+ *   ۱. اقدام‌های امروز  — صف کارهایی که منتظر تصمیم کاربر است (از دادهٔ ماژول‌ها)
+ *   ۲. نمای کلی نیرو    — شمار کارکنان به تفکیک وضعیت و نوع قرارداد
+ *   ۳. توزیع و ترکیب    — توزیع واحدها و سابقهٔ خدمت
+ *   ۴. آخرین رخدادها    — مرخصی‌های اخیر و اعلان‌ها (هر دو کلیک‌پذیر)
+ *
+ * همهٔ عددها از دادهٔ همان ماژول‌ها محاسبه می‌شود؛ هیچ عدد نمایشی دستی در این صفحه
+ * نیست تا با دادهٔ واقعی نخوانَد (نمودار «روند استخدام» پیشین چنین بود و برداشته شد).
+ */
 function dashHR() {
-  const active = EMPS.filter(e=>e.status==='active').length;
-  const pend = LEAVES.filter(l=>l.status==='pending').length;
-  const onLeave = EMPS.filter(e=>e.status==='leave').length;
-  const openJobs = JOBS.filter(j=>j.status==='open').length;
-  const deptCounts = Object.keys(DEPTS).map(k=>({k, n:EMPS.filter(e=>e.dept===k && e.status!=='terminated').length}));
-  const maxD = Math.max(...deptCounts.map(d=>d.n), 1);
+  const alive = EMPS.filter(e => e.status !== 'terminated');
+  const active = EMPS.filter(e => e.status === 'active').length;
+  const onLeave = EMPS.filter(e => e.status === 'leave').length;
+  const probation = EMPS.filter(e => e.status === 'probation').length;
+  const contractor = alive.filter(e => e.contract === 'پیمانکاری').length;
+
+  // صف اقدام‌ها — از همان دادهٔ ماژول‌های مربوطه
+  const pendLeaves = LEAVES.filter(l => l.status === 'pending').length;
+  const pendHiring = RECRUIT_REQS.filter(r => r.status === 'pending').length;
+  const draftRuns = PAYRUNS.filter(p => p.status === 'پیش‌نویس');
+  const runningCycles = PERF_CYCLES.filter(c => c.status === 'در حال اجرا');
+  const openJobs = JOBS.filter(j => j.status === 'open').length;
+  const pipeline = CANDS.filter(c => c.stage !== 'حذف‌شده').length;
+
+  // توزیع نیرو: نزولی؛ پنج واحد نخست و بقیه در یک سطر «سایر واحدها»
+  const deptCounts = Object.keys(DEPTS)
+    .map(k => ({ k, n: alive.filter(e => e.dept === k).length }))
+    .filter(d => d.n > 0)
+    .sort((a, b) => b.n - a.n);
+  const maxD = Math.max(...deptCounts.map(d => d.n), 1);
+  const deptTop = deptCounts.slice(0, 5);
+  const deptRest = deptCounts.slice(5).reduce((sum, d) => sum + d.n, 0);
+
+  // ترکیب پرونده‌ها بر پایهٔ سال استخدام (شمسی) — سابقهٔ خدمت بدون تاریخ ساختگی
+  const hireYear = e => parseInt(String(e.hire || '0').slice(0, 4), 10) || 0;
+  const tenure = [
+    { l: '۱۳۹۴ و پیش‌تر', n: alive.filter(e => hireYear(e) <= 1394).length },
+    { l: '۱۳۹۵ تا ۱۳۹۸', n: alive.filter(e => hireYear(e) >= 1395 && hireYear(e) <= 1398).length },
+    { l: '۱۳۹۹ تا ۱۴۰۱', n: alive.filter(e => hireYear(e) >= 1399 && hireYear(e) <= 1401).length },
+    { l: '۱۴۰۲ و بعد', n: alive.filter(e => hireYear(e) >= 1402).length },
+  ];
+  const maxT = Math.max(...tenure.map(t => t.n), 1);
+
+  /** کارت اقدام: رنگ نوار کناری از فوریت می‌آید، بقیه فقط نمایش است. */
+  const act = (cls, ico, title, note, n, page, unitFa) => `
+    <div class="act ${cls}" onclick="go('${page}')">
+      <div class="act-ico">${ico}</div>
+      <div style="min-width:0"><b>${title}</b><div class="muted">${esc(note)}</div></div>
+      <div class="act-num num">${fa(n)}<span class="muted" style="font-size:.6rem"> ${unitFa}</span></div>
+    </div>`;
+
+  /** میله‌های افقی برای توزیع‌ها (بلندترین میله پررنگ‌تر). */
+  const bars = rows => rows.map(r => `
+    <div class="bar-row"><span class="bar-lbl">${esc(r.l)}</span>
+      <span class="bar-val num">${fa(r.n)} نفر</span></div>
+    <div class="progress" style="margin-bottom:9px"><span style="width:${Math.round(r.n / r.max * 100)}%;background:${r.hi ? 'var(--primary)' : '#93C5FD'}"></span></div>`).join('');
+
   return `
   ${pageHead('داشبورد', `خوش آمدید ${session.name} — نمای کلی سامانه`,
-    `<button class="btn btn-ghost" onclick="exportDlg()">⬇️ خروجی</button>
-     <button class="btn btn-primary" onclick="go('leaveApprove')">✅ اقدامات سریع</button>`)}
-  <div class="grid-stats">
+    `<button class="btn btn-ghost" onclick="go('employees')">👥 فهرست کارکنان</button>
+     <button class="btn btn-ghost" onclick="exportDlg()">⬇️ خروجی</button>`)}
+
+  <div class="db-sec"><h3>اقدام‌های امروز</h3><span class="muted">کارهایی که منتظر شماست</span></div>
+  <div class="act-grid">
+    ${act(pendLeaves ? 'urgent' : 'ok', '🌤️', 'تأیید مرخصی', pendLeaves ? 'درخواست در انتظار بررسی' : 'صف خالی است', pendLeaves, 'leaveApprove', 'درخواست')}
+    ${act(pendHiring ? 'soon' : 'ok', '📝', 'درخواست نیرو', pendHiring ? 'در انتظار تصویب' : 'صف خالی است', pendHiring, 'hiringReqs', 'درخواست')}
+    ${act(draftRuns.length ? 'soon' : 'ok', '🧾', 'پردازش حقوق',
+      draftRuns.length ? 'دورهٔ باز: ' + draftRuns[0].month : 'همهٔ دوره‌ها بسته است', draftRuns.length, 'payrollRun', 'دوره')}
+    ${act(runningCycles.length ? 'soon' : 'ok', '⭐', 'ارزیابی عملکرد',
+      runningCycles.length ? runningCycles[0].name : 'دورهٔ بازی نیست', runningCycles.length, 'perfCycles', 'دوره')}
+  </div>
+
+  <div class="db-sec"><h3>نمای کلی نیرو</h3><span class="muted">از پروندهٔ کارکنان</span></div>
+  <div class="grid-stats mb">
     ${statCard({ico:'👥', tint:'#EFF6FF', accent:'#2563EB', val:fa(active), label:'کارکنان فعال', link:'مشاهده', page:'employees'})}
-    ${statCard({ico:'🌤️', tint:'#FEF3C7', accent:'#D97706', val:fa(pend), label:'درخواست مرخصی در انتظار تأیید', link:'تأیید', page:'leaveApprove'})}
     ${statCard({ico:'🏖️', tint:'#EDE9FE', accent:'#7C3AED', val:fa(onLeave), label:'در مرخصی امروز'})}
+    ${statCard({ico:'🧪', tint:'#FEF3C7', accent:'#D97706', val:fa(probation), label:'در دورهٔ آزمایشی'})}
+    ${statCard({ico:'📄', tint:'#E0F2FE', accent:'#0284C7', val:fa(contractor), label:'پیمانکاری'})}
     ${statCard({ico:'📢', tint:'#DCFCE7', accent:'#16A34A', val:fa(openJobs), label:'آگهی شغلی باز', link:'مشاهده', page:'jobs'})}
+    ${statCard({ico:'🧑‍💼', tint:'#FEE2E2', accent:'#DC2626', val:fa(pipeline), label:'متقاضی در جریان', link:'فهرست', page:'candidates'})}
   </div>
-  <div class="grid-2 mb">
+
+  <div class="db-sec"><h3>توزیع و ترکیب</h3><span class="muted">${fa(alive.length)} پروندهٔ فعال</span></div>
+  <div class="grid-2eq mb">
     <div class="card card-pad">
-      <div class="card-title">نمودار توزیع نیرو در واحدها <span class="muted">تعداد نفرات</span></div>
-      ${deptCounts.map(d=>`
-        <div class="kpi-row"><span>${deptName(d.k)}</span><span class="num">${fa(d.n)} نفر</span></div>
-        <div class="progress" style="margin-bottom:9px"><span style="width:${Math.round(d.n/maxD*100)}%;background:${d.n===maxD?'#2563EB':'#93C5FD'}"></span></div>`).join('')}
+      <div class="card-title">توزیع نیرو در واحدها</div>
+      ${bars(deptTop.map(d => ({l: deptName(d.k), n: d.n, max: maxD, hi: d.n === maxD})))}
+      ${deptRest ? `<div class="bar-row"><span class="bar-lbl">سایر واحدها</span><span class="bar-val num">${fa(deptRest)} نفر</span></div>` : ''}
     </div>
     <div class="card card-pad">
-      <div class="card-title">روند استخدام ۶ ماه اخیر <span class="muted">جذب در برابر ترک خدمت</span></div>
-      ${barChart([
-        {l:'فروردین', a:4, b:2},{l:'اردیبهشت', a:6, b:1},{l:'خرداد', a:3, b:3},
-        {l:'تیر', a:5, b:2},{l:'مرداد', a:2, b:1},{l:'شهریور', a:4, b:2}
-      ])}
-      <div style="display:flex;gap:14px;font-size:.72rem;color:var(--muted);margin-top:10px">
-        <span>🟦 جذب</span><span>🟥 ترک خدمت</span>
-      </div>
+      <div class="card-title">ترکیب بر پایهٔ سال استخدام <span class="muted">سابقهٔ خدمت</span></div>
+      ${bars(tenure.map(t => ({l: t.l, n: t.n, max: maxT, hi: t.n === maxT})))}
     </div>
   </div>
-  <div class="grid-2">
+
+  <div class="db-sec"><h3>آخرین رخدادها</h3><span class="muted">کلیک‌پذیر — می‌روید به همان صفحه</span></div>
+  <div class="grid-2eq">
     <div class="card">
-      <div class="card-title" style="padding:16px 18px 0">آخرین درخواست‌های مرخصی</div>
+      <div class="card-title" style="padding:16px 18px 0">درخواست‌های مرخصی اخیر
+        <button class="btn btn-sm btn-ghost" onclick="go('leaveApprove')">مشاهدهٔ همه</button></div>
       <div class="tbl-wrap"><table class="tbl">
         <thead><tr><th>کارمند</th><th>نوع</th><th>از</th><th>تا</th><th>وضعیت</th></tr></thead>
         <tbody>${LEAVES.slice(0,5).map(l=>`<tr class="clickable" onclick="go('leaveApprove')">
@@ -61,8 +124,11 @@ function dashHR() {
     </div>
     <div class="card card-pad">
       <div class="card-title">اعلان‌های اخیر</div>
-      <ul class="list-tight">
-        ${NOTIFS.map(n=>`<li><span>${n.ico}</span><div>${esc(n.title)}<div class="muted" style="font-size:.7rem">${n.time}</div></div></li>`).join('')}
+      <ul class="db-list">
+        ${NOTIFS.map(n=>`<li onclick="go('${n.page}')">
+          <span>${n.ico}</span>
+          <div>${esc(n.title)}<div class="muted" style="font-size:.7rem">${n.time}${n.unread?' · خوانده‌نشده':''}</div></div>
+        </li>`).join('')}
       </ul>
     </div>
   </div>`;

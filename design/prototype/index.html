@@ -372,6 +372,62 @@ body.dark .login-err{background:#7F1D1D;color:#FECACA}
   .search-wrap{display:none}
   .user-meta{display:none}
 }
+/* ============ نظم منوی درختی و داشبورد (بازآرایی رابط) ============ */
+/* ابزار بالای منو: جستجو و باز/بستن همه — چسبیده به بالای ناحیهٔ اسکرول. */
+.sb-tools{position:sticky;top:0;z-index:3;background:var(--surface);padding:6px 10px 8px;border-bottom:1px solid var(--border)}
+.sb-search{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:5px 9px}
+.sb-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:.76rem;color:var(--text)}
+.sb-search .sb-ico{font-size:.78rem;opacity:.7}
+.sb-clear{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:.72rem}
+.sb-actions{display:flex;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap}
+.sb-actions button{font:inherit;font-size:.65rem;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:8px;padding:2px 8px;cursor:pointer}
+.sb-actions button:hover{color:var(--primary);border-color:var(--primary)}
+.sb-actions .muted{margin-inline-start:auto;font-size:.64rem}
+.sb-sec-title{font-size:.64rem;font-weight:700;color:var(--muted);padding:10px 12px 5px}
+.sb-quick{display:flex;flex-wrap:wrap;gap:5px;padding:0 10px 6px}
+.sb-chip{display:inline-flex;align-items:center;gap:4px;font-size:.69rem;background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:3px 9px;cursor:pointer;color:var(--text);max-width:100%}
+.sb-chip:hover{border-color:var(--primary)}
+.sb-chip.pinned{background:var(--primary-light);border-color:#BFDBFE}
+.sb-chip .sb-unpin{opacity:.5;font-size:.6rem;margin-inline-start:2px}
+.sb-empty{padding:8px 14px 12px;font-size:.73rem;color:var(--muted);line-height:2.1}
+.nav-count{margin-inline-start:auto;font-size:.62rem;color:var(--muted);background:var(--bg);border-radius:6px;padding:0 5px;min-width:18px;text-align:center}
+.nav-dept-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-hint{margin-inline-start:6px;font-size:.6rem;color:var(--muted);white-space:nowrap}
+.nav-pin{opacity:0;font-size:.72rem;color:var(--muted);margin-inline-start:6px;cursor:pointer}
+.nav-item:hover .nav-pin{opacity:.65}
+.nav-pin.on{opacity:1;color:var(--amber)}
+.nav-pin:hover{opacity:1;color:var(--primary)}
+.nav-item.flat{font-size:.75rem}
+/* صفحههای بدون نسخهٔ نمایشی (نیازمند سرور) در حالت بدون سرور کمرنگ میشوند؛
+   هیچ صفحهای پنهان یا غیرفعال نمیشود، فقط وضعیتش دیده میشود. */
+.nav-item.dead,.nav-mod.dead,.sb-chip.dead{opacity:.5}
+.nav-item.dead:hover,.nav-mod.dead:hover{opacity:.8}
+.sb-legend,.sb-legend2{padding:6px 12px 0;font-size:.63rem;color:var(--muted);line-height:1.9}
+.sb-legend2{color:var(--primary)}
+.nav-group-title.as-btn.current,.nav-mod.current{color:var(--primary-dark)}
+/* ============ داشبورد: بخش‌بندی روشن و کارت اقدام ============ */
+.db-sec{display:flex;align-items:center;gap:10px;margin:18px 2px 10px}
+.db-sec h3{margin:0;font-size:.86rem;font-weight:800}
+.db-sec .muted{font-size:.7rem}
+.db-sec::after{content:"";flex:1;height:1px;background:var(--border)}
+.act-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px}
+.act{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border);border-inline-start:4px solid var(--border);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);cursor:pointer}
+.act:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.act .act-ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:1.05rem;background:var(--bg)}
+.act b{font-size:.8rem;display:block}
+.act .muted{font-size:.68rem}
+.act .act-num{margin-inline-start:auto;font-weight:800;font-size:1.15rem}
+.act.urgent{border-inline-start-color:var(--red)}
+.act.soon{border-inline-start-color:var(--amber)}
+.act.ok{border-inline-start-color:var(--green)}
+.bar-row{display:flex;align-items:center;gap:8px;font-size:.74rem;margin-bottom:2px}
+.bar-row .bar-lbl{min-width:106px}
+.bar-row .bar-val{margin-inline-start:auto;color:var(--muted)}
+.db-list{list-style:none;margin:0;padding:0}
+.db-list li{display:flex;gap:9px;align-items:flex-start;padding:9px 2px;border-bottom:1px dashed var(--border);font-size:.78rem;cursor:pointer}
+.db-list li:last-child{border-bottom:0}
+.db-list li:hover{background:var(--bg)}
+@media(max-width:920px){.grid-2,.grid-2eq{grid-template-columns:1fr}}
 @media print{.sidebar,.topbar,.head-actions,.row-actions,.modal-back{display:none!important}.main{margin:0}}
 </style>
 </head>
@@ -482,14 +538,14 @@ body.dark .login-err{background:#7F1D1D;color:#FECACA}
      (npm run gen) — هر دو پیش از ui.js بارگذاری می‌شوند. -->
 <script src="js/menu.generated.js?v=44"></script>
 <script src="js/organizations.generated.js?v=38"></script>
-<script src="js/ui.js?v=44"></script>
+<script src="js/ui.js?v=47"></script>
 <script src="js/pages.js?v=38"></script>
 <script src="js/pages2.js?v=38"></script>
-<script src="js/pages3.js?v=38"></script>
+<script src="js/pages3.js?v=39"></script>
 <script src="js/pages4.js?v=38"></script>
-<script src="js/pages5.js?v=38"></script>
+<script src="js/pages5.js?v=39"></script>
 <script src="js/live_params.js?v=43"></script>
-<script src="js/live.js?v=44"></script>
+<script src="js/live.js?v=45"></script>
 <script src="js/live_records.js?v=45"></script>
 <script src="js/live_stats.js?v=39"></script>
 <script src="js/live_stats_section.js?v=2"></script>

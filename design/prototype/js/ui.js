@@ -156,14 +156,166 @@ buildPageAccess();
 let session = null; // {username, name, role}
 let currentPage = 'dashboard';
 let notifs = [...NOTIFS];/* ------------------- باز/بسته کردن ماژول‌ها در منو ------------------- */
-const collapsedModules = new Set();
-/* اداره‌های بازوبستهشدهٔ منو؛ پیش‌فرض باز است تا کاربر ساختار کامل را ببیند. */
-const collapsedDepartments = new Set();
+/* ---------------------------------------------------------------------
+   وضعیت منوی درختی (دسترسی سریع و مرتب‌سازی)
+   ---------------------------------------------------------------------
+   چرا اینجا: منو بیش از ۱۳۰ صفحه در پنج سطح دارد (حوزه > اداره > زیرواحد >
+   ماژول > صفحه) و اگر همه باز باشد کاربر باید چند صفحه اسکرول کند. سه ابزار
+   ساده شلوغی را کم می‌کند و همه‌شان فقط «نمایش»اند، نه قاعدهٔ کسب‌وکار:
+
+     ۱. جستجوی صفحه (فیلتر زندهٔ درخت)
+     ۲. جمع‌شدن پیش‌فرض اداره‌ها؛ فقط ادارهٔ صفحهٔ جاری باز است
+     ۳. دسترسی سریع: سنجاق‌شده‌ها و آخرین بازدیدها
+
+   انتخاب‌ها در localStorage می‌مانند تا بعد از تازه‌سازی صفحه حفظ شوند؛ اگر
+   ذخیره‌سازی در دسترس نباشد (قفل مرورگر)، در حافظه ادامه می‌دهیم.
+   --------------------------------------------------------------------- */
+const SB_PREF_KEY = 'hrms.sidebar.prefs.v1';
+const sbPrefs = { pins: [], recents: [], openDepts: [], openAll: false, collapsedModules: [], hideDead: false };
+let sbQuery = '';
+let sbFocusPending = false;
+
+function loadSbPrefs() {
+  try {
+    const raw = localStorage.getItem(SB_PREF_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    for (const k of ['pins', 'recents', 'openDepts', 'collapsedModules']) {
+      if (Array.isArray(saved[k])) sbPrefs[k] = saved[k].filter(x => typeof x === 'string');
+    }
+    sbPrefs.openAll = !!saved.openAll;
+    sbPrefs.hideDead = !!saved.hideDead;
+  } catch (_) { /* ذخیره‌سازی در دسترس نیست */ }
+}
+function saveSbPrefs() {
+  try { localStorage.setItem(SB_PREF_KEY, JSON.stringify(sbPrefs)); } catch (_) { /* بی‌اثر */ }
+}
+loadSbPrefs();
+
+/** فهرست تخت صفحه‌های در دسترس — پایهٔ جستجو و بخش دسترسی سریع. */
+function sidebarPages() {
+  const out = [];
+  for (const dir of DIRECTORATES)
+    for (const dept of activeDepartments(dir))
+      for (const g of dept.groups)
+        for (const m of g.modules)
+          for (const s of m.screens)
+            out.push({ page: s.page, label: s.label, icon: s.icon, module: m.id,
+              moduleFa: m.titleFa, dept: dept.id, deptFa: dept.titleFa, dirFa: dir.titleFa });
+  return out;
+}
+
+/** یک صفحه از کلید آن (برای بخش دسترسی سریع). */
+function sidebarPageOf(list, page) {
+  return list.find(p => p.page === page) || null;
+}
+
+/** آیا ادارهٔ داده‌شده در منو باز است؟ */
+function isDeptOpen(id) {
+  return sbPrefs.openAll ? !sbPrefs.openDepts.includes(id) : sbPrefs.openDepts.includes(id);
+}
+/**
+ * وضعیت نمایشی یک صفحه — پایهٔ سادهسازی منوی درختی.
+ *
+ * چرا لازم است: ۱۳۲ صفحه در منو هست، ولی همهشان بدون سرور کار نمیکنند و پیشتر
+ * هر سه دسته یکشکل دیده میشدند؛ نتیجه این بود که کاربر در دمو به بنبست میخورد و
+ * دلیلش را نمیدانست. حالا هر صفحه یکی از این سه حالت را دارد:
+ *
+ *   static  → صفحهٔ نمایشی ثابت دارد؛ بدون سرور هم کامل کار میکند
+ *   server  → فقط نسخهٔ زنده دارد؛ به سرور محلی نیاز دارد
+ *   missing → نه صفحهٔ ثابت دارد و نه صفحهٔ زنده؛ هنوز نوشته نشده است
+ */
+function pageDemoState(page) {
+  if (typeof staticPages === 'function' && staticPages()[page]) return 'static';
+  if (typeof SPEC_SCREENS !== 'undefined' && SPEC_SCREENS[page]) return 'static';
+  if (typeof LIVE_PAGES !== 'undefined' && LIVE_PAGES[page]) return 'server';
+  return 'missing';
+}
+
+/** آیا این صفحه در حالت بدون سرور به بنبست میرسد؟ (پایهٔ کمرنگکردن منو) */
+function isDemoDeadEnd(page) {
+  return serverOnline === false && pageDemoState(page) !== 'static';
+}
+
 
 function toggleModule(id) {
-  if (collapsedModules.has(id)) collapsedModules.delete(id);
-  else collapsedModules.add(id);
+  const i = sbPrefs.collapsedModules.indexOf(id);
+  if (i >= 0) sbPrefs.collapsedModules.splice(i, 1); else sbPrefs.collapsedModules.push(id);
+  saveSbPrefs();
   renderSidebar();
+}
+
+/** جمع/باز کردن یک اداره. */
+function toggleDepartment(id) {
+  const i = sbPrefs.openDepts.indexOf(id);
+  if (i >= 0) sbPrefs.openDepts.splice(i, 1); else sbPrefs.openDepts.push(id);
+  saveSbPrefs();
+  renderSidebar();
+}
+
+/** باز/بستن یک‌جای همهٔ اداره‌ها (و برگرداندن ماژول‌ها به حالت باز). */
+function sbExpandAll(open) {
+  sbPrefs.openDepts = [];
+  sbPrefs.collapsedModules = [];
+  sbPrefs.openAll = !!open;
+  saveSbPrefs();
+  renderSidebar();
+}
+
+/**
+ * پنهان/نمایش صفحههایی که در حالت بدون سرور کار نمیکنند.
+ *
+ * فقط برای کمکردن شلوغی منو است؛ هیچ صفحهای از سامانه حذف یا غیرفعال نمیشود و با
+ * یک کلیک برمیگردد. انتخاب کاربر در localStorage میماند.
+ */
+function sbToggleHideDead() {
+  sbPrefs.hideDead = !sbPrefs.hideDead;
+  saveSbPrefs();
+  renderSidebar();
+}
+
+/** جستجوی زندهٔ صفحه‌ها؛ تمرکز کادر پس از بازترسیم برمی‌گردد. */
+function sidebarSearch(value) {
+  sbQuery = (value || '').trim();
+  sbFocusPending = true;
+  renderSidebar();
+}
+
+/** پاک‌کردن جستجو. */
+function sidebarClearSearch() {
+  sbQuery = '';
+  sbFocusPending = true;
+  renderSidebar();
+}
+
+/** سنجاق‌کردن/برداشتن سنجاق یک صفحه (بخش دسترسی سریع). */
+function togglePin(page) {
+  const i = sbPrefs.pins.indexOf(page);
+  if (i >= 0) sbPrefs.pins.splice(i, 1); else sbPrefs.pins.unshift(page);
+  saveSbPrefs();
+  renderSidebar();
+}
+
+/** ثبت آخرین بازدیدها برای بخش «اخیر». */
+function recordRecent(page) {
+  if (!page || page === 'dashboard') return;
+  sbPrefs.recents = [page, ...sbPrefs.recents.filter(p => p !== page)].slice(0, 5);
+  saveSbPrefs();
+}
+
+/** میان‌بر کلیدی منو: «/» تمرکز جستجو، «Esc» پاک‌کردن. */
+function initSidebarKeys() {
+  if (window.__sbKeysReady) return;
+  window.__sbKeysReady = true;
+  document.addEventListener('keydown', e => {
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
+    if (e.key === '/' && !typing) {
+      const box = $('#sbSearch');
+      if (box) { e.preventDefault(); box.focus(); }
+      return;
+    }
+    if (e.key === 'Escape' && document.activeElement?.id === 'sbSearch') sidebarClearSearch();
+  });
 }
 
 /* ------------------- ورود / خروج ------------------- */
@@ -269,6 +421,7 @@ function go(page, ...args) {
     }
   currentPage = page;
   window.currentPageArgs = args;
+  recordRecent(page);
   closeOverlays();
   renderSidebar();
   renderPage(page, ...args);
@@ -293,9 +446,56 @@ function activeDepartments(dir) {
   })).filter(dept => dept.groups.length);
 }
 
+/**
+ * ترتیب نمایشی حوزهها در منو: حوزهای که داشبورد در آن است اول میآید.
+ *
+ * چرا: در ترتیب مانیفست، حوزهٔ ستادی سازمان (داشبورد و تنظیمات) بعد از هشت واحد میآمد و
+ * پرکاربردترین صفحهٔ سامانه ته فهرست میافتاد. این فقط ترتیب نمایش است و فایل تولیدشدهٔ
+ * منو دستنخورده میماند.
+ */
+function orderedDirectorates() {
+  const hasHome = d => (d.departments || []).some(dp => (dp.groups || []).some(g =>
+    (g.modules || []).some(m => (m.screens || []).some(s => s.page === 'dashboard'))));
+  return [...DIRECTORATES].sort((a, b) => (hasHome(b) ? 1 : 0) - (hasHome(a) ? 1 : 0));
+}
+
 function renderSidebar() {
   const sb = $('#sidebar');
-  let html = `<div class="role-chip">🎖️ ${ROLE_NAMES[session.role]}</div>`;
+  initSidebarKeys();
+  const pages = sidebarPages();
+  // در حالت بدون سرور، صفحههای بینسخهٔ نمایشی کمرنگ میشوند و کاربر میتواند با دکمهٔ
+  // «فقط صفحههای فعال» آنها را یکسره کنار بگذارد تا فهرست کوتاه شود. هر دو فقط نمایشاند؛
+  // هیچ صفحهای حذف یا غیرفعال نمیشود و با یک کلیک برمیگردد.
+  const hiding = serverOnline === false && sbPrefs.hideDead;
+  const hiddenCount = hiding ? pages.filter(p => pageDemoState(p.page) !== 'static').length : 0;
+  const deadHint = serverOnline === false ? ' — نیازمند سرور محلی' : '';
+  const q = sbQuery.toLowerCase();
+  const matches = q
+    ? pages.filter(p => [p.label, p.moduleFa, p.deptFa, p.dirFa].join(' ').toLowerCase().includes(q))
+      .filter(p => !hiding || pageDemoState(p.page) === 'static')
+    : [];
+
+  let html = `<div class="role-chip">🎖️ ${ROLE_NAMES[session.role]}</div>
+    <div class="sb-tools">
+      <div class="sb-search">
+        <span class="sb-ico">🔎</span>
+        <input id="sbSearch" value="${esc(sbQuery)}" oninput="sidebarSearch(this.value)"
+          placeholder="جستجوی صفحه… (کلید /)" autocomplete="off">
+        ${sbQuery ? `<button class="sb-clear" onclick="sidebarClearSearch()" title="پاک‌کردن">✕</button>` : ''}
+      </div>
+      <div class="sb-actions">
+        <button onclick="sbExpandAll(true)">باز کردن همه</button>
+        <button onclick="sbExpandAll(false)">بستن همه</button>
+        ${serverOnline === false ? `<button onclick="sbToggleHideDead()"
+          title="صفحههایی که فقط با سرور محلی باز میشوند، از این فهرست کنار گذاشته میشوند">
+          ${sbPrefs.hideDead ? 'نمایش صفحههای نیازمند سرور' : 'فقط صفحههای فعال'}</button>` : ''}
+        <span class="muted num">${fa(pages.length)} صفحه</span>
+      </div>
+      ${hiding ? `<div class="sb-legend2">${fa(hiddenCount)} صفحهٔ نیازمند سرور کنار گذاشته شد.</div>` : ''}
+      ${serverOnline === false ? `<div class="sb-legend">صفحههای کمرنگ نسخهٔ نمایشی ندارند و
+        به سرور محلی نیاز دارند؛ بقیه همین حالا کار میکنند.</div>` : ''}
+    </div>`;
+
   if (!DIRECTORATES.length) {
     html += `<div class="nav-group-title">منو در دسترس نیست</div>
       <div class="muted" style="font-size:.75rem;padding:0 12px;line-height:1.9">
@@ -303,39 +503,118 @@ function renderSidebar() {
         دستور <span class="ltr">npm run gen</span> را اجرا کنید.
       </div>`;
   }
-  for (const dir of DIRECTORATES) {
+
+  /* ---- حالت جستجو: فهرست تخت نتیجه‌ها ---- */
+  if (q) {
+    html += `<div class="sb-sec-title">نتیجهٔ جستجو <span class="num">${fa(matches.length)}</span></div>`;
+    if (!matches.length) {
+      html += `<div class="sb-empty">صفحه‌ای با «${esc(sbQuery)}» پیدا نشد.<br>
+        <button class="btn btn-sm btn-ghost" onclick="sidebarClearSearch()">پاک‌کردن جستجو</button></div>`;
+    }
+    for (const p of matches) {
+      const dead = isDemoDeadEnd(p.page);
+      html += `<a class="nav-item flat ${currentPage === p.page ? 'active' : ''}${dead ? ' dead' : ''}" onclick="go('${p.page}')"
+        title="${esc(p.dirFa + ' › ' + p.deptFa + ' › ' + p.moduleFa)}${dead ? deadHint : ''}">
+        <span class="ico">${icon(p.icon)}</span>${esc(p.label)}
+        <span class="nav-hint">${esc(p.moduleFa)}</span>
+        ${sbPinBtn(p.page)}
+      </a>`;
+    }
+    return void (sb.innerHTML = html + sidebarFootHtml());
+  }
+
+  /* ---- بخش دسترسی سریع: سنجاق‌شده‌ها و آخرین بازدیدها ---- */
+  const pinned = sbPrefs.pins.map(pg => sidebarPageOf(pages, pg)).filter(Boolean);
+  const recent = sbPrefs.recents.map(pg => sidebarPageOf(pages, pg))
+    .filter(p => p && !sbPrefs.pins.includes(p.page));
+  if (pinned.length || recent.length) {
+    html += `<div class="sb-sec-title">دسترسی سریع</div>`;
+    if (pinned.length) {
+      html += `<div class="sb-quick">${pinned.map(p => `
+        <a class="sb-chip pinned" onclick="go('${p.page}')" title="${esc(p.moduleFa)}">
+          <span class="ico">${icon(p.icon)}</span>${esc(p.label)}
+          <span class="sb-unpin" onclick="event.stopPropagation();togglePin('${p.page}')" title="برداشتن سنجاق">✕</span>
+        </a>`).join('')}</div>`;
+    }
+    if (recent.length) {
+      html += `<div class="sb-quick">${recent.map(p => `
+        <a class="sb-chip" onclick="go('${p.page}')" title="${esc(p.moduleFa)} (اخیر)">
+          <span class="ico">${icon(p.icon)}</span>${esc(p.label)}
+        </a>`).join('')}</div>`;
+    }
+  }
+
+  /* ---- درخت اصلی ---- */
+  // فقط اداره‌ای که صفحهٔ جاری در آن است، پیش‌فرض باز می‌شود.
+  // «shown» تنها جایی است که فیلتر پنهانسازی اعمال میشود؛ پیشفرض همهچیز نشان داده میشود.
+  const shown = s => !hiding || pageDemoState(s.page) === 'static';
+  const currentDept = sidebarPageOf(pages, currentPage)?.dept;
+  for (const dir of orderedDirectorates()) {
     const depts = activeDepartments(dir);
     if (!depts.length) continue;
-    html += `<div class="nav-directorate" title="${esc((dir.dutiesFa||[]).join(' · '))}">${esc(dir.titleFa)}</div>`;
+    html += `<div class="nav-directorate" title="${esc((dir.dutiesFa || []).join(' · '))}">${esc(dir.titleFa)}</div>`;
     for (const dept of depts) {
-      const deptOpen = !collapsedDepartments.has(dept.id);
-      html += `<button class="nav-group-title as-btn ${deptOpen?'open':''}" onclick="toggleDepartment('${dept.id}')"
-        title="${esc((dept.dutiesFa||[]).join(' · '))}">
-        <span class="caret">${deptOpen?'▾':'▸'}</span>${esc(dept.titleFa)}</button>`;
+      const hasCurrent = dept.id === currentDept;
+      const deptOpen = isDeptOpen(dept.id) || (hasCurrent && !sbPrefs.openDepts.length && !sbPrefs.openAll);
+      const pageCount = dept.groups.reduce((n, g) => n + g.modules.reduce((k, m) => k + m.screens.filter(shown).length, 0), 0);
+      html += `<button class="nav-group-title as-btn ${deptOpen ? 'open' : ''}${hasCurrent ? ' current' : ''}"
+        onclick="toggleDepartment('${dept.id}')" title="${esc((dept.dutiesFa || []).join(' · '))}">
+        <span class="caret">${deptOpen ? '▾' : '▸'}</span>
+        <span class="nav-dept-name">${esc(dept.titleFa)}</span>
+        <span class="nav-count num">${fa(pageCount)}</span></button>`;
+      if (hiding && !pageCount) continue;
       if (!deptOpen) continue;
       for (const g of dept.groups) {
         // زیرواحد فقط یک برچسب گروه‌بندی است؛ خودش منطق یا دسترسی ندارد.
-        if (g.titleFa) html += `<div class="nav-subunit" title="${esc((g.dutiesFa||[]).join(' · '))}">${esc(g.titleFa)}</div>`;
+        if (g.titleFa) html += `<div class="nav-subunit" title="${esc((g.dutiesFa || []).join(' · '))}">${esc(g.titleFa)}</div>`;
         for (const m of g.modules) {
-          const open = !collapsedModules.has(m.id);
-          html += `<button class="nav-mod ${open?'open':''}" onclick="toggleModule('${m.id}')">
-            <span class="caret">${open?'▾':'▸'}</span>
+          const screens = m.screens.filter(shown);
+          if (!screens.length) continue;
+          const open = !sbPrefs.collapsedModules.includes(m.id);
+          const hasPage = m.screens.some(s => s.page === currentPage);
+          const modDead = isDemoDeadEnd(m.screens[0].page)
+            && m.screens.every(s => pageDemoState(s.page) !== 'static');
+          html += `<button class="nav-mod ${open ? 'open' : ''}${hasPage ? ' current' : ''}${modDead ? ' dead' : ''}" onclick="toggleModule('${m.id}')"
+            title="${modDead ? esc(m.titleFa) + deadHint : esc(m.titleFa)}">
+            <span class="caret">${open ? '▾' : '▸'}</span>
             <span class="nav-mod-name">${esc(m.titleFa)}</span>
-            ${m.shared?`<span class="chip c-shared">مشترک</span>`:''}
-            <span class="muted num" style="font-size:.68rem">${fa(m.screens.length)}</span>
+            ${m.shared ? `<span class="chip c-shared">مشترک</span>` : ''}
+            <span class="nav-count num">${fa(screens.length)}</span>
           </button>`;
           if (!open) continue;
-          for (const s of m.screens) {
+          for (const s of screens) {
             const pill = PILLS[s.page] ? PILLS[s.page]() : 0;
-            html += `<a class="nav-item ${currentPage===s.page?'active':''}" onclick="go('${s.page}')">
+            const dead = isDemoDeadEnd(s.page);
+            const miss = pageDemoState(s.page) === 'missing';
+            html += `<a class="nav-item ${currentPage === s.page ? 'active' : ''}${dead ? ' dead' : ''}"
+              title="${esc(s.label)}${dead ? deadHint : ''}" onclick="go('${s.page}')">
               <span class="ico">${icon(s.icon)}</span>${esc(s.label)}
-              ${pill?`<span class="pill num">${fa(pill)}</span>`:''}
+              ${miss ? '<span class="chip c-prob">ساخته نشده</span>' : ''}
+              ${pill ? `<span class="pill num">${fa(pill)}</span>` : ''}
+              ${sbPinBtn(s.page)}
             </a>`;
           }
         }
       }
     }
   }
+  sb.innerHTML = html + sidebarFootHtml();
+  if (sbFocusPending) {
+    sbFocusPending = false;
+    const box = $('#sbSearch');
+    if (box) { box.focus(); box.setSelectionRange(box.value.length, box.value.length); }
+  }
+}
+
+/** دکمهٔ سنجاق یک صفحه (در منو و نتیجهٔ جستجو). */
+function sbPinBtn(page) {
+  const on = sbPrefs.pins.includes(page);
+  return `<span class="nav-pin${on ? ' on' : ''}" title="${on ? 'برداشتن سنجاق' : 'سنجاق به دسترسی سریع'}"
+    onclick="event.stopPropagation();togglePin('${page}')">${on ? '★' : '☆'}</span>`;
+}
+
+/** پانویس منو: نشان شرکت و وضعیت اتصال. */
+function sidebarFootHtml() {
   const conn = serverOnline === true
     ? `<span class="chip c-ok">متصل به سرور محلی</span>`
     : serverOnline === false
@@ -346,8 +625,7 @@ function renderSidebar() {
         <b>${esc(activeOrg.titleFa)}</b><br>
         <span class="muted">${esc(activeOrg.holdingFa)} — ${esc(activeOrg.shortCode)}</span></div>`
     : '';
-  html += `${org}<div class="sidebar-foot">سامانه جامع منابع انسانی — نسخه نمایشی<br>${conn}</div>`;
-  sb.innerHTML = html;
+  return `${org}<div class="sidebar-foot">سامانه جامع منابع انسانی — نسخه نمایشی<br>${conn}</div>`;
 }
 
 /* ------------------- استقرار پارامتریک: انتخاب شرکت ------------------- */
@@ -446,12 +724,6 @@ try {
   const org = ORG_DATA.organizations.find(o => o.id === saved);
   if (org) activeOrg = org;
 } catch (_) { /* حالت‌های محدود مرورگر */ }
-
-function toggleDepartment(id) {
-  if (collapsedDepartments.has(id)) collapsedDepartments.delete(id);
-  else collapsedDepartments.add(id);
-  renderSidebar();
-}
 
 /* ------------------- توست، مودال، اعلان‌ها، تم ------------------- */
 function toast(msg, type='success') {
