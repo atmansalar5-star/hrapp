@@ -106,8 +106,11 @@ func round2(x float64) float64 {
 }
 
 // TaxFor مالیات پله‌ای بر درآمد مشمول.
+//
+// دو حالت مرزی که عمدی است: فهرست خالی ⇒ صفر، و اگر پلهٔ آخر «بسته» باشد (سقف مثبت و
+// بی‌پلهٔ بی‌سقف `Upto=0`) باقی درآمد با نرخ همان پله مشمول می‌شود تا مالیات بی‌صدا کم نشود.
 func TaxFor(income int64, brackets []TaxBracket) int64 {
-	if income <= 0 {
+	if income <= 0 || len(brackets) == 0 {
 		return 0
 	}
 	var tax float64
@@ -125,6 +128,11 @@ func TaxFor(income int64, brackets []TaxBracket) int64 {
 			tax += float64(slice) * b.Rate
 		}
 		prev = upper
+	}
+	// پلهٔ آخر «بسته» بود (سقف مثبت): باقی درآمد با نرخ همان پله مشمول می‌شود تا بخشی از
+	// درآمد بی‌صدا از مالیات بیرون نماند. این تابع میان هر سه نظام پرداخت مشترک است.
+	if last := brackets[len(brackets)-1]; last.Upto > 0 && income > prev {
+		tax += float64(income-prev) * last.Rate
 	}
 	return RoundHalfUp(tax)
 }
@@ -221,7 +229,7 @@ func ComputePayroll(input PayrollInput, params PayrollParams) PayrollResult {
 		InsuranceEmployer:    statutory.InsuranceEmployer,
 		TaxableIncome:        statutory.TaxableIncome,
 		Tax:                  statutory.Tax,
-		Net:                  gross - statutory.InsuranceEmployee - statutory.Tax - input.OtherDeductions,
+		Net:                  gross - statutory.InsuranceEmployee - statutory.Tax - nonNegative64(input.OtherDeductions),
 		VeteranApplied:       statutory.VeteranApplied,
 		VeteranTaxExempt:     statutory.VeteranTaxExempt,
 		VeteranPensionExempt: statutory.VeteranPensionExempt,

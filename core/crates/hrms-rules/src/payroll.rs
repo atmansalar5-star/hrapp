@@ -63,8 +63,12 @@ pub struct PayrollResult {
 }
 
 /// مالیات پله‌ای بر درآمد مشمول.
+///
+/// دو حالت مرزی که عمدی است: فهرست خالی ⇒ صفر، و اگر پلهٔ آخر «بسته» باشد (سقف مثبت و
+/// بی‌پلهٔ بی‌سقف `upto = 0`) باقی درآمد با نرخ همان پله مشمول می‌شود. این رفتار باید با
+/// `rules.TaxFor` در سرور Go یکی بماند (دروازهٔ تطبیق دو میزبان).
 pub fn tax_for(income: i64, brackets: &[TaxBracket]) -> i64 {
-    if income <= 0 {
+    if income <= 0 || brackets.is_empty() {
         return 0;
     }
     let mut tax = 0.0;
@@ -79,6 +83,13 @@ pub fn tax_for(income: i64, brackets: &[TaxBracket]) -> i64 {
             tax += slice as f64 * b.rate;
         }
         prev = upper;
+    }
+    // پلهٔ آخر «بسته» بود (سقف مثبت): باقی درآمد با نرخ همان پله مشمول می‌شود تا بخشی از
+    // درآمد بی‌صدا از مالیات بیرون نماند — هم‌رفتار با rules.TaxFor در سرور Go.
+    if let Some(last) = brackets.last() {
+        if last.upto > 0 && income > prev {
+            tax += (income - prev) as f64 * last.rate;
+        }
     }
     round_half_up(tax)
 }
@@ -99,7 +110,7 @@ pub fn compute(input: &PayrollInput, params: &PayrollParams) -> PayrollResult {
 
     let taxable_income = (gross - insurance_employee - params.tax_exemption).max(0);
     let tax = tax_for(taxable_income, &params.tax_brackets);
-    let net = gross - insurance_employee - tax - input.other_deductions;
+    let net = gross - insurance_employee - tax - input.other_deductions.max(0);
 
     PayrollResult {
         overtime_pay,

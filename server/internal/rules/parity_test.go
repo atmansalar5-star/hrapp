@@ -196,3 +196,30 @@ func TestRoundingMatchesRustBehaviour(t *testing.T) {
 		t.Errorf("مالیات پله‌ای نادرست است: %d", TaxFor(100_000_000, []TaxBracket{{Upto: 50_000_000, Rate: 0.10}, {Upto: 100_000_000, Rate: 0.15}}))
 	}
 }
+
+// TestTaxForClosedLastBracketWithoutOpenEnded پلهٔ آخر «بسته» را می‌سنجد: درآمد بالای سقف
+// آخرین پله نباید بی‌مالیات بماند (این تابع میان هر سه نظام پرداخت مشترک است و همان رفتار
+// در core/crates/hrms-rules/src/payroll.rs هم پیاده شده است).
+func TestTaxForClosedLastBracketWithoutOpenEnded(t *testing.T) {
+	brackets := []TaxBracket{{Upto: 50_000_000, Rate: 0.10}, {Upto: 200_000_000, Rate: 0.15}}
+	// ۵۰م × ۱۰٪ = ۵م و ۱۵۰م × ۱۵٪ = ۲۲٫۵م ⇒ ۲۷٫۵م برای درآمد ۲۰۰م
+	if got := TaxFor(200_000_000, brackets); got != 27_500_000 {
+		t.Fatalf("مالیات درآمد ۲۰۰م باید ۲۷٬۵۰۰٬۰۰۰ باشد، شد %d", got)
+	}
+	// درآمد بالای سقف آخر: ۱۰۰م باقی‌مانده هم با نرخ پلهٔ آخر مشمول می‌شود ⇒ ۴۲٫۵م
+	if got := TaxFor(300_000_000, brackets); got != 42_500_000 {
+		t.Fatalf("درآمد بالای سقف آخر باید مشمول بماند (۴۲٬۵۰۰٬۰۰۰)، شد %d", got)
+	}
+	// فهرست خالی و درآمد نامثبت
+	if got := TaxFor(300_000_000, nil); got != 0 {
+		t.Fatalf("بدون پله، مالیات باید صفر باشد: %d", got)
+	}
+	if got := TaxFor(0, brackets); got != 0 {
+		t.Fatalf("درآمد صفر مالیات ندارد: %d", got)
+	}
+	// پلهٔ بی‌سقف (`Upto=0`) همان رفتار پیشین را نگه می‌دارد
+	open := []TaxBracket{{Upto: 50_000_000, Rate: 0.10}, {Upto: 0, Rate: 0.15}}
+	if got := TaxFor(300_000_000, open); got != 42_500_000 {
+		t.Fatalf("با پلهٔ بی‌سقف باید ۴۲٬۵۰۰٬۰۰۰ باشد، شد %d", got)
+	}
+}

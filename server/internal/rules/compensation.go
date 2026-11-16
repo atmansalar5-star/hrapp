@@ -251,7 +251,7 @@ func CompensationParamsFromText(values map[string]string) CompensationParams {
 		if !strings.HasPrefix(key, "compensation.") {
 			continue
 		}
-		text := strings.TrimSpace(strings.NewReplacer("٪", "", "%", "", ",", "", "،", "", "٬", "", "'", "", " ", "").Replace(raw))
+		text := strings.TrimSpace(strings.NewReplacer("٪", "", "%", "", ",", "", "،", "", "٬", "", "'", "", " ", "", "٫", ".").Replace(raw))
 		if text == "" {
 			continue
 		}

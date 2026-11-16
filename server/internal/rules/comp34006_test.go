@@ -588,3 +588,62 @@ func TestComp34006AllParamsDriveCalculation(t *testing.T) {
 		t.Fatalf("پیش‌فرض شیفت صبح و عصر باید ۱۰ باشد: %v", got)
 	}
 }
+
+// TestComp34006BoundaryGuards حالت‌های مرزی را می‌سنجد که پیش‌تر بی‌صدا به پرداخت بیشتر
+// (یا هشدار نادرست) می‌انجامیدند.
+func TestComp34006BoundaryGuards(t *testing.T) {
+	// ۱) سقف صفر نقش یعنی «هیچ نقش همزمانی مجاز نیست» (خاموش‌کردن)، نه «بی‌سقف».
+	noRoles := Comp34006ParamsFromValues(map[string]float64{"comp34006.role.maxConcurrent": 0})
+	roleIn := Comp34006Input{EmployeeID: "EMP-12", JobGrade: 21, RoleType: "type1", RoleCount: 3}
+	if got := Comp34006Calc(roleIn, noRoles).RoleAllow; got != 0 {
+		t.Fatalf("سقف صفر نقش باید فوق‌العادهٔ نقش را صفر کند، شد %d", got)
+	}
+	if got := Comp34006Calc(roleIn, DefaultComp34006Params()).RoleAllow; got == 0 {
+		t.Fatal("با سقف پیش‌فرض ۳، فوق‌العادهٔ نقش باید محاسبه شود.")
+	}
+
+	// ۲) درصد منفی جذب بازار کار: دادهٔ نامعتبر ⇒ صفر، نه بالاترین پرداخت.
+	marketIn := Comp34006Input{EmployeeID: "EMP-12", JobGrade: 21, PersonalGrade: 20,
+		MarketAttractionApproved: true}
+	negIn := marketIn
+	negIn.MarketAttractionPercent = -50
+	if neg := Comp34006Calc(negIn, DefaultComp34006Params()); neg.MarketAllow != 0 {
+		t.Fatalf("درصد منفی باید صفر شود، شد %d", neg.MarketAllow)
+	}
+	if auto := Comp34006Calc(marketIn, DefaultComp34006Params()); auto.MarketAllow == 0 {
+		t.Fatal("بدون درصد، پیش‌فرض پارامتر باید اعمال شود.")
+	}
+
+	// ۳) سقف گرید شخصی بیش از سقف گرید شغلی، به سقف شغلی بریده می‌شود.
+	capped := Comp34006ParamsFromValues(map[string]float64{
+		"comp34006.maxJobGrade": 25, "comp34006.maxPersonalGrade": 40})
+	if capped.MaxPersonalGrade != 25 {
+		t.Fatalf("سقف گرید شخصی باید ۲۵ شود، شد %d", capped.MaxPersonalGrade)
+	}
+
+	// ۴) ممیز اعشاری فارسی «٫» در پارامتر خوانده می‌شود (وگرنه مقدار بی‌صدا نادیده می‌رفت).
+	fa := Comp34006ParamsFromText(map[string]string{"comp34006.region.tehran.tablePercent": "۶۸٫۷۵"})
+	if fa.RegionTehranTablePercent != 68.75 {
+		t.Fatalf("ممیز فارسی خوانده نشد: %v", fa.RegionTehranTablePercent)
+	}
+
+	// ۵) امتیاز ارزیابی بیش از ۱۰۰ به ۱۰۰ بریده می‌شود.
+	perfParams := Comp34006ParamsFromValues(map[string]float64{"comp34006.performance.percent": 20})
+	atMax := Comp34006Calc(Comp34006Input{EmployeeID: "EMP-12", JobGrade: 21, PerformanceScore: 100}, perfParams)
+	over := Comp34006Calc(Comp34006Input{EmployeeID: "EMP-12", JobGrade: 21, PerformanceScore: 150}, perfParams)
+	if over.Performance != atMax.Performance {
+		t.Fatalf("امتیاز ۱۵۰ باید مانند ۱۰۰ رفتار کند: %d در برابر %d", over.Performance, atMax.Performance)
+	}
+	if atMax.Performance == 0 {
+		t.Fatal("با درصد پارامتری روشن، پاداش عملکرد باید محاسبه شود.")
+	}
+
+	// ۶) هشدار کاهندهٔ صلاحیت با درصد صفر نباید صادر شود.
+	zeroDeduct := Comp34006ParamsFromValues(map[string]float64{"comp34006.qualification.deductPercentPerGrade": 0})
+	out := Comp34006Calc(Comp34006Input{EmployeeID: "EMP-12", JobGrade: 21, QualificationGapGrades: 2}, zeroDeduct)
+	for _, w := range out.WarningsFa {
+		if strings.Contains(w, "ضریب کاهندهٔ صلاحیت") {
+			t.Fatal("با درصد صفر نباید هشدار کاهندهٔ صلاحیت صادر شود.")
+		}
+	}
+}

@@ -488,6 +488,11 @@ func Comp34006ParamsFromValues(values map[string]float64) Comp34006Params {
 	if p.RegionMode != "table" && p.RegionMode != "jobGrade" && p.RegionMode != "both" {
 		p.RegionMode = "both"
 	}
+	// سقف گرید شخصی نمی‌تواند از سقف نردبان شغلی بگذرد؛ وگرنه گرید گزارش‌شده با امتیاز
+	// محاسبه‌شده ناهم‌خوان می‌شود (نردبان جدول ۳ تا همان گرید بسته شده است).
+	if p.MaxPersonalGrade > p.MaxJobGrade {
+		p.MaxPersonalGrade = p.MaxJobGrade
+	}
 	return p
 }
 
@@ -499,7 +504,7 @@ func Comp34006ParamsFromText(values map[string]string) Comp34006Params {
 		if !strings.HasPrefix(key, "comp34006.") {
 			continue
 		}
-		text := strings.TrimSpace(strings.NewReplacer("٪", "", "%", "", ",", "", "،", "", "٬", "", "'", "", " ", "").Replace(raw))
+		text := strings.TrimSpace(strings.NewReplacer("٪", "", "%", "", ",", "", "،", "", "٬", "", "'", "", " ", "", "٫", ".").Replace(raw))
 		if text == "" {
 			continue
 		}
@@ -933,7 +938,10 @@ func Comp34006Calc(in Comp34006Input, p Comp34006Params) Comp34006Result {
 	if roleCount < 0 {
 		roleCount = 0
 	}
-	if p.MaxConcurrentRoles > 0 && roleCount > p.MaxConcurrentRoles {
+	// صفر یعنی «هیچ نقش همزمانی مجاز نیست» (خاموش‌کردن فوق‌العادهٔ نقش)، نه «بی‌سقف».
+	if p.MaxConcurrentRoles <= 0 {
+		roleCount = 0
+	} else if roleCount > p.MaxConcurrentRoles {
 		roleCount = p.MaxConcurrentRoles
 	}
 	rolePercent := Comp34006RolePercent(in.RoleType, p)
@@ -945,7 +953,12 @@ func Comp34006Calc(in Comp34006Input, p Comp34006Params) Comp34006Result {
 	// ۳۴۶۰۶ — فوق‌العادهٔ جذب بازار کار: حداکثر معادل فوق‌العادهٔ گرید شخصی، با تصویب.
 	if in.MarketAttractionApproved {
 		percent := in.MarketAttractionPercent
-		if percent <= 0 {
+		if percent < 0 {
+			// منفی یعنی دادهٔ نامعتبر، نه «بدون مصوبه»: صفر می‌شود تا به بالاترین پرداخت نرسد.
+			percent = 0
+			out.WarningsFa = append(out.WarningsFa,
+				"درصد فوق‌العادهٔ جذب بازار کار منفی بود و صفر گرفته شد.")
+		} else if percent == 0 {
 			percent = p.MarketDefaultPercent
 		}
 		if capPercent := p.MarketMaxFactor * 100; percent > capPercent {
@@ -974,8 +987,14 @@ func Comp34006Calc(in Comp34006Input, p Comp34006Params) Comp34006Result {
 	}
 
 	// ۳۴۶۰۸ — پاداش عملکرد (درصد پارامتری از حقوق پایه؛ صفر یعنی از ماژول عملکرد).
+	// امتیاز ارزیابی به ۱۰۰ بریده می‌شود؛ وگرنه امتیاز بیرون از مقیاس (مثلاً ۱۵۰) پاداش را
+	// بیش از درصد مصوب بالا می‌برد.
 	if p.PerformancePercent > 0 && in.PerformanceScore > 0 {
-		out.Performance = RoundHalfUp(float64(out.BaseSalary) * p.PerformancePercent / 100 * in.PerformanceScore / 100)
+		score := in.PerformanceScore
+		if score > 100 {
+			score = 100
+		}
+		out.Performance = RoundHalfUp(float64(out.BaseSalary) * p.PerformancePercent / 100 * score / 100)
 	}
 
 	// ۳۴۶۰۹ — ثابت ماهانه، ۳۴۶۱۰ — حق عائله‌مندی و اولاد، ۳۴۶۱۱ — حق مسکن،
@@ -1049,7 +1068,7 @@ func Comp34006Calc(in Comp34006Input, p Comp34006Params) Comp34006Result {
 		out.WarningsFa = append(out.WarningsFa,
 			"فوق‌العادهٔ اقماری به فوق‌العادهٔ منطقه گره خورده است؛ بدون منطقه، اقماری محاسبه نمی‌شود.")
 	}
-	if in.QualificationGapGrades > 0 {
+	if in.QualificationGapGrades > 0 && p.QualificationDeductPercentPerGrade > 0 {
 		out.WarningsFa = append(out.WarningsFa,
 			"ضریب کاهندهٔ صلاحیت اعمال شد: "+IntFa(in.QualificationGapGrades)+" گرید × "+
 				TrimFloatFa(p.QualificationDeductPercentPerGrade)+"٪.")
@@ -1107,7 +1126,8 @@ func comp34006Lines(
 	}
 	if out.Performance > 0 {
 		lines = append(lines, Comp34006Line{Code: "34608", TitleFa: "پاداش عملکرد", Amount: out.Performance,
-			RefFa: "بند ۶-۸ دستورالعمل"})
+			FormulaFa: TrimFloatFa(p.PerformancePercent) + "٪ از حقوق پایه × امتیاز ارزیابی (سقف ۱۰۰)",
+			RefFa:     "بند ۶-۸ دستورالعمل"})
 	}
 	if out.FixedMonthly > 0 {
 		lines = append(lines, Comp34006Line{Code: "34609", TitleFa: "ثابت ماهانه", Amount: out.FixedMonthly,
