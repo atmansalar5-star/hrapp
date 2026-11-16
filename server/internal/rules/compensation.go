@@ -7,7 +7,10 @@
 //	P1 — Position  (شغل)      ارزشیابی و رتبه‌بندی شغل، امتیاز شغل و پلهٔ گروه شغلی
 //	P2 — Person    (شخص)      شایستگی و صلاحیت فرد، سطح مهارت و سابقهٔ مرتبط
 //	P3 — Performance (عملکرد) نتیجهٔ ارزیابی عملکرد دوره
-//	P4 — Pay       (پرداخت)   باند و پله‌های پرداخت، میانهٔ باند، نسبت پرداخت به میانه
+//	P4 — Partnership (شراکت)  تعهد، مشارکت و عضویت؛ در مدل جی‌بیست سنجیده می‌شود
+//
+// باند پرداخت **خروجی** مدل است، نه یکی از چهار عامل؛ عنوان سطرهای محاسبه هم همین را
+// می‌گوید تا با تعریف رسمی ۴پی (و سند جبران خدمات شرکت) یکی بماند.
 //
 // قاعدهٔ معماری: هر عددی که «سیاست شرکت» است در پارامترها می‌نشیند
 // (`compensation.*`) و در این فایل فقط قاعدهٔ محاسبه و متن فارسی اعلام می‌شود؛ هیچ
@@ -448,7 +451,7 @@ type CompensationResult struct {
 	PerformanceScore  float64 `json:"performanceScore"`
 	PerformanceFa     string  `json:"performanceFa"`
 	PerformanceFactor float64 `json:"performanceFactor"`
-	// P4 — پرداخت
+	// خروجی پرداخت (نه یکی از چهار عامل)
 	TargetPay     int64   `json:"targetPay"`
 	CurrentPay    int64   `json:"currentPay"`
 	Increase      int64   `json:"increase"`
@@ -548,7 +551,7 @@ func CompensationCalc(in CompensationInput, p CompensationParams) CompensationRe
 		{Key: "position", TitleFa: "P1 — شغل: امتیاز ارزشیابی و پلهٔ گروه شغلی",
 			ValueFa: IntFa(int(in.JobScore)) + " امتیاز → پلهٔ " + IntFa(rank) + " («" + out.GradeFa + "»)",
 			RefFa:   "پارامتر شرکت compensation.job.pointsPerGrade"},
-		{Key: "band", TitleFa: "P4 — پرداخت: باند پلهٔ " + out.GradeFa,
+		{Key: "band", TitleFa: "باند پرداخت (خروجی مدل): پلهٔ " + out.GradeFa,
 			ValueFa: "کف " + IntMoneyFa(out.Band.Min) + " — میانه " + IntMoneyFa(out.Band.Midpoint) + " — سقف " + IntMoneyFa(out.Band.Max),
 			RefFa:   "پارامترهای compensation.band.*"},
 		{Key: "person", TitleFa: "P2 — شخص: سطح شایستگی «" + out.LevelFa + "»",

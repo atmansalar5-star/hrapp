@@ -63,7 +63,7 @@ function compResultHTML(result) {
         ${statCard({ico: '🏷️', tint: '#EFF6FF', accent: '#2563EB', val: fa(r.rank || 0) + ' — ' + esc(r.gradeFa || '—'), label: 'پلهٔ گروه شغلی (P1)'})}
         ${statCard({ico: '🎯', tint: '#EDE9FE', accent: '#7C3AED', val: '×' + fa(r.personFactor || 0), label: 'ضریب شایستگی (P2)'})}
         ${statCard({ico: '📈', tint: '#FEF3C7', accent: '#D97706', val: '×' + fa(r.performanceFactor || 0), label: 'ضریب عملکرد (P3)'})}
-        ${statCard({ico: '💰', tint: '#DCFCE7', accent: '#16A34A', val: money(r.targetPay || 0), label: 'پرداخت هدف (P4)'})}
+        ${statCard({ico: '💰', tint: '#DCFCE7', accent: '#16A34A', val: money(r.targetPay || 0), label: 'پرداخت هدف (خروجی مدل)'})}
       </div>
       ${warnings}
       ${tbl(['سطر محاسبه', 'مقدار', 'مبنا'], (r.lines || []).map(line), {foot: false})}
@@ -126,7 +126,7 @@ function pageCompJobPricingLive() {
         <div id="cjpResult" style="margin-top:10px"></div>
       </div>
       <div class="card card-pad" style="margin-bottom:12px">
-        <div class="card-title">📐 باندهای پرداخت مصوب (P4)</div>
+        <div class="card-title">📐 باندهای پرداخت مصوب (خروجی مدل)</div>
         ${tbl(['پله', 'گروه شغلی', 'کف باند', 'میانهٔ باند', 'سقف باند', 'گام پله'], bands, {foot: false})}
         <div class="muted" style="font-size:.74rem;margin-top:6px">
           این باندها از پارامترهای مصوب ساخته می‌شوند؛ برای تغییرشان مدل جبران خدمات یا پارامترهای شرکت را به‌روز کنید.
