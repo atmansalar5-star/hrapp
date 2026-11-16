@@ -52,3 +52,4 @@ server/data/
 # ابزارهای یک‌بارهٔ توسعه و تصویرهای بازبینی — خروجی کار، نه سورس
 tools/dbscripts/
 tools/*-shots/
+.dsh-tmp/
