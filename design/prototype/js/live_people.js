@@ -118,7 +118,7 @@ function pageEmployeesLive() {
 async function liveEmployeeForm(id) {
   const optRes = await apiFetch('/api/v1/employee/options');
   const options = (optRes.ok && optRes.data) || {};
-  let e = {id: '', fullName: '', nationalId: '', gender: '', birthDate: '', mobile: '', homePhone: '', phone: '', postalCode: '', address: '', residenceSite: '', email: '', departmentId: '', position: '', contractType: 'تمام‌وقت', employmentType: '', hireDate: '', baseSalary: 0, status: 'active'};
+  let e = {id: '', fullName: '', nationalId: '', gender: '', birthDate: '', mobile: '', homePhone: '', phone: '', postalCode: '', address: '', residenceSite: '', jobGrade: '', email: '', departmentId: '', position: '', contractType: 'تمام‌وقت', employmentType: '', hireDate: '', baseSalary: 0, status: 'active'};
   if (id) {
     const res = await apiFetch('/api/v1/employee/employees/' + encodeURIComponent(id));
     if (!res.ok) { toast(res.message, 'error'); return; }
@@ -139,6 +139,13 @@ async function liveEmployeeForm(id) {
   const residenceOpts = [`<option value="">ثبت نشده (درصد پیش‌فرض شرکت)</option>`]
     .concat(((options.residenceOptions) || []).map(r =>
       `<option value="${esc(r.key)}" ${r.key === e.residenceSite ? 'selected' : ''}>${esc(r.titleFa)}</option>`)).join('');
+  // گروه شغلی: نردبان گروه‌های شغلی سازمان از فهرست سرور می‌آید. گزینهٔ نخست نشانهٔ
+  // پاک‌کردن است («-») تا اگر گروهی اشتباه ثبت شده بود، از همین فرم برداشته شود؛
+  // سرور «-» را «پاک کن» و مقدار خالی را «تغییر نده» می‌خواند.
+  const gradeOpts = [`<option value="-" ${e.jobGrade ? '' : 'selected'}>— بدون گروه شغلی —</option>`]
+    .concat(((options.jobGradeOptions) || []).map(g =>
+      `<option value="${esc(g.key)}" ${g.key === e.jobGrade ? 'selected' : ''}>${esc(g.titleFa)}</option>`)).join('');
+
   openModal({
     title: id ? 'ویرایش کارمند — ' + (e.fullName || e.id) : 'ثبت کارمند تازه',
     body: `<fieldset class="field-group"><legend>اطلاعات هویتی و تماس</legend>
@@ -159,6 +166,8 @@ async function liveEmployeeForm(id) {
       <div class="form-grid">
         <div class="field"><label>واحد سازمانی <span class="req">*</span></label><select id="neDept">${deptOpts}</select></div>
         <div class="field"><label>پست سازمانی <span class="req">*</span></label><input id="nePosition" value="${esc(e.position || '')}"></div>
+        <div class="field"><label>گروه شغلی (نردبان گروه‌های سازمان)</label><select id="neGrade">${gradeOpts}</select>
+          <div class="muted" style="font-size:.68rem">مبنای پایهٔ سمت در فیش صندوق نفت و رتبهٔ سازمانی کارمند؛ گروه ناشناخته ثبت نمی‌شود.</div></div>
         <div class="field"><label>نوع قرارداد</label><select id="neContract">${contractOpts}</select></div>
         <div class="field"><label>نوع استخدام</label><select id="neEmploymentType">${typeOpts}</select></div>
         <div class="field"><label>تاریخ استخدام (شمسی) <span class="req">*</span></label><input id="neHire" class="num" value="${esc(e.hireDate || '')}" placeholder="1404/07/01"></div>
@@ -170,25 +179,37 @@ async function liveEmployeeForm(id) {
   });
 }
 
+/** ارقام فارسی/عربی یک ورودی را لاتین می‌کند و بقیهٔ نویسه‌ها (مثل «/») را نگه می‌دارد.
+ *
+ *  چرا جدا از digitsOf: آن تابع هر نویسهٔ غیررقمی را دور می‌ریزد؛ برای تاریخ شمسی درست
+ *  نیست، چون «1404/06/01» را به «14040601» تبدیل می‌کرد و سرور آن را نامعتبر می‌دانست
+ *  — یعنی ویرایش هر کارمندی با خطای «تاریخ تولد» شکست می‌خورد. */
+function empLatinDigits(value) {
+  return String(value == null ? '' : value)
+    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+}
+
 /** ذخیرهٔ کارمند: قاعدهٔ اعتبارسنجی در سرور است و پیام هر فیلد همان‌جا می‌آید. */
 async function liveEmployeeSave(id) {
   const body = {
     fullName: ($('#neName').value || '').trim(),
     nationalId: digitsOf($('#neNid').value),
     gender: $('#neGender').value,
-    birthDate: digitsOf($('#neBirth').value),
+    birthDate: empLatinDigits($('#neBirth').value).trim(),
     mobile: digitsOf($('#neMobile').value),
     homePhone: digitsOf($('#neHomePhone').value),
     postalCode: digitsOf($('#nePostal').value),
     phone: digitsOf($('#nePhone').value),
     address: ($('#neAddress').value || '').trim(),
     residenceSite: $('#neResidence').value,
+    jobGrade: $('#neGrade').value,
     email: ($('#neEmail').value || '').trim(),
     departmentId: $('#neDept').value,
     position: ($('#nePosition').value || '').trim(),
     contractType: $('#neContract').value,
     employmentType: $('#neEmploymentType').value,
-    hireDate: ($('#neHire').value || '').trim(),
+    hireDate: empLatinDigits($('#neHire').value).trim(),
     baseSalary: Number(digitsOf($('#neBase').value)) || 0,
     status: $('#neStatus').value,
   };
@@ -199,7 +220,7 @@ async function liveEmployeeSave(id) {
     const details = (res.data && res.data.details) || {};
     const labels = {fullName: 'نام', nationalId: 'کد ملی', gender: 'جنسیت', birthDate: 'تاریخ تولد', mobile: 'موبایل', homePhone: 'شمارهٔ منزل',
       postalCode: 'کد پستی', address: 'نشانی', email: 'ایمیل', departmentId: 'واحد', position: 'پست',
-      hireDate: 'تاریخ استخدام', baseSalary: 'حقوق پایه', phone: 'تلفن'};
+      hireDate: 'تاریخ استخدام', baseSalary: 'حقوق پایه', jobGrade: 'گروه شغلی', phone: 'تلفن'};
     const first = Object.keys(details)[0];
     toast(first ? (labels[first] || first) + ': ' + details[first] : res.message, 'error');
     return;

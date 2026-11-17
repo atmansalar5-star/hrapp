@@ -196,9 +196,9 @@ func (s *Service) Assign(ctx context.Context, id string, in contracts.EmployeeAs
 		updated.Position = position
 		result.PositionChanged = true
 	}
-	// نشانهٔ «-» یعنی «گروه شغلی را خالی کن» (ابطال ابلاغی که گروهی به پرونده اضافه کرده
-	// بود)؛ فیلد خالی یعنی «تغییر نده».
-	if raw := strings.TrimSpace(in.JobGrade); raw == clearJobGrade {
+	// نشانهٔ «-» یعنی «گروه شغلی را خالی کن» (همان ثابت دامنه؛ ابطال ابلاغی که
+	// گروهی به پرونده اضافه کرده بود)؛ فیلد خالی یعنی «تغییر نده».
+	if raw := strings.TrimSpace(in.JobGrade); raw == domain.ClearJobGrade {
 		if current.JobGrade != "" {
 			updated.JobGrade = ""
 			result.GradeChanged = true
@@ -239,9 +239,6 @@ func (s *Service) Assign(ctx context.Context, id string, in contracts.EmployeeAs
 	result.NoteFa = assignmentNoteFa(result)
 	return result, nil
 }
-
-// clearJobGrade نشانهٔ صریح «گروه شغلی را پاک کن» در قرارداد تغییر سازمانی.
-const clearJobGrade = "-"
 
 // resolveGrade کلید گروه شغلی را می‌سنجد؛ گروه ناشناخته تغییر نمی‌کند (قاعدهٔ دامنه).
 func resolveGrade(key string) string {

@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"hrms/internal/contracts"
+	employeedomain "hrms/internal/modules/employee/domain"
 	platformmodules "hrms/internal/platform/modules"
 )
 
@@ -367,6 +368,12 @@ func TestPostgresSmokeEmployeeUpdatePersists(t *testing.T) {
 	}
 
 	// بدنهٔ ویرایش همان چیزی است که رابط کاربری می‌فرستد: کل پرونده با مقدار تازه.
+	// گروه شغلی: کلید معتبرِ نردبان گروه‌ها. مقدار خالی یعنی «تغییر نده»، پس برای
+	// بازگرداندن پروندهٔ بدون گروه، نشانهٔ صریح پاک‌کردن فرستاده می‌شود.
+	alternateGrade := "expert"
+	if original.JobGrade == alternateGrade {
+		alternateGrade = "senior_expert"
+	}
 	edited := contracts.EmployeeInput{
 		FullName: original.FullName, NationalID: original.NationalID,
 		DepartmentID: original.DepartmentID, Position: original.Position,
@@ -377,7 +384,7 @@ func TestPostgresSmokeEmployeeUpdatePersists(t *testing.T) {
 		HireDate: original.HireDate, Status: original.Status,
 		BaseSalary:    original.BaseSalary + 1000000,
 		ResidenceSite: original.ResidenceSite,
-		JobGrade:      original.JobGrade,
+		JobGrade:      alternateGrade,
 	}
 	alteredSite := ""
 	if original.ResidenceSite != "" {
@@ -406,8 +413,8 @@ func TestPostgresSmokeEmployeeUpdatePersists(t *testing.T) {
 	if alteredSite != "" && saved.ResidenceSite != alteredSite {
 		t.Errorf("محل سکونت پس از ویرایش %q است، انتظار %q بود", saved.ResidenceSite, alteredSite)
 	}
-	if saved.JobGrade != original.JobGrade {
-		t.Errorf("گروه شغلی نباید بی‌دلیل عوض شود: %q در برابر %q", saved.JobGrade, original.JobGrade)
+	if saved.JobGrade != alternateGrade {
+		t.Errorf("گروه شغلی پس از ویرایش %q است، انتظار %q بود", saved.JobGrade, alternateGrade)
 	}
 
 	// بازگرداندن مقدارهای اولیه تا دادهٔ نمونه برای اجراهای بعدی دست‌نخورده بماند.
@@ -415,6 +422,9 @@ func TestPostgresSmokeEmployeeUpdatePersists(t *testing.T) {
 	restore.BaseSalary = original.BaseSalary
 	restore.ResidenceSite = original.ResidenceSite
 	restore.JobGrade = original.JobGrade
+	if restore.JobGrade == "" {
+		restore.JobGrade = employeedomain.ClearJobGrade
+	}
 	if back := call(t, h, http.MethodPatch, path, admin.AccessToken, restore); back.Code != http.StatusOK {
 		t.Fatalf("بازگرداندن مقدارهای اولیه ناموفق بود (کد %d): %s", back.Code, smokeClip(back.Body.String()))
 	}

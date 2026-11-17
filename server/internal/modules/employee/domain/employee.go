@@ -164,7 +164,12 @@ func (e Employee) Apply(in contracts.EmployeeInput) Employee {
 	if site := resolveResidenceSite(in.ResidenceSite); site != "" {
 		e.ResidenceSite = site
 	}
-	if grade := resolveJobGrade(in.JobGrade); grade != "" {
+	// گروه شغلی: نشانهٔ «-» یعنی «پاکش کن» (همان قراردادی که مسیر تغییر سازمانی هم به کار
+	// میبرد)، کلید ناشناخته نادیده گرفته میشود و مقدار خالی «تغییر نده» است. بدون این
+	// نشانه، گروه شغلی ثبت‌شده از فرم ویرایش پرونده هیچوقت پاک نمیشد.
+	if raw := strings.TrimSpace(in.JobGrade); raw == ClearJobGrade {
+		e.JobGrade = ""
+	} else if grade := resolveJobGrade(raw); grade != "" {
 		e.JobGrade = grade
 	}
 	if in.Email != "" {
@@ -204,6 +209,12 @@ func gradeTitleFa(key string) string {
 	}
 	return rules.GradeTitleFa(rules.GradeRankOf(key))
 }
+
+// ClearJobGrade نشانهٔ صریح «گروه شغلی را پاک کن» در ورودی ویرایش و تغییر سازمانی.
+//
+// چرا یک نشانه و نه مقدار خالی: در ویرایش جزئی (PATCH) مقدار خالی یعنی «این فیلد را
+// تغییر نده»؛ بدون نشانه، گروه شغلی ثبت‌شده هرگز پاک نمی‌شد.
+const ClearJobGrade = "-"
 
 // ResolveJobGrade کلید معتبر گروه شغلی را برمی‌گرداند؛ کلید ناشناخته خالی می‌شود.
 //
