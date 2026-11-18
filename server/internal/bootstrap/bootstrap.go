@@ -56,6 +56,7 @@ import (
 	"hrms/internal/platform/calendar"
 	platformdb "hrms/internal/platform/db"
 	"hrms/internal/platform/documents"
+	"hrms/internal/platform/events"
 	"hrms/internal/platform/history"
 	"hrms/internal/platform/httpx"
 	"hrms/internal/platform/modulekit"
@@ -141,6 +142,9 @@ type Config struct {
 	DataDir string
 	// Migrate اجرای مهاجرت‌های اعمال‌نشده در زمان راه‌اندازی (پیش‌فرض: اگر پایگاه‌داده تنظیم شده باشد).
 	Migrate bool
+	// Events تنظیمات صندوق خروجی رخداد (یکپارچه‌سازی با n8n و سامانه‌های بیرونی).
+	// URL خالی یعنی ارسال خاموش؛ رخدادها همچنان ثبت می‌شوند تا بعداً فرستادنی باشند.
+	Events events.Config
 	// SeedDemo بذرکاری دادهٔ نمونه روی پایگاه‌دادهٔ واقعی (نصب تازهٔ خالی).
 	//
 	// بی این پرچم، نصب تازهٔ Postgres همهٔ ماژول‌ها را خالی نشان می‌دهد؛ با آن، همان
@@ -333,8 +337,25 @@ func NewDeps(cfg Config) (modulekit.Deps, error) {
 			if err != nil {
 				return modulekit.Deps{}, err
 			}
-			logger.Info("مهاجرت‌ها بررسی شد", "found", len(migrations), "applied", applied)
+			logger.Info("مهاجرتها بررسی شد", "found", len(migrations), "applied", applied)
 		}
+	}
+
+	// صندوق خروجی رخداد: با پایگاه‌داده، انبار پایدار؛ بدون آن، انبار حافظه‌ای تا
+	// توسعه و آزمون بدون هیچ سرویس بیرونی کار کند. اگر ارسال به سامانهٔ بیرونی تنظیم
+	// نشده باشد، رخدادها فقط ثبت می‌شوند و چیزی به شبکه نمی‌رود.
+	eventCfg := cfg.Events
+	eventCfg.Log = logger
+	var eventStore events.Store
+	if deps.DB != nil {
+		eventStore = events.NewPostgresStore(deps.DB)
+	} else {
+		eventStore = events.NewMemoryStore(0)
+	}
+	deps.Events = events.NewBus(eventStore, eventCfg)
+	if deps.Events.Enabled() {
+		logger.Info("صندوق خروجی رخداد روشن است",
+			"target", eventCfg.URL, "intervalSeconds", int(deps.Events.Interval().Seconds()))
 	}
 
 	return deps, nil
@@ -373,7 +394,9 @@ func NewHandler(deps modulekit.Deps) (http.Handler, []string, error) {
 		deps.Logger("bootstrap").Info("رابط وب روی مسیر ریشه سرو می‌شود", "dir", deps.WebDir)
 	}
 
-	return deps.Auth.Middleware(mux), registered, nil
+	// میان‌افزار رخداد درون میان‌افزار نشست می‌نشیند تا کاربر جاری را ببیند: ترتیب
+	// پوشش یعنی Auth(Events(mux)) — نه برعکس؛ وگرنه رخداد بی‌نام و بی‌نقش ثبت می‌شد.
+	return deps.Auth.Middleware(events.Middleware(deps.Events, deps.Log)(mux)), registered, nil
 }
 
 func registerPlatformRoutes(mux *http.ServeMux, deps modulekit.Deps) {
@@ -495,6 +518,12 @@ func registerPlatformRoutes(mux *http.ServeMux, deps modulekit.Deps) {
 	mux.HandleFunc("GET /api/v1/orgs/active", auth.RequireAuth(func(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteJSON(w, http.StatusOK, deps.Org.Summary())
 	}))
+
+	// صندوق خروجی رخداد (یکپارچه‌سازی بیرونی): وضعیت ارسال، فهرست رخدادها و بازگرداندن
+	// یک ردیف به صف. فقط مدیر سیستم؛ محتوای رخداد نام کاربر و مسیر درخواست را دارد.
+	mux.HandleFunc("GET /api/v1/events/config", auth.RequireAuth(events.ConfigHandler(deps.Events)))
+	mux.HandleFunc("GET /api/v1/events/outbox", auth.RequireAuth(events.OutboxHandler(deps.Events)))
+	mux.HandleFunc("POST /api/v1/events/outbox/{id}/retry", auth.RequireAuth(events.RetryHandler(deps.Events)))
 
 	// کارتابل سراسری: همهٔ کارهای گردش‌کاری که نقش کاربر جاری مجاز به انجامش است،
 	// از تمام ماژول‌های رکوردی. هیچ منطق مجاز بودن این‌جا نیست؛ هر منبع کارهایش را

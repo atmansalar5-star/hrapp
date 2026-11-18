@@ -53,3 +53,7 @@ server/data/
 tools/dbscripts/
 tools/*-shots/
 .dsh-tmp/
+
+# یکپارچه‌سازی n8n: دادهٔ عملیاتی (جریان‌ها، رمزهای ذخیره‌شده، کلید رمز) و کلید وبهوک
+integrations/n8n/data/
+integrations/n8n/.env

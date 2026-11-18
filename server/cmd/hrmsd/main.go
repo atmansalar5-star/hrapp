@@ -38,6 +38,7 @@ import (
 	"time"
 
 	"hrms/internal/bootstrap"
+	"hrms/internal/platform/events"
 )
 
 func main() {
@@ -113,6 +114,13 @@ func run() error {
 		DataDir:     *dataFlag,
 		Migrate:     *migrateFlag,
 		SeedDemo:    seedDemo,
+		// صندوق خروجی رخداد: مقصد وبهوک، کلید امضا و فاصلهٔ بررسی. خالی بودن مقصد
+		// یعنی ارسال خاموش (رخدادها فقط ثبت می‌شوند) — همان رفتار امن پیش‌فرض.
+		Events: events.Config{
+			URL:      strings.TrimSpace(os.Getenv("HRMS_WEBHOOK_URL")),
+			Secret:   strings.TrimSpace(os.Getenv("HRMS_WEBHOOK_SECRET")),
+			Interval: envDuration("HRMS_WEBHOOK_INTERVAL", 15*time.Second),
+		},
 	}
 	deps, err := bootstrap.NewDeps(cfg)
 	if err != nil {
@@ -135,6 +143,12 @@ func run() error {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	// گردانندهٔ صندوق خروجی رخداد: با پایان ctx (خاموشی سرور) خودش می‌ایستد. اگر
+	// ارسال تنظیم نشده باشد، بی‌درنگ و بی‌صدا برمی‌گردد.
+	if deps.Events != nil {
+		go deps.Events.Run(ctx)
+	}
 
 	logger.Info("سرور منابع انسانی آماده است",
 		"addr", *addr,
@@ -185,6 +199,20 @@ func envBool(name string) bool {
 	default:
 		return true
 	}
+}
+
+// envDuration متغیر محیطی مدت‌زمان را می‌خواند («15s»، «2m»)؛ نامعتبر یا خالی یعنی
+// مقدار پیش‌فرض، تا یک تایپ اشتباه در .env سرور را از کار نیندازد.
+func envDuration(name string, fallback time.Duration) time.Duration {
+	raw := strings.TrimSpace(os.Getenv(name))
+	if raw == "" {
+		return fallback
+	}
+	d, err := time.ParseDuration(raw)
+	if err != nil || d <= 0 {
+		return fallback
+	}
+	return d
 }
 
 // storeKind نام انبار فعال را برای گزارش راه‌اندازی برمی‌گرداند.

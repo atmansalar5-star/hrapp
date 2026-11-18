@@ -1,0 +1,289 @@
+{
+  "name": "HRMS — رویدادهای سامانه",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hrms-events",
+        "responseMode": "onReceived",
+        "options": {
+          "rawBody": true,
+          "responseData": "‏رخداد دریافت شد"
+        }
+      },
+      "id": "wh-hrms-1",
+      "name": "Webhook سامانهٔ منابع انسانی",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        120
+      ],
+      "webhookId": "hrms-events",
+      "notes": "سرور رویدادها را با امضای HMAC به همین نشانی می‌فرستد (HRMS_WEBHOOK_URL)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// بازبینی امضای HMAC و تازگی مُهر زمانی؛ بدنهٔ دست‌کاری‌شده رد می‌شود.\n//\n// چرا در کد و نه در نود آماده: امضا روی «بایت‌های خام» بدنه محاسبه شده و اگر بدنه\n// یک‌بار به JSON تبدیل و دوباره سریال‌شده شود، ترتیب کلیدها و فاصله‌ها عوض می‌شود و\n// امضا دیگر معنا ندارد. پس همان بدنهٔ خام خوانده می‌شود.\nconst crypto = require('crypto');\n\nconst item = $input.first();\nconst headers = (item.json && item.json.headers) || {};\n\nlet raw = '';\nif (item.binary && item.binary.data) {\n  raw = Buffer.from(item.binary.data.data, 'base64').toString('utf8');\n} else if (typeof item.json.body === 'string') {\n  raw = item.json.body;\n} else if (item.json.body) {\n  raw = JSON.stringify(item.json.body);\n}\n\nconst secret = $env.HRMS_WEBHOOK_SECRET || '';\nconst ts = String(headers['x-hrms-timestamp'] || '');\nconst signature = String(headers['x-hrms-signature'] || '');\n\nif (!secret) {\n  throw new Error('HRMS_WEBHOOK_SECRET تنظیم نشده است؛ بازبینی امضا ممکن نیست.');\n}\nif (!raw || !ts || !signature) {\n  throw new Error('بدنه یا سرآیندهای امضا در درخواست نیست.');\n}\n\nconst expected = 'sha256=' + crypto.createHmac('sha256', secret).update(ts + '.' + raw).digest('hex');\nconst same = expected.length === signature.length &&\n  crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));\n\n// پنج دقیقه اختلاف مجاز است تا بازپخش (replay) بدنهٔ قدیمی ممکن نباشد.\nconst skew = Math.abs(Math.floor(Date.now() / 1000) - Number(ts));\nif (skew > 300) {\n  throw new Error('مُهر زمانی رخداد قدیمی است (' + skew + ' ثانیه)؛ درخواست رد شد.');\n}\nif (!same) {\n  throw new Error('امضای رخداد نامعتبر است؛ درخواست رد شد.');\n}\n\nconst event = JSON.parse(raw);\nreturn [{ json: event }];"
+      },
+      "id": "code-verify-1",
+      "name": "بازبینی امضا",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        120
+      ],
+      "notes": "NODE_FUNCTION_ALLOW_BUILTIN=crypto باید تنظیم باشد (اسکریپت اجرای n8n آن را می‌گذارد)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond-1",
+              "leftValue": "={{ $('بازبینی امضا').item.json.name }}",
+              "rightValue": "employee.",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-employee-1",
+      "name": "رخداد کارمند؟",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ ($env.HRMS_API_BASE || 'http://127.0.0.1:8099') + '/api/v1/employee/employees/' + ($('بازبینی امضا').item.json.subject || '') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('ورود سرویس').item.json.accessToken }}"
+            },
+            {
+              "name": "X-HRMS-Integration-Origin",
+              "value": "n8n"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "http-employee-1",
+      "name": "خواندن پرونده از API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        200,
+        20
+      ],
+      "notes": "سرآیند X-HRMS-Integration-Origin جلوی ثبت رخداد تازه برای درخواست خود n8n را می‌گیرد (ضدِ حلقه)."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f-name",
+              "name": "employeeName",
+              "value": "={{ $json.fullName || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "f-id",
+              "name": "employeeId",
+              "value": "={{ $json.id || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "f-dep",
+              "name": "department",
+              "value": "={{ $json.departmentName || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "f-event",
+              "name": "eventName",
+              "value": "={{ $('بازبینی امضا').item.json.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "set-notify-1",
+      "name": "آمادهٔ اطلاع‌رسانی",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        20
+      ],
+      "notes": "اینجا جای نود پیامک/ایمیل/بله است؛ متن فارسی پیام از همین فیلدها ساخته می‌شود."
+    },
+    {
+      "parameters": {},
+      "id": "noop-notify-1",
+      "name": "— پیامک یا ایمیل را اینجا بگذارید —",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        640,
+        20
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "noop-other-1",
+      "name": "سایر رخدادها (فقط ثبت)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        200,
+        220
+      ],
+      "notes": "رخدادهای غیرکارمندی فعلاً کاری نمی‌کنند؛ برای هرکدام یک شاخهٔ تازه اضافه کنید."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.HRMS_API_BASE || 'http://127.0.0.1:8099') + '/api/v1/auth/login' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ username: $env.HRMS_API_USER || \"\", password: $env.HRMS_API_PASS || \"\" }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "http-login-1",
+      "name": "ورود سرویس",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -240,
+        320
+      ],
+      "notes": "توکن دسترسی ۳۰ دقیقه اعتبار دارد؛ گردش‌کار هر بار با حساب سرویس وارد می‌شود."
+    }
+  ],
+  "connections": {
+    "Webhook سامانهٔ منابع انسانی": {
+      "main": [
+        [
+          {
+            "node": "بازبینی امضا",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "بازبینی امضا": {
+      "main": [
+        [
+          {
+            "node": "ورود سرویس",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "رخداد کارمند؟": {
+      "main": [
+        [
+          {
+            "node": "خواندن پرونده از API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "سایر رخدادها (فقط ثبت)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "خواندن پرونده از API": {
+      "main": [
+        [
+          {
+            "node": "آمادهٔ اطلاع‌رسانی",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "آمادهٔ اطلاع‌رسانی": {
+      "main": [
+        [
+          {
+            "node": "— پیامک یا ایمیل را اینجا بگذارید —",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ورود سرویس": {
+      "main": [
+        [
+          {
+            "node": "رخداد کارمند؟",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "pinData": {},
+  "active": false,
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [],
+  "id": "hrms-events-1"
+}

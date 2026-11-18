@@ -19,6 +19,7 @@ import (
 	"hrms/internal/platform/audit"
 	"hrms/internal/platform/auth"
 	"hrms/internal/platform/calendar"
+	"hrms/internal/platform/events"
 	"hrms/internal/platform/httpx"
 	"hrms/internal/platform/modules"
 	"hrms/internal/platform/orgs"
@@ -81,6 +82,10 @@ type Deps struct {
 	// با type assertion آن را می‌خواند. اجرای مستقل یک‌رایانه‌ای از همین راه انبار
 	// فایل JSON را تزریق می‌کند.
 	Records any
+	// Events صندوق خروجی رخداد سامانه برای یکپارچه‌سازی بیرونی (n8n، پیامک، گزارش‌ساز).
+	// nil یعنی صندوق خاموش؛ همهٔ متدهای آن نسبت به nil ایمن‌اند. ماژول‌ها معمولاً لازم
+	// نیست مستقیم از آن استفاده کنند: میان‌افزار رخداد، تغییرهای API را خودش ثبت می‌کند.
+	Events *events.Bus
 }
 
 // Ports دسترسی بین‌ماژولی از طریق قراردادهای صادرشده.
