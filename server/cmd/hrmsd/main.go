@@ -33,12 +33,15 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
 
 	"hrms/internal/bootstrap"
+	"hrms/internal/platform/auth"
 	"hrms/internal/platform/events"
+	"hrms/internal/platform/websecurity"
 )
 
 func main() {
@@ -82,7 +85,19 @@ func run() error {
 	}
 	if generated {
 		logger.Warn("HRMS_JWT_SECRET تنظیم نشده است؛ برای این اجرا کلید تصادفی ساخته شد. در استقرار واقعی کلید را از محیط تزریق کنید.")
+	} else if err := auth.ValidateSecret(secret); err != nil {
+		// کلید کوتاه، امضای HS256 را قابل شکستن می‌کند. در استقرار واقعی نباید
+		// پذیرفته شود؛ ولی در اجرای محلی فقط هشدار می‌دهد تا توسعه متوقف نشود.
+		if envBool("HRMS_SECRET_STRICT") {
+			return err
+		}
+		logger.Warn("کلید امضای توکن کوتاه است؛ در استقرار واقعی کلید تصادفی ۳۲ بایتی بگذارید", "error", err)
 	}
+
+	// لایهٔ امنیتی وب برای استقرار: محدودیت نرخ و قفل حساب روشن است مگر با
+	// HRMS_SECURITY_OFF=1 خاموش شود. پروکسی معتمد فقط نشانی‌های محلی است مگر
+	// HRMS_TRUSTED_PROXIES صریح بگوید (مثلاً «127.0.0.1,10.0.0.5,10.0.0.0/24»).
+	securityCfg := securityConfig()
 
 	// بذرکاری دادهٔ نمونه: پرچم خط فرمان یا متغیر محیطی — و متغیر از فایل `.env` هم
 	// خوانده می‌شود، چون `flag.Parse` پیش از خواندن فایل اجرا شده است؛ پس تنها تکیه بر
@@ -114,6 +129,7 @@ func run() error {
 		DataDir:     *dataFlag,
 		Migrate:     *migrateFlag,
 		SeedDemo:    seedDemo,
+		Security:    securityCfg,
 		// صندوق خروجی رخداد: مقصد وبهوک، کلید امضا و فاصلهٔ بررسی. خالی بودن مقصد
 		// یعنی ارسال خاموش (رخدادها فقط ثبت می‌شوند) — همان رفتار امن پیش‌فرض.
 		Events: events.Config{
@@ -139,6 +155,10 @@ func run() error {
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      60 * time.Second,
 		IdleTimeout:       90 * time.Second,
+		// سقف سرآیندها و بدنه: بخشی از دفاع در برابر DoS. سرآیند پیش‌فرض Go یک
+		// مگابایت است که برای این API بی‌دلیل بزرگ است؛ بدنه هم در httpx به ۱ مگابایت
+		// محدود شده است.
+		MaxHeaderBytes: maxHeaderBytes,
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
@@ -190,6 +210,9 @@ func run() error {
 	return nil
 }
 
+// سقف سرآیندهای درخواست: بخشی از دفاع در برابر DoS (پیش‌فرض Go یک مگابایت است).
+const maxHeaderBytes = 64 << 10
+
 // envBool متغیر محیطی بولی را می‌خواند؛ هر مقدار جز 0/false/خالی «روشن» است تا در
 // فایل .env بتوان HRMS_SEED_DEMO=1 نوشت.
 func envBool(name string) bool {
@@ -213,6 +236,35 @@ func envDuration(name string, fallback time.Duration) time.Duration {
 		return fallback
 	}
 	return d
+}
+
+// envInt متغیر محیطی عددی را می‌خواند؛ نامعتبر یا غیرمثبت یعنی مقدار پیش‌فرض.
+func envInt(name string, fallback int) int {
+	raw := strings.TrimSpace(os.Getenv(name))
+	if raw == "" {
+		return fallback
+	}
+	n, err := strconv.Atoi(raw)
+	if err != nil || n <= 0 {
+		return fallback
+	}
+	return n
+}
+
+// securityConfig تنظیمات لایهٔ امنیتی وب را از محیط می‌خواند.
+//
+// پیش‌فرض‌ها «امن» هستند، نه «راحت»: محدودیت نرخ روشن است و فقط با پرچم صریح خاموش
+// می‌شود؛ این‌گونه استقرار فراموش‌شده بی‌دفاع نمی‌ماند.
+func securityConfig() websecurity.Config {
+	return websecurity.Config{
+		Enabled:        !envBool("HRMS_SECURITY_OFF"),
+		TrustedProxies: websecurity.ParseTrustedProxies(os.Getenv("HRMS_TRUSTED_PROXIES")),
+		GeneralRate:    os.Getenv("HRMS_RATE_LIMIT"),
+		LoginRate:      os.Getenv("HRMS_LOGIN_RATE"),
+		LockoutAfter:   envInt("HRMS_LOGIN_LOCKOUT_AFTER", websecurity.DefaultLockoutHits),
+		LockoutFor:     os.Getenv("HRMS_LOGIN_LOCKOUT_FOR"),
+		HSTS:           envBool("HRMS_HSTS"),
+	}
 }
 
 // storeKind نام انبار فعال را برای گزارش راه‌اندازی برمی‌گرداند.

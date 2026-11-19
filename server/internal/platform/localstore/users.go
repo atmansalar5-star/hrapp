@@ -129,7 +129,14 @@ func Users(path, bootstrapUser, bootstrapPassword string) (accounts []auth.Accou
 }
 
 // upsertPassword رمز یک کاربر را می‌سازد یا عوض می‌کند و فایل را ذخیره می‌کند.
+//
+// سیاست قدرت رمز همین‌جا اعمال می‌شود: این مسیر همان جایی است که راهبر رمز دلخواه
+// می‌گذارد (پرچم بازنشانی)، پس ضعیف‌بودنش باید همان‌جا و با پیام روشن رد شود — نه
+// اینکه در استقرار کشف شود.
 func upsertPassword(path string, file *usersFile, username, password string) error {
+	if err := auth.ValidateStrength(password); err != nil {
+		return err
+	}
 	hash, err := auth.HashPassword(password)
 	if err != nil {
 		return fmt.Errorf("درهم‌سازی رمز ناموفق: %w", err)

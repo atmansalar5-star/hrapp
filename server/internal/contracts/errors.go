@@ -21,4 +21,7 @@ const (
 	CodeNotImplemented   = "not_implemented"
 	CodeInternal         = "internal_error"
 	CodeBadRequest       = "bad_request"
+	// CodeRateLimited پاسخ ۴۲۹ سامانه: سقف درخواست یا تلاش ورود پر شده است. کد جدا
+	// است تا کلاینت بتواند «بعداً تلاش کن» را از خطای اعتبارسنجی تفکیک کند.
+	CodeRateLimited = "rate_limited"
 )

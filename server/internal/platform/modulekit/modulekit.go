@@ -25,6 +25,7 @@ import (
 	"hrms/internal/platform/orgs"
 	"hrms/internal/platform/rbac"
 	"hrms/internal/platform/synclog"
+	"hrms/internal/platform/websecurity"
 	"hrms/internal/rules"
 )
 
@@ -86,6 +87,10 @@ type Deps struct {
 	// nil یعنی صندوق خاموش؛ همهٔ متدهای آن نسبت به nil ایمن‌اند. ماژول‌ها معمولاً لازم
 	// نیست مستقیم از آن استفاده کنند: میان‌افزار رخداد، تغییرهای API را خودش ثبت می‌کند.
 	Events *events.Bus
+	// Security کنترل‌های لایهٔ وب استقرار (سرآیندهای امنیتی، محدودیت نرخ، قفل حساب
+	// ورود). nil یعنی فقط سرآیندهای امنیتی پیش‌فرض؛ مسیر راه‌اندازی استقرار آن را
+	// می‌سازد و ماژول‌ها فقط از قفل/نرخ ورود استفاده می‌کنند.
+	Security *websecurity.Security
 }
 
 // Ports دسترسی بین‌ماژولی از طریق قراردادهای صادرشده.

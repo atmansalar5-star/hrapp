@@ -22,6 +22,7 @@ var defaultMessages = map[string]string{
 	contracts.CodeNotImplemented:   "این بخش هنوز در این نسخه پیاده‌سازی نشده است.",
 	contracts.CodeInternal:         "خطای داخلی سامانه رخ داد.",
 	contracts.CodeBadRequest:       "درخواست نامعتبر است.",
+	contracts.CodeRateLimited:      "تعداد درخواست‌ها بیش از حد مجاز است؛ کمی بعد دوباره تلاش کنید.",
 }
 
 // WriteJSON پاسخ موفق را می‌نویسد.

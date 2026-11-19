@@ -64,6 +64,7 @@ import (
 	"hrms/internal/platform/orgs"
 	"hrms/internal/platform/rbac"
 	"hrms/internal/platform/synclog"
+	"hrms/internal/platform/websecurity"
 	"hrms/internal/platform/webstatic"
 	"hrms/internal/rules"
 )
@@ -145,6 +146,10 @@ type Config struct {
 	// Events تنظیمات صندوق خروجی رخداد (یکپارچه‌سازی با n8n و سامانه‌های بیرونی).
 	// URL خالی یعنی ارسال خاموش؛ رخدادها همچنان ثبت می‌شوند تا بعداً فرستادنی باشند.
 	Events events.Config
+	// Security تنظیمات لایهٔ امنیتی وب: محدودیت نرخ، قفل حساب ورود، سرآیندهای امنیتی
+	// و پروکسی‌های معتمد. مقدار صفر یعنی محدودیت نرخ خاموش (آزمون‌ها و اجرای
+	// درون‌حافظه‌ای)؛ cmd/hrmsd آن را برای استقرار روشن می‌کند.
+	Security websecurity.Config
 	// SeedDemo بذرکاری دادهٔ نمونه روی پایگاه‌دادهٔ واقعی (نصب تازهٔ خالی).
 	//
 	// بی این پرچم، نصب تازهٔ Postgres همهٔ ماژول‌ها را خالی نشان می‌دهد؛ با آن، همان
@@ -292,6 +297,25 @@ func NewDeps(cfg Config) (modulekit.Deps, error) {
 	// در همان شرکت و سطح هلدینگ‌محور فقط در شرکت‌های همان هلدینگ اعمال می‌شود.
 	policy := rbac.New(registry, auditLog, accessStore).WithTenant(org.ID, orgs.HoldingKey(org))
 
+	// لایهٔ امنیتی وب: پیکربندی بدفرم (مثل «20/5x») در همین‌جا سرور را بالا نمی‌آورد؛
+	// این عمدی است تا یک اشتباه تایپی به «محدودیت نرخ خاموش» تبدیل نشود.
+	security, securityWarnings, err := websecurity.New(cfg.Security)
+	if err != nil {
+		return modulekit.Deps{}, err
+	}
+	for _, warning := range securityWarnings {
+		logger.Warn("هشدار پیکربندی لایهٔ امنیتی وب", "warning", warning)
+	}
+	if security.Enabled() {
+		logger.Info("لایهٔ امنیتی وب روشن است",
+			"generalRate", security.Limiter().Limit(),
+			"loginRate", security.LoginLimiter().Limit(),
+			"lockoutAfter", security.Guard().Threshold(),
+			"lockoutFor", security.Guard().Lockout().String())
+	} else {
+		logger.Debug("محدودیت نرخ خاموش است (فقط سرآیندهای امنیتی فرستاده می‌شود)")
+	}
+
 	deps := modulekit.Deps{
 		Log:      logger,
 		Registry: registry,
@@ -311,6 +335,7 @@ func NewDeps(cfg Config) (modulekit.Deps, error) {
 		// مسیر مطلق می‌شود تا مستقل از پوشهٔ جاری فرمان، همه‌جا یکی باشد.
 		DataDir:   dataDirOf(cfg),
 		VerifyKey: cfg.JWTSecret,
+		Security:  security,
 	}
 
 	// پایگاه‌داده و مهاجرت: تنها جایی که سامانه به Postgres وصل می‌شود. اگر نشانی
@@ -396,7 +421,11 @@ func NewHandler(deps modulekit.Deps) (http.Handler, []string, error) {
 
 	// میان‌افزار رخداد درون میان‌افزار نشست می‌نشیند تا کاربر جاری را ببیند: ترتیب
 	// پوشش یعنی Auth(Events(mux)) — نه برعکس؛ وگرنه رخداد بی‌نام و بی‌نقش ثبت می‌شد.
-	return deps.Auth.Middleware(events.Middleware(deps.Events, deps.Log)(mux)), registered, nil
+	//
+	// لایهٔ امنیتی بیرونی‌ترین است: سرآیندهای امنیتی باید روی همهٔ پاسخ‌ها بنشینند،
+	// حتی پاسخ ۴۰۱ و ۴۰۴ و ۴۲۹؛ و سقف نرخ پیش از هر کار پرهزینه‌ای (درهم‌سازی رمز،
+	// کوئری پایگاه‌داده) اعمال شود.
+	return deps.Security.Middleware(deps.Auth.Middleware(events.Middleware(deps.Events, deps.Log)(mux))), registered, nil
 }
 
 func registerPlatformRoutes(mux *http.ServeMux, deps modulekit.Deps) {
@@ -627,12 +656,33 @@ func registerPlatformRoutes(mux *http.ServeMux, deps modulekit.Deps) {
 			})
 			return
 		}
+		// سد نرخ/قفل پیش از سنجش رمز: درهم‌سازی Argon2id عمداً گران است و اگر سقفی
+		// نباشد، خود همین هزینه ابزار اشغال منابع می‌شود.
+		username := strings.TrimSpace(req.Username)
+		clientIP := deps.Security.ClientIP(r)
+		if decision, retry := deps.Security.BeginLogin(clientIP, username); decision != websecurity.LoginAllow {
+			message := websecurity.LoginLockedFa
+			if decision == websecurity.LoginLimited {
+				message = websecurity.LoginLimitedFa
+			}
+			deps.Audit.Append(username, "auth", "login-throttled", clientIP, "تلاش ورود مسدود شد: "+decision)
+			websecurity.WriteRetryAfter(w, retry, message)
+			return
+		}
+
 		session, err := deps.Auth.Login(req.Username, req.Password)
 		if err != nil {
 			deps.Audit.Append(req.Username, "auth", "login-failed", r.RemoteAddr, err.Error())
+			// پس از سقف شکست، حساب (نه فقط نشانی) قفل می‌شود تا حملهٔ چند-IP هم گران شود.
+			if locked, wait := deps.Security.EndLogin(req.Username, false); locked {
+				deps.Audit.Append(req.Username, "auth", "login-locked", r.RemoteAddr, "قفل موقت حساب پس از تلاش‌های ناموفق")
+				websecurity.WriteRetryAfter(w, wait, websecurity.LoginLockedFa)
+				return
+			}
 			httpx.WriteErrorMsg(w, http.StatusUnauthorized, contracts.CodeUnauthorized, err.Error(), nil)
 			return
 		}
+		deps.Security.EndLogin(req.Username, true)
 		deps.Audit.Append(session.User.Username, "auth", "login", r.RemoteAddr, "ورود موفق")
 		httpx.WriteJSON(w, http.StatusOK, session)
 	})

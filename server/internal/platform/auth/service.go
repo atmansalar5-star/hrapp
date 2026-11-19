@@ -63,19 +63,56 @@ func (s *Service) WithClock(clock func() time.Time) *Service {
 func (s *Service) AccessTTL() time.Duration { return s.accessTTL }
 
 // Login ورود با نام کاربری و رمز.
+//
+// سه نکتهٔ امنیتی که عمدی‌اند:
+//   - برای نام کاربری ناموجود هم یک درهم‌سازی ساختگی سنجیده می‌شود تا زمان پاسخ با
+//     حالت «رمز نادرست» یکی بماند و شمارش کاربران ممکن نباشد.
+//   - پیام یکسان برای کاربر ناموجود و رمز نادرست.
+//   - درهم‌های قدیمی در همین ورود به Argon2id ارتقا می‌یابند (تنها لحظهٔ دسترسی به رمز).
 func (s *Service) Login(username, password string) (contracts.Session, error) {
 	s.mu.RLock()
 	account, ok := s.accounts[username]
 	s.mu.RUnlock()
 
-	if !ok || !VerifyPassword(account.PasswordHash, password) {
-		// پیام یکسان برای کاربر ناموجود و رمز نادرست، تا وجود کاربر لو نرود.
+	if !ok {
+		VerifyDummy(password)
+		return contracts.Session{}, ErrBadCredentials
+	}
+	verified, upgraded := VerifyAndRehash(account.PasswordHash, password)
+	if !verified {
 		return contracts.Session{}, ErrBadCredentials
 	}
 	if account.Disabled {
 		return contracts.Session{}, ErrUserDisabled
 	}
+	if upgraded != "" {
+		s.rehash(username, upgraded)
+	}
 	return s.issue(account.User)
+}
+
+// rehash درهم رمز را با نسخهٔ قوی‌تر جایگزین می‌کند.
+func (s *Service) rehash(username, hash string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	account, ok := s.accounts[username]
+	if !ok {
+		return
+	}
+	account.PasswordHash = hash
+	s.accounts[username] = account
+}
+
+// passwordHash درهم ذخیره‌شدهٔ یک حساب را برمی‌گرداند (برای حسابرسی و آزمون؛ هرگز
+// از API بیرون نمی‌رود).
+func (s *Service) passwordHash(username string) (string, bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	account, ok := s.accounts[username]
+	if !ok {
+		return "", false
+	}
+	return account.PasswordHash, true
 }
 
 // Refresh نشست تازه از روی توکن تازه‌سازی صادر می‌کند.
@@ -180,6 +217,17 @@ func newID() string {
 	return base64.RawURLEncoding.EncodeToString(b)
 }
 
+// demoHashOnce درهم رمز نمایشی را یک‌بار می‌سازد و برای همهٔ حساب‌های نمونه به کار
+// می‌برد. چرا: Argon2id عمداً گران است و آزمون‌ها ده‌ها بار وابستگی می‌سازند. این
+// حساب‌ها رمز عمومی «demo» دارند و فقط در حالت توسعه/نمایش ساخته می‌شوند، پس نمک
+// یکسان نشت معناداری ندارد؛ حساب‌های واقعی از مسیر settings/localstore ساخته می‌شوند
+// و هرکدام نمک تازه می‌گیرند.
+var (
+	demoHashOnce sync.Once
+	demoHash     string
+	demoHashErr  error
+)
+
 // SeedAccounts کاربران نمونهٔ سامانه — همان حساب‌های بستهٔ طراحی (رمز همه: demo).
 //
 // این تابع فقط برای حالت توسعه و نمایش است؛ در استقرار واقعی کاربران از ماژول
@@ -195,13 +243,15 @@ func SeedAccounts() ([]Account, error) {
 		{"line.mgr", contracts.User{Username: "line.mgr", DisplayName: "آرش رضایی", Role: contracts.RoleLineManager, EmployeeID: "EMP-002", DepartmentID: "D1"}},
 		{"employee", contracts.User{Username: "employee", DisplayName: "فاطمه صادقی", Role: contracts.RoleEmployee, EmployeeID: "EMP-010", DepartmentID: "D1"}},
 	}
+	demoHashOnce.Do(func() {
+		demoHash, demoHashErr = HashPassword("demo")
+	})
+	if demoHashErr != nil {
+		return nil, demoHashErr
+	}
 	accounts := make([]Account, 0, len(defs))
 	for _, d := range defs {
-		hash, err := HashPassword("demo")
-		if err != nil {
-			return nil, err
-		}
-		accounts = append(accounts, Account{Username: d.username, PasswordHash: hash, User: d.user})
+		accounts = append(accounts, Account{Username: d.username, PasswordHash: demoHash, User: d.user})
 	}
 	return accounts, nil
 }
