@@ -150,6 +150,16 @@ type Config struct {
 	// و پروکسی‌های معتمد. مقدار صفر یعنی محدودیت نرخ خاموش (آزمون‌ها و اجرای
 	// درون‌حافظه‌ای)؛ cmd/hrmsd آن را برای استقرار روشن می‌کند.
 	Security websecurity.Config
+	// UsersFile فایل کاربران عملیاتی (JSON با رمز Argon2id). خالی و هم‌زمان با
+	// پایگاه‌دادهٔ واقعی یعنی پیش‌فرض «<DataDir>/users.json».
+	UsersFile string
+	// AdminUser/AdminPassword حساب مدیری که در نخستین اجرا ساخته یا رمزش بازنشانی
+	// می‌شود. AdminPassword خالی یعنی رمز موقت تصادفی (یک‌بار در لاگ اعلام می‌شود).
+	AdminUser     string
+	AdminPassword string
+	// AllowDemoAccounts اجازهٔ حساب‌های نمایشی (admin/demo) را می‌دهد؛ فقط برای
+	// آزمون و نمایش. خالی‌بودن پایگاه‌دادهٔ واقعی این پرچم را لازم نمی‌کند.
+	AllowDemoAccounts bool
 	// SeedDemo بذرکاری دادهٔ نمونه روی پایگاه‌دادهٔ واقعی (نصب تازهٔ خالی).
 	//
 	// بی این پرچم، نصب تازهٔ Postgres همهٔ ماژول‌ها را خالی نشان می‌دهد؛ با آن، همان
@@ -275,9 +285,12 @@ func NewDeps(cfg Config) (modulekit.Deps, error) {
 
 	registry := platformmodules.NewRegistry(enabled)
 
-	accounts, err := auth.SeedAccounts()
+	// پوشهٔ داده، پیش از انتخاب حساب‌ها لازم است (فایل کاربران کنار همان پوشه می‌نشیند).
+	dataDir := dataDirOf(cfg)
+
+	accounts, err := operationalAccounts(cfg, dataDir, logger)
 	if err != nil {
-		return modulekit.Deps{}, fmt.Errorf("ساخت حساب‌های نمونه ناموفق: %w", err)
+		return modulekit.Deps{}, err
 	}
 
 	params, err := json.Marshal(rules.DefaultPayrollParams())
@@ -333,7 +346,7 @@ func NewDeps(cfg Config) (modulekit.Deps, error) {
 		SeedDemo: cfg.SeedDemo,
 		// پوشهٔ داده (:نشان شرکت و فایل‌های بارگذاری‌شده) و کلید امضای نشانی تأیید سند.
 		// مسیر مطلق می‌شود تا مستقل از پوشهٔ جاری فرمان، همه‌جا یکی باشد.
-		DataDir:   dataDirOf(cfg),
+		DataDir:   dataDir,
 		VerifyKey: cfg.JWTSecret,
 		Security:  security,
 	}

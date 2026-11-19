@@ -38,14 +38,19 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	var repo app.Repository = infra.NewSeededStore()
 	if deps.DB != nil {
 		store := infra.NewPgStore(deps.DB, nil)
-		departments, employees, err := store.SeedIfEmpty(context.Background())
-		if err != nil {
-			// شکست بذرکاری نباید سامانه را بخواباند: انبار Postgres در هر حال
-			// کار می‌کند و بذرکاری اجرای بعدی تکرار می‌شود.
-			log.Warn("بذرکاری کارکنان در پایگاه‌داده انجام نشد", "error", err.Error())
-		} else if employees > 0 {
-			log.Info("دادهٔ نمونهٔ کارکنان در پایگاه‌داده بذرکاری شد",
-				"employees", employees, "departments", departments)
+		// بذرکاری دادهٔ نمونه فقط با پرچم صریح (HRMS_SEED_DEMO=1). در استقرار عملیاتی
+		// پایگاه‌دادهٔ سازمان نباید هیچ واحد/کارمند ساختگی بگیرد؛ پیش از این نسخه این
+		// بذرکاری بی‌قید اجرا می‌شد و دادهٔ نمونه به دادهٔ واقعی آمیخته می‌شد (OPS-02).
+		if deps.SeedDemo {
+			departments, employees, err := store.SeedIfEmpty(context.Background())
+			if err != nil {
+				// شکست بذرکاری نباید سامانه را بخواباند: انبار Postgres در هر حال
+				// کار می‌کند و بذرکاری اجرای بعدی تکرار می‌شود.
+				log.Warn("بذرکاری کارکنان در پایگاه‌داده انجام نشد", "error", err.Error())
+			} else if employees > 0 {
+				log.Info("دادهٔ نمونهٔ کارکنان در پایگاه‌داده بذرکاری شد",
+					"employees", employees, "departments", departments)
+			}
 		}
 		repo = store
 		log.Info("انبار کارکنان روی پایگاه‌داده فعال است", "schema", "hr_employee")

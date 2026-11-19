@@ -45,6 +45,9 @@ verify:
 	node tools/gen/gen.mjs --check
 	node tools/check/verify.mjs
 	node tools/skills/check-skills.mjs
+	node tools/check/security-spec.mjs
+	node tools/check/frontend-security.mjs
+	node tools/check/ops-spec.mjs
 
 # اعتبارسنجی قالب اسکیل‌های پروژه بر پایهٔ استاندارد Agent Skills (name/description/ساختار).
 skills-check:

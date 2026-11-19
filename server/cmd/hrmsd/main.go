@@ -60,6 +60,10 @@ func run() error {
 	dbFlag := flag.String("db", "", "نشانی Postgres؛ خالی یعنی متغیر HRMS_DATABASE_URL و در نبود آن اجرای درون‌حافظه‌ای")
 	rootFlag := flag.String("root", ".", "ریشهٔ پوشهٔ سرور برای یافتن migrations (پوشهٔ migrations و internal/modules/*/migrations)")
 	dataFlag := flag.String("data", "data", "پوشهٔ دادهٔ سرور برای فایل‌های بارگذاری‌شده (نشان شرکت)؛ نسبی یعنی کنار ریشهٔ سرور")
+	usersFlag := flag.String("users", "", "فایل کاربران عملیاتی (JSON با رمز Argon2id)؛ خالی یعنی <data>/users.json وقتی پایگاه‌دادهٔ واقعی تنظیم است")
+	adminUserFlag := flag.String("admin-user", "", "نام کاربر مدیر برای ساخت یا بازنشانی رمز (پیش‌فرض admin)")
+	adminPassFlag := flag.String("admin-password", "", "رمز مدیر؛ خالی یعنی رمز موقت تصادفی در نخستین اجرا (یک‌بار در لاگ اعلام می‌شود)")
+	devAccountsFlag := flag.Bool("dev-accounts", false, "اجازهٔ حساب‌های نمایشی admin/demo (فقط نمایش و آزمون)؛ متغیر: HRMS_DEV_ACCOUNTS=1")
 	migrateFlag := flag.Bool("migrate", true, "اجرای مهاجرت‌های اعمال‌نشده در زمان راه‌اندازی (وقتی پایگاه‌داده تنظیم شده باشد)")
 	seedDemoFlag := flag.Bool("seed-demo", false, "بذرکاری دادهٔ نمونهٔ آزمایشی روی پایگاه‌دادهٔ واقعی، فقط برای جدول‌های خالی (متغیر محیطی: HRMS_SEED_DEMO=1)")
 	debug := flag.Bool("debug", false, "سطح لاگ تفصیلی")
@@ -117,19 +121,33 @@ func run() error {
 		dsn = strings.TrimSpace(os.Getenv("HRMS_DATABASE_URL"))
 	}
 
+	// حساب‌های عملیاتی: با پایگاه‌دادهٔ واقعی، رمزهای نمایشی پذیرفته نمی‌شوند و کاربران
+	// از فایل کاربران خوانده می‌شوند (بند OPS-03 سند docs/operational-spec-fa.md).
+	usersFile := firstNonEmpty(*usersFlag, os.Getenv("HRMS_USERS_FILE"))
+	adminUser := firstNonEmpty(*adminUserFlag, os.Getenv("HRMS_ADMIN_USER"))
+	adminPassword := firstNonEmpty(*adminPassFlag, os.Getenv("HRMS_ADMIN_PASSWORD"))
+	devAccounts := *devAccountsFlag || envBool("HRMS_DEV_ACCOUNTS")
+	if devAccounts {
+		logger.Warn("حساب‌های نمایشی روشن است (admin/demo)؛ این حالت فقط برای نمایش و آزمون است، نه استقرار.")
+	}
+
 	cfg := bootstrap.Config{
-		Modules:     *moduleList,
-		WebDir:      *webDir,
-		JWTSecret:   secret,
-		Logger:      logger,
-		Clock:       time.Now,
-		Org:         orgID,
-		DatabaseURL: dsn,
-		ServerRoot:  *rootFlag,
-		DataDir:     *dataFlag,
-		Migrate:     *migrateFlag,
-		SeedDemo:    seedDemo,
-		Security:    securityCfg,
+		Modules:           *moduleList,
+		WebDir:            *webDir,
+		JWTSecret:         secret,
+		Logger:            logger,
+		Clock:             time.Now,
+		Org:               orgID,
+		DatabaseURL:       dsn,
+		ServerRoot:        *rootFlag,
+		DataDir:           *dataFlag,
+		Migrate:           *migrateFlag,
+		SeedDemo:          seedDemo,
+		Security:          securityCfg,
+		UsersFile:         usersFile,
+		AdminUser:         adminUser,
+		AdminPassword:     adminPassword,
+		AllowDemoAccounts: devAccounts,
 		// صندوق خروجی رخداد: مقصد وبهوک، کلید امضا و فاصلهٔ بررسی. خالی بودن مقصد
 		// یعنی ارسال خاموش (رخدادها فقط ثبت می‌شوند) — همان رفتار امن پیش‌فرض.
 		Events: events.Config{
@@ -249,6 +267,16 @@ func envInt(name string, fallback int) int {
 		return fallback
 	}
 	return n
+}
+
+// firstNonEmpty نخستین مقدار ناتهی از پرچم خط فرمان و متغیر محیطی را برمی‌گرداند.
+func firstNonEmpty(values ...string) string {
+	for _, v := range values {
+		if trimmed := strings.TrimSpace(v); trimmed != "" {
+			return trimmed
+		}
+	}
+	return ""
 }
 
 // securityConfig تنظیمات لایهٔ امنیتی وب را از محیط می‌خواند.

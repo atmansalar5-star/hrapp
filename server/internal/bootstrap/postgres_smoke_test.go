@@ -75,7 +75,10 @@ func smokeNewHandler(t *testing.T, dsn string) (http.Handler, []string) {
 		ServerRoot:  "../..",
 		Migrate:     true,
 		SeedDemo:    true,
-		Logger:      slog.New(slog.NewTextHandler(io.Discard, nil)),
+		// آزمون دودی با حساب نمایشی وارد می‌شود؛ در استقرار واقعی همین پرچم خاموش است
+		// و حساب‌ها از فایل کاربران خوانده می‌شوند (بند OPS-03).
+		AllowDemoAccounts: true,
+		Logger:            slog.New(slog.NewTextHandler(io.Discard, nil)),
 	})
 	if err != nil {
 		t.Fatalf("بالا آوردن سرور روی پایگاه‌دادهٔ آزمون ناموفق بود: %v", err)

@@ -152,6 +152,11 @@ go build -o bin/hrmsd.exe ./cmd/hrmsd
 
 ### گام ۳ — پایگاه‌داده و مهاجرت‌ها
 
+> برای استقرار **عملیاتی** (دادهٔ واقعی، بدون دادهٔ نمونه) گام‌های دقیق و سنجش‌پذیر در
+> `docs/operational-spec-fa.md` آمده است: ساخت نقش کم‌دسترسی با `hrops -create-role`،
+> ساخت پایگاه‌دادهٔ تازه با `hrops -create`، حساب‌های واقعی در `data/users.json` و
+> `HRMS_SEED_DEMO=0`. بازبینی آمادگی: `hrops -db <dsn> -ping`.
+
 ```bash
 # ساخت پایگاه‌داده و کاربر (یک‌بار)
 createdb hrms       # یا از طریق pgAdmin/psql
