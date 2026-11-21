@@ -14,6 +14,7 @@
 package main
 
 import (
+	"context"
 	"crypto/rand"
 	"database/sql"
 	"flag"
@@ -24,6 +25,9 @@ import (
 	"strings"
 
 	_ "github.com/lib/pq"
+
+	"hrms/internal/platform/datadict"
+	platformmodules "hrms/internal/platform/modules"
 )
 
 func main() {
@@ -36,14 +40,27 @@ func main() {
 	drop := flag.String("drop", "", "حذف پایگاه‌داده (برای تنظیم دوبارهٔ محیط یا پاک‌کردن پایگاه‌دادهٔ آزمون بازگردانی)")
 	confirmed := flag.Bool("yes", false, "تأیید عملیات برگشت‌ناپذیر (همراه با -drop)")
 	counts := flag.Bool("counts", false, "شمارش سطرهای جدول‌های hr_*")
+	envFile := flag.String("env", "", "فایل متغیرهای محیطی KEY=VALUE برای خواندن HRMS_DATABASE_URL (مثل .env)")
+	dict := flag.Bool("dict", false, "ساخت «فرهنگ داده» از کاتالوگ زنده (ساختار درختی، ERD، سند و CSV)")
+	format := flag.String("format", "tree", "قالب خروجی فرهنگ داده: "+strings.Join(datadict.Formats, " | "))
+	out := flag.String("out", "", "مسیر فایل خروجی فرهنگ داده (خالی یعنی چاپ در خروجی استاندارد)")
+	check := flag.Bool("check", false, "فقط بررسی هم‌خوانی فایل -out با کاتالوگ زنده (کد ۱ اگر قدیمی باشد)")
 	flag.Parse()
 
+	if *envFile != "" {
+		loadEnvFile(*envFile)
+	}
 	if *dsn == "" {
 		*dsn = strings.TrimSpace(os.Getenv("HRMS_DATABASE_URL"))
 	}
-	if *dsn == "" {
-		fmt.Fprintln(os.Stderr, "استفاده: hrops -db <dsn> -ping | -create <name> [-owner <role>] | -create-role <role> | -drop <name> -yes | -counts")
+	if *dsn == "" && !*dict {
+		fmt.Fprintln(os.Stderr, "استفاده: hrops -db <dsn> -ping | -create <name> [-owner <role>] | -create-role <role> | -drop <name> -yes | -counts | -dict [-format tree|mermaid|md|csv|json] [-out file]")
 		os.Exit(2)
+	}
+
+	if *dict {
+		renderDictionary(*dsn, *format, *out, *check)
+		return
 	}
 
 	if *create != "" {
@@ -316,6 +333,111 @@ func dropDatabase(dsn, name string) {
 		fail("حذف پایگاه‌داده", err)
 	}
 	fmt.Printf("✓ پایگاه‌دادهٔ «%s» حذف شد.\n", target)
+}
+
+// renderDictionary فرهنگ داده را می‌سازد و چاپ/ذخیره می‌کند.
+//
+// برای فایل‌های نسخه‌دار (docs/generated) حالت «پایدار» به کار می‌رود: بدون مُهر زمان و
+// بدون شمار سطرها، تا با هر تغییر داده (که ساختار را عوض نمی‌کند) فایل کهنه نشود. خروجی
+// زندهٔ API همان قالب کامل را با زمان و شمار سطر می‌دهد.
+func renderDictionary(dsn, format, outPath string, checkOnly bool) {
+	if strings.TrimSpace(dsn) == "" {
+		fmt.Fprintln(os.Stderr, "✖ فرهنگ داده به نشانی پایگاه‌داده نیاز دارد (HRMS_DATABASE_URL یا -db یا -env .env)")
+		os.Exit(2)
+	}
+	db := open(dsn)
+	defer db.Close()
+	if err := db.Ping(); err != nil {
+		fail("پاسخ پایگاه‌داده", err)
+	}
+
+	options := datadict.Options{}
+	if outPath != "" {
+		options.Stable = true
+	}
+	dict, err := datadict.Load(context.Background(), db, moduleInfos(), options)
+	if err != nil {
+		fail("ساخت فرهنگ داده", err)
+	}
+	body, _, err := datadict.Render(dict, format)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "✖ "+err.Error())
+		os.Exit(2)
+	}
+
+	if outPath == "" {
+		fmt.Print(body)
+		return
+	}
+
+	if checkOnly {
+		current, readErr := os.ReadFile(outPath)
+		if readErr != nil {
+			fmt.Fprintf(os.Stderr, "✖ فایل «%s» خوانده نشد: %v\n  برای ساخت: hrops -env .env -dict -format %s -out %s\n", outPath, readErr, format, outPath)
+			os.Exit(1)
+		}
+		if string(current) != body {
+			fmt.Fprintf(os.Stderr, "✖ «%s» با کاتالوگ زنده هم‌خوان نیست؛ بازتولید کنید:\n  hrops -env .env -dict -format %s -out %s\n", outPath, format, outPath)
+			os.Exit(1)
+		}
+		fmt.Printf("✓ «%s» با کاتالوگ زنده هم‌خوان است\n", outPath)
+		return
+	}
+
+	if err := os.WriteFile(outPath, []byte(body), 0o644); err != nil {
+		fail("نوشتن فایل خروجی", err)
+	}
+	fmt.Printf("✓ فرهنگ داده در «%s» نوشته شد — %d طرح · %d جدول · %d ستون · %d رابطه\n",
+		outPath, dict.Summary.Schemas, dict.Summary.Tables, dict.Summary.Columns, dict.Summary.Relations)
+}
+
+// moduleInfos نگاشت ماژول‌های سامانه را از رجیستری مانیفست‌ها می‌سازد (نام فارسی،
+// پیشوند API، طرح داده، موجودیت‌ها و صفحه‌ها) تا فرهنگ داده به زبان سامانه حرف بزند.
+func moduleInfos() []datadict.ModuleInfo {
+	registry := platformmodules.NewRegistry(nil)
+	out := make([]datadict.ModuleInfo, 0, registry.Count())
+	for _, m := range registry.All() {
+		screens := make([]string, 0, len(m.Screens))
+		for _, s := range m.Screens {
+			screens = append(screens, s.TitleFa)
+		}
+		out = append(out, datadict.ModuleInfo{
+			ID:        m.ID,
+			TitleFa:   m.TitleFa,
+			APIPrefix: m.APIPrefix,
+			DBSchema:  m.DBSchema,
+			Entities:  m.Entities,
+			Screens:   screens,
+		})
+	}
+	return out
+}
+
+// loadEnvFile متغیرهای محیطی را از فایل سادهٔ KEY=VALUE می‌خواند (نبودن فایل خطا نیست و
+// متغیری که در محیط تعریف شده باشد بازنویسی نمی‌شود — همان قاعدهٔ سرور).
+func loadEnvFile(path string) {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return
+	}
+	for _, line := range strings.Split(string(raw), "\n") {
+		line = strings.TrimSpace(strings.TrimSuffix(line, "\r"))
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		key, value, found := strings.Cut(line, "=")
+		if !found {
+			continue
+		}
+		key = strings.TrimSpace(key)
+		value = strings.Trim(strings.TrimSpace(value), `"'`)
+		if key == "" {
+			continue
+		}
+		if _, exists := os.LookupEnv(key); !exists {
+			_ = os.Setenv(key, value)
+		}
+	}
 }
 
 // printCounts شمار سطرهای هر جدول hr_* را چاپ می‌کند (برای مقایسهٔ پشتیبان و بازگردانی).

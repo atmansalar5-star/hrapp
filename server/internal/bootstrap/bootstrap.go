@@ -54,6 +54,7 @@ import (
 	"hrms/internal/platform/audit"
 	"hrms/internal/platform/auth"
 	"hrms/internal/platform/calendar"
+	"hrms/internal/platform/datadict"
 	platformdb "hrms/internal/platform/db"
 	"hrms/internal/platform/documents"
 	"hrms/internal/platform/events"
@@ -441,6 +442,31 @@ func NewHandler(deps modulekit.Deps) (http.Handler, []string, error) {
 	return deps.Security.Middleware(deps.Auth.Middleware(events.Middleware(deps.Events, deps.Log)(mux))), registered, nil
 }
 
+// dictionaryModules نگاشت ماژول‌های فعال را برای فرهنگ داده می‌سازد: نام فارسی، پیشوند
+// API، طرح داده، موجودیت‌ها و صفحه‌ها — تا فرهنگ داده به زبان خود سامانه حرف بزند.
+func dictionaryModules(registry *platformmodules.Registry) []datadict.ModuleInfo {
+	if registry == nil {
+		return nil
+	}
+	all := registry.All()
+	out := make([]datadict.ModuleInfo, 0, len(all))
+	for _, m := range all {
+		screens := make([]string, 0, len(m.Screens))
+		for _, s := range m.Screens {
+			screens = append(screens, s.TitleFa)
+		}
+		out = append(out, datadict.ModuleInfo{
+			ID:        m.ID,
+			TitleFa:   m.TitleFa,
+			APIPrefix: m.APIPrefix,
+			DBSchema:  m.DBSchema,
+			Entities:  m.Entities,
+			Screens:   screens,
+		})
+	}
+	return out
+}
+
 func registerPlatformRoutes(mux *http.ServeMux, deps modulekit.Deps) {
 	// بررسی سلامت — بدون احراز هویت.
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
@@ -503,6 +529,48 @@ func registerPlatformRoutes(mux *http.ServeMux, deps modulekit.Deps) {
 	mux.HandleFunc("GET /api/v1/documents/{kind}/{id}", auth.RequireAuth(documents.Handler(deps)))
 	// پیش‌نمایش قالب سند با دادهٔ نمونه (صفحهٔ قالب‌های متن اسناد).
 	mux.HandleFunc("GET /api/v1/documents/preview/{kind}", auth.RequireAuth(documents.PreviewHandler(deps)))
+
+	// فرهنگ داده (دیکشنری داده) و نمودار انتیتی-رلیشن.
+	//
+	// هر درخواست، تصویر لحظه‌ایِ کاتالوگ پایگاه‌داده است؛ پس «بروزرسانی پس از تغییرات»
+	// یعنی همین درخواست — نه بازتولید فایل. قالب‌ها: json (ساختار کامل)، tree (درخت
+	// خوانا)، mermaid (نمودار ERD)، md (سند فرهنگ داده) و csv (برای Excel).
+	//
+	// دسترسی: فقط مدیر سیستم. ساختار داده نقشهٔ راه نفوذ است (نام جدول‌ها، ستون‌های
+	// حساس، روابط) و برای نقش‌های عملیاتی لازم نیست.
+	mux.HandleFunc("GET /api/v1/platform/data-dictionary", auth.RequireAuth(func(w http.ResponseWriter, r *http.Request) {
+		user, ok := auth.UserFrom(r.Context())
+		if !ok {
+			httpx.WriteError(w, http.StatusUnauthorized, contracts.CodeUnauthorized, nil)
+			return
+		}
+		if user.Role != contracts.RoleAdmin {
+			httpx.WriteError(w, http.StatusForbidden, contracts.CodeForbidden, nil)
+			return
+		}
+		if deps.DB == nil {
+			httpx.WriteErrorMsg(w, http.StatusServiceUnavailable, contracts.CodeInternal,
+				"فرهنگ داده فقط روی استقراری که پایگاه‌داده دارد معنا پیدا می‌کند.", nil)
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), 20*time.Second)
+		defer cancel()
+
+		dict, err := datadict.Load(ctx, deps.DB, dictionaryModules(deps.Registry), datadict.Options{})
+		if err != nil {
+			httpx.WriteErrorMsg(w, http.StatusInternalServerError, contracts.CodeInternal,
+				"ساخت فرهنگ داده ناموفق بود: "+err.Error(), nil)
+			return
+		}
+		body, contentType, err := datadict.Render(dict, r.URL.Query().Get("format"))
+		if err != nil {
+			httpx.WriteErrorMsg(w, http.StatusBadRequest, contracts.CodeBadRequest, err.Error(), nil)
+			return
+		}
+		w.Header().Set("Content-Type", contentType)
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(body))
+	}))
 
 	// شرکت‌های قابل شبیه‌سازی (استقرار پارامتریک).
 	//

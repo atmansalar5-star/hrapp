@@ -48,6 +48,24 @@ verify:
 	node tools/check/security-spec.mjs
 	node tools/check/frontend-security.mjs
 	node tools/check/ops-spec.mjs
+	node tools/check/dd-spec.mjs
+
+# فرهنگ داده و نمودار ERD: بازتولید فایل‌های نسخه‌دار از کاتالوگ زندهٔ پایگاه‌داده.
+#   make datadict          بازتولید سه فایل در DATADICT_TMP
+#   make datadict-check    بررسی کهنه‌بودن فایل‌های docs/generated (کد ۱ اگر ساختار عوض شده)
+# نکتهٔ سندباکس ویندوز: فرایند فرزند نمی‌تواند مستقیم در docs/generated بنویسد؛ فایل‌ها در
+# پوشهٔ موقت ساخته می‌شوند و در صورت نیاز منتقل می‌شوند.
+DATADICT_OUT ?= ../docs/generated
+DATADICT_TMP ?= ../.dsh-tmp/dd
+datadict:
+	cd server && go run ./cmd/hrops -env .env -dict -format md -out $(DATADICT_TMP)/data-dictionary-fa.md
+	cd server && go run ./cmd/hrops -env .env -dict -format mermaid -out $(DATADICT_TMP)/erd-fa.mmd
+	cd server && go run ./cmd/hrops -env .env -dict -format csv -out $(DATADICT_TMP)/data-dictionary-fa.csv
+	@echo "فایل‌ها در $(DATADICT_TMP) ساخته شدند؛ برای نسخه‌دارشدن به $(DATADICT_OUT) منتقل کنید."
+
+datadict-check:
+	cd server && go run ./cmd/hrops -env .env -dict -format md -out $(DATADICT_OUT)/data-dictionary-fa.md -check
+	cd server && go run ./cmd/hrops -env .env -dict -format mermaid -out $(DATADICT_OUT)/erd-fa.mmd -check
 
 # اعتبارسنجی قالب اسکیل‌های پروژه بر پایهٔ استاندارد Agent Skills (name/description/ساختار).
 skills-check:

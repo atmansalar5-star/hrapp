@@ -30,6 +30,8 @@ jobs:
         run: node tools/check/frontend-security.mjs
       - name: ردیابی اسپک آمادگی عملیاتی (OPS ⇄ آزمون/سند/ابزار)
         run: node tools/check/ops-spec.mjs
+      - name: ردیابی اسپک فرهنگ داده (DD ⇄ آزمون/سند/ابزار)
+        run: node tools/check/dd-spec.mjs
 
   go:
     name: سرور Go

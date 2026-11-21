@@ -1,0 +1,279 @@
+erDiagram
+    %% فرهنگ داده — تولیدشده از کاتالوگ زنده؛ برای بروزرسانی دوباره درخواست کنید.
+    hr_contracts_contract {
+        text id PK
+        text employee_id
+        text employee_name
+        text department_name
+        text position_title
+        text kind
+        text start_date
+        text end_date
+        bigint monthly_salary
+        text status
+        text supersedes_id
+        integer renew_count
+        text note_fa
+        text created_by
+        text decided_by
+        integer version
+        timestamp updated_at
+        text employment_type
+        text climate_region
+        bigint rank_wage
+        bigint seniority_wage
+        bigint post_allowance
+        bigint sacrifice_allowance
+        bigint climate_allowance
+        bigint salary_repair
+        double bad_climate_percent
+        double deprivation_percent
+        double region_hardship_percent
+        double extra_time_percent
+    }
+    hr_contracts_contract_event {
+        bigint id PK
+        text contract_id FK
+        timestamp at
+        text actor
+        text action
+        text note_fa
+    }
+    hr_employee_change_log {
+        bigint seq PK
+        text entity
+        text entity_id
+        text op
+        integer version
+        jsonb payload
+        text actor
+        timestamp created_at
+    }
+    hr_employee_contract {
+        text id PK
+        text employee_id FK
+        text contract_type
+        date start_date
+        date end_date
+        bigint base_salary
+        timestamp created_at
+    }
+    hr_employee_department {
+        text id PK
+        text name
+        text head_name
+        text parent_id FK
+        integer headcount
+        timestamp created_at
+    }
+    hr_employee_document {
+        text id PK
+        text employee_id FK
+        text title
+        text file_ref
+        timestamp uploaded_at
+    }
+    hr_employee_employee {
+        text id PK
+        text full_name
+        text national_id
+        text department_id FK
+        text position
+        text contract_type
+        text status
+        date hire_date
+        bigint base_salary
+        numeric leave_balance
+        text phone
+        text email
+        text manager_name
+        integer version
+        bigint server_seq
+        boolean deleted
+        timestamp created_at
+        timestamp updated_at
+        text employment_type
+        text mobile
+        text home_phone
+        text postal_code
+        text address
+        text gender
+        date birth_date
+        text residence_site
+        text job_grade
+    }
+    hr_employee_position {
+        text id PK
+        text title
+        text department_id FK
+    }
+    hr_employee_skill {
+        text employee_id PK,FK
+        text name PK
+        smallint level
+    }
+    hr_personnel_dependent {
+        text id PK
+        text employee_id
+        text employee_name
+        text department_name
+        text full_name
+        text relation
+        text national_id
+        text birth_date
+        text coverage_start
+        boolean insurance
+        text documents_fa
+        text status
+        text note_fa
+        text decided_by
+        integer version
+        timestamp updated_at
+        text services
+    }
+    hr_personnel_flight_request {
+        text id PK
+        text employee_id
+        text employee_name
+        text department_name
+        text origin_fa
+        text destination_fa
+        text depart_date
+        text return_date
+        text purpose
+        integer passengers
+        text companions_fa
+        bigint estimated_cost
+        text status
+        text note_fa
+        text decided_by
+        text ticket_no
+        integer version
+        timestamp updated_at
+    }
+    hr_platform_event_outbox {
+        bigint id PK
+        text event_id
+        text name
+        timestamp occurred_at
+        text actor
+        text role
+        text module
+        text method
+        text path
+        integer status
+        text subject
+        jsonb payload
+        text status_delivery
+        integer attempts
+        timestamp next_attempt_at
+        timestamp delivered_at
+        text last_error
+        timestamp created_at
+    }
+    hr_records_record {
+        text id PK
+        text module
+        text kind
+        text title
+        text employee_id
+        text employee_name
+        text department_name
+        text status
+        jsonb fields
+        text note_fa
+        text created_by
+        text decided_by
+        integer version
+        timestamp updated_at
+    }
+    hr_records_record_event {
+        bigint id PK
+        text record_id FK
+        timestamp at
+        text actor
+        text action
+        text note_fa
+    }
+    hr_records_seq {
+        text key PK
+        bigint n
+    }
+    hr_salary_admin_certificate {
+        text id PK
+        text serial
+        text employee_id
+        text employee_name
+        text department_name
+        text position_title
+        text kind
+        text purpose_fa
+        text requested_at
+        text issued_at
+        text delivered_at
+        text status
+        text note_fa
+        text decided_by
+        integer version
+        timestamp updated_at
+    }
+    hr_salary_admin_decree {
+        text id PK
+        text employee_id
+        text employee_name
+        text department_name
+        text position_title
+        text job_group
+        bigint base_salary
+        text effective_date
+        text reason_fa
+        text status
+        text supersedes_id
+        text note_fa
+        text created_by
+        text decided_by
+        integer version
+        timestamp updated_at
+        text employment_type
+        text climate_region
+        bigint rank_wage
+        bigint seniority_wage
+        bigint post_allowance
+        bigint sacrifice_allowance
+        bigint climate_allowance
+        bigint salary_repair
+        double bad_climate_percent
+        double deprivation_percent
+        double region_hardship_percent
+        double extra_time_percent
+        bigint pay_gap
+        text pay_gap_since
+    }
+    hr_settings_sys_param_version {
+        bigint id PK
+        text key
+        jsonb payload
+        date effective_from
+        timestamp created_at
+        text created_by
+    }
+    public_rbac_permission {
+        text role PK
+        text module_id PK
+        text action PK
+        text scope
+    }
+    public_schema_migration {
+        text module PK
+        integer version PK
+        text name
+        timestamp applied_at
+    }
+    hr_contracts_contract_event }|--|| hr_contracts_contract : "contract_id → id · حذف آبشاری (CASCADE)"
+    hr_employee_contract }|--|| hr_employee_employee : "employee_id → id · حذف آبشاری (CASCADE)"
+    hr_employee_department }o--|| hr_employee_department : "parent_id → id · بدون عمل (NO ACTION)"
+    hr_employee_document }|--|| hr_employee_employee : "employee_id → id · حذف آبشاری (CASCADE)"
+    hr_employee_employee }|--|| hr_employee_department : "department_id → id · بدون عمل (NO ACTION)"
+    hr_employee_position }o--|| hr_employee_department : "department_id → id · بدون عمل (NO ACTION)"
+    hr_employee_skill }|--|| hr_employee_employee : "employee_id → id · حذف آبشاری (CASCADE)"
+    hr_records_record_event }|--|| hr_records_record : "record_id → id · حذف آبشاری (CASCADE)"
