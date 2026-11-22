@@ -67,8 +67,27 @@
       ]
     },
     {
-      "key": "payrollRun",
+      "key": "payByMethod",
       "order": 1,
+      "icon": "layers",
+      "titleFa": "فیش بر پایهٔ روش پرداخت",
+      "component": "PayByMethodScreen",
+      "purposeFa": "محاسبهٔ فیش هر کارمند با موتور روش پرداخت خودش: نظام پرداخت صندوق بازنشستگی نفت، دستورالعمل ۳۴۰۰۶، حقوق و دستمزد جاری، و مدل توسعه‌ای ۴پی؛ روش پرداخت از پروندهٔ کارمند و در نبود آن از نوع استخدام تعیین می‌شود.",
+      "actionsFa": [
+        "انتخاب کارمند و محاسبهٔ فیش",
+        "نمایش روش پرداخت، منبع آن و موتور محاسبه",
+        "تفکیک اقلام فیش بر پایهٔ همان موتور",
+        "هشدار ناسازگاری پروندهٔ روش پرداخت با نوع استخدام"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "payrollRun",
+      "order": 2,
       "icon": "play-circle",
       "titleFa": "پردازش حقوق",
       "component": "PayrollRunScreen",
@@ -86,7 +105,7 @@
     },
     {
       "key": "payslip",
-      "order": 2,
+      "order": 3,
       "icon": "receipt",
       "titleFa": "فیش حقوقی",
       "component": "PayslipScreen",
@@ -106,7 +125,7 @@
     },
     {
       "key": "payItems",
-      "order": 3,
+      "order": 4,
       "icon": "sliders",
       "titleFa": "اجزای حقوق",
       "component": "PayItemsScreen",
@@ -124,7 +143,7 @@
     },
     {
       "key": "karana",
-      "order": 4,
+      "order": 5,
       "icon": "hand-coins",
       "titleFa": "کارانه و پرداخت‌های متغیر",
       "component": "KaranaScreen",
@@ -144,7 +163,7 @@
     },
     {
       "key": "payReports",
-      "order": 5,
+      "order": 6,
       "icon": "bar-chart",
       "titleFa": "گزارش‌های مالی حقوق",
       "component": "PayReportsScreen",
@@ -162,7 +181,7 @@
     },
     {
       "key": "payGap",
-      "order": 7,
+      "order": 8,
       "icon": "scale",
       "titleFa": "تطبیق حقوق و تفاوت تطبیق",
       "component": "PayGapScreen",
@@ -182,7 +201,7 @@
     },
     {
       "key": "serviceBonus",
-      "order": 6,
+      "order": 7,
       "icon": "calculator",
       "titleFa": "پاداش پایان خدمت (سنوات)",
       "component": "ServiceBonusScreen",
@@ -205,7 +224,7 @@
     },
     {
       "key": "payParams",
-      "order": 7,
+      "order": 9,
       "icon": "percent",
       "titleFa": "پارامترها و ضرائب حقوق",
       "component": "PayParamsScreen",
@@ -225,7 +244,7 @@
     },
     {
       "key": "statutoryFiles",
-      "order": 8,
+      "order": 10,
       "icon": "file-check",
       "titleFa": "فایل قانونی بیمه و مالیات",
       "component": "StatutoryFilesScreen",
@@ -244,7 +263,7 @@
     },
     {
       "key": "bankPayments",
-      "order": 9,
+      "order": 11,
       "icon": "banknote",
       "titleFa": "فایل پرداخت بانکی",
       "component": "BankFilesScreen",
@@ -264,7 +283,7 @@
     },
     {
       "key": "payMethods",
-      "order": 10,
+      "order": 12,
       "icon": "user-cog",
       "titleFa": "روش پرداخت کارکنان",
       "component": "PayMethodsScreen",
@@ -284,7 +303,7 @@
     },
     {
       "key": "comp34006",
-      "order": 11,
+      "order": 13,
       "icon": "calculator",
       "titleFa": "نظام جبران خدمات ۳۴۰۰۶",
       "component": "Comp34006Screen",

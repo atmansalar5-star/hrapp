@@ -129,6 +129,7 @@ window.HRMS_MENU = [
         shared: false,
         screens: [
         { page: "oilPayslip", label: "فیش حقوقی صندوق نفت", icon: "calculator", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "payByMethod", label: "فیش بر پایهٔ روش پرداخت", icon: "layers", roles: ['admin', 'hr_manager', 'hr_spec'] },
         { page: "payrollRun", label: "پردازش حقوق", icon: "play-circle", roles: ['admin', 'hr_manager'] },
         { page: "payslip", label: "فیش حقوقی", icon: "receipt", roles: ['admin', 'hr_manager', 'hr_spec', 'line_manager', 'employee'] },
         { page: "payItems", label: "اجزای حقوق", icon: "sliders", roles: ['admin', 'hr_manager'] },

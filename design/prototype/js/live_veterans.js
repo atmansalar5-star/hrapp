@@ -161,7 +161,7 @@ function vetClearForm() {
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   window.VET.plan = null;
   const box = document.getElementById('vetPlanBox');
-  if (box) box.innerHTML = '';
+  if (box) box.replaceChildren();
 }
 
 /* ------------------------------ نتیجهٔ محاسبه ------------------------------ */

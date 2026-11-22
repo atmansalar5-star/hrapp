@@ -649,7 +649,7 @@ function pageOilPayslipLive() {
  */
 async function oilPrefillSaved(employeeId) {
   const state = document.getElementById('oilProfileState');
-  if (!employeeId) { if (state) state.innerHTML = ''; return; }
+  if (!employeeId) { if (state) state.replaceChildren(); return; }
   const res = await apiFetch('/api/v1/payroll/records?kind=oilPayslips&employeeId=' +
     encodeURIComponent(employeeId) + '&size=3');
   const items = (res.ok && res.data && res.data.items) || [];
@@ -734,3 +734,179 @@ async function oilSaveProfile(options) {
 }
 
 LIVE_PAGES.oilPayslip = pageOilPayslipLive;
+/* =====================================================================
+   صفحهٔ «فیش بر پایهٔ روش پرداخت» — یک نقطهٔ ورود برای چهار نظام پرداخت
+   ---------------------------------------------------------------------
+   محاسبه در سرور است (`POST /api/v1/payroll/payslip`) و موتور را سرور بر پایهٔ
+   «روش پرداخت» همان کارمند برمی‌گزیند: صندوق نفت، دستورالعمل ۳۴۰۰۶، حقوق و دستمزد
+   جاری، و مدل توسعه‌ای ۴پی. این صفحه فقط انتخاب کارمند و نمایش فیش همان موتور است؛
+   هیچ قاعده و درصدی در رابط نیست.
+
+     GET  /api/v1/payroll/payslip-defaults   کارکنان با روش پرداخت مؤثرشان + موتورها
+     POST /api/v1/payroll/payslip            فیش با موتور روش پرداخت همان کارمند
+   ===================================================================== */
+var PBM_DEFAULTS = null;
+var PBM_RESULT = null;
+
+/** نمایش مبلغ با جداکننده و ارقام فارسی. */
+function pbmMoney(v) {
+  return typeof money === 'function' ? money(v) : fa(v);
+}
+
+/** خلاصهٔ روش پرداخت و منبع آن به شکل چیپ‌های سرصفحه. */
+function pbmHeaderHtml(r) {
+  const chip = (label, value) => value
+    ? `<span class="chip" style="font-size:.74rem">${esc(label)}: <b>${esc(value)}</b></span>` : '';
+  const emp = r.employee || {};
+  return `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+      ${chip('کارمند', emp.name || emp.id)}
+      ${chip('نوع استخدام', emp.employmentTypeFa || emp.employmentType)}
+      ${chip('روش پرداخت', r.payModelFa || r.payModel)}
+      ${chip('منبع', r.sourceFa)}
+      ${chip('موتور', r.engineFa)}
+      ${chip('دوره', r.period)}
+    </div>`;
+}
+
+/** سطرهای فیش صندوق نفت (اقلام گروه‌بندی‌شده) + جمع‌ها. */
+function pbmOilSlipHtml(slip) {
+  const lines = (slip.lines || []).map(l => `<tr>
+      <td>${esc(l.groupFa || '—')}</td>
+      <td>${esc(l.titleFa)}</td>
+      <td class="num">${l.percent ? fa(l.percent) + '٪' : '—'}</td>
+      <td class="num">${l.base ? pbmMoney(l.base) : '—'}</td>
+      <td class="num">${pbmMoney(l.amount)}</td>
+      <td class="muted" style="font-size:.72rem">${esc(l.detailFa || '')}</td>
+    </tr>`);
+  const totals = `<div class="grid-stats" style="margin:10px 0">
+      ${statCard({ico: '💰', tint: '#EFF6FF', accent: '#2563EB', val: pbmMoney(slip.gross), label: 'جمع ناخالص'})}
+      ${statCard({ico: '🧾', tint: '#FEF3C7', accent: '#D97706', val: pbmMoney(slip.deductions), label: 'جمع کسور'})}
+      ${statCard({ico: '✅', tint: '#DCFCE7', accent: '#16A34A', val: pbmMoney(slip.net), label: 'خالص پرداختی'})}
+    </div>`;
+  return totals + liveTable(['گروه', 'قلم', 'درصد', 'مبنا', 'مبلغ (ریال)', 'شرح'], lines, lines.length);
+}
+
+/** سطرهای فیش ۳۴۰۰۶: اقلام بستانکار و کسور با کد رسمی. */
+function pbm34006SlipHtml(slip) {
+  const rows = list => (list || []).map(l => `<tr>
+      <td class="num ltr">${esc(l.code || '')}</td>
+      <td>${esc(l.titleFa || '')}</td>
+      <td class="num">${l.percent ? fa(l.percent) + '٪' : '—'}</td>
+      <td class="num">${pbmMoney(l.amount)}</td>
+    </tr>`);
+  const earnings = rows(slip.earnings);
+  const deductions = rows(slip.deductions);
+  const totals = `<div class="grid-stats" style="margin:10px 0">
+      ${statCard({ico: '💰', tint: '#EFF6FF', accent: '#2563EB', val: pbmMoney(slip.gross), label: 'جمع بستانکار'})}
+      ${statCard({ico: '🧾', tint: '#FEF3C7', accent: '#D97706', val: pbmMoney(slip.totalDeductions), label: 'جمع کسور'})}
+      ${statCard({ico: '✅', tint: '#DCFCE7', accent: '#16A34A', val: pbmMoney(slip.net), label: 'خالص پرداختی'})}
+    </div>`;
+  return totals +
+    `<div class="card card-pad" style="margin-bottom:10px"><div style="font-weight:600;margin-bottom:6px">اقلام بستانکار</div>` +
+    liveTable(['کد', 'عنوان', 'درصد', 'مبلغ (ریال)'], earnings, earnings.length) + `</div>` +
+    `<div class="card card-pad"><div style="font-weight:600;margin-bottom:6px">کسور</div>` +
+    liveTable(['کد', 'عنوان', 'درصد', 'مبلغ (ریال)'], deductions, deductions.length) + `</div>`;
+}
+
+/** فیش موتور جاری: ناخالص، بیمه، مالیات و خالص. */
+function pbmPayrollSlipHtml(slip) {
+  const row = (title, v, faLabel) => `<tr><td>${esc(title)}</td><td class="num">${faLabel || pbmMoney(v)}</td></tr>`;
+  const rows = [
+    row('جمع ناخالص', slip.gross),
+    row('اضافه‌کاری', slip.overtimePay),
+    row('مبنای بیمه', slip.insuranceBase),
+    row('بیمهٔ سهم کارمند', slip.insuranceEmployee),
+    row('بیمهٔ سهم کارفرما', slip.insuranceEmployer),
+    row('درآمد مشمول مالیات', slip.taxableIncome),
+    row('مالیات', slip.tax),
+  ];
+  const totals = `<div class="grid-stats" style="margin:10px 0">
+      ${statCard({ico: '💰', tint: '#EFF6FF', accent: '#2563EB', val: pbmMoney(slip.gross), label: 'جمع ناخالص'})}
+      ${statCard({ico: '🧾', tint: '#FEF3C7', accent: '#D97706', val: pbmMoney((slip.insuranceEmployee || 0) + (slip.tax || 0)), label: 'بیمه و مالیات'})}
+      ${statCard({ico: '✅', tint: '#DCFCE7', accent: '#16A34A', val: pbmMoney(slip.net), label: 'خالص پرداختی'})}
+    </div>`;
+  return totals + liveTable(['شرح', 'مبلغ (ریال)'], rows, rows.length);
+}
+
+/** فیش هر موتور را با همان ساختار خودش نشان می‌دهد. */
+function pbmSlipHtml(r) {
+  const slip = r.slip || {};
+  if (Array.isArray(slip.lines) && slip.lines.length) return pbmOilSlipHtml(slip);
+  if (Array.isArray(slip.earnings) || Array.isArray(slip.deductions)) return pbm34006SlipHtml(slip);
+  return pbmPayrollSlipHtml(slip);
+}
+
+/** محاسبه و نمایش فیش کارمند انتخاب‌شده. */
+async function pbmRun() {
+  const sel = document.getElementById('pbmEmployee');
+  const out = document.getElementById('pbmOut');
+  if (!sel || !out) return;
+  const employeeId = (sel.value || '').trim();
+  if (!employeeId) {
+    out.textContent = 'کارمند را انتخاب کنید.';
+    return;
+  }
+  out.innerHTML = liveSpinner();
+  const res = await apiFetch('/api/v1/payroll/payslip', {method: 'POST', body: {employeeId}});
+  if (!res.ok) {
+    out.innerHTML = liveErrorBox(res.message);
+    return;
+  }
+  PBM_RESULT = res.data || {};
+  const r = PBM_RESULT;
+  out.innerHTML = `<div class="card card-pad" style="margin-bottom:10px">
+      ${pbmHeaderHtml(r)}
+      ${liveWarnBox(r.notesFa || [])}
+      <div class="muted" style="font-size:.73rem">فیش بر پایهٔ روش پرداخت همین کارمند ساخته شد؛
+        محاسبه و درصدها همه از سرور آمده‌اند.</div>
+    </div>` + pbmSlipHtml(r);
+}
+
+/** اتصال رویدادها (بدون هندلر درون‌خطی — سقف امنیتی رابط رعایت می‌شود). */
+function pbmBind() {
+  const sel = document.getElementById('pbmEmployee');
+  const btn = document.getElementById('pbmRun');
+  if (sel && !sel.dataset.pbmBound) {
+    sel.dataset.pbmBound = '1';
+    sel.addEventListener('change', () => pbmRun());
+  }
+  if (btn && !btn.dataset.pbmBound) {
+    btn.dataset.pbmBound = '1';
+    btn.addEventListener('click', () => pbmRun());
+  }
+}
+
+/** صفحهٔ «فیش بر پایهٔ روش پرداخت». */
+function pagePayByMethodLive() {
+  if (!isLive()) return offlineFallback('payByMethod');
+  (async () => {
+    await liveLoad(async () => {
+      const res = await apiFetch('/api/v1/payroll/payslip-defaults');
+      if (!res.ok) return liveErrorBox(res.message);
+      PBM_DEFAULTS = res.data || {};
+      const people = PBM_DEFAULTS.employees || [];
+      const opts = people.map(e => `<option value="${esc(e.id)}">${esc(e.titleFa)} — ${esc(e.payModelFa)}</option>`).join('');
+      const engines = (PBM_DEFAULTS.engines || [])
+        .map(x => `<span class="chip" style="font-size:.72rem" title="${esc(x.engineFa || '')}">${esc(x.titleFa)}</span>`).join(' ');
+      return `<div class="card card-pad" style="margin-bottom:12px">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <label style="font-size:.82rem;font-weight:600">کارمند:</label>
+            <select id="pbmEmployee" style="min-width:340px">
+              <option value="">— انتخاب کارمند —</option>${opts}
+            </select>
+            <button class="btn btn-primary" id="pbmRun">محاسبهٔ فیش</button>
+            <span class="muted" style="font-size:.73rem">${esc(PBM_DEFAULTS.noteFa || '')}</span>
+          </div>
+          <div style="margin-top:8px;font-size:.73rem" class="muted">موتورهای پشتیبانی‌شده: ${engines}</div>
+          <div style="margin-top:4px;font-size:.73rem" class="muted">دوره: ${esc(PBM_DEFAULTS.period || '')} — امروز: ${esc(PBM_DEFAULTS.today || '')}</div>
+        </div>
+        <div id="pbmOut"></div>`;
+    });
+    pbmBind();
+  })();
+  return liveShell('فیش بر پایهٔ روش پرداخت',
+    'یک نقطهٔ ورود برای چهار نظام: صندوق بازنشستگی نفت، دستورالعمل ۳۴۰۰۶، حقوق و دستمزد جاری و مدل ۴پی — موتور از روش پرداخت همان کارمند انتخاب می‌شود',
+    '');
+}
+
+if (typeof LIVE_PAGES !== 'undefined') LIVE_PAGES.payByMethod = pagePayByMethodLive;

@@ -956,7 +956,7 @@ function cardsRenderResult(r, trial) {
 
 function cardsClearResult() {
   const box = $('#cupResult');
-  if (box) box.innerHTML = '';
+  if (box) box.replaceChildren();
 }
 
 /** دانلود CSV فایل شارژ برای واحد مالی (با هدر احراز هویت، پس Blob لازم است). */
@@ -1115,7 +1115,7 @@ function bonusRenderResult(r, trial) {
 
 function bonusClearResult() {
   const box = $('#ebpResult');
-  if (box) box.innerHTML = '';
+  if (box) box.replaceChildren();
 }
 
 /** دانلود CSV فایل پاداش تحصیلی برای واحد مالی (با هدر احراز هویت، پس Blob لازم است). */
@@ -1207,7 +1207,7 @@ function loansRenderResult(r) {
 
 function loansClearResult() {
   const box = $('#lnResult');
-  if (box) box.innerHTML = '';
+  if (box) box.replaceChildren();
 }
 
 /**
@@ -1375,7 +1375,7 @@ function loanGrantRenderResult(r, trial) {
 
 function loanGrantClear() {
   const box = $('#lngResult');
-  if (box) box.innerHTML = '';
+  if (box) box.replaceChildren();
 }
 
 /* =====================================================================
@@ -1886,7 +1886,7 @@ function bonusAllocRenderResult(r, trial) {
 
 function bonusAllocClearResult() {
   const box = $('#bnpResult');
-  if (box) box.innerHTML = '';
+  if (box) box.replaceChildren();
 }
 
 /* =====================================================================
@@ -2184,7 +2184,7 @@ function deRenderFields() {
   const box = document.getElementById('deFields');
   if (!select || !box) return;
   const kind = DE_STATE.kinds.find(k => k.kind === select.value);
-  if (!kind) { box.innerHTML = ''; return; }
+  if (!kind) { box.replaceChildren(); return; }
   if (['csv', 'xlsx'].includes(kind.kind)) {
     box.innerHTML = `<div class="muted" style="font-size:.82rem">این نوع فایلی است: فایل را بارگذاری کنید و مسیر ذخیره‌شده خودکار در پیکربندی می‌نشیند.</div>`;
     return;

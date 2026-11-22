@@ -20287,8 +20287,19 @@
           ]
         },
         {
-          "key": "payrollRun",
+          "key": "payByMethod",
           "order": 1,
+          "titleFa": "فیش بر پایهٔ روش پرداخت",
+          "component": "PayByMethodScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
+        },
+        {
+          "key": "payrollRun",
+          "order": 2,
           "titleFa": "پردازش حقوق",
           "component": "PayrollRunScreen",
           "roles": [
@@ -20298,7 +20309,7 @@
         },
         {
           "key": "payslip",
-          "order": 2,
+          "order": 3,
           "titleFa": "فیش حقوقی",
           "component": "PayslipScreen",
           "roles": [
@@ -20311,7 +20322,7 @@
         },
         {
           "key": "payItems",
-          "order": 3,
+          "order": 4,
           "titleFa": "اجزای حقوق",
           "component": "PayItemsScreen",
           "roles": [
@@ -20321,7 +20332,7 @@
         },
         {
           "key": "karana",
-          "order": 4,
+          "order": 5,
           "titleFa": "کارانه و پرداخت‌های متغیر",
           "component": "KaranaScreen",
           "roles": [
@@ -20332,7 +20343,7 @@
         },
         {
           "key": "payReports",
-          "order": 5,
+          "order": 6,
           "titleFa": "گزارش‌های مالی حقوق",
           "component": "PayReportsScreen",
           "roles": [
@@ -20343,7 +20354,7 @@
         },
         {
           "key": "payGap",
-          "order": 7,
+          "order": 8,
           "titleFa": "تطبیق حقوق و تفاوت تطبیق",
           "component": "PayGapScreen",
           "roles": [
@@ -20354,7 +20365,7 @@
         },
         {
           "key": "serviceBonus",
-          "order": 6,
+          "order": 7,
           "titleFa": "پاداش پایان خدمت (سنوات)",
           "component": "ServiceBonusScreen",
           "roles": [
@@ -20365,7 +20376,7 @@
         },
         {
           "key": "payParams",
-          "order": 7,
+          "order": 9,
           "titleFa": "پارامترها و ضرائب حقوق",
           "component": "PayParamsScreen",
           "roles": [
@@ -20376,7 +20387,7 @@
         },
         {
           "key": "statutoryFiles",
-          "order": 8,
+          "order": 10,
           "titleFa": "فایل قانونی بیمه و مالیات",
           "component": "StatutoryFilesScreen",
           "roles": [
@@ -20386,7 +20397,7 @@
         },
         {
           "key": "bankPayments",
-          "order": 9,
+          "order": 11,
           "titleFa": "فایل پرداخت بانکی",
           "component": "BankFilesScreen",
           "roles": [
@@ -20396,7 +20407,7 @@
         },
         {
           "key": "payMethods",
-          "order": 10,
+          "order": 12,
           "titleFa": "روش پرداخت کارکنان",
           "component": "PayMethodsScreen",
           "roles": [
@@ -20407,7 +20418,7 @@
         },
         {
           "key": "comp34006",
-          "order": 11,
+          "order": 13,
           "titleFa": "نظام جبران خدمات ۳۴۰۰۶",
           "component": "Comp34006Screen",
           "roles": [

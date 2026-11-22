@@ -342,7 +342,7 @@ async function apaRevoke(id) {
 function apaRenderSteps(id) {
   const box = document.getElementById('apaExec');
   if (!box) return;
-  if (!APA_EXEC_STEPS.length) { box.innerHTML = ''; return; }
+  if (!APA_EXEC_STEPS.length) { box.replaceChildren(); return; }
   const rows = APA_EXEC_STEPS.map(s => {
     const mark = s.done
       ? '<span class="chip c-ok">✔ انجام شد</span>'

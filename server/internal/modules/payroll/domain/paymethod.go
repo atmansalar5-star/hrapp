@@ -119,7 +119,7 @@ func employeePayModelSeeds() []contracts.RecordInput {
 				"reasonFa": "حکم استخدامی بر پایهٔ آیین‌نامهٔ صندوق بازنشستگی نفت",
 			},
 			SeedStatus: "active"},
-		{Kind: KindEmployeePayModel, Title: "روش پرداخت — سارا محمدی (حقوق و دستمزد جاری)", EmployeeID: "EMP-001",
+		{Kind: KindEmployeePayModel, Title: "روش پرداخت — نگار حسینی (حقوق و دستمزد جاری)", EmployeeID: "EMP-003",
 			NoteFa: "روش پیش‌فرض سازمان",
 			Fields: map[string]string{
 				"payModel": PayModelPayroll, "effectiveDate": "1405/01/01",

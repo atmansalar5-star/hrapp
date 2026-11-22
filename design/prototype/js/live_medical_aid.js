@@ -429,7 +429,7 @@ async function medAidAnnualHint(employeeId) {
   const yearEl = document.getElementById('maPeriodYear');
   const year = yearEl ? yearEl.value.trim() : '';
   const res = await apiFetch(medAidPrefix() + '/aid-annual?employeeId=' + encodeURIComponent(employeeId) + '&year=' + encodeURIComponent(year));
-  if (!res.ok) { box.innerHTML = ''; return; }
+  if (!res.ok) { box.replaceChildren(); return; }
   const d = res.data || {};
   box.innerHTML = d.ceiling
     ? `پرداخت‌های تأییدشدهٔ سال <b class="num">${esc(String(d.year))}</b>: <b class="num">${esc(d.annualPaidFa)}</b> ریال در ${fa(d.claimsCount)} درخواست — باقی‌ماندهٔ سقف: <b class="num">${esc(d.remainingFa)}</b> ریال`

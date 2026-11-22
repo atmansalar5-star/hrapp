@@ -60,7 +60,7 @@ async function payGapPickEmployee(id) {
   window.PAYGAP.employeeId = id || '';
   const box = document.getElementById('pgBox');
   if (!id) {
-    if (box) box.innerHTML = '';
+    if (box) box.replaceChildren();
     return;
   }
   if (box) box.innerHTML = '<div class="card card-pad muted">⏳ در حال خواندن سند کارگزینی…</div>';

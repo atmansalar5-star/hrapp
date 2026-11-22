@@ -392,6 +392,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
         },
         ScreenPolicy {
+            key: "payByMethod",
+            title_fa: "فیش بر پایهٔ روش پرداخت",
+            component: "PayByMethodScreen",
+            icon: "layers",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ScreenPolicy {
             key: "payrollRun",
             title_fa: "پردازش حقوق",
             component: "PayrollRunScreen",
