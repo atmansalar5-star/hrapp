@@ -612,6 +612,45 @@ func (s *Service) Expiring(ctx context.Context, days int) ([]contracts.Contract,
 
 // ensureNoActiveOverlap جلوی دو قرارداد جاری هم‌زمان برای یک کارمند را می‌گیرد.
 // فقط قراردادهای فعال و در انتظار تأیید بررسی می‌شوند؛ پیش‌نویس‌های دیگر مانع نیستند.
+// BackfillPayClassification دستهٔ پرداخت (گروه جدول ۳ + روش پرداخت) را روی قراردادهایی
+// که آن را ثبت نکرده‌اند می‌نویسد و شمار قراردادهای به‌روزشده را برمی‌گرداند.
+//
+// چرا لازم است: قراردادهای پیش از این تغییر ستون خالی دارند؛ نمایش درست است (سرویس هنگام
+// خواندن استنتاج می‌کند) ولی برای بازبینی و گزارش‌گیری باید سند خودش دسته را داشته باشد.
+// احکام گذشته عمداً دست‌نخورده می‌مانند: حکم سند تاریخی است و بازنویسی نمی‌شود.
+func (s *Service) BackfillPayClassification(ctx context.Context, actor string) (int, error) {
+	page, err := s.repo.List(ctx, contracts.ContractFilter{Scope: "all", Size: 1000, Sort: "id:asc"})
+	if err != nil {
+		return 0, err
+	}
+	updated := 0
+	for _, item := range page.Items {
+		c, ok, err := s.repo.Get(ctx, item.ID)
+		if err != nil {
+			return updated, err
+		}
+		if !ok {
+			continue
+		}
+		classification := domain.PayClassificationOf(c.EmploymentType, c.PayGroup, c.PayModel)
+		if c.PayGroup == classification.PayGroup && c.PayModel == classification.PayModel {
+			continue
+		}
+		c.PayGroup = classification.PayGroup
+		c.PayModel = classification.PayModel
+		c.Events = append(c.Events, s.event(actor, domain.ActionUpdate, "ثبت دستهٔ پرداخت روی سند"))
+		if _, err := s.repo.Save(ctx, c); err != nil {
+			return updated, err
+		}
+		updated++
+	}
+	if updated > 0 && s.audit != nil {
+		s.audit.Append(actor, "contracts", "pay-classification-backfill", "",
+			fmt.Sprintf("قراردادهای به‌روزشده=%d", updated))
+	}
+	return updated, nil
+}
+
 func (s *Service) ensureNoActiveOverlap(ctx context.Context, candidate domain.Contract, ignoreID string) error {
 	list, err := s.repo.ActiveForEmployee(ctx, candidate.EmployeeID)
 	if err != nil {

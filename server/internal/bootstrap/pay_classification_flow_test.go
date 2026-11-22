@@ -201,3 +201,51 @@ func TestPAY07OfficialOilKeyConsistency(t *testing.T) {
 		t.Fatalf("کلید کارمند رسمی نفت باید گروه یکم بدهد: %+v", group)
 	}
 }
+
+// TestPAY09ClassificationBackfill می‌سنجد عملیات «ثبت دستهٔ پرداخت روی اسناد» اجرا می‌شود،
+// سندهای نمونه را به‌روز می‌کند و اجرای دوم چیزی برای تغییر نمی‌یابد (تکرارپذیر است).
+func TestPAY09ClassificationBackfill(t *testing.T) {
+	h := newTestServer(t)
+	manager := login(t, h, "hr.manager", "demo")
+	token := manager.AccessToken
+
+	rec := call(t, h, http.MethodPost, "/api/v1/contracts/pay-classification/backfill", token, nil)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("ثبت دستهٔ پرداخت باید ۲۰۰ بدهد، %d داد: %s", rec.Code, rec.Body.String())
+	}
+	var first struct {
+		Updated int    `json:"updated"`
+		NoteFa  string `json:"noteFa"`
+	}
+	decodeInto(t, rec, &first)
+	if first.Updated == 0 {
+		t.Fatal("دست‌کم یک قرارداد نمونه باید دستهٔ پرداخت بگیرد")
+	}
+	if strings.TrimSpace(first.NoteFa) == "" {
+		t.Fatal("پاسخ باید توضیح فارسی داشته باشد")
+	}
+
+	// اجرای دوم: هیچ سندی برای تغییر نمانده است.
+	rec = call(t, h, http.MethodPost, "/api/v1/contracts/pay-classification/backfill", token, nil)
+	var second struct {
+		Updated int `json:"updated"`
+	}
+	decodeInto(t, rec, &second)
+	if second.Updated != 0 {
+		t.Fatalf("اجرای دوم باید بدون تغییر باشد، %d سند عوض شد", second.Updated)
+	}
+
+	// اسناد به‌روزشده باید در گزارش دسته‌بندی با گروه و روش پرداخت دیده شوند.
+	rec = call(t, h, http.MethodGet, "/api/v1/contracts/pay-classification", token, nil)
+	var report struct {
+		Rows []map[string]any `json:"rows"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &report); err != nil {
+		t.Fatalf("گزارش دسته‌بندی قابل تجزیه نیست: %v", err)
+	}
+	for _, row := range report.Rows {
+		if row["payModel"] == "" || row["payModel"] == nil {
+			t.Fatalf("هر دسته باید روش پرداخت داشته باشد: %+v", row)
+		}
+	}
+}

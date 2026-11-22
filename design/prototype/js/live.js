@@ -166,6 +166,37 @@ function liveTable(head, rows, count) {
    قراردادهای کارکنان
    ===================================================================== */
 
+let LIVE_PAY_CLASSIFICATION = null;
+
+/**
+ * بخش «دستهٔ پرداخت کارکنان» در صفحهٔ قراردادها.
+ *
+ * داده از /api/v1/contracts/pay-classification می‌آید: دسته‌ها بر پایهٔ نوع استخدام × گروه
+ * جدول ۳ آیین‌نامهٔ فوق‌العاده‌ها × روش پرداخت مصوب ساخته می‌شوند و شمار کارکنان هر دسته را
+ * نشان می‌دهد. قاعده در سرور است؛ اینجا فقط نمایش داده می‌شود.
+ */
+async function livePayClassificationSection() {
+  if (!LIVE_PAY_CLASSIFICATION) {
+    const res = await apiFetch('/api/v1/contracts/pay-classification');
+    LIVE_PAY_CLASSIFICATION = (res.ok && res.data) || {rows: []};
+  }
+  const data = LIVE_PAY_CLASSIFICATION;
+  if (!data || !(data.rows || []).length) return '';
+  const rows = data.rows.map(r => `<tr>
+      <td>${esc(r.employmentTypeFa || r.employmentType)}</td>
+      <td><span class="chip" style="font-size:.72rem">${esc(r.payGroupFa || ('گروه ' + fa(r.payGroup)))}</span></td>
+      <td>${esc(r.payModelFa || r.payModel)}</td>
+      <td>${esc(r.payFamilyFa || r.payFamily || '—')}</td>
+      <td class="num">${fa(r.count)}</td>
+    </tr>`);
+  return `<div class="card card-pad" style="margin-bottom:12px">
+      <div style="font-weight:600;margin-bottom:4px">دستهٔ پرداخت کارکنان — ${fa(data.groupCount)} دسته از ${fa(data.total)} قرارداد جاری</div>
+      <div class="muted" style="font-size:.74rem;margin-bottom:6px">${esc(data.noteFa || '')}</div>
+      ${liveTable(['نوع استخدام', 'گروه نظام پرداخت (جدول ۳)', 'روش پرداخت', 'خانوادهٔ پرداخت', 'شمار'],
+        rows, data.rows.length)}
+    </div>`;
+}
+
 function pageContractsLive() {
   if (!isLive()) return offlineFallback('contracts');
   liveLoad(async () => {
@@ -225,7 +256,10 @@ function pageContractsLive() {
       <span class="muted" style="font-size:.75rem">فهرست قراردادها را بر پایهٔ نوع استخدام باریک کنید.</span>
     </div>` : '';
 
-    return stats + note + typeFilter + liveTable(
+    // دستهٔ پرداخت کارکنان: نوع استخدام × گروه جدول ۳ آیین‌نامه × روش پرداخت مصوب.
+    const classification = await livePayClassificationSection();
+
+    return stats + note + classification + typeFilter + liveTable(
       ['شماره', 'کارمند', 'واحد', 'نوع', 'نوع استخدام', 'شروع', 'پایان', 'وضعیت', 'عملیات'],
       rows, items.length);
   });
@@ -235,8 +269,7 @@ function pageContractsLive() {
     `<button class="btn btn-primary" onclick="liveContractForm()">➕ انعقاد قرارداد تازه</button>`);
 }
 
-/** باریک کردن سطرهای جدول قراردادها بر پایهٔ نوع استخدام. */
-function liveContractFilterRows() {
+/** باریک کردن سطرهای جدول قراردادها بر پایهٔ نوع استخدام. */function liveContractFilterRows() {
   const sel = $('#conTypeFilter');
   if (!sel) return;
   const want = sel.value;
@@ -382,38 +415,59 @@ function livePayFieldHtml(prefix, f, value) {
   return `<div class="field"><label>${label}</label><input id="${id}" value="${value ? esc(String(value)) : ''}"${f.type === 'date' ? ' placeholder="۱۴۰۵/۰۱/۰۱"' : ''}>${hint}</div>`;
 }
 
-/** HTML زیرفرم یک خانواده؛ خانوادهٔ رسمی همان بلوک «اجزای ثابت مزد» است. */
-function livePayFormHtml(prefix, family, form, v, regions) {
-  if (family === 'official' || !form) {
-    return liveWageFields(prefix, v, regions);
-  }
-  const meta = (v && v.payMeta) || {};
-  const groups = (form.groups || []).map(g => `
-    <div class="card" style="grid-column:1/-1;padding:10px 12px">
+/** HTML یک کارت گروه زیرفرم (سرصفحه + راهنما + فیلدها). */
+function livePayGroupHtml(prefix, g, values) {
+  return `<div class="card" style="grid-column:1/-1;padding:10px 12px">
       <div style="font-weight:600;margin-bottom:6px">${esc(g.titleFa)}</div>
       ${g.hintFa ? `<div class="muted" style="font-size:.74rem;margin-bottom:6px">${esc(g.hintFa)}</div>` : ''}
-      <div class="form-grid">${(g.fields || []).map(f => livePayFieldHtml(prefix, f, meta[f.key])).join('')}</div>
-    </div>`).join('');
-  return `<div class="form-grid" style="grid-column:1/-1">
-      <div class="muted" style="grid-column:1/-1;font-size:.74rem">${esc(form.noteFa || '')}</div>
-      ${groups}
+      <div class="form-grid">${(g.fields || []).map(f => livePayFieldHtml(prefix, f, values[f.key])).join('')}</div>
     </div>`;
 }
 
+/**
+ * HTML زیرفرم یک خانواده.
+ *
+ * کارت «دستهٔ پرداخت» (روش پرداخت و گروه جدول ۳) در همهٔ خانواده‌ها نمایش داده می‌شود —
+ * از جمله خانوادهٔ رسمی که به‌جای کارت‌های پیمان/مأموریت، بلوک «اجزای ثابت مزد» را دارد.
+ */
+function livePayFormHtml(prefix, family, form, v, regions) {
+  const groups = (form && form.groups) ? form.groups : [];
+  const classGroup = groups.find(g => (g.fields || []).some(f => f.key === 'payModel'));
+  const values = Object.assign({}, (v && v.payMeta) || {}, {
+    payModel: (v && v.payModel) || '',
+    payGroup: v && v.payGroup ? String(v.payGroup) : '',
+  });
+  const classHtml = classGroup ? livePayGroupHtml(prefix, classGroup, values) : '';
+
+  if (family === 'official' || !form) {
+    return `<div class="form-grid" style="grid-column:1/-1">${classHtml}${liveWageFields(prefix, v, regions)}</div>`;
+  }
+  const rest = groups.filter(g => g !== classGroup)
+    .map(g => livePayGroupHtml(prefix, g, values)).join('');
+  return `<div class="form-grid" style="grid-column:1/-1">
+      <div class="muted" style="grid-column:1/-1;font-size:.74rem">${esc(form.noteFa || '')}</div>
+      ${classHtml}
+      ${rest}
+    </div>`;
+}
 /** خواندن زیرفرم از DOM و ساختن بدنهٔ API (درصد کاربر → نسبت API). */
 function livePayPayload(prefix, family, form) {
-  if (family === 'official' || !form) return {payFamily: 'official'};
+  const out = {payFamily: family};
   const meta = {};
-  (form.groups || []).forEach(g => (g.fields || []).forEach(f => {
+  (form && form.groups ? form.groups : []).forEach(g => (g.fields || []).forEach(f => {
     const el = $('#' + prefix + 'Meta_' + f.key);
     if (!el) return;
     const raw = (el.value || '').trim();
     if (!raw) return;
+    // «دستهٔ پرداخت» فیلد بالادستی است، نه فرادادهٔ خانواده: آن را از meta جدا می‌کنیم.
+    if (f.key === 'payModel') { out.payModel = raw; return; }
+    if (f.key === 'payGroup') { out.payGroup = Number(raw) || 0; return; }
     if (f.type === 'money') meta[f.key] = Number(raw) || 0;
     else if (f.type === 'percent') meta[f.key] = (Number(raw) || 0) / 100;
     else meta[f.key] = raw;
   }));
-  return {payFamily: family, payMeta: meta};
+  if (Object.keys(meta).length) out.payMeta = meta;
+  return out;
 }
 
 /** کشیدن زیرفرم در ظرف، بر پایهٔ نوع استخدام انتخاب‌شده. */
@@ -433,6 +487,16 @@ async function liveContractPayMount(prefix, values) {
   box.innerHTML = livePayFormHtml(prefix, family, form, values, data.climateRegions || []);
   const title = $('#' + prefix + 'PayTitle');
   if (title && form) title.textContent = form.titleFa || '';
+
+  // پیش‌فرض دستهٔ پرداخت بر پایهٔ نوع استخدام: رسمی نفت ⇒ صندوق نفت و گروه یکم، بقیه ⇒
+  // حقوق و دستمزد جاری (گروه خودکار از سمت سرور تعیین می‌شود).
+  const employmentType = typeEl ? typeEl.value : '';
+  const modelEl = $('#' + prefix + 'Meta_payModel');
+  if (modelEl && !modelEl.value) {
+    modelEl.value = employmentType === 'official_oil' ? 'oil' : 'payroll';
+  }
+  const groupEl = $('#' + prefix + 'Meta_payGroup');
+  if (groupEl && !groupEl.value && employmentType === 'official_oil') groupEl.value = '1';
 }
 
 /** تغییر نوع استخدام: زیرفرم همان نوع کشیده می‌شود (برای فراخوان دستی/آزمون). */
@@ -632,6 +696,7 @@ async function liveContractSave() {
   };
   const res = await apiFetch('/api/v1/contracts/contracts', {method: 'POST', body});
   if (!res.ok) { toast(res.message, 'error'); return; }
+  LIVE_PAY_CLASSIFICATION = null;   // شمار دسته‌ها پس از ثبت تازه دوباره خوانده شود
   closeModal(); toast('پیش‌نویس قرارداد ثبت شد'); liveReload();
 }
 
@@ -688,10 +753,12 @@ async function liveContractUpdate(id) {
   };
   const res = await apiFetch('/api/v1/contracts/contracts/' + encodeURIComponent(id), {method: 'PATCH', body});
   if (!res.ok) { toast(res.message, 'error'); return; }
+  LIVE_PAY_CLASSIFICATION = null;
   closeModal(); toast('قرارداد ویرایش شد'); liveReload();
 }
 /** حذف پیش‌نویس قرارداد — قاعدهٔ دامنه در سرور اعمال می‌شود. */
 function liveContractDelete(id) {
+  LIVE_PAY_CLASSIFICATION = null;
   if (!confirm('این پیش‌نویس قرارداد حذف شود؟')) return;
   liveSend('/api/v1/contracts/contracts/' + encodeURIComponent(id), {method: 'DELETE'}, 'قرارداد حذف شد')
     .then(ok => ok && liveReload());

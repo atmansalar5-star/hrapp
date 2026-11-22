@@ -12,6 +12,7 @@ import (
 
 	"hrms/internal/contracts"
 	"hrms/internal/modules/contracts/domain"
+	"hrms/internal/platform/auth"
 	"hrms/internal/platform/httpx"
 )
 
@@ -103,6 +104,24 @@ func (h *Handler) PayClassification(w http.ResponseWriter, r *http.Request) {
 			"آیین‌نامهٔ فوق‌العاده‌ها × روش پرداخت مصوب (payroll | oil | comp34006 | fourp).",
 		"models": domain.PayModelOptions(),
 		"groups": domain.PayGroupOptions(),
+	})
+}
+
+// BackfillPayClassification دستهٔ پرداخت را روی قراردادهایی که آن را ثبت نکرده‌اند می‌نویسد.
+//
+// عملیات مدیریتی است (نقش تأییدکننده) و یک‌بار پس از افزودن ستون‌های تازه لازم می‌شود؛
+// پاسخ، شمار قراردادهای به‌روزشده را می‌دهد تا بتوان پیش/پس از اجرا را سنجید.
+func (h *Handler) BackfillPayClassification(w http.ResponseWriter, r *http.Request) {
+	user, _ := auth.UserFrom(r.Context())
+	updated, err := h.svc.BackfillPayClassification(r.Context(), user.Username)
+	if err != nil {
+		h.fail(w, err)
+		return
+	}
+	httpx.WriteJSON(w, http.StatusOK, map[string]any{
+		"updated":  updated,
+		"noteFa":   "دستهٔ پرداخت روی قراردادهای بدون ستون ثبت شد؛ احکام گذشته دست‌نخورده می‌مانند.",
+		"auditLog": "رخداد در زنجیرهٔ حسابرسی ثبت شد.",
 	})
 }
 

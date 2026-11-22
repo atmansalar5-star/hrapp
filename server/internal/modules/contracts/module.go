@@ -93,6 +93,9 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	mux.HandleFunc("GET /api/v1/contracts/forms", r("read", h.Forms))
 	// دسته‌بندی کارکنان بر پایهٔ نوع استخدام × گروه جدول ۳ × روش پرداخت (قراردادهای جاری).
 	mux.HandleFunc("GET /api/v1/contracts/pay-classification", r("read", h.PayClassification))
+	// نوشتن دستهٔ پرداخت روی قراردادهایی که ستون خالی دارند (یک‌بار پس از افزودن ستون).
+	// دسترسی «نوشتن» است نه «تأیید»: این یک عملیات نگهداری داده است، نه تصمیم گردشکاری.
+	mux.HandleFunc("POST /api/v1/contracts/pay-classification/backfill", r("write", h.BackfillPayClassification))
 
 	// قالب‌های متن قرارداد از پورت قالب‌های اسناد خوانده می‌شوند؛ متن قرارداد قابل طراحی
 	// است و در صفحهٔ «قالب‌های متن اسناد» ویرایش می‌شود.
