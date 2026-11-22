@@ -33,6 +33,25 @@ type Contract struct {
 
 	WageStructure
 
+	// PayFamily خانوادهٔ پرداخت این قرارداد (رسمی/پیمانکاری/مأموریت) که شکل زیرفرم
+	// «حقوق و مزایا» را تعیین می‌کند؛ از نوع استخدام استنتاج و در سند نگه داشته می‌شود.
+	PayFamily string `json:"payFamily,omitempty"`
+	// PayFamilyFa عنوان فارسی خانوادهٔ پرداخت (برای نمایش).
+	PayFamilyFa string `json:"payFamilyFa,omitempty"`
+	// PayMeta فیلدهای مخصوص همان خانواده: مشخصات پیمان و مبنای پرداخت در پیمانکاری،
+	// ترتیب پرداخت و شرکت میزبان در مأموریت. برای خانوادهٔ رسمی خالی است.
+	PayMeta map[string]any `json:"payMeta,omitempty"`
+	// PayGroup شمارهٔ «گروه نظام پرداخت نفت» (جدول ۳ آیین‌نامهٔ فوق‌العاده‌ها): گروه یکم
+	// مخصوص کارمند رسمی نفت و گروه دوم پایهٔ سمت ۶ تا ۱۰؛ درصد حق جذب عمومی و حق مقام از
+	// همین گروه می‌آید. صفر یعنی تعیین نشده.
+	PayGroup int `json:"payGroup,omitempty"`
+	// PayGroupFa عنوان فارسی گروه پرداخت برای نمایش.
+	PayGroupFa string `json:"payGroupFa,omitempty"`
+	// PayModel کلید روش پرداخت مصوب این قرارداد (payroll | oil | comp34006 | fourp) و
+	// PayModelFa عنوان فارسی آن. همین دو با نوع استخدام، «دستهٔ پرداخت» کارمند را می‌سازند.
+	PayModel   string `json:"payModel,omitempty"`
+	PayModelFa string `json:"payModelFa,omitempty"`
+
 	// MazdBase مزد مبنا: از اجزای همین قرارداد ساخته می‌شود (قاعده در بستهٔ rules) تا
 	// فیش و سند چاپی همان عددی را نشان دهند که حکم و قرارداد تعهد کرده‌اند. فقط‌خواندنی.
 	MazdBase int64 `json:"mazdBase,omitempty"`
@@ -65,6 +84,14 @@ type ContractInput struct {
 	NoteFa         string `json:"noteFa,omitempty"`
 
 	WageStructure
+
+	// PayMeta فیلدهای مخصوص زیرفرم «حقوق و مزایا» بر پایهٔ نوع استخدام (پیمان/مأموریت).
+	// خانوادهٔ پرداخت از نوع استخدام استنتاج می‌شود و از کلاینت گرفته نمی‌شود.
+	PayMeta map[string]any `json:"payMeta,omitempty"`
+	// PayGroup گروه نظام پرداخت نفت (جدول ۳)؛ صفر یعنی از نوع استخدام و پایهٔ سمت استنتاج شود.
+	PayGroup int `json:"payGroup,omitempty"`
+	// PayModel روش پرداخت مصوب (payroll | oil | comp34006 | fourp)؛ خالی یعنی پیش‌فرض نوع استخدام.
+	PayModel string `json:"payModel,omitempty"`
 }
 
 // ContractDecision ورودی تأیید/رد یا خاتمهٔ قرارداد.

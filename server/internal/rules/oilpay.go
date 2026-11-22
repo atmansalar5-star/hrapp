@@ -250,6 +250,10 @@ type OilPayParams struct {
 	DegreeAllowancePercents map[string]float64 `json:"degreeAllowancePercents"`
 	// JobGrades جدول ۳ (پایهٔ سمت → درصد جذب عمومی و حق مقام).
 	JobGrades []OilJobGrade `json:"jobGrades"`
+	// Groups گروه‌های نظام پرداخت (جدول ۳): گروه یکم = کارمند رسمی نفت و گروه‌های
+	// دوم تا دهم = پایه‌های سمت. درصد جذب/مقام هر گروه با پارامتر
+	// `oilpay.group.<شماره>.public|rank` بازنویسی می‌شود.
+	Groups []OilPayGroup `json:"groups"`
 	// Residences جدول ۱ و ۲ (محل سکونت → درصد محرومیت و صرف وقت).
 	Residences []OilResidence `json:"residences"`
 	// GradeSiteMap نگاشت «گروه شغلی کارمند» (نردبان `DefaultGradeLadder`) به «پایهٔ سمت»
@@ -316,6 +320,7 @@ func DefaultOilPayParams() OilPayParams {
 			"phd":       54,
 		},
 		JobGrades:  OilJobGrades(),
+		Groups:     OilPayGroups(),
 		Residences: OilResidences(),
 		// نگاشت پیشنهادی گروه شغلی → پایهٔ سمت جدول ۳. این یک «پیشنهاد» است، نه قاعده:
 		// فرم فیش آن را پیش‌فرض می‌گذارد و کاربر میتواند پایهٔ سمت دیگری برگزیند.
@@ -346,6 +351,14 @@ type OilPayInput struct {
 	Degree string `json:"degree,omitempty"`
 	// JobGrade کلید پایهٔ سمت (جدول ۳ آییننامه)؛ درصد «حق جذب عمومی و حق مقام» را می‌آورد.
 	JobGrade string `json:"jobGrade,omitempty"`
+	// EmploymentType نوع استخدام کارمند (کلید `contracts.EmploymentTypeCatalog`).
+	//
+	// چرا لازم است: «کارمند رسمی نفت» گروه مستقل خودش را در جدول ۳ دارد (گروه یکم) و
+	// درصدهای او نباید با پایهٔ سمت ۶ تا ۱۰ (گروه دوم) قاطی شود. این فیلد در سرور از
+	// پروندهٔ کارمند پر می‌شود، نه از درخواست کاربر.
+	EmploymentType string `json:"employmentType,omitempty"`
+	// PayGroup شمارهٔ گروه دستی؛ صفر یعنی خودکار از نوع استخدام و پایهٔ سمت تعیین شود.
+	PayGroup int `json:"payGroup,omitempty"`
 	// SpecialtyExtraPercent افزایش ضریب تخصصی شغل (درصد افزودنی).
 	//
 	// چرا جدا از درصدهای جدول: درصد «فوقالعادهٔ تخصصی شغل» از دو منبع ساخته می‌شود — پایهٔ
@@ -433,6 +446,20 @@ type OilPayslip struct {
 	// JobGrade و JobGradeFa پایهٔ سمت مبنا (جدول ۳) و عنوان فارسی آن.
 	JobGrade   string `json:"jobGrade,omitempty"`
 	JobGradeFa string `json:"jobGradeFa,omitempty"`
+	// PayGroup شمارهٔ «گروه نظام پرداخت نفت» به‌همراه کلید و عنوان فارسی (جدول ۳).
+	//
+	// چرا در فیش: درصد «حق جذب عمومی و حق مقام» (Y جدول ۳) بر پایهٔ گروه تعیین می‌شود و
+	// کارمند رسمی نفت گروه مستقل خودش را دارد؛ پس فیش باید بگوید با کدام گروه حساب شده
+	// تا بازبینی و بازتولیدپذیری ممکن باشد.
+	PayGroup        int    `json:"payGroup,omitempty"`
+	PayGroupKey     string `json:"payGroupKey,omitempty"`
+	PayGroupFa      string `json:"payGroupFa,omitempty"`
+	PayGroupShortFa string `json:"payGroupShortFa,omitempty"`
+	// PayGroupSourceFa می‌گوید گروه از کجا تعیین شده: نوع استخدام (رسمی نفت) یا پایهٔ سمت.
+	PayGroupSourceFa string `json:"payGroupSourceFa,omitempty"`
+	// PayGroupYPercent درصد جمع (Y) جدول ۳ برای همین گروه که در «فوقالعادهٔ تخصصی شغل»
+	// به‌کار رفت.
+	PayGroupYPercent float64 `json:"payGroupYPercent,omitempty"`
 	// Residence و ResidenceFa محل سکونت مبنا (جدول ۱ و ۲) و عنوان فارسی آن.
 	Residence   string `json:"residence,omitempty"`
 	ResidenceFa string `json:"residenceFa,omitempty"`
@@ -487,6 +514,9 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 
 	grade, gradeOK := OilJobGradeByKey(in.JobGrade)
 	residence, residenceOK := OilResidenceByKey(in.Residence)
+	// گروه نظام پرداخت: نخست از گروه دستی، سپس از نوع استخدام (رسمی نفت = گروه یکم) و
+	// در نهایت از پایهٔ سمت. گروه تعیین‌کنندهٔ درصدهای جدول ۳ است.
+	group, groupOK, groupSourceFa := oilEffectiveGroup(in, params)
 
 	out := OilPayslip{
 		Scheme:          SchemeOil,
@@ -505,6 +535,14 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	}
 	if residenceOK {
 		out.Residence, out.ResidenceFa = residence.Key, residence.TitleFa
+	}
+	if groupOK {
+		out.PayGroup = group.Number
+		out.PayGroupKey = group.Key
+		out.PayGroupFa = group.TitleFa
+		out.PayGroupShortFa = group.ShortFa
+		out.PayGroupSourceFa = groupSourceFa
+		out.PayGroupYPercent = group.Total()
 	}
 
 	// سطر پایه و بدی آب و هوا، تا فیش از بالا خوانا باشد.
@@ -615,7 +653,7 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 		amount := float64(lineBase) * percent / 100
 		detail := numberFa(percent) + "٪ × " + baseFa + " (" + moneyFa(float64(lineBase)) + " ریال)"
 		if allowance.Key == OilAllowanceAttraction {
-			detail = oilSpecialtyDetailFa(in, grade, gradeOK, degreePercent, hasManual, percent, lineBase, baseFa)
+			detail = oilSpecialtyDetailFa(in, group, groupOK, grade, gradeOK, degreePercent, hasManual, percent, lineBase, baseFa)
 		}
 		if allowance.Key == OilAllowanceDeprivation && !hasManual && residenceOK {
 			detail = "جدول ۱ — محل سکونت " + residence.TitleFa + ": " + numberFa(percent) +
@@ -814,9 +852,14 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 // چرا یک سطر: فیش رسمی سازمان همین قلم را یک‌جا می‌آورد؛ درصدش جمع دو جزء است — «Y» از جدول ۳
 // (حق جذب عمومی + حق مقام) و «Z» از ضریب مدرک تحصیلی — و هر دو روی مبنای جذب بسته می‌شوند.
 // شرح، ترکیب را نشان می‌دهد تا کارشناس بتواند همان یک مبلغ را با فیش رسمی تطبیق دهد.
-func oilSpecialtyDetailFa(in OilPayInput, grade OilJobGrade, gradeOK bool, degreePercent float64, hasManual bool, percent float64, lineBase int64, baseFa string) string {
+func oilSpecialtyDetailFa(in OilPayInput, group OilPayGroup, groupOK bool, grade OilJobGrade, gradeOK bool, degreePercent float64, hasManual bool, percent float64, lineBase int64, baseFa string) string {
 	parts := []string{}
-	if gradeOK {
+	if groupOK {
+		// سرصفحهٔ شرح، گروه جدول ۳ را می‌آورد: «گروه یکم — کارمند رسمی نفت» یا
+		// «گروه دوم — پایهٔ سمت ۶ تا ۱۰». درصد جذب/مقام همان گروه است.
+		parts = append(parts, group.TitleFa+" — حق جذب عمومی "+numberFa(group.PublicAttract)+
+			"٪ + حق مقام "+numberFa(group.PositionRank)+"٪")
+	} else if gradeOK {
 		parts = append(parts, "جدول ۳ — حق جذب عمومی "+numberFa(grade.PublicAttract)+"٪ + حق مقام "+
 			numberFa(grade.PositionRank)+"٪ ("+grade.TitleFa+")")
 	}

@@ -35,6 +35,11 @@ type SalaryDecree struct {
 	DecidedBy      string
 	Version        int
 
+	// دستهٔ پرداخت این حکم: گروه جدول ۳ آیین‌نامهٔ فوق‌العاده‌ها و روش پرداخت مصوب
+	// (payroll | oil | comp34006 | fourp). گروه ⇒ درصد حق جذب/مقام، روش ⇒ موتور فیش.
+	PayGroup int
+	PayModel string
+
 	contracts.WageStructure
 }
 
@@ -128,6 +133,7 @@ func CanDecreeTransition(from, to string) bool {
 
 // ToSalaryDecree تبدیل به شکل انتقالی API.
 func (d SalaryDecree) ToSalaryDecree() contracts.SalaryDecree {
+	classification := DecreeClassificationOf(d.EmploymentType, d.JobGroup, d.PayGroup, d.PayModel)
 	return contracts.SalaryDecree{
 		ID:               d.ID,
 		EmployeeID:       d.EmployeeID,
@@ -138,6 +144,10 @@ func (d SalaryDecree) ToSalaryDecree() contracts.SalaryDecree {
 		EmploymentTypeFa: contracts.EmploymentTypeTitleFa(d.EmploymentType),
 		JobGroup:         d.JobGroup,
 		BaseSalary:       d.BaseSalary,
+		PayGroup:         classification.PayGroup,
+		PayGroupFa:       classification.PayGroupFa,
+		PayModel:         classification.PayModel,
+		PayModelFa:       classification.PayModelFa,
 		EffectiveDate:    d.EffectiveDate,
 		ReasonFa:         d.ReasonFa,
 		Status:           d.Status,

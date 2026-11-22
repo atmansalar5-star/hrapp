@@ -62,10 +62,16 @@ export function checkSpec({ specPath, label, prefix }) {
   if (reqs.size === 0) fail('spec', 'هیچ بند شناسه‌داری در سند یافت نشد');
 
   // ---------- آزمون‌های سرور ----------
+  // goTests: آزمون‌های هم‌پیشوند (برای تشخیص آزمون یتیم).
+  // allTests: همهٔ آزمون‌های Test* — تا یک بند بتواند به آزمون اسپک دیگری هم ارجاع دهد.
   const goTests = new Map();
+  const allTests = new Set();
   const testPattern = new RegExp(`func (Test${prefix}(\\d+)[A-Za-z0-9_]*)\\(`, 'g');
   for (const file of walk(join(ROOT, 'server')).filter(f => f.endsWith('_test.go'))) {
     const body = readFileSync(file, 'utf8');
+    for (const m of body.matchAll(/func (Test[A-Za-z0-9_]+)\(/g)) {
+      allTests.add(m[1]);
+    }
     for (const m of body.matchAll(testPattern)) {
       goTests.set(m[1], { file: rel(file), id: `${prefix}-${m[2]}` });
     }
@@ -88,7 +94,7 @@ export function checkSpec({ specPath, label, prefix }) {
       const rest = token.slice(sep + 1);
 
       if (kind === 'go') {
-        if (!goTests.has(rest)) fail('verify', `${id}: آزمون «${rest}» در server/ یافت نشد`);
+        if (!allTests.has(rest)) fail('verify', `${id}: آزمون «${rest}» در server/ یافت نشد`);
       } else if (kind === 'tool') {
         const file = join(ROOT, 'tools', 'check', rest.endsWith('.mjs') ? rest : `${rest}.mjs`);
         if (!existsSync(file)) fail('verify', `${id}: ابزار «${rel(file)}» یافت نشد`);

@@ -93,7 +93,7 @@
 این سطر بیشتر شود، شکست می‌دهد. هر بار که بخشی به `data-act` یا `textContent` منتقل شد،
 سقف را پایین بیاورید (فقط پایین، نه بالا).
 
-<!-- frontend-baseline: innerhtml=136 handlers=541 -->
+<!-- frontend-baseline: innerhtml=135 handlers=541 -->
 
 - `innerHTML` در `design/prototype/js/*.js`: نوشتن رشتهٔ HTML از دادهٔ سرور.
 - `on*=` تولیدشده در رشته‌های HTML: هندلر درون‌خطی (دلیل `script-src-attr`).

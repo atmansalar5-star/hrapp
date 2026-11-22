@@ -124,7 +124,6 @@
     { "key": "compensation.g20.cut.b", "titleFa": "آستانهٔ طبقهٔ B (پیشرو) در جی‌بیست", "value": "70", "unitFa": "امتیاز", "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست" },
     { "key": "compensation.g20.cut.c", "titleFa": "آستانهٔ طبقهٔ C (تثبیت‌شده) در جی‌بیست", "value": "55", "unitFa": "امتیاز", "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست" },
     { "key": "compensation.g20.cut.d", "titleFa": "آستانهٔ طبقهٔ D (در حال رشد) در جی‌بیست", "value": "40", "unitFa": "امتیاز", "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست" },
-    { "key": "compensation.g20.partnership.maxFactor", "titleFa": "سقف ضریب پارتنرشیپ برای پیوند اختیاری با مدل ۴پی", "value": "1.00", "unitFa": "ضریب", "groupFa": "نظام جبران خدمات ۴پی — مدل جی‌بیست" },
     { "key": "compensation.g20.payroll.apply", "titleFa": "اعمال نتیجهٔ مدل جیبیست در پرداخت (۰ خیر، ۱ بله)", "value": "0", "unitFa": "۰ خیر، ۱ بله", "groupFa": "نظام جبران خدمات ۴پی — مدل جیبیست" },
     { "key": "comp34006.payroll.apply", "titleFa": "اعمال مدل دستورالعمل ۳۴۰۰۶ در حکم و پرداخت (پیش‌فرض خاموش)", "value": "0", "unitFa": "۰ خیر، ۱ بله", "groupFa": "نظام جبران خدمات ۳۴۰۰۶" },
     { "key": "comp34006.rialFactor", "titleFa": "ضریب ریالی سال (امتیاز × ضریب = مبلغ)", "value": "7500", "unitFa": "ریال", "groupFa": "نظام جبران خدمات ۳۴۰۰۶" },

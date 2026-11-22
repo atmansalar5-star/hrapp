@@ -5,6 +5,10 @@
 // پیش‌فرض چهار عامل از پروندهٔ کارمند و حکم حقوق او، ۳) دادن ورودی به موتور قواعد و
 // برگرداندن محاسبهٔ خط‌به‌خط. هیچ قاعده‌ای اینجا نوشته نمی‌شود؛ موتور `internal/rules`
 // مرجع است و این فایل فقط داده را می‌برد و نتیجه را برمی‌گرداند.
+//
+// مرز دو نظام: نظام پرداخت جیب‌یست (G20) نظامی جدا و مستقل است؛ مسیرها، پارامترها و خروجی
+// خودش را در همین بسته و در فایل g20.go دارد. این فایل هیچ تابع، پارامتر یا دادهٔ G20 را
+// نمیخواند و پاسخهای ۴پی هم هیچ کلید G20 برنمیگردانند.
 package compensation
 
 import (
@@ -185,10 +189,9 @@ func optionsPayload(deps modulekit.Deps) map[string]any {
 		"performanceLevels": domain.PerformanceLevels(),
 		"policyScopes":      domain.PolicyScopes(),
 		"yesNo":             domain.YesNo(),
-		// فهرست مرجع مدل جی‌بیست: خانوادهٔ چهارگانه و منبع دادهٔ شاخص‌ها.
-		"g20Families": domain.G20Families(),
-		"g20Sources":  domain.G20Sources(),
-		"today":       calendar.Format(nowOf(deps)),
+		// فهرستهای مرجع نظام جیب‌یست (خانوادهٔ امتیاز و منبع دادهٔ شاخص) در مسیر خودِ آن
+		// نظام سرو می‌شود: /api/v1/compensation/g20-options؛ پاسخ ۴پی هیچ دادهٔ G20 ندارد.
+		"today": calendar.Format(nowOf(deps)),
 		// مرز مدل‌ها: مدل ۴پی مستقل و اختیاری است؛ این کلیدها همان چیزی است که رابط و سند
 		// نشان می‌دهند تا کسی گمان نکند پرداخت جاری یا مدل صندوق نفت عوض شده است.
 		"modelOptional":      !params.PayrollApply,
@@ -215,12 +218,16 @@ func nowOf(deps modulekit.Deps) time.Time {
 }
 
 // compensationParams پارامترهای مصوب شرکت برای نظام ۴پی.
+//
+// کلیدهای نظام جیب‌یست (`compensation.g20.*`) عمداً خوانده نمی‌شوند: دو نظام هیچ پارامتر
+// مشترکی ندارند و خوانندهٔ پارامترهای ۴پی نباید حتی به کلیدهای نظام دیگر نگاه کند.
 func compensationParams(deps modulekit.Deps) rules.CompensationParams {
 	values := map[string]string{}
 	for _, p := range deps.Org.Params {
-		if strings.HasPrefix(p.Key, "compensation.") {
-			values[p.Key] = p.Value
+		if !strings.HasPrefix(p.Key, "compensation.") || strings.HasPrefix(p.Key, "compensation.g20.") {
+			continue
 		}
+		values[p.Key] = p.Value
 	}
 	return rules.CompensationParamsFromText(values)
 }

@@ -40,6 +40,17 @@ type Contract struct {
 	// WageStructure اجزای ثابت مزد و فوق‌العاده‌های اقلیمی همین قرارداد؛ همان ساختاری که
 	// حکم کارگزینی دارد تا فیش حقوق در نبود حکم از قرارداد هم همان مزد مبنا را بسازد.
 	contracts.WageStructure
+
+	// PayFamily خانوادهٔ پرداخت (official | contracting | secondment) که شکل زیرفرم
+	// «حقوق و مزایا» را تعیین می‌کند؛ PayMeta فیلدهای مخصوص همان خانواده را نگه می‌دارد.
+	PayFamily string
+	PayMeta   map[string]any
+
+	// PayGroup گروه نظام پرداخت نفت (جدول ۳ آیین‌نامهٔ فوق‌العاده‌ها) و PayModel روش پرداخت
+	// مصوب (payroll | oil | comp34006 | fourp). این دو، «دستهٔ پرداخت» کارمند را می‌سازند:
+	// گروه ⇒ درصدهای جدول ۳، روش ⇒ موتور محاسبهٔ حکم و فیش.
+	PayGroup int
+	PayModel string
 }
 
 // Event رخداد زندگی قرارداد.
@@ -143,6 +154,7 @@ func CanTransition(from, to string) bool {
 
 // ToContract تبدیل به شکل انتقالی قرارداد API.
 func (c Contract) ToContract(today calendar.Date) contracts.Contract {
+	classification := PayClassificationOf(c.EmploymentType, c.PayGroup, c.PayModel)
 	return contracts.Contract{
 		ID:               c.ID,
 		EmployeeID:       c.EmployeeID,
@@ -167,6 +179,13 @@ func (c Contract) ToContract(today calendar.Date) contracts.Contract {
 		Events:           eventsToContract(c.Events),
 		Version:          c.Version,
 		WageStructure:    c.WageStructure,
+		PayFamily:        PayFamilyOf(c.EmploymentType),
+		PayFamilyFa:      PayFamilyFa[PayFamilyOf(c.EmploymentType)],
+		PayMeta:          c.PayMeta,
+		PayGroup:         classification.PayGroup,
+		PayGroupFa:       classification.PayGroupFa,
+		PayModel:         classification.PayModel,
+		PayModelFa:       classification.PayModelFa,
 	}
 }
 

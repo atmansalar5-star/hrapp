@@ -34,7 +34,7 @@ const decreeColumns = `id, employee_id, employee_name, department_name, position
 	base_salary, effective_date, reason_fa, status, supersedes_id, note_fa, created_by, decided_by, employment_type, version,
 	climate_region, rank_wage, seniority_wage, post_allowance, sacrifice_allowance, climate_allowance,
 	bad_climate_percent, deprivation_percent, region_hardship_percent, extra_time_percent, salary_repair,
-	pay_gap, pay_gap_since`
+	pay_gap, pay_gap_since, coalesce(pay_group, 0), coalesce(pay_model, '')`
 
 const certificateColumns = `id, serial, employee_id, employee_name, department_name, position_title, kind,
 	purpose_fa, requested_at, issued_at, delivered_at, status, note_fa, decided_by, version`
@@ -134,7 +134,7 @@ func (s *PostgresStore) SaveDecree(ctx context.Context, d domain.SalaryDecree) (
 	err := s.db.QueryRowContext(ctx, `
 		insert into hr_salary_admin.decree (`+decreeColumns+`)
 		values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,1,
-			$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28)
+			$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30)
 		on conflict (id) do update set
 			employee_id = excluded.employee_id, employee_name = excluded.employee_name,
 			department_name = excluded.department_name, position_title = excluded.position_title,
@@ -150,6 +150,7 @@ func (s *PostgresStore) SaveDecree(ctx context.Context, d domain.SalaryDecree) (
 			region_hardship_percent = excluded.region_hardship_percent, extra_time_percent = excluded.extra_time_percent,
 			salary_repair = excluded.salary_repair,
 			pay_gap = excluded.pay_gap, pay_gap_since = excluded.pay_gap_since,
+			pay_group = excluded.pay_group, pay_model = excluded.pay_model,
 			version = hr_salary_admin.decree.version + 1, updated_at = now()
 		returning version`,
 		d.ID, d.EmployeeID, d.EmployeeName, d.DepartmentName, d.Position, d.JobGroup,
@@ -157,7 +158,7 @@ func (s *PostgresStore) SaveDecree(ctx context.Context, d domain.SalaryDecree) (
 		d.CreatedBy, d.DecidedBy, d.EmploymentType,
 		d.ClimateRegion, d.RankWage, d.SeniorityWage, d.PostAllowance, d.SacrificeAllowance,
 		d.ClimateAllowance, d.BadClimatePercent, d.DeprivationPercent, d.RegionHardshipPercent,
-		d.ExtraTimePercent, d.SalaryRepair, d.PayGap, d.PayGapSince).Scan(&version)
+		d.ExtraTimePercent, d.SalaryRepair, d.PayGap, d.PayGapSince, d.PayGroup, d.PayModel).Scan(&version)
 	if err != nil {
 		return domain.SalaryDecree{}, err
 	}
@@ -322,7 +323,7 @@ func scanDecree(row rowScanner) (domain.SalaryDecree, error) {
 		&d.CreatedBy, &d.DecidedBy, &d.EmploymentType, &d.Version,
 		&d.ClimateRegion, &d.RankWage, &d.SeniorityWage, &d.PostAllowance, &d.SacrificeAllowance,
 		&d.ClimateAllowance, &d.BadClimatePercent, &d.DeprivationPercent, &d.RegionHardshipPercent,
-		&d.ExtraTimePercent, &d.SalaryRepair, &d.PayGap, &d.PayGapSince)
+		&d.ExtraTimePercent, &d.SalaryRepair, &d.PayGap, &d.PayGapSince, &d.PayGroup, &d.PayModel)
 	return d, err
 }
 

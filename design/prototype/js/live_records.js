@@ -288,10 +288,11 @@ function pageRecordkitLive(page) {
       if (attendanceOpts.ok) rkApplyAttendanceOptions(attendanceOpts.data || {});
     }
 
-    // فهرست‌های مرجع جبران خدمات: خانوادهٔ چهارگانه و منبع دادهٔ شاخص‌های جی‌بیست، تا ستون
-    // «خانوادهٔ چهارگانه» به‌جای کلید لاتین، عنوان فارسی نشان دهد.
+    // فهرست‌های مرجع مدل جی‌بیست (خانوادهٔ چهارگانه و منبع دادهٔ شاخص‌ها) از مسیر مالک همان
+    // مدل خوانده می‌شوند: مسیر ۴پی هیچ دادهٔ G20 برنمی‌گرداند (دو نظام منفک‌اند). ستون
+    // «خانوادهٔ چهارگانه» به‌جای کلید لاتین، عنوان فارسی نشان می‌دهد.
     if (mod.prefix === '/api/v1/compensation') {
-      const compOpts = await apiFetch(mod.prefix + '/options');
+      const compOpts = await apiFetch(mod.prefix + '/g20-options');
       if (compOpts.ok) {
         const o = compOpts.data || {};
         rkSetSelectOpts('family', (o.g20Families || []).map(f => ({key: f.key, titleFa: f.titleFa})));

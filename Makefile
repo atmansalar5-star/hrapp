@@ -49,6 +49,8 @@ verify:
 	node tools/check/frontend-security.mjs
 	node tools/check/ops-spec.mjs
 	node tools/check/dd-spec.mjs
+	node tools/check/cpf-spec.mjs
+	node tools/check/pcs-spec.mjs
 
 # فرهنگ داده و نمودار ERD: بازتولید فایل‌های نسخه‌دار از کاتالوگ زندهٔ پایگاه‌داده.
 #   make datadict          بازتولید سه فایل در DATADICT_TMP

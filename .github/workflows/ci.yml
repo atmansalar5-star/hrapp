@@ -32,6 +32,10 @@ jobs:
         run: node tools/check/ops-spec.mjs
       - name: ردیابی اسپک فرهنگ داده (DD ⇄ آزمون/سند/ابزار)
         run: node tools/check/dd-spec.mjs
+      - name: ردیابی اسپک زیرفرم حقوق قرارداد (CPF ⇄ آزمون/سند)
+        run: node tools/check/cpf-spec.mjs
+      - name: ردیابی اسپک دستهٔ پرداخت (PAY ⇄ آزمون/سند)
+        run: node tools/check/pcs-spec.mjs
 
   go:
     name: سرور Go

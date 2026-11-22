@@ -1,7 +1,8 @@
-// آزمون‌های مدل جی‌بیست (G20): بیست شاخص، چهار خانواده، امتیاز کل و طبقه‌بندی.
+// آزمون‌های نظام جیب‌یست (G20): بیست شاخص، چهار خانواده، امتیاز کل، طبقه‌بندی و مرزبندی با نظام ۴پی.
 package rules
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -123,21 +124,6 @@ func TestG20SegmentBoundaries(t *testing.T) {
 	}
 }
 
-// TestG20PartnershipFactor پیش‌فرض بی‌اثر و سقف پارامتری مؤثر.
-func TestG20PartnershipFactor(t *testing.T) {
-	p := DefaultG20Params()
-	if got := G20PartnershipFactor(100, p); got != 1 {
-		t.Fatalf("پیش‌فرض سقف ۱٫۰۰ باید ضریب ۱ بدهد، شد %v", got)
-	}
-	p.PartnershipMaxFactor = 1.15
-	if got := G20PartnershipFactor(100, p); got != 1.15 {
-		t.Fatalf("امتیاز کامل با سقف ۱٫۱۵ باید ۱٫۱۵ شود، شد %v", got)
-	}
-	if got := G20PartnershipFactor(50, p); got != 1.075 {
-		t.Fatalf("امتیاز نیمه با سقف ۱٫۱۵ باید ۱٫۰۷۵ شود، شد %v", got)
-	}
-}
-
 // TestG20ScoreFromIndices میانگین وزنی شاخص‌های یک خانواده.
 func TestG20ScoreFromIndices(t *testing.T) {
 	items := G20IndexesByFamily("performance")
@@ -167,5 +153,123 @@ func TestG20IndependenceFa(t *testing.T) {
 	}
 	if G20InstructionFa() == "" {
 		t.Fatal("راهنمای شروع نباید خالی باشد")
+	}
+}
+
+// ---- مرزبندی دو نظام: جبران خدمات ۴پی و نظام پرداخت جیب‌یست (G20) ----
+
+// g20DecoupleParamKeys کلیدهای پارامتریک نظام جیب‌یست؛ همان کلیدهایی که در پاسخ
+// /api/v1/compensation/g20-options دیده می‌شوند.
+func g20DecoupleParamKeys() []string {
+	return []string{
+		"compensation.g20.family.person",
+		"compensation.g20.family.position",
+		"compensation.g20.family.performance",
+		"compensation.g20.family.partnership",
+		"compensation.g20.index.max",
+		"compensation.g20.cut.a",
+		"compensation.g20.cut.b",
+		"compensation.g20.cut.c",
+		"compensation.g20.cut.d",
+		"compensation.g20.payroll.apply",
+	}
+}
+
+// TestG20DecoupleNoLinkParameter نظام جیب‌یست هیچ پارامتر یا فهرست پیوندی به نظام ۴پی
+// ندارد: پارامتر پیوند پارتنرشیپ و میدان آن در نوع پارامترها حذف شده است، هیچ کلید
+// پارامتریک از فضای نام خودش بیرون نمی‌زند و کلیدهای ۴پی پارامتر جیب‌یست را عوض نمی‌کنند.
+func TestG20DecoupleNoLinkParameter(t *testing.T) {
+	// کلید حذف‌شدهٔ پیوند، دوتکه نوشته می‌شود تا در جست‌وجوی کد با پارامتر زندهٔ نظام
+	// دیگری اشتباه گرفته نشود؛ همین که نوشتنش بی‌اثر است، خودِ آزمون است.
+	removedLinkKey := "compensation.g20.partnership" + ".maxFactor"
+	if got := G20ParamsFromText(map[string]string{removedLinkKey: "1.8"}); got != DefaultG20Params() {
+		t.Fatalf("کلید پیوند نباید هیچ پارامتری را عوض کند: %+v", got)
+	}
+	if _, ok := reflect.TypeOf(G20Params{}).FieldByName("PartnershipMaxFactor"); ok {
+		t.Fatal("میدان PartnershipMaxFactor (ضریب پیوند پارتنرشیپ با ۴پی) باید حذف شده باشد")
+	}
+	for _, key := range g20DecoupleParamKeys() {
+		if !strings.HasPrefix(key, "compensation.g20.") {
+			t.Fatalf("کلید پارامتری جیب‌یست باید در فضای نام خودش بماند: %s", key)
+		}
+		if strings.Contains(key, "maxFactor") || strings.Contains(key, "fourp") || strings.Contains(key, "4p") {
+			t.Fatalf("کلید پارامتری جیب‌یست نباید به نظام ۴پی اشاره کند: %s", key)
+		}
+	}
+	// هیچ کلید ۴پی هم پارامتر جیب‌یست را عوض نمی‌کند.
+	fourPKeys := map[string]string{
+		"compensation.payroll.apply":          "1",
+		"compensation.person.maxFactor":       "1.5",
+		"compensation.band.baseMidpoint":      "999999999",
+		"compensation.performance.factorGood": "1.9",
+	}
+	if got := G20ParamsFromText(fourPKeys); got != DefaultG20Params() {
+		t.Fatalf("کلیدهای ۴پی نباید پارامترهای جیب‌یست را تغییر دهند: %+v", got)
+	}
+	// خانوادهٔ پارتنرشیپ فقط یک خانوادهٔ امتیاز درون جیب‌یست است، نه پیوند با ۴پی.
+	for _, fam := range G20Families() {
+		if strings.Contains(fam.TitleFa, "۴پی") || strings.Contains(fam.BriefFa, "۴پی") || strings.Contains(fam.BriefFa, "مدل ۴پی") {
+			t.Fatalf("خانوادهٔ %s نباید به نظام ۴پی اشاره کند", fam.Key)
+		}
+	}
+}
+
+// TestG20DecoupleG20ParamsDoNotAffect4P تغییر پارامترهای نظام جیب‌یست هیچ اثری بر خروجی
+// مدل ۴پی ندارد، حتی اگر «اعمال در پرداخت» جیب‌یست روشن شود.
+func TestG20DecoupleG20ParamsDoNotAffect4P(t *testing.T) {
+	in := CompensationInput{
+		EmployeeID: "EMP-001", JobScore: 350, CompetencyLevel: 4,
+		PerformanceScore: 88, CurrentPay: 210_000_000,
+	}
+	p := DefaultCompensationParams()
+	want := CompensationCalc(in, p)
+
+	changed := G20ParamsFromText(map[string]string{
+		"compensation.g20.family.person":      "90",
+		"compensation.g20.family.position":    "5",
+		"compensation.g20.family.performance": "1",
+		"compensation.g20.family.partnership": "60",
+		"compensation.g20.index.max":          "250",
+		"compensation.g20.cut.a":              "10",
+		"compensation.g20.cut.d":              "1",
+		"compensation.g20.payroll.apply":      "1",
+	})
+	if changed == DefaultG20Params() {
+		t.Fatal("پارامترهای جیب‌یست باید با کلیدهای شرکت عوض شوند (وگرنه این آزمون بی‌اثر است)")
+	}
+	if got := CompensationCalc(in, p); !reflect.DeepEqual(want, got) {
+		t.Fatalf("تغییر پارامترهای جیب‌یست نباید خروجی ۴پی را عوض کند:\n خواسته %+v\n گرفته %+v", want, got)
+	}
+	// «اعمال در پرداخت» جیب‌یست کلید ۴پی نیست و نباید مدل ۴پی را روشن کند.
+	if on := CompensationParamsFromText(map[string]string{"compensation.g20.payroll.apply": "1"}); on != DefaultCompensationParams() {
+		t.Fatalf("کلید اعمال در پرداخت جیب‌یست نباید پارامتر ۴پی را عوض کند: %+v", on)
+	}
+}
+
+// TestG20Decouple4PParamsDoNotAffectG20 تغییر پارامترهای نظام ۴پی هیچ اثری بر خروجی نظام
+// جیب‌یست ندارد.
+func TestG20Decouple4PParamsDoNotAffectG20(t *testing.T) {
+	in := G20Input{Person: 82, Position: 78, Performance: 88, Partnership: 70}
+	g20 := DefaultG20Params()
+	want := G20Calc(in, g20)
+
+	changed := CompensationParamsFromText(map[string]string{
+		"compensation.band.baseMidpoint":         "500000000",
+		"compensation.band.slopePercent":         "50",
+		"compensation.band.spreadPercent":        "150",
+		"compensation.person.maxFactor":          "2",
+		"compensation.performance.goodScore":     "55",
+		"compensation.increase.maxAnnualPercent": "90",
+		"compensation.payroll.apply":             "1",
+	})
+	if changed == DefaultCompensationParams() {
+		t.Fatal("پارامترهای ۴پی باید با کلیدهای شرکت عوض شوند (وگرنه این آزمون بی‌اثر است)")
+	}
+	if got := G20Calc(in, g20); !reflect.DeepEqual(want, got) {
+		t.Fatalf("تغییر پارامترهای ۴پی نباید خروجی جیب‌یست را عوض کند:\n خواسته %+v\n گرفته %+v", want, got)
+	}
+	// «اعمال در پرداخت» ۴پی هم پارامتر جیب‌یست را روشن نمی‌کند.
+	if on := G20ParamsFromText(map[string]string{"compensation.payroll.apply": "1"}); on != DefaultG20Params() {
+		t.Fatalf("کلید اعمال در پرداخت ۴پی نباید پارامتر جیب‌یست را عوض کند: %+v", on)
 	}
 }

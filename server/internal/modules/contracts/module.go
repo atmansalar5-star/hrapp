@@ -88,6 +88,11 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	mux.HandleFunc("POST /api/v1/contracts/contracts/{id}/convert", r("approve", h.Convert))
 	mux.HandleFunc("GET /api/v1/contracts/renewals", r("read", h.Renewals))
 	mux.HandleFunc("GET /api/v1/contracts/options", r("read", h.Options))
+	// زیرفرم‌های «حقوق و مزایا» بر پایهٔ نوع استخدام (رسمی/پیمانکاری/مأموریت): تعریفی که
+	// رابط همان را می‌کشد و سرور همان را اعتبارسنجی می‌کند.
+	mux.HandleFunc("GET /api/v1/contracts/forms", r("read", h.Forms))
+	// دسته‌بندی کارکنان بر پایهٔ نوع استخدام × گروه جدول ۳ × روش پرداخت (قراردادهای جاری).
+	mux.HandleFunc("GET /api/v1/contracts/pay-classification", r("read", h.PayClassification))
 
 	// قالب‌های متن قرارداد از پورت قالب‌های اسناد خوانده می‌شوند؛ متن قرارداد قابل طراحی
 	// است و در صفحهٔ «قالب‌های متن اسناد» ویرایش می‌شود.

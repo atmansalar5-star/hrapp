@@ -7,7 +7,7 @@
 | --- | --- |
 | طرح‌ها | 8 |
 | جدول‌ها | 20 |
-| ستون‌ها | 229 |
+| ستون‌ها | 235 |
 | روابط خارجی | 8 |
 | سطرهای داده | — (در نسخهٔ پایدار شمرده نمی‌شود؛ خروجی زندهٔ API آن را می‌دهد) |
 
@@ -82,6 +82,10 @@
 | `deprivation_percent` | `double precision` | اعشاری | خیر | 0 |  | ضریب محرومیت از تسهیلات زندگی؛ صفر یعنی از پارامتر شرکت |
 | `region_hardship_percent` | `double precision` | اعشاری | خیر | 0 |  | ضریب صعوبت شرایط منطقه؛ صفر یعنی از پارامتر شرکت |
 | `extra_time_percent` | `double precision` | اعشاری | خیر | 0 |  | ضریب جبران صرف وقت اضافی؛ صفر یعنی از پارامتر شرکت |
+| `pay_family` | `text` | متنی بلند | خیر | 'official'::text |  | خانوادهٔ پرداخت: official \| contracting \| secondment |
+| `pay_meta` | `jsonb` | JSON | خیر | '{}'::jsonb |  | فیلدهای مخصوص زیرفرم همان خانواده (پیمان/مأموریت) |
+| `pay_group` | `integer` | عدد صحیح | خیر | 0 |  | گروه نظام پرداخت نفت (جدول ۳): ۱ = کارمند رسمی نفت، ۲ = پایهٔ سمت ۶ تا ۱۰، … |
+| `pay_model` | `text` | متنی بلند | خیر | ''::text |  | روش پرداخت مصوب: payroll \| oil \| comp34006 \| fourp |
 
 ### `hr_contracts.contract_event`
 
@@ -358,6 +362,8 @@
 | `extra_time_percent` | `double precision` | اعشاری | خیر | 0 |  | ضریب جبران صرف وقت اضافی؛ صفر یعنی از پارامتر شرکت |
 | `pay_gap` | `bigint` | عدد صحیح بزرگ | خیر | 0 |  | تفاوت تطبیق ماهانه (ریال)؛ مبلغ جذب‌شدنی که با افزایش حقوق کاهش می‌یابد و جزو مزد مبنا نیست |
 | `pay_gap_since` | `text` | متنی بلند | خیر | ''::text |  | تاریخ شروع تفاوت تطبیق به قالب شمسی YYYY/MM/DD |
+| `pay_group` | `integer` | عدد صحیح | خیر | 0 |  | گروه نظام پرداخت نفت (جدول ۳): ۱ = کارمند رسمی نفت، ۲ = پایهٔ سمت ۶ تا ۱۰، … |
+| `pay_model` | `text` | متنی بلند | خیر | ''::text |  | روش پرداخت مصوب: payroll \| oil \| comp34006 \| fourp |
 
 ## hr_settings — تنظیمات
 
@@ -440,6 +446,10 @@ erDiagram
         double deprivation_percent
         double region_hardship_percent
         double extra_time_percent
+        text pay_family
+        jsonb pay_meta
+        integer pay_group
+        text pay_model
     }
     hr_contracts_contract_event {
         bigint id PK
@@ -658,6 +668,8 @@ erDiagram
         double extra_time_percent
         bigint pay_gap
         text pay_gap_since
+        integer pay_group
+        text pay_model
     }
     hr_settings_sys_param_version {
         bigint id PK

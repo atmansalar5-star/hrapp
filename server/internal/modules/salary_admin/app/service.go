@@ -203,15 +203,25 @@ func (s *Service) CreateDecree(ctx context.Context, in contracts.SalaryDecreeInp
 	if err != nil {
 		return contracts.SalaryDecree{}, err
 	}
+	employmentType := employmentTypeOf(in.EmploymentType, employee.EmploymentType)
+	// دستهٔ پرداخت حکم: گروه جدول ۳ آیین‌نامه و روش پرداخت مصوب. انتخاب ناسازگار همین‌جا
+	// رد می‌شود و در نبود انتخاب، از نوع استخدام و گروه شغلی استنتاج می‌گردد.
+	if errs := domain.ValidateDecreeClassification(employmentType, in.PayGroup, in.PayModel); len(errs) > 0 {
+		return contracts.SalaryDecree{}, &ValidationError{Details: errs}
+	}
+	classification := domain.DecreeClassificationOf(employmentType, in.JobGroup, in.PayGroup, in.PayModel)
+
 	draft := domain.SalaryDecree{
 		ID:             id,
 		EmployeeID:     employee.ID,
 		EmployeeName:   employee.FullName,
 		DepartmentName: employee.DepartmentName,
 		Position:       employee.Position,
-		EmploymentType: employmentTypeOf(in.EmploymentType, employee.EmploymentType),
+		EmploymentType: employmentType,
 		JobGroup:       in.JobGroup,
 		BaseSalary:     in.BaseSalary,
+		PayGroup:       classification.PayGroup,
+		PayModel:       classification.PayModel,
 		EffectiveDate:  in.EffectiveDate,
 		ReasonFa:       in.ReasonFa,
 		Status:         domain.DecreeDraft,

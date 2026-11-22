@@ -213,6 +213,39 @@ func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Forms زیرفرم‌های «حقوق و مزایا» را بر پایهٔ نوع استخدام و نوع قرارداد برمی‌گرداند.
+//
+// چرا این مسیر: شکل بخش حقوقی قرارداد با نوع استخدام عوض می‌شود (جدول مزد رسمی / مبلغ و
+// مبنای پیمان / تفاهم‌نامهٔ پرداخت مأموریت). رابط این تعریف را از همین مسیر می‌گیرد و
+// همان را می‌کشد؛ سرور هم در زمان ثبت/ویرایش، دقیقاً همین تعریف را اعتبارسنجی می‌کند.
+func (h *Handler) Forms(w http.ResponseWriter, r *http.Request) {
+	types := []map[string]any{}
+	for _, t := range contracts.EmploymentTypes() {
+		family := domain.PayFamilyOf(t.Key)
+		types = append(types, map[string]any{
+			"key":        t.Key,
+			"titleFa":    t.TitleFa,
+			"groupFa":    t.GroupFa,
+			"kind":       t.Kind,
+			"family":     family,
+			"familyFa":   domain.PayFamilyFa[family],
+			"decreeFa":   t.DecreeFa,
+			"noteFa":     t.NoteFa,
+			"payFormKey": family,
+		})
+	}
+	httpx.WriteJSON(w, http.StatusOK, map[string]any{
+		"forms":           domain.PayFormsOf(),
+		"employmentTypes": types,
+		"climateRegions":  domain.ClimateRegionOptions(),
+		// دستهٔ پرداخت: چهار روش پرداخت مصوب و گروه‌های جدول ۳ آیین‌نامهٔ فوق‌العاده‌ها.
+		"payModels": domain.PayModelOptions(),
+		"payGroups": domain.PayGroupOptions(),
+		"noteFa": "زیرفرم «حقوق و مزایا» بر پایهٔ نوع استخدام انتخاب می‌شود؛ " +
+			"همین تعریف در سرور هم اعتبارسنجی می‌شود، پس چیزی در رابط دور زده نمی‌شود.",
+	})
+}
+
 // Templates قالب‌های متن قرارداد را از پورت قالب‌های اسناد برمی‌گرداند.
 //
 // متن قرارداد قابل طراحی است: قالب فعال از ماژول تنظیمات می‌آید و این ماژول تنها

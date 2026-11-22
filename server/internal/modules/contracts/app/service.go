@@ -8,6 +8,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"hrms/internal/contracts"
@@ -73,6 +74,55 @@ func New(repo Repository, employees EmployeeLookup, auditLog *audit.Log, syncLog
 		clock = time.Now
 	}
 	return &Service{repo: repo, employees: employees, audit: auditLog, sync: syncLog, clock: clock}
+}
+
+// payFieldErrors خطاهای زیرفرم را به شکل «فیلد → پیام» برای پاسخ ۴۲۲ آماده می‌کند.
+func payFieldErrors(errs []domain.PayFieldError) map[string]string {
+	out := make(map[string]string, len(errs))
+	for _, e := range errs {
+		if _, exists := out[e.Field]; !exists {
+			out[e.Field] = e.Message
+		}
+	}
+	return out
+}
+
+// cleanPayMeta فرادادهٔ زیرفرم را پاک‌سازی می‌کند: کلید/مقدار تهی نگه داشته نمی‌شود و
+// کلیدهای اجزای مزد رسمی (که ستون ثابت خودشان را دارند) هرگز در فراداده نمی‌نشیند.
+func cleanPayMeta(meta map[string]any) map[string]any {
+	if len(meta) == 0 {
+		return nil
+	}
+	out := make(map[string]any, len(meta))
+	for key, value := range meta {
+		key = strings.TrimSpace(key)
+		if key == "" || officialWageKeys[key] {
+			continue
+		}
+		switch v := value.(type) {
+		case nil:
+			continue
+		case string:
+			if strings.TrimSpace(v) == "" {
+				continue
+			}
+			out[key] = strings.TrimSpace(v)
+		default:
+			out[key] = value
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
+// officialWageKeys کلیدهایی که ستون ثابت خودشان را دارند و در فراداده تکرار نمی‌شوند.
+var officialWageKeys = map[string]bool{
+	"climateRegion": true, "rankWage": true, "seniorityWage": true, "postAllowance": true,
+	"sacrificeAllowance": true, "climateAllowance": true, "salaryRepair": true, "payGap": true,
+	"payGapSince": true, "badClimatePercent": true, "deprivationPercent": true,
+	"regionHardshipPercent": true, "extraTimePercent": true, "monthlySalary": true,
 }
 
 // today تاریخ امروز شمسی.
@@ -141,13 +191,29 @@ func (s *Service) Create(ctx context.Context, in contracts.ContractInput, actor 
 		return contracts.Contract{}, &ValidationError{Details: map[string]string{"employeeId": "کارمند انتخابی یافت نشد."}}
 	}
 
+	employmentType := employmentTypeOf(in.EmploymentType, in.Kind, employee.EmploymentType)
+	// زیرفرم «حقوق و مزایا» بر پایهٔ نوع استخدام اعتبارسنجی می‌شود: همان تعریفی که سرور
+	// به رابط می‌دهد (GET /api/v1/contracts/forms)، پس UI و API هرگز واگرا نمی‌شوند.
+	if errs := domain.ValidatePayForm(domain.PayInput{
+		Kind:           in.Kind,
+		EmploymentType: employmentType,
+		MonthlySalary:  in.MonthlySalary,
+		Wage:           in.WageStructure,
+		Meta:           in.PayMeta,
+		PayModel:       in.PayModel,
+		PayGroup:       in.PayGroup,
+	}); len(errs) > 0 {
+		return contracts.Contract{}, &ValidationError{Details: payFieldErrors(errs)}
+	}
+	classification := domain.PayClassificationOf(employmentType, in.PayGroup, in.PayModel)
+
 	draft := domain.Contract{
 		EmployeeID:     employee.ID,
 		EmployeeName:   employee.FullName,
 		DepartmentName: employee.DepartmentName,
 		Position:       employee.Position,
 		Kind:           in.Kind,
-		EmploymentType: employmentTypeOf(in.EmploymentType, in.Kind, employee.EmploymentType),
+		EmploymentType: employmentType,
 		StartDate:      in.StartDate,
 		EndDate:        in.EndDate,
 		MonthlySalary:  in.MonthlySalary,
@@ -155,6 +221,10 @@ func (s *Service) Create(ctx context.Context, in contracts.ContractInput, actor 
 		NoteFa:         in.NoteFa,
 		CreatedBy:      actor,
 		WageStructure:  in.WageStructure,
+		PayFamily:      domain.PayFamilyOf(employmentType),
+		PayMeta:        cleanPayMeta(in.PayMeta),
+		PayGroup:       classification.PayGroup,
+		PayModel:       classification.PayModel,
 	}
 	if err := s.ensureNoActiveOverlap(ctx, draft, ""); err != nil {
 		return contracts.Contract{}, err
@@ -198,18 +268,38 @@ func (s *Service) Update(ctx context.Context, id string, in contracts.ContractIn
 		return contracts.Contract{}, &ValidationError{Details: map[string]string{"employeeId": "کارمند انتخابی یافت نشد."}}
 	}
 
+	employmentType := employmentTypeOf(in.EmploymentType, in.Kind, employee.EmploymentType)
+	if errs := domain.ValidatePayForm(domain.PayInput{
+		Kind:           in.Kind,
+		EmploymentType: employmentType,
+		MonthlySalary:  in.MonthlySalary,
+		Wage:           in.WageStructure,
+		Meta:           in.PayMeta,
+		PayModel:       in.PayModel,
+		PayGroup:       in.PayGroup,
+	}); len(errs) > 0 {
+		return contracts.Contract{}, &ValidationError{Details: payFieldErrors(errs)}
+	}
+	classification := domain.PayClassificationOf(employmentType, in.PayGroup, in.PayModel)
+
 	updated := current
 	updated.EmployeeID = employee.ID
 	updated.EmployeeName = employee.FullName
 	updated.DepartmentName = employee.DepartmentName
 	updated.Position = employee.Position
 	updated.Kind = in.Kind
-	updated.EmploymentType = employmentTypeOf(in.EmploymentType, in.Kind, employee.EmploymentType)
+	updated.EmploymentType = employmentType
 	updated.StartDate = in.StartDate
 	updated.EndDate = in.EndDate
 	updated.MonthlySalary = in.MonthlySalary
 	updated.NoteFa = in.NoteFa
 	updated.WageStructure = in.WageStructure
+	// زیرفرم تازه: اگر نوع استخدام عوض شده باشد، خانواده و فراداده هم عوض می‌شوند و
+	// باقی‌ماندهٔ خانوادهٔ قبلی (مثل مشخصات پیمان) پاک می‌شود.
+	updated.PayFamily = domain.PayFamilyOf(employmentType)
+	updated.PayMeta = cleanPayMeta(in.PayMeta)
+	updated.PayGroup = classification.PayGroup
+	updated.PayModel = classification.PayModel
 	if updated.Status == domain.StatusRejected {
 		updated.Status = domain.StatusDraft
 	}

@@ -337,6 +337,110 @@ function liveWagePayload(prefix) {
 }
 
 /* =====================================================================
+   زیرفرم «حقوق و مزایا» بر پایهٔ نوع استخدام و نوع قرارداد
+   ---------------------------------------------------------------------
+   تعریف فیلدها در سرور است (دامنهٔ contracts، مسیر /api/v1/contracts/forms) و
+   همان تعریف در سرور هم اعتبارسنجی می‌شود؛ اینجا فقط کشیده و نمایش داده می‌شود.
+   سه خانواده: official (جدول مزد رسمی)، contracting (مشخصات و مبنای پیمان)،
+   secondment (تفاهم‌نامهٔ پرداخت مأموریت).
+   ===================================================================== */
+let LIVE_CONTRACT_FORMS = null;
+
+async function liveContractForms() {
+  if (LIVE_CONTRACT_FORMS) return LIVE_CONTRACT_FORMS;
+  const res = await apiFetch('/api/v1/contracts/forms');
+  LIVE_CONTRACT_FORMS = (res.ok && res.data) || {forms: [], employmentTypes: [], climateRegions: []};
+  return LIVE_CONTRACT_FORMS;
+}
+
+function livePayFamilyOf(data, employmentType) {
+  const t = (data.employmentTypes || []).find(x => x.key === employmentType);
+  return (t && t.family) || 'official';
+}
+
+function livePayFormOf(data, family) {
+  return (data.forms || []).find(f => f.family === family) || null;
+}
+
+/** یک فیلد زیرفرم غیررسمی (پیمان/مأموریت). */
+function livePayFieldHtml(prefix, f, value) {
+  const id = prefix + 'Meta_' + f.key;
+  const label = esc(f.labelFa) + (f.required ? ' <span class="req">*</span>' : '') +
+    (f.unitFa ? ` <span class="muted">(${esc(f.unitFa)})</span>` : '');
+  const hint = f.hintFa ? `<span class="muted" style="font-size:.72rem">${esc(f.hintFa)}</span>` : '';
+  if (f.type === 'select') {
+    const opts = (f.options || []).map(o => `<option value="${esc(o.value)}" ${value === o.value ? 'selected' : ''}>${esc(o.labelFa)}</option>`).join('');
+    return `<div class="field"><label>${label}</label><select id="${id}"><option value="">—</option>${opts}</select>${hint}</div>`;
+  }
+  if (f.type === 'money') {
+    return `<div class="field"><label>${label}</label><input id="${id}" type="number" min="0" value="${value ? esc(String(value)) : ''}">${hint}</div>`;
+  }
+  if (f.type === 'percent') {
+    const pct = Number(value || 0) ? Math.round(Number(value) * 100) : '';
+    return `<div class="field"><label>${label}</label><input id="${id}" type="number" min="0" max="100" value="${pct}">${hint}</div>`;
+  }
+  return `<div class="field"><label>${label}</label><input id="${id}" value="${value ? esc(String(value)) : ''}"${f.type === 'date' ? ' placeholder="۱۴۰۵/۰۱/۰۱"' : ''}>${hint}</div>`;
+}
+
+/** HTML زیرفرم یک خانواده؛ خانوادهٔ رسمی همان بلوک «اجزای ثابت مزد» است. */
+function livePayFormHtml(prefix, family, form, v, regions) {
+  if (family === 'official' || !form) {
+    return liveWageFields(prefix, v, regions);
+  }
+  const meta = (v && v.payMeta) || {};
+  const groups = (form.groups || []).map(g => `
+    <div class="card" style="grid-column:1/-1;padding:10px 12px">
+      <div style="font-weight:600;margin-bottom:6px">${esc(g.titleFa)}</div>
+      ${g.hintFa ? `<div class="muted" style="font-size:.74rem;margin-bottom:6px">${esc(g.hintFa)}</div>` : ''}
+      <div class="form-grid">${(g.fields || []).map(f => livePayFieldHtml(prefix, f, meta[f.key])).join('')}</div>
+    </div>`).join('');
+  return `<div class="form-grid" style="grid-column:1/-1">
+      <div class="muted" style="grid-column:1/-1;font-size:.74rem">${esc(form.noteFa || '')}</div>
+      ${groups}
+    </div>`;
+}
+
+/** خواندن زیرفرم از DOM و ساختن بدنهٔ API (درصد کاربر → نسبت API). */
+function livePayPayload(prefix, family, form) {
+  if (family === 'official' || !form) return {payFamily: 'official'};
+  const meta = {};
+  (form.groups || []).forEach(g => (g.fields || []).forEach(f => {
+    const el = $('#' + prefix + 'Meta_' + f.key);
+    if (!el) return;
+    const raw = (el.value || '').trim();
+    if (!raw) return;
+    if (f.type === 'money') meta[f.key] = Number(raw) || 0;
+    else if (f.type === 'percent') meta[f.key] = (Number(raw) || 0) / 100;
+    else meta[f.key] = raw;
+  }));
+  return {payFamily: family, payMeta: meta};
+}
+
+/** کشیدن زیرفرم در ظرف، بر پایهٔ نوع استخدام انتخاب‌شده. */
+async function liveContractPayMount(prefix, values) {
+  const data = await liveContractForms();
+  const box = $('#' + prefix + 'PaySection');
+  if (!box) return;
+  const typeEl = $('#' + prefix + 'EmploymentType');
+  if (typeEl && !typeEl.dataset.payBound) {
+    // تغییر نوع استخدام ⇒ زیرفرم همان نوع؛ شنوندهٔ برنامه‌ای جای صفت درون‌خطی
+    // (onchange) را می‌گیرد تا سقف هندلرهای درون‌خطی رابط بالا نرود.
+    typeEl.dataset.payBound = '1';
+    typeEl.addEventListener('change', () => liveContractPayMount(prefix, null));
+  }
+  const family = livePayFamilyOf(data, typeEl ? typeEl.value : (values && values.employmentType));
+  const form = livePayFormOf(data, family);
+  box.innerHTML = livePayFormHtml(prefix, family, form, values, data.climateRegions || []);
+  const title = $('#' + prefix + 'PayTitle');
+  if (title && form) title.textContent = form.titleFa || '';
+}
+
+/** تغییر نوع استخدام: زیرفرم همان نوع کشیده می‌شود (برای فراخوان دستی/آزمون). */
+async function liveContractPayRefresh() {
+  await liveContractPayMount('ct', null);
+}
+
+/* =====================================================================
    اطلاعات پایهٔ کارمند در فرم‌های نیازمند (قرارداد، حکم، انتصاب، جابه‌جایی)
    ---------------------------------------------------------------------
    چرا یک بلوک مشترک: کد ملی، شماره‌های تماس، کد پستی، نشانی و مدرک تحصیلی در
@@ -491,23 +595,29 @@ async function liveContractForm() {
           <option value="fixed_term">مدت موقت</option>
         </select></div>
       <div class="field"><label>نوع استخدام <span class="req">*</span></label>
-        <select id="ctEmploymentType">${(RB_TYPES.length ? RB_TYPES : []).map(t => `<option value="${esc(t.key)}">${esc(t.titleFa)}</option>`).join('')}</select></div>
+        <select id="ctEmploymentType">${(RB_TYPES.length ? RB_TYPES : []).map(t => `<option value="${esc(t.key)}">${esc(t.titleFa)}</option>`).join('')}</select>
+        <span class="muted" style="font-size:.72rem">با تغییر نوع استخدام، بخش «حقوق و مزایا» بر پایهٔ همان نوع عوض می‌شود.</span></div>
       <div class="field"><label>تاریخ شروع (شمسی) <span class="req">*</span></label><input id="ctStart" placeholder="1404/07/01"></div>
       <div class="field" id="ctEndField" style="display:none"><label>تاریخ پایان (شمسی)</label><input id="ctEnd" placeholder="1405/06/31"></div>
       <div class="field"><label>مبلغ پایهٔ ماهانه (ریال) <span class="req">*</span></label><input id="ctSalary" type="number" min="1"></div>
       <div class="field"><label>یادداشت</label><input id="ctNote"></div>
-      ${liveWageFields('ct', null, regions)}
+      <div class="field" style="grid-column:1/-1"><label>حقوق و مزایا <span class="muted" id="ctPayTitle"></span></label></div>
+      <div id="ctPaySection" style="grid-column:1/-1"></div>
     </div>`,
     foot: `<button class="btn btn-primary" onclick="liveContractSave()">ثبت پیش‌نویس</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
   });
   mountEmployeeBase('ctEmp', 'ctEmpBase');
+  await liveContractPayMount('ct', null);
 }
 function liveContractKindToggle() {
   const el = $('#ctEndField');
   if (el) el.style.display = $('#ctKind').value === 'fixed_term' ? '' : 'none';
 }
 async function liveContractSave() {
+  const formsData = await liveContractForms();
+  const family = livePayFamilyOf(formsData, $('#ctEmploymentType').value);
+  const payForm = livePayFormOf(formsData, family);
   const body = {
     employeeId: $('#ctEmp').value,
     kind: $('#ctKind').value,
@@ -516,7 +626,9 @@ async function liveContractSave() {
     endDate: $('#ctKind').value === 'fixed_term' ? $('#ctEnd').value.trim() : '',
     monthlySalary: Number($('#ctSalary').value) || 0,
     noteFa: $('#ctNote').value.trim(),
-    ...liveWagePayload('ct'),
+    // خانوادهٔ رسمی: اجزای ثابت مزد؛ خانواده‌های پیمانکاری/مأموریت: فرادادهٔ همان زیرفرم.
+    ...(family === 'official' ? liveWagePayload('ct') : {}),
+    ...livePayPayload('ct', family, payForm),
   };
   const res = await apiFetch('/api/v1/contracts/contracts', {method: 'POST', body});
   if (!res.ok) { toast(res.message, 'error'); return; }
@@ -550,14 +662,19 @@ async function liveContractEdit(id) {
       <div class="field" id="ctEndField" style="display:${c.kind === 'fixed_term' ? '' : 'none'}"><label>تاریخ پایان (شمسی)</label><input id="ctEnd" value="${esc(c.endDate || '')}"></div>
       <div class="field"><label>مبلغ پایهٔ ماهانه (ریال) <span class="req">*</span></label><input id="ctSalary" type="number" min="1" value="${esc(String(c.monthlySalary || ''))}"></div>
       <div class="field"><label>یادداشت</label><input id="ctNote" value="${esc(c.noteFa || '')}"></div>
-      ${liveWageFields('ct', c, regions)}
+      <div class="field" style="grid-column:1/-1"><label>حقوق و مزایا <span class="muted" id="ctPayTitle"></span></label></div>
+      <div id="ctPaySection" style="grid-column:1/-1"></div>
     </div>`,
     foot: `<button class="btn btn-primary" onclick="liveContractUpdate('${esc(c.id)}')">ذخیره</button>
            <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>`,
   });
   mountEmployeeBase('ctEmp', 'ctEmpBase');
+  await liveContractPayMount('ct', c);
 }
 async function liveContractUpdate(id) {
+  const formsData = await liveContractForms();
+  const family = livePayFamilyOf(formsData, $('#ctEmploymentType').value);
+  const payForm = livePayFormOf(formsData, family);
   const body = {
     employeeId: $('#ctEmp').value,
     kind: $('#ctKind').value,
@@ -566,7 +683,8 @@ async function liveContractUpdate(id) {
     endDate: $('#ctKind').value === 'fixed_term' ? $('#ctEnd').value.trim() : '',
     monthlySalary: Number($('#ctSalary').value) || 0,
     noteFa: $('#ctNote').value.trim(),
-    ...liveWagePayload('ct'),
+    ...(family === 'official' ? liveWagePayload('ct') : {}),
+    ...livePayPayload('ct', family, payForm),
   };
   const res = await apiFetch('/api/v1/contracts/contracts/' + encodeURIComponent(id), {method: 'PATCH', body});
   if (!res.ok) { toast(res.message, 'error'); return; }
@@ -2051,7 +2169,7 @@ function renderReportFilters(src) {
   const box = $('#rbFilters');
   if (!box) return;
   const filters = src.filters || [];
-  if (!filters.length) { box.innerHTML = ''; return; }
+  if (!filters.length) { box.replaceChildren(); return; }
   const controls = filters.map(f => {
     let field;
     if (f.multiple) {
@@ -2139,7 +2257,7 @@ function addReportCondition() {
 }
 function resetReportConditions() {
   const box = $('#rbConds');
-  if (box) box.innerHTML = '';
+  if (box) box.replaceChildren();
 }
 
 function reportSelection() {

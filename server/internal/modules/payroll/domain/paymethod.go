@@ -16,66 +16,35 @@ import (
 	"hrms/internal/contracts"
 	"hrms/internal/platform/calendar"
 	"hrms/internal/platform/recordkit"
+	"hrms/internal/rules"
 )
 
-// کلیدهای روش پرداخت کارمند.
+// کلیدهای روش پرداخت — بازنمایی فهرست مشترک `rules` تا یک منبع حقیقت بماند.
 const (
 	// PayModelPayroll مدل حقوق و دستمزد جاری (پیش‌فرض سازمان).
-	PayModelPayroll = "payroll"
+	PayModelPayroll = rules.PayModelPayroll
 	// PayModelOil نظام پرداخت صندوق بازنشستگی نفت.
-	PayModelOil = "oil"
+	PayModelOil = rules.PayModelOil
 	// PayModelComp34006 نظام جبران خدمات دستورالعمل IMS-HR-34006 (مستقل و اختیاری).
-	PayModelComp34006 = "comp34006"
+	PayModelComp34006 = rules.PayModelComp34006
 	// PayModelFourP مدل توسعه‌ای و اختیاری جبران خدمات ۴پی.
-	PayModelFourP = "fourp"
+	PayModelFourP = rules.PayModelFourP
 )
 
 // KindEmployeePayModel کلید نوع رکورد «روش پرداخت کارمند».
 const KindEmployeePayModel = "employeePayModel"
 
 // PayModelChoice یک گزینهٔ روش پرداخت برای فهرست انتخابی فرم.
-type PayModelChoice struct {
-	Key     string `json:"key"`
-	TitleFa string `json:"titleFa"`
-	NoteFa  string `json:"noteFa,omitempty"`
-	// Optional یعنی مدل توسعه‌ای/اختیاری است و پیش از انتخاب باید پارامتر شرکت روشن شود.
-	Optional bool `json:"optional,omitempty"`
-}
+type PayModelChoice = rules.PayModelChoice
 
-// PayModelChoices فهرست روش‌های پرداخت مصوب.
-func PayModelChoices() []PayModelChoice {
-	return []PayModelChoice{
-		{Key: PayModelPayroll, TitleFa: "حقوق و دستمزد جاری (پیش‌فرض سازمان)",
-			NoteFa: "محاسبهٔ ماهانه با پردازش حقوق و اقلام پارامتری همین ماژول."},
-		{Key: PayModelOil, TitleFa: "نظام پرداخت صندوق بازنشستگی نفت",
-			NoteFa: "فیش صندوق نفت با جدول‌های ۱ تا ۳ آیین‌نامه و ضرایب همان نظام."},
-		{Key: PayModelComp34006, TitleFa: "نظام جبران خدمات دستورالعمل ۳۴۰۰۶", Optional: true,
-			NoteFa: "مدل مستقل با جدول‌های امتیاز و ضریب ریالی خودش؛ محاسبه‌اش در فرم همین نظام انجام می‌شود."},
-		{Key: PayModelFourP, TitleFa: "مدل توسعه‌ای جبران خدمات ۴پی", Optional: true,
-			NoteFa: "مدل مستقل و اختیاری؛ اثرش در حکم و فیش فقط با روشن‌بودن پارامتر «اعمال در پرداخت» است."},
-	}
-}
+// PayModelChoices فهرست روش‌های پرداخت مصوب (همان چهار روش سامانه).
+var PayModelChoices = rules.PayModelChoices
 
 // PayModelTitleFa عنوان فارسی یک روش پرداخت؛ روش ناشناخته خودِ کلید را برمی‌گرداند.
-func PayModelTitleFa(key string) string {
-	for _, choice := range PayModelChoices() {
-		if choice.Key == key {
-			return choice.TitleFa
-		}
-	}
-	return strings.TrimSpace(key)
-}
+func PayModelTitleFa(key string) string { return rules.PayModelTitleFa(key) }
 
 // PayModelOf کلید معتبر روش پرداخت؛ مقدار ناشناخته یعنی روش پیش‌فرض.
-func PayModelOf(raw string) string {
-	value := strings.TrimSpace(raw)
-	for _, choice := range PayModelChoices() {
-		if choice.Key == value {
-			return value
-		}
-	}
-	return PayModelPayroll
-}
+func PayModelOf(raw string) string { return rules.PayModelOf(raw) }
 
 // employeePayModelKind روش پرداخت کارمند.
 func employeePayModelKind() recordkit.Kind {

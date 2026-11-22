@@ -30,6 +30,10 @@ erDiagram
         double deprivation_percent
         double region_hardship_percent
         double extra_time_percent
+        text pay_family
+        jsonb pay_meta
+        integer pay_group
+        text pay_model
     }
     hr_contracts_contract_event {
         bigint id PK
@@ -248,6 +252,8 @@ erDiagram
         double extra_time_percent
         bigint pay_gap
         text pay_gap_since
+        integer pay_group
+        text pay_model
     }
     hr_settings_sys_param_version {
         bigint id PK

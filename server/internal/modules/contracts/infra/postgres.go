@@ -5,6 +5,7 @@ package infra
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -38,7 +39,8 @@ const contractColumns = `id, employee_id, employee_name, department_name, positi
 	start_date, end_date, monthly_salary, status, supersedes_id, renew_count, note_fa,
 	created_by, decided_by, version, employment_type,
 	climate_region, rank_wage, seniority_wage, post_allowance, sacrifice_allowance, climate_allowance,
-	bad_climate_percent, deprivation_percent, region_hardship_percent, extra_time_percent, salary_repair`
+	bad_climate_percent, deprivation_percent, region_hardship_percent, extra_time_percent, salary_repair,
+	coalesce(pay_family, 'official'), coalesce(pay_meta, '{}'::jsonb), coalesce(pay_group, 0), coalesce(pay_model, '')`
 
 // Get خواندن قرارداد همراه با سابقهٔ رخدادها.
 func (s *PostgresStore) Get(ctx context.Context, id string) (domain.Contract, bool, error) {
@@ -191,9 +193,9 @@ func (s *PostgresStore) Save(ctx context.Context, c domain.Contract) (domain.Con
 			 monthly_salary, status, supersedes_id, renew_count, note_fa, created_by, decided_by, version,
 			 employment_type, climate_region, rank_wage, seniority_wage, post_allowance, sacrifice_allowance,
 			 climate_allowance, bad_climate_percent, deprivation_percent, region_hardship_percent,
-			 extra_time_percent, salary_repair, updated_at)
+			 extra_time_percent, salary_repair, updated_at, pay_family, pay_meta, pay_group, pay_model)
 		values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,
-			$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28, now())
+			$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28, now(), $29, $30, $31, $32)
 		on conflict (id) do update set
 			employee_id = excluded.employee_id, employee_name = excluded.employee_name,
 			department_name = excluded.department_name, position_title = excluded.position_title,
@@ -209,12 +211,14 @@ func (s *PostgresStore) Save(ctx context.Context, c domain.Contract) (domain.Con
 			deprivation_percent = excluded.deprivation_percent,
 			region_hardship_percent = excluded.region_hardship_percent,
 			extra_time_percent = excluded.extra_time_percent, salary_repair = excluded.salary_repair,
+			pay_family = excluded.pay_family, pay_meta = excluded.pay_meta,
+			pay_group = excluded.pay_group, pay_model = excluded.pay_model,
 			updated_at = now()`,
 		c.ID, c.EmployeeID, c.EmployeeName, c.DepartmentName, c.Position, c.Kind, c.StartDate, c.EndDate,
 		c.MonthlySalary, c.Status, c.SupersedesID, c.RenewCount, c.NoteFa, c.CreatedBy, c.DecidedBy, c.Version,
 		c.EmploymentType, c.ClimateRegion, c.RankWage, c.SeniorityWage, c.PostAllowance, c.SacrificeAllowance,
 		c.ClimateAllowance, c.BadClimatePercent, c.DeprivationPercent, c.RegionHardshipPercent,
-		c.ExtraTimePercent, c.SalaryRepair,
+		c.ExtraTimePercent, c.SalaryRepair, payFamilyOf(c), payMetaJSON(c), payGroupOf(c), payModelOf(c),
 	); err != nil {
 		return domain.Contract{}, err
 	}
@@ -290,13 +294,57 @@ type scanner interface{ Scan(dest ...any) error }
 
 func scanContract(row scanner) (domain.Contract, error) {
 	var c domain.Contract
+	var payMeta []byte
 	err := row.Scan(&c.ID, &c.EmployeeID, &c.EmployeeName, &c.DepartmentName, &c.Position, &c.Kind,
 		&c.StartDate, &c.EndDate, &c.MonthlySalary, &c.Status, &c.SupersedesID, &c.RenewCount,
 		&c.NoteFa, &c.CreatedBy, &c.DecidedBy, &c.Version, &c.EmploymentType,
 		&c.ClimateRegion, &c.RankWage, &c.SeniorityWage, &c.PostAllowance, &c.SacrificeAllowance,
 		&c.ClimateAllowance, &c.BadClimatePercent, &c.DeprivationPercent, &c.RegionHardshipPercent,
-		&c.ExtraTimePercent, &c.SalaryRepair)
-	return c, err
+		&c.ExtraTimePercent, &c.SalaryRepair, &c.PayFamily, &payMeta, &c.PayGroup, &c.PayModel)
+	if err != nil {
+		return c, err
+	}
+	if len(payMeta) > 0 {
+		meta := map[string]any{}
+		if err := json.Unmarshal(payMeta, &meta); err == nil && len(meta) > 0 {
+			c.PayMeta = meta
+		}
+	}
+	return c, nil
+}
+
+// payFamilyOf خانوادهٔ پرداخت سند را برمی‌آورد؛ خالی یعنی از نوع استخدام استنتاج شود.
+func payFamilyOf(c domain.Contract) string {
+	if strings.TrimSpace(c.PayFamily) != "" {
+		return c.PayFamily
+	}
+	return domain.PayFamilyOf(c.EmploymentType)
+}
+
+// payMetaJSON فرادادهٔ خانواده را برای ستون JSONB آماده می‌کند.
+func payMetaJSON(c domain.Contract) []byte {
+	if len(c.PayMeta) == 0 {
+		return []byte("{}")
+	}
+	raw, err := json.Marshal(c.PayMeta)
+	if err != nil {
+		return []byte("{}")
+	}
+	return raw
+}
+
+// payGroupOf شمارهٔ گروه نظام پرداخت سند؛ صفر یعنی «تعیین نشده» و سرویس آن را استنتاج می‌کند.
+func payGroupOf(c domain.Contract) int {
+	if c.PayGroup > 0 {
+		return c.PayGroup
+	}
+	return 0
+}
+
+// payModelOf کلید روش پرداخت سند؛ خالی یعنی «تعیین نشده» (سرویس پیش‌فرض نوع استخدام را
+// می‌نویسد).
+func payModelOf(c domain.Contract) string {
+	return strings.TrimSpace(c.PayModel)
 }
 
 func collectContracts(rows *sql.Rows) ([]domain.Contract, error) {

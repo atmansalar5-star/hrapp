@@ -54,7 +54,9 @@ func oilPayDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
 		"shiftOptions": []map[string]string{{"key": "no", "titleFa": "غیر نوبت‌کار"}, {"key": "yes", "titleFa": "نوبت‌کار"}},
 		"degrees":      oilDegreeOptions(params),
 		// جدول ۳ (پایهٔ سمت → حق جذب عمومی و حق مقام) و جدول‌های ۱ و ۲ (محل سکونت).
-		"jobGrades":   oilJobGradeOptions(params),
+		"jobGrades": oilJobGradeOptions(params),
+		// گروه‌های نظام پرداخت: گروه یکم کارمند رسمی نفت و گروه‌های دوم به بعد پایه‌های سمت.
+		"payGroups":   rules.OilPayGroupTable3(params),
 		"residences":  oilResidenceOptions(params),
 		"employees":   oilEmployeeOptions(ctx, deps, params),
 		"paramViews":  oilParamViews(deps, nil),
@@ -74,9 +76,16 @@ func oilPayDefaults(ctx context.Context, deps modulekit.Deps) map[string]any {
 // oilPayslip فیش را با پارامترهای شرکت می‌سازد و دورهٔ جاری را هم برمی‌گرداند.
 //
 // امتیاز ایثارگری از پروندهٔ تأییدشدهٔ همان کارمند خوانده می‌شود؛ خودِ محاسبه در
-// `rules.ComputeOilPayslip` است و این تابع فقط ورودی موتور را کامل می‌کند.
+// `rules.ComputeOilPayslip` است و این تابع فقط ورودی موتور را کامل می‌کند. نوع استخدام هم
+// از پرونده خوانده می‌شود (نه از درخواست) تا گروه جدول ۳ — و در نتیجه درصد حق جذب/مقام —
+// از سمت مرورگر قابل جعل نباشد.
 func oilPayslip(ctx context.Context, deps modulekit.Deps, in rules.OilPayInput) map[string]any {
 	in.Veteran = veteranEntitlement(ctx, deps, in.EmployeeID)
+	if !rules.IsOfficialOilEmployment(in.EmploymentType) {
+		if employeeType := oilEmployeeEmploymentType(ctx, deps, in.EmployeeID); employeeType != "" {
+			in.EmploymentType = employeeType
+		}
+	}
 	params := oilPayParams(deps, in.ParamOverrides)
 	slip := rules.ComputeOilPayslip(in, params)
 	return map[string]any{
@@ -244,6 +253,25 @@ func oilTableParams(values map[string]string, params *rules.OilPayParams) {
 					params.Residences[i].TimeConsumedDay = value
 				case "timeConsumedShift":
 					params.Residences[i].TimeConsumedShift = value
+				}
+			}
+		case "group":
+			// گروه‌های نظام پرداخت (جدول ۳): `oilpay.group.<شماره>.public|rank`.
+			// گروه یکم گروه مستقل کارمند رسمی نفت است و گروه دوم پایهٔ سمت ۶ تا ۱۰؛
+			// پس مصوبهٔ جدا برای رسمی‌های نفت دیگر به پایهٔ سمت آن‌ها گره نمی‌خورد.
+			number, convErr := strconv.Atoi(strings.TrimSpace(parts[2]))
+			if convErr != nil || number <= 0 {
+				continue
+			}
+			for i := range params.Groups {
+				if params.Groups[i].Number != number {
+					continue
+				}
+				switch parts[3] {
+				case "public":
+					params.Groups[i].PublicAttract = value
+				case "rank":
+					params.Groups[i].PositionRank = value
 				}
 			}
 		}
@@ -429,9 +457,45 @@ func oilEmployeeOptions(ctx context.Context, deps modulekit.Deps, params rules.O
 			"jobGradeFa":     e.JobGradeFa,
 			"jobGradeSite":   rules.OilSiteForGrade(params, e.JobGrade),
 			"jobGradeSiteFa": rules.OilJobGradeTitleFa(rules.OilSiteForGrade(params, e.JobGrade)),
+			// گروه نظام پرداخت (جدول ۳): کارمند رسمی نفت گروه یکم و بقیه بر پایهٔ پایهٔ سمت.
+			"payGroup":   strconv.Itoa(oilEmployeeGroupNumber(params, e.EmploymentType, e.JobGrade)),
+			"payGroupFa": rules.OilPayGroupTitleFa(oilEmployeeGroupNumber(params, e.EmploymentType, e.JobGrade)),
 		})
 	}
 	return out
+}
+
+// oilEmployeeEmploymentType نوع استخدام کارمند را از پرونده می‌خواند (برای تعیین گروه
+// جدول ۳). نبودِ پورت یا کارمند، رشتهٔ خالی برمی‌گرداند و محاسبه با گروه پایهٔ سمت ادامه می‌یابد.
+func oilEmployeeEmploymentType(ctx context.Context, deps modulekit.Deps, employeeID string) string {
+	employeeID = strings.TrimSpace(employeeID)
+	if employeeID == "" {
+		return ""
+	}
+	reader, ok := deps.Ports.Employees()
+	if !ok {
+		return ""
+	}
+	employee, found, err := reader.Get(ctx, contracts.EmployeeFilter{Scope: "all"}, employeeID)
+	if err != nil || !found {
+		return ""
+	}
+	return strings.TrimSpace(employee.EmploymentType)
+}
+
+// oilEmployeeGroupNumber شمارهٔ گروه نظام پرداخت یک کارمند: کارمند رسمی نفت گروه یکم،
+// بقیه بر پایهٔ پایهٔ سمت جدول ۳ و اگر پایهٔ سمت معلوم نباشد گروه دوم (پایهٔ سمت ۶ تا ۱۰).
+func oilEmployeeGroupNumber(params rules.OilPayParams, employmentType, jobGrade string) int {
+	if group, ok := rules.OilPayGroupOfEmployment(employmentType); ok {
+		return group.Number
+	}
+	if group, ok := rules.OilPayGroupOfBase(jobGrade); ok {
+		return group.Number
+	}
+	if len(params.Groups) > 0 {
+		return params.Groups[0].Number
+	}
+	return 1
 }
 
 // oilPeriod دورهٔ جاری به شکل YYYY/MM (ماه حقوق).

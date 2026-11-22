@@ -18,15 +18,24 @@ type SalaryDecree struct {
 	EmploymentTypeFa string `json:"employmentTypeFa,omitempty"`
 	JobGroup         string `json:"jobGroup"`
 	BaseSalary       int64  `json:"baseSalary"`
-	EffectiveDate    string `json:"effectiveDate"`
-	ReasonFa         string `json:"reasonFa"`
-	Status           string `json:"status"`
-	StatusFa         string `json:"statusFa"`
-	SupersedesID     string `json:"supersedesId,omitempty"`
-	NoteFa           string `json:"noteFa,omitempty"`
-	CreatedBy        string `json:"createdBy,omitempty"`
-	DecidedBy        string `json:"decidedBy,omitempty"`
-	Version          int    `json:"version"`
+	// PayGroup شمارهٔ «گروه نظام پرداخت نفت» (جدول ۳ آیین‌نامهٔ فوق‌العاده‌ها). گروه یکم
+	// مخصوص کارمند رسمی نفت است و گروه دوم پایهٔ سمت ۶ تا ۱۰؛ صفر یعنی تعیین نشده.
+	PayGroup int `json:"payGroup,omitempty"`
+	// PayGroupFa عنوان فارسی گروه پرداخت برای نمایش.
+	PayGroupFa string `json:"payGroupFa,omitempty"`
+	// PayModel کلید روش پرداخت مصوب این حکم و PayModelFa عنوان فارسی آن؛ با نوع استخدام و
+	// گروه جدول ۳، «دستهٔ پرداخت» کارمند را می‌سازد.
+	PayModel      string `json:"payModel,omitempty"`
+	PayModelFa    string `json:"payModelFa,omitempty"`
+	EffectiveDate string `json:"effectiveDate"`
+	ReasonFa      string `json:"reasonFa"`
+	Status        string `json:"status"`
+	StatusFa      string `json:"statusFa"`
+	SupersedesID  string `json:"supersedesId,omitempty"`
+	NoteFa        string `json:"noteFa,omitempty"`
+	CreatedBy     string `json:"createdBy,omitempty"`
+	DecidedBy     string `json:"decidedBy,omitempty"`
+	Version       int    `json:"version"`
 
 	WageStructure
 
@@ -43,9 +52,13 @@ type SalaryDecreeInput struct {
 	EmploymentType string `json:"employmentType,omitempty"`
 	JobGroup       string `json:"jobGroup"`
 	BaseSalary     int64  `json:"baseSalary"`
-	EffectiveDate  string `json:"effectiveDate"`
-	ReasonFa       string `json:"reasonFa"`
-	NoteFa         string `json:"noteFa,omitempty"`
+	// PayGroup گروه نظام پرداخت نفت (جدول ۳)؛ صفر یعنی از نوع استخدام و پایهٔ سمت استنتاج شود.
+	PayGroup int `json:"payGroup,omitempty"`
+	// PayModel روش پرداخت مصوب (payroll | oil | comp34006 | fourp)؛ خالی یعنی پیش‌فرض نوع استخدام.
+	PayModel      string `json:"payModel,omitempty"`
+	EffectiveDate string `json:"effectiveDate"`
+	ReasonFa      string `json:"reasonFa"`
+	NoteFa        string `json:"noteFa,omitempty"`
 
 	WageStructure
 }
