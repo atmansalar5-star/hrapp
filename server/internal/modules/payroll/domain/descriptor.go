@@ -47,6 +47,8 @@ func Descriptor() recordkit.Descriptor {
 			bankFilesKind(),
 			// روش پرداخت هر کارمند: کدام موتور محاسبه مسئول این کارمند است.
 			employeePayModelKind(),
+			// تخصیص فوق العاده: پیوند کد رسمی به کارمند یا گروهی از کارکنان.
+			allowanceAssignmentKind(),
 		},
 	}
 }
@@ -434,9 +436,11 @@ func parseMoney(raw string) float64 {
 
 // Seed پارامترها، اقلام حقوق، دوره‌ها و کارانهٔ نمونه.
 func Seed() []contracts.RecordInput {
-	// روش پرداخت کارکنان نمونه در انتهای بذر می‌آید تا صفحهٔ «روش پرداخت کارکنان» در
-	// نصب تازه هم داده داشته باشد.
-	return append(append(append(payParamSeeds(), payItemSeeds()...), payrollSeedRecords()...), employeePayModelSeeds()...)
+	// روش پرداخت کارکنان و تخصیص فوق‌العاده‌ها در انتهای بذر می‌آیند تا صفحه‌های مربوط در
+	// نصب تازه هم داده داشته باشند.
+	records := append(append(append(payParamSeeds(), payItemSeeds()...), payrollSeedRecords()...),
+		employeePayModelSeeds()...)
+	return append(records, allowanceAssignmentSeeds()...)
 }
 
 // payrollSeedRecords رکوردهای نمونهٔ دوره‌ها، کارانه و فایل‌های قانونی.

@@ -15,12 +15,15 @@ package rules
 func OilFixedAllowances() []OilAllowance {
 	return []OilAllowance{
 		{Key: OilAllowanceFamily, TitleFa: "کمک هزینهٔ عایله‌مندی", GroupFa: OilGroupClimate,
+			Code:   PayslipCodeNumberOf("family"),
 			Fixed:  true,
 			NoteFa: "مبلغ ثابت ماهانه — پارامتر oilpay.allowance.family (ریال)."},
 		{Key: OilAllowanceHousing, TitleFa: "کمک هزینهٔ مسکن", GroupFa: OilGroupClimate,
+			Code:   PayslipCodeNumberOf("housing"),
 			Fixed:  true,
 			NoteFa: "مبلغ ثابت ماهانه — پارامتر oilpay.allowance.housing (ریال)."},
 		{Key: OilAllowanceChildren, TitleFa: "حق اولاد", GroupFa: OilGroupClimate,
+			Code:   PayslipCodeNumberOf("children"),
 			Fixed:  true,
 			NoteFa: "جمع حق اولاد فرزندان مشمول — پارامتر oilpay.allowance.children (ریال)."},
 		{Key: OilAllowanceExtra, TitleFa: "فوقالعادهٔ خاص", GroupFa: OilGroupClimate,

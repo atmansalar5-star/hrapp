@@ -54,6 +54,7 @@ import MissionCalcScreen from '../features/attendance/MissionCalcScreen';
 import PayrollRunScreen from '../features/payroll/PayrollRunScreen';
 import OilPayslipScreen from '../features/payroll/OilPayslipScreen';
 import PayByMethodScreen from '../features/payroll/PayByMethodScreen';
+import AllowanceAssignScreen from '../features/payroll/AllowanceAssignScreen';
 import PayslipScreen from '../features/payroll/PayslipScreen';
 import PayItemsScreen from '../features/payroll/PayItemsScreen';
 import KaranaScreen from '../features/payroll/KaranaScreen';
@@ -236,6 +237,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   PayrollRunScreen,
   OilPayslipScreen,
   PayByMethodScreen,
+  AllowanceAssignScreen,
   PayslipScreen,
   PayItemsScreen,
   PayParamsScreen,

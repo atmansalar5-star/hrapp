@@ -104,8 +104,28 @@
       ]
     },
     {
-      "key": "payslip",
+      "key": "allowanceAssign",
       "order": 3,
+      "icon": "gift",
+      "titleFa": "تخصیص فوق العاده‌های حقوق",
+      "component": "AllowanceAssignScreen",
+      "purposeFa": "تخصیص کد رسمی فوق العاده به یک کارمند یا گروهی از کارکنان: مبلغ ماهانهٔ ثابت، یک‌بار مرتبه، درصدی، ضریبی یا فرمولی، با تعیین مشمولیت مالیات و بیمه و پنجرهٔ اعتبار؛ همراه با پیش‌نمایش اقلام هر کارمند.",
+      "actionsFa": [
+        "انتخاب کد رسمی از جدول سازمان",
+        "تعیین روش محاسبه و مقدار/درصد/ضریب/فرمول",
+        "تعیین مشمولیت مالیات و بیمه",
+        "تخصیص به کارمند یا گروه (واحد، نوع استخدام، گروه شغلی، گروه پرداخت)",
+        "پیش‌نمایش و فعال/پایان تخصیص"
+      ],
+      "roles": [
+        "admin",
+        "hr_manager",
+        "hr_spec"
+      ]
+    },
+    {
+      "key": "payslip",
+      "order": 4,
       "icon": "receipt",
       "titleFa": "فیش حقوقی",
       "component": "PayslipScreen",
@@ -125,7 +145,7 @@
     },
     {
       "key": "payItems",
-      "order": 4,
+      "order": 5,
       "icon": "sliders",
       "titleFa": "اجزای حقوق",
       "component": "PayItemsScreen",
@@ -143,7 +163,7 @@
     },
     {
       "key": "karana",
-      "order": 5,
+      "order": 6,
       "icon": "hand-coins",
       "titleFa": "کارانه و پرداخت‌های متغیر",
       "component": "KaranaScreen",
@@ -163,7 +183,7 @@
     },
     {
       "key": "payReports",
-      "order": 6,
+      "order": 7,
       "icon": "bar-chart",
       "titleFa": "گزارش‌های مالی حقوق",
       "component": "PayReportsScreen",
@@ -181,7 +201,7 @@
     },
     {
       "key": "payGap",
-      "order": 8,
+      "order": 9,
       "icon": "scale",
       "titleFa": "تطبیق حقوق و تفاوت تطبیق",
       "component": "PayGapScreen",
@@ -201,7 +221,7 @@
     },
     {
       "key": "serviceBonus",
-      "order": 7,
+      "order": 8,
       "icon": "calculator",
       "titleFa": "پاداش پایان خدمت (سنوات)",
       "component": "ServiceBonusScreen",
@@ -224,7 +244,7 @@
     },
     {
       "key": "payParams",
-      "order": 9,
+      "order": 10,
       "icon": "percent",
       "titleFa": "پارامترها و ضرائب حقوق",
       "component": "PayParamsScreen",
@@ -244,7 +264,7 @@
     },
     {
       "key": "statutoryFiles",
-      "order": 10,
+      "order": 11,
       "icon": "file-check",
       "titleFa": "فایل قانونی بیمه و مالیات",
       "component": "StatutoryFilesScreen",
@@ -263,7 +283,7 @@
     },
     {
       "key": "bankPayments",
-      "order": 11,
+      "order": 12,
       "icon": "banknote",
       "titleFa": "فایل پرداخت بانکی",
       "component": "BankFilesScreen",
@@ -283,7 +303,7 @@
     },
     {
       "key": "payMethods",
-      "order": 12,
+      "order": 13,
       "icon": "user-cog",
       "titleFa": "روش پرداخت کارکنان",
       "component": "PayMethodsScreen",
@@ -303,7 +323,7 @@
     },
     {
       "key": "comp34006",
-      "order": 13,
+      "order": 14,
       "icon": "calculator",
       "titleFa": "نظام جبران خدمات ۳۴۰۰۶",
       "component": "Comp34006Screen",

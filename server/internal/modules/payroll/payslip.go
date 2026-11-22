@@ -202,6 +202,9 @@ func unifiedPayslip(ctx context.Context, deps modulekit.Deps, svc *recordkit.Ser
 	}
 
 	result["notesFa"] = notes
+	// تخصیص فوق العاده‌های همین کارمند (کد رسمی، مبلغ، مشمولیت مالیات/بیمه) کنار فیش
+	// می‌آید؛ جمع این سطرها بیرون از محاسبهٔ موتور گزارش می‌شود تا فیش هر نظام دست‌نخورده بماند.
+	result["assignments"] = allowanceAssignmentBlock(ctx, deps, svc, employee.ID, period)
 	return result, nil
 }
 

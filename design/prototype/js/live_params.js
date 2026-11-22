@@ -486,7 +486,7 @@ async function paramRunReport(source) {
   const box = document.getElementById('repResult_' + source);
   const columns = paramSelectedColumns(source);
   if (!box) return;
-  if (!columns.length) { box.innerHTML = '<div class="muted">دست‌کم یک ستون انتخاب کنید.</div>'; return; }
+  if (!columns.length) { box.textContent = 'دست‌کم یک ستون انتخاب کنید.'; return; }
   box.innerHTML = '<div class="muted">در حال اجرا...</div>';
   const res = await apiFetch('/api/v1/reports/run', {method: 'POST', body: {source, items: columns, limit: 200}});
   if (!res.ok) { box.innerHTML = `<div class="empty-state"><div class="big">⚠️</div>${esc(res.message)}</div>`; return; }

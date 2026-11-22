@@ -36,6 +36,8 @@ jobs:
         run: node tools/check/cpf-spec.mjs
       - name: ردیابی اسپک دستهٔ پرداخت (PAY ⇄ آزمون/سند)
         run: node tools/check/pcs-spec.mjs
+      - name: ردیابی اسپک تخصیص فوق العاده (ASG ⇄ آزمون/سند)
+        run: node tools/check/asg-spec.mjs
 
   go:
     name: سرور Go

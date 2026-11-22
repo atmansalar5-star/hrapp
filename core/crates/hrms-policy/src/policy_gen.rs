@@ -406,6 +406,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             roles: &[RoleKey::Admin, RoleKey::HrManager],
         },
         ScreenPolicy {
+            key: "allowanceAssign",
+            title_fa: "تخصیص فوق العاده‌های حقوق",
+            component: "AllowanceAssignScreen",
+            icon: "gift",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
+        ScreenPolicy {
             key: "payslip",
             title_fa: "فیش حقوقی",
             component: "PayslipScreen",

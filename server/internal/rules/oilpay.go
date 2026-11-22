@@ -46,6 +46,9 @@ type OilAllowance struct {
 	GroupFa string  `json:"groupFa"`
 	Percent float64 `json:"percent"`
 	Base    string  `json:"base"`
+	// Code کد رسمی «فوق العاده» همین قلم از جدول مرجع سازمان (خالی = قلم در آن جدول کد
+	// ندارد). روی فیش چاپی و در مکاتبه با مالی و بیمه، قلم با همین کد شناخته می‌شود.
+	Code string `json:"code,omitempty"`
 	// DrivenBy میگوید درصد این قلم از کدام جدول آیین‌نامه می‌آید (خالی = درصد ثابت مصوب):
 	//
 	//	residence یعنی جدول ۱ و ۲ بر پایهٔ محل سکونت (محرومیت و صرف وقت)،
@@ -274,18 +277,22 @@ func DefaultOilPayParams() OilPayParams {
 		ClimatePercent:           25,
 		Allowances: []OilAllowance{
 			{Key: OilAllowanceDeprivation, TitleFa: "فوق‌العادهٔ محرومیت از تسهیلات زندگی",
+				Code:    PayslipCodeNumberOf("deprivation"),
 				GroupFa: OilGroupClimate, Percent: 27.5, Base: OilBaseAllowance, DrivenBy: "residence",
 				NoteFa: "ردیف ۴ آیین‌نامه — درصد از جدول ۱ بر پایهٔ محل سکونت، روی مبنای فوق‌العاده‌ها."},
 			{Key: OilAllowanceSpecial, TitleFa: "فوق‌العادهٔ ویژه", GroupFa: OilGroupClimate,
 				Percent: 30, Base: OilBaseAllowance,
 				NoteFa: "ردیف ۳ آیین‌نامه — ۳۰٪ از پایهٔ حقوق و بدی آب و هوا؛ مبنای جذب را می‌سازد."},
 			{Key: OilAllowanceTimeConsumed, TitleFa: "فوق‌العادهٔ جبران صرف وقت اضافی",
+				Code:    PayslipCodeNumberOf("timeConsumed"),
 				GroupFa: OilGroupClimate, Percent: 16.5, Base: OilBaseAllowance, DrivenBy: "residence",
 				NoteFa: "ردیف ۶ آیین‌نامه — درصد از جدول ۲ بر پایهٔ محل سکونت (روزکار/نوبت‌کار)."},
 			{Key: "workshop", TitleFa: "فوق‌العادهٔ کارگاهی", GroupFa: OilGroupClimate,
+				Code:    PayslipCodeNumberOf("workshop"),
 				Percent: 10, Base: OilBaseAllowance,
 				NoteFa: "ردیف ۵ آیین‌نامه — شرایط محیط کار، ۱۰٪ از مبنای فوق‌العاده‌ها."},
 			{Key: OilAllowanceAttraction, TitleFa: "فوقالعادهٔ تخصصی شغل",
+				Code:    PayslipCodeNumberOf("attractionSpecialty"),
 				GroupFa: OilGroupClimate, Percent: 0, Base: OilBaseAttraction, DrivenBy: "grade",
 				NoteFa: "ردیف ۷ آییننامه — (A+B+C) × (Y+Z): درصد جدول ۳ بر پایهٔ پایهٔ سمت به‌همراه ضریب مدرک تحصیلی، در یک سطر روی مبنای جذب — همان سطر فیش رسمی."},
 			{Key: "production", TitleFa: "فوق‌العادهٔ کار مراکز تولیدی فرآورشی",
@@ -395,9 +402,12 @@ type OilPayInput struct {
 
 // OilPayLine یک سطر فیش (فوق‌العاده یا کسر).
 type OilPayLine struct {
-	Key      string  `json:"key"`
-	TitleFa  string  `json:"titleFa"`
-	GroupFa  string  `json:"groupFa"`
+	Key     string `json:"key"`
+	TitleFa string `json:"titleFa"`
+	GroupFa string `json:"groupFa"`
+	// Code کد رسمی «فوق العاده» همین سطر از جدول مرجع سازمان؛ خالی یعنی این سطر در آن
+	// جدول کد ندارد (مبناها، سطرهای دستی و اقلامی که هنوز کد رسمی نگرفته‌اند).
+	Code     string  `json:"code,omitempty"`
 	Percent  float64 `json:"percent,omitempty"`
 	Base     int64   `json:"base,omitempty"`
 	Amount   int64   `json:"amount"`
@@ -548,9 +558,11 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	// سطر پایه و بدی آب و هوا، تا فیش از بالا خوانا باشد.
 	out.Lines = append(out.Lines,
 		OilPayLine{Key: "baseSalary", TitleFa: "پایهٔ حقوق", GroupFa: OilGroupBase,
+			Code:   PayslipCodeNumberOf("baseSalary"),
 			Amount: base, DetailFa: "پایهٔ حقوق ماهانهٔ کارمند (A)"},
 		OilPayLine{Key: OilAllowanceClimate, TitleFa: "فوق‌العادهٔ بدی آب و هوا (مناطق گرمسیری)",
 			GroupFa: OilGroupBase, Percent: climatePercent, Base: base, Amount: climate,
+			Code:     PayslipCodeNumberOf("badClimate"),
 			DetailFa: numberFa(climatePercent) + "٪ × پایهٔ حقوق (" + moneyFa(float64(base)) + " ریال) — ردیف ۲ آیین‌نامه"},
 		OilPayLine{Key: "allowanceBase", TitleFa: "مبنای فوق‌العاده‌ها", GroupFa: OilGroupBase,
 			Amount: allowanceBase, DetailFa: "پایهٔ حقوق + فوق‌العادهٔ بدی آب و هوا (A+B)"},
@@ -597,6 +609,7 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 			}
 			line := OilPayLine{
 				Key: allowance.Key, TitleFa: allowance.TitleFa, GroupFa: allowance.GroupFa,
+				Code:   allowance.Code,
 				Amount: amount, DetailFa: oilFixedDetailFa,
 			}
 			out.AllowanceLines = append(out.AllowanceLines, line)
@@ -772,6 +785,7 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 	if out.FundEmployee > 0 {
 		out.Lines = append(out.Lines, OilPayLine{Key: "fundEmployee", TitleFa: "کسور صندوق بازنشستگی نفت",
 			GroupFa: OilGroupDeduct, Percent: params.FundEmployeePercent, Base: deductionBase, Amount: out.FundEmployee,
+			Code:     PayslipCodeNumberOf("fundEmployee"),
 			DetailFa: numberFa(params.FundEmployeePercent) + "٪ × مبنای کسور" + exemptNoteFa})
 	}
 	if out.InsuranceEmployee > 0 {
@@ -803,7 +817,8 @@ func ComputeOilPayslip(in OilPayInput, params OilPayParams) OilPayslip {
 				" ریال (ماده ۵۶ قانون جامع خدمات‌رسانی به ایثارگران)"
 		}
 		out.Lines = append(out.Lines, OilPayLine{Key: "tax", TitleFa: "مالیات",
-			GroupFa: OilGroupDeduct, Amount: out.Tax, DetailFa: taxDetailFa})
+			GroupFa: OilGroupDeduct, Amount: out.Tax,
+			Code: PayslipCodeNumberOf("tax"), DetailFa: taxDetailFa})
 	}
 	if out.OtherDeductions > 0 {
 		out.Lines = append(out.Lines, OilPayLine{Key: "otherDeductions", TitleFa: "سایر کسور",
