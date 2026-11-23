@@ -243,3 +243,201 @@ func TestASG10ReportingFlags(t *testing.T) {
 		t.Fatalf("کد گزارش نامعتبر باید رد شود: %+v", errs)
 	}
 }
+
+// TestASG12AllowanceDefinition می‌سنجد تعریف فوق العاده (گام یکم) درست سنجیده و کامل
+// می‌شود: کد رسمی یا کد داخلی، روش محاسبه، متغیرها و کد گزارش.
+func TestASG12AllowanceDefinition(t *testing.T) {
+	def := NormalizeAllowanceDefinition(AllowanceDefinition{
+		Code: "151", Calc: AllowanceCalcFixed, Rate: "9000000", VarsText: "SITE=1",
+		ShowOnPayslip: true, ShowInReports: true, ReportCode: "151-R",
+	})
+	if !def.CodeOfficial || def.CodeTitleFa != "مسکن" || def.TitleFa != "مسکن" {
+		t.Fatalf("کد رسمی باید عنوان و نوع قلم را بدهد: %+v", def)
+	}
+	if def.Category != AllowanceCategoryEarning {
+		t.Fatalf("نوع قلم از کد رسمی استنتاج نشد: %+v", def)
+	}
+	if errs := ValidateAllowanceDefinition(def); len(errs) != 0 {
+		t.Fatalf("تعریف معتبر نباید خطا بدهد: %+v", errs)
+	}
+
+	// کد داخلی (قلم بی‌کد رسمی) هم پذیرفته می‌شود ولی «رسمی» نشان نمی‌خورد.
+	internal := NormalizeAllowanceDefinition(AllowanceDefinition{
+		Code: "X-100", TitleFa: "فوق العادهٔ داخلی", Category: AllowanceCategoryEarning,
+		Calc: AllowanceCalcFixed, Rate: "1000000",
+	})
+	if internal.CodeOfficial {
+		t.Fatal("کد داخلی نباید رسمی شمرده شود")
+	}
+	if errs := ValidateAllowanceDefinition(internal); len(errs) != 0 {
+		t.Fatalf("کد داخلی معتبر نباید خطا بدهد: %+v", errs)
+	}
+
+	// متغیرها: نام=مقدار، جدا‌شده با کاما/نقطه‌ویرگول/خط تازه و با ارقام فارسی.
+	vars, problems := ParseAllowanceVars("children=2, RATE=0.15؛ SITE=۱\nEXTRA=3")
+	if len(problems) != 0 {
+		t.Fatalf("متغیرهای معتبر نباید ایراد بدهند: %v", problems)
+	}
+	if vars["CHILDREN"] != 2 || vars["RATE"] != 0.15 || vars["SITE"] != 1 || vars["EXTRA"] != 3 {
+		t.Fatalf("متغیرها درست خوانده نشدند: %+v", vars)
+	}
+	if text := AllowanceVarsText(vars); text != "CHILDREN=2, EXTRA=3, RATE=0.15, SITE=1" {
+		t.Fatalf("متن متغیرها باید مرتب و خوانا باشد: %q", text)
+	}
+
+	badVars := []string{"CHILDREN", "2X=3", "A=x", "RATE="}
+	for _, raw := range badVars {
+		if _, problems := ParseAllowanceVars(raw); len(problems) == 0 {
+			t.Fatalf("متغیر نامعتبر «%s» باید ایراد بدهد", raw)
+		}
+	}
+
+	// ورودی نامعتبر تعریف: کد بی‌شکل، روش محاسبه نبود، مقدار صفر، کد گزارش بدشکل.
+	badDefs := []AllowanceDefinition{
+		{Code: "!!", Calc: AllowanceCalcFixed, Rate: "1"},
+		{Code: "151", Rate: "1"},
+		{Code: "151", Calc: AllowanceCalcFixed, Rate: "0"},
+		{Code: "151", Calc: AllowanceCalcPercent, Rate: "10"},
+		{Code: "151", Calc: AllowanceCalcFormula},
+		{Code: "151", Calc: AllowanceCalcFixed, Rate: "1", VarsText: "CHILDREN=2x"},
+		{Code: "151", Calc: AllowanceCalcFixed, Rate: "1", ReportCode: "کد گزارش!"},
+	}
+	for i, in := range badDefs {
+		if errs := ValidateAllowanceDefinition(in); len(errs) == 0 {
+			t.Fatalf("تعریف نادرست %d باید خطا بدهد: %+v", i, in)
+		}
+	}
+}
+
+// TestASG13DefinitionMerge می‌سنجد تخصیص (گام دوم) با تعریفش یکی می‌شود، بازنویسی مقدار و
+// مبنا اثر می‌گذارد، متغیرهای تعریف به محاسبه می‌رسند و تخصیص قدیمی دست‌نخورده می‌ماند.
+func TestASG13DefinitionMerge(t *testing.T) {
+	def := NormalizeAllowanceDefinition(AllowanceDefinition{
+		ID: "ALD-0001", Code: "122", Calc: AllowanceCalcPercent, Rate: "10", Basis: "allowanceBase",
+		Taxable: true, Insured: true, ShowOnPayslip: true, ShowInReports: true, ReportCode: "122-R",
+		VarsText: "SITE=1",
+	})
+	employee := AllowanceEmployee{ID: "EMP-001", EmploymentType: "official_oil"}
+	env := AllowanceEnv{Bases: map[string]float64{"allowanceBase": 100_000_000, "base": 50_000_000}, Period: "1405/02"}
+
+	// الف) بدون بازنویسی: ۱۰٪ مبنای فوق العاده = ۱۰ میلیون.
+	plain := AllowanceAssignment{
+		ID: "ALW-1", Definition: "ALD-0001", Status: "active",
+		Target: AllowanceTarget{Kind: AllowanceTargetEmployment, Value: "official_oil"}, EffectiveFrom: "1405/01",
+	}
+	lines := ResolveAllowanceLines(map[string]AllowanceDefinition{"ALD-0001": def}, []AllowanceAssignment{plain}, employee, env)
+	if len(lines) != 1 {
+		t.Fatalf("تخصیص تعریف‌محور باید یک سطر بدهد: %+v", lines)
+	}
+	line := lines[0]
+	if line.Code != "122" || line.Amount != 10_000_000 || line.DefinitionID != "ALD-0001" {
+		t.Fatalf("سطر تعریف‌محور درست نیست: %+v", line)
+	}
+	if !line.Taxable || !line.Insured || line.ReportCode != "122-R" || !line.ShowOnPayslip {
+		t.Fatalf("پرچم‌ها باید از تعریف بیایند: %+v", line)
+	}
+
+	// ب) بازنویسی مقدار روی همان تعریف: ۱۵٪ مالک ۱۰٪ است.
+	override := plain
+	override.RateOverride = "15"
+	lines = ResolveAllowanceLines(map[string]AllowanceDefinition{"ALD-0001": def}, []AllowanceAssignment{override}, employee, env)
+	if lines[0].Amount != 15_000_000 {
+		t.Fatalf("بازنویسی مقدار باید اثر کند: %+v", lines[0])
+	}
+
+	// ج) بازنویسی مبنا.
+	overrideBasis := override
+	overrideBasis.BasisOverride = "base"
+	lines = ResolveAllowanceLines(map[string]AllowanceDefinition{"ALD-0001": def}, []AllowanceAssignment{overrideBasis}, employee, env)
+	if lines[0].Amount != 7_500_000 || lines[0].Basis != "base" {
+		t.Fatalf("بازنویسی مبنا باید اثر کند: %+v", lines[0])
+	}
+
+	// د) متغیرهای تعریف در فرمول به کار می‌روند و متغیر درخواست مقدم است.
+	formulaDef := NormalizeAllowanceDefinition(AllowanceDefinition{
+		ID: "ALD-0002", Code: "X-100", TitleFa: "فرمولی", Category: AllowanceCategoryEarning,
+		Calc: AllowanceCalcFormula, Formula: "BASE*CHILDREN", VarsText: "CHILDREN=2",
+	})
+	formulaAssignment := AllowanceAssignment{
+		ID: "ALW-2", Definition: "ALD-0002", Status: "active",
+		Target: AllowanceTarget{Kind: AllowanceTargetAll}, EffectiveFrom: "1405/01",
+	}
+	lines = ResolveAllowanceLines(map[string]AllowanceDefinition{"ALD-0002": formulaDef}, []AllowanceAssignment{formulaAssignment}, employee, env)
+	if lines[0].Amount != 100_000_000 {
+		t.Fatalf("متغیر تعریف در فرمول به کار نرفت: %+v", lines[0])
+	}
+	envWithVar := env
+	envWithVar.Vars = map[string]float64{"CHILDREN": 3}
+	lines = ResolveAllowanceLines(map[string]AllowanceDefinition{"ALD-0002": formulaDef}, []AllowanceAssignment{formulaAssignment}, employee, envWithVar)
+	if lines[0].Amount != 150_000_000 {
+		t.Fatalf("متغیر درخواست باید مقدم بر متغیر تعریف باشد: %+v", lines[0])
+	}
+
+	// ه) تخصیص قدیمی (بدون تعریف) دست‌نخورده حساب می‌شود.
+	legacy := AllowanceAssignment{
+		ID: "ALW-3", Code: "151", Category: AllowanceCategoryEarning, Calc: AllowanceCalcFixed, Rate: "9000000",
+		Status: "active", Target: AllowanceTarget{Kind: AllowanceTargetAll}, EffectiveFrom: "1405/01",
+	}
+	lines = ResolveAllowanceLines(map[string]AllowanceDefinition{"ALD-0001": def}, []AllowanceAssignment{legacy}, employee, env)
+	if len(lines) != 1 || lines[0].Amount != 9_000_000 || lines[0].DefinitionID != "" {
+		t.Fatalf("تخصیص درون‌خطی قدیمی باید بی‌تغییر بماند: %+v", lines)
+	}
+
+	// و) تعریف پیدا نشود: سطر با توضیح صریح می‌آید و مبلغ نمی‌سازد.
+	lines = ResolveAllowanceLines(nil, []AllowanceAssignment{plain}, employee, env)
+	if len(lines) != 1 || lines[0].Amount != 0 || lines[0].DetailFa == "" {
+		t.Fatalf("نبود تعریف باید صریح گزارش شود: %+v", lines)
+	}
+}
+
+// TestASG17OverlapWarning می‌سنجد هم‌پوشانی تخصیص‌ها (یک قلم از دو تخصیص فعال) هشدار
+// می‌دهد تا مبلغ بی‌صدا دوبار حساب نشود.
+func TestASG17OverlapWarning(t *testing.T) {
+	employee := AllowanceEmployee{ID: "EMP-001", EmploymentType: "official_oil"}
+	def := NormalizeAllowanceDefinition(AllowanceDefinition{
+		ID: "ALD-0001", Code: "122", Calc: AllowanceCalcFixed, Rate: "1000000",
+		ShowOnPayslip: true, ShowInReports: true,
+	})
+	defs := map[string]AllowanceDefinition{"ALD-0001": def}
+
+	// الف) یک تخصیص گروهی + یک تخصیص فردی روی همان تعریف ⇒ هشدار.
+	group := AllowanceAssignment{ID: "ALW-1", Definition: "ALD-0001", Status: "active",
+		Target: AllowanceTarget{Kind: AllowanceTargetEmployment, Value: "official_oil"}, EffectiveFrom: "1405/01"}
+	person := AllowanceAssignment{ID: "ALW-2", Definition: "ALD-0001", Status: "active",
+		Target: AllowanceTarget{Kind: AllowanceTargetEmployee, Value: "EMP-001"}, EffectiveFrom: "1405/01"}
+	lines := ResolveAllowanceLines(defs, []AllowanceAssignment{group, person}, employee, AllowanceEnv{Period: "1405/02"})
+	warnings := AllowanceOverlapWarnings(lines)
+	if len(lines) != 2 || len(warnings) != 1 {
+		t.Fatalf("دو تخصیص روی یک تعریف باید یک هشدار بدهد: lines=%d warnings=%v", len(lines), warnings)
+	}
+	if !strings.Contains(warnings[0], "122") || !strings.Contains(warnings[0], "2") {
+		t.Fatalf("متن هشدار باید کد و تعداد را بگوید: %q", warnings[0])
+	}
+
+	// ب) اقلام متفاوت ⇒ بی‌هشدار.
+	other := NormalizeAllowanceDefinition(AllowanceDefinition{
+		ID: "ALD-0002", Code: "151", Calc: AllowanceCalcFixed, Rate: "9000000"})
+	otherAssign := AllowanceAssignment{ID: "ALW-3", Definition: "ALD-0002", Status: "active",
+		Target: AllowanceTarget{Kind: AllowanceTargetAll}, EffectiveFrom: "1405/01"}
+	defs["ALD-0002"] = other
+	lines = ResolveAllowanceLines(defs, []AllowanceAssignment{group, otherAssign}, employee, AllowanceEnv{Period: "1405/02"})
+	if warnings := AllowanceOverlapWarnings(lines); len(warnings) != 0 {
+		t.Fatalf("اقلام متفاوت نباید هشدار بدهند: %v", warnings)
+	}
+
+	// ج) تخصیص قدیمی و تعریف‌محور با همان کد ⇒ هشدار (هم‌پوشانی کد).
+	legacy := AllowanceAssignment{ID: "ALW-4", Code: "122", Calc: AllowanceCalcFixed, Rate: "1000000",
+		Status: "active", Target: AllowanceTarget{Kind: AllowanceTargetAll}, EffectiveFrom: "1405/01"}
+	lines = ResolveAllowanceLines(defs, []AllowanceAssignment{group, legacy}, employee, AllowanceEnv{Period: "1405/02"})
+	if warnings := AllowanceOverlapWarnings(lines); len(warnings) != 1 {
+		t.Fatalf("هم‌پوشانی کد یکسان باید هشدار بدهد (حتی اگر یکی تعریف‌محور باشد): %v", warnings)
+	}
+
+	// د) سطر بی‌تخصیص (تعریف گمشده) در هشدار شمرده نمی‌شود.
+	missing := AllowanceAssignment{ID: "ALW-5", Definition: "ALD-9999", Status: "active",
+		Target: AllowanceTarget{Kind: AllowanceTargetAll}, EffectiveFrom: "1405/01"}
+	lines = ResolveAllowanceLines(defs, []AllowanceAssignment{group, missing}, employee, AllowanceEnv{Period: "1405/02"})
+	if warnings := AllowanceOverlapWarnings(lines); len(warnings) != 0 {
+		t.Fatalf("سطر پیام‌دار نباید هشدار هم‌پوشانی بسازد: %v", warnings)
+	}
+}

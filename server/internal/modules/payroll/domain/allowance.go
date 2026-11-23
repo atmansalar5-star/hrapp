@@ -25,10 +25,16 @@ func allowanceAssignmentKind() recordkit.Kind {
 		Key: KindAllowanceAssignment, TitleFa: "تخصیص فوق العادهٔ حقوق", IDPrefix: "ALW",
 		EmployeeScoped: false,
 		Fields: recordkit.Fields(
-			"code|کد فوق العاده (جدول رسمی)|select|1",
+			// گام دوم کار: تخصیص یک «تعریف فوق العاده» به یک گروه استخدامی یا افراد.
+			"definition|تعریف فوق العاده (شناسهٔ ALD-xxxx)|text|0",
+			"rateOverride|بازنویسی مقدار/درصد/ضریب (خالی = مقدار تعریف)|text|0",
+			"basisOverride|بازنویسی مبنا (خالی = مبنای تعریف)|select|0",
+			// فیلدهای زیر برای تخصیص‌های قدیمی (درون‌خطی، بدون تعریف) مانده‌اند تا سابقهٔ
+			// ثبت‌شده از کار نیفتد؛ فرم تازه از «تعریف» استفاده می‌کند.
+			"code|کد فوق العاده (جدول رسمی)|select|0",
 			"titleFa|عنوان قلم (خالی = عنوان رسمی همان کد)|text|0",
 			"category|نوع قلم (earning مزایا / deduction کسور)|select|0",
-			"calc|روش محاسبه (fixed ماهانه ثابت / once یک‌بار مرتبه / percent درصدی / coefficient ضریبی / formula فرمولی)|select|1",
+			"calc|روش محاسبه (fixed ماهانه ثابت / once یک‌بار مرتبه / percent درصدی / coefficient ضریبی / formula فرمولی)|select|0",
 			"rate|مقدار، درصد یا ضریب|text|0",
 			"basis|مبنای محاسبه (base/allowanceBase/attractionBase/gross/insuranceBase/constant)|select|0",
 			"formula|فرمول محاسبه|text|0",
@@ -89,6 +95,9 @@ func validateAllowanceAssignment(in contracts.RecordInput) error {
 	}
 
 	assignment := rules.AllowanceAssignment{
+		Definition:    strings.TrimSpace(f["definition"]),
+		RateOverride:  strings.TrimSpace(f["rateOverride"]),
+		BasisOverride: strings.TrimSpace(f["basisOverride"]),
 		Code:          strings.TrimSpace(f["code"]),
 		TitleFa:       strings.TrimSpace(f["titleFa"]),
 		Category:      strings.TrimSpace(f["category"]),
@@ -126,24 +135,23 @@ func validateAllowanceAssignment(in contracts.RecordInput) error {
 	return nil
 }
 
-// allowanceAssignmentSeeds نمونهٔ تخصیص برای نصب تازه: یک قلم گروهی و یک قلم فردی.
+// allowanceAssignmentSeeds نمونهٔ تخصیص برای نصب تازه: دو تخصیص «تعریف‌محور» (به تعریف
+// ALD-0001 و ALD-0003 وصل‌اند) و یک تخصیص «درون‌خطی» قدیمی که سازگاری سابقه را نشان می‌دهد.
 //
-// چرا نمونه لازم است: صفحهٔ «تخصیص فوق العاده‌های حقوق» باید شکل کار را در نصب خالی هم
+// چرا نمونه لازم است: صفحهٔ «تعریف و تخصیص فوق العاده‌ها» باید شکل کار را در نصب خالی هم
 // نشان دهد؛ این رکوردها فقط در نصب تازه و وقتی جدول خالی است ساخته می‌شوند.
 func allowanceAssignmentSeeds() []contracts.RecordInput {
 	return []contracts.RecordInput{
 		{Kind: KindAllowanceAssignment, Title: "تخصیص مسکن — همهٔ کارکنان",
-			NoteFa: "مبلغ ثابت ماهانهٔ کمک هزینهٔ مسکن برای همهٔ کارکنان",
+			NoteFa: "ثبت تعریف ALD-0001 برای همهٔ کارکنان",
 			Fields: map[string]string{
-				"code": "151", "category": rules.AllowanceCategoryEarning,
-				"calc": rules.AllowanceCalcFixed, "rate": "9000000",
-				"taxable": "خیر", "insured": "خیر",
+				"definition": "ALD-0001",
 				"targetKind": rules.AllowanceTargetAll, "targetValue": "",
 				"effectiveFrom": "1405/01/01", "noteFa": "بخشنامهٔ رفاهی سال",
 			},
 			SeedStatus: "active"},
-		{Kind: KindAllowanceAssignment, Title: "تخصیص حق اولاد — فرزندان مشمول",
-			NoteFa: "درصدی از پایهٔ حقوق برای کارکنان مشمول حق اولاد",
+		{Kind: KindAllowanceAssignment, Title: "تخصیص حق اولاد — گروه استخدامی رسمی نفت",
+			NoteFa: "تخصیص درون‌خطی (بدون تعریف) برای کارکنان رسمی نفت",
 			Fields: map[string]string{
 				"code": "181", "category": rules.AllowanceCategoryEarning,
 				"calc": rules.AllowanceCalcPercent, "rate": "3", "basis": "base",
@@ -153,11 +161,9 @@ func allowanceAssignmentSeeds() []contracts.RecordInput {
 			},
 			SeedStatus: "active"},
 		{Kind: KindAllowanceAssignment, Title: "تخصیص کسر وام اضطراری — نمونه",
-			NoteFa: "کسر ماهانهٔ قسط وام اضطراری برای یک کارمند",
+			NoteFa: "ثبت تعریف ALD-0003 برای یک کارمند",
 			Fields: map[string]string{
-				"code": "5400", "category": rules.AllowanceCategoryDeduction,
-				"calc": rules.AllowanceCalcFixed, "rate": "2500000",
-				"taxable": "خیر", "insured": "خیر",
+				"definition": "ALD-0003", "rateOverride": "2500000",
 				"targetKind": rules.AllowanceTargetEmployee, "targetValue": "EMP-004",
 				"effectiveFrom": "1405/01/01", "noteFa": "قرارداد وام اضطراری",
 			},

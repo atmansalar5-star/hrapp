@@ -13,6 +13,7 @@
 package rules
 
 import (
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -204,11 +205,54 @@ type AllowanceAssignment struct {
 	ShowInReports bool `json:"showInReports"`
 	// ReportCode کد گزارش (کدال / کد رسمی گزارش سازمان) برای درج در گزارش‌های رسمی.
 	ReportCode string `json:"reportCode,omitempty"`
+	// Definition شناسهٔ «تعریف فوق العاده» که این تخصیص به آن وصل است.
+	//
+	// چرا ارجاع و نه تکرار: تعریف (کد، روش محاسبه، متغیرها، مشمولیت کسور و جای نمایش)
+	// یک سند مرجع است و تخصیص فقط دامنه و پنجرهٔ اعتبار را می‌گوید. اگر مقدار/مبنای
+	// دیگری برای یک گروه لازم بود، با RateOverride/BasisOverride بازنویسی می‌شود.
+	Definition string `json:"definition,omitempty"`
+	// RateOverride/BasisOverride بازنویسی مقدار و مبنا برای همین تخصیص (خالی = تعریف).
+	RateOverride  string `json:"rateOverride,omitempty"`
+	BasisOverride string `json:"basisOverride,omitempty"`
 	// Target دامنهٔ اثر: یک کارمند یا گروهی از کارکنان.
 	Target AllowanceTarget `json:"target"`
 	// EffectiveFrom ماه شروع (YYYY/MM) و EffectiveTo ماه پایان (خالی = تا اطلاع).
 	EffectiveFrom string `json:"effectiveFrom"`
 	EffectiveTo   string `json:"effectiveTo,omitempty"`
+	NoteFa        string `json:"noteFa,omitempty"`
+	Status        string `json:"status,omitempty"`
+}
+
+// AllowanceDefinition تعریف یک فوق العاده — سند مرجع پیش از تخصیص.
+//
+// ترتیب کار سازمان همین است: نخست فوق العاده تعریف می‌شود (کد رسمی یا کد داخلی، نوع قلم،
+// روش محاسبه، مقدار/مبنا/فرمول، **متغیرها**، مشمولیت مالیات و بیمه، جای نمایش در فیش و
+// گزارش و کد گزارش)، سپس همان تعریف به یک گروه استخدامی یا فرد تخصیص داده می‌شود. تعریف
+// یک‌جا می‌ماند و چند تخصیص می‌تواند به آن وصل شود؛ تغییر نرخ یا فرمول فقط در یک جا انجام
+// می‌گیرد و همهٔ تخصیص‌های وابسته همان را می‌بینند.
+type AllowanceDefinition struct {
+	ID string `json:"id"`
+	// Code کد رسمی جدول سازمان؛ کد داخلی (مثل X-100) هم پذیرفته می‌شود و آنگاه
+	// CodeOfficial نادرست می‌ماند و در پاسخ API صریح گزارش می‌گردد.
+	Code string `json:"code"`
+	// CodeOfficial آیا این کد در جدول رسمی «کد فوق العاده» هست.
+	CodeOfficial bool   `json:"codeOfficial"`
+	CodeTitleFa  string `json:"codeTitleFa,omitempty"`
+	TitleFa      string `json:"titleFa"`
+	Category     string `json:"category"`
+	Calc         string `json:"calc"`
+	Rate         string `json:"rate,omitempty"`
+	Basis        string `json:"basis,omitempty"`
+	Formula      string `json:"formula,omitempty"`
+	// Vars متغیرهای تعریف (نام → مقدار) که در محاسبهٔ فرمولی/شرطی به کار می‌روند.
+	Vars map[string]float64 `json:"vars,omitempty"`
+	// VarsText نمایش خوانای متغیرها برای فرم و گزارش (مثل «CHILDREN=2, RATE=0.15»).
+	VarsText      string `json:"varsText,omitempty"`
+	Taxable       bool   `json:"taxable"`
+	Insured       bool   `json:"insured"`
+	ShowOnPayslip bool   `json:"showOnPayslip"`
+	ShowInReports bool   `json:"showInReports"`
+	ReportCode    string `json:"reportCode,omitempty"`
 	NoteFa        string `json:"noteFa,omitempty"`
 	Status        string `json:"status,omitempty"`
 }
@@ -239,13 +283,277 @@ type AllowanceLine struct {
 	ReportCode    string  `json:"reportCode,omitempty"`
 	Resolved      bool    `json:"resolved"`
 	SourceFa      string  `json:"sourceFa"`
+	DefinitionID  string  `json:"definitionId,omitempty"`
 	AssignmentID  string  `json:"assignmentId,omitempty"`
 	DetailFa      string  `json:"detailFa,omitempty"`
 }
 
+// ParseAllowanceVars متن متغیرهای تعریف را می‌خواند: «نام=مقدار»های جدا‌شده با کاما،
+// نقطه‌ویرگول یا خط تازه. نام متغیر با حرف شروع می‌شود و حرف/رقم/زیرخط دارد؛ مقدار عدد
+// است. خروجی دوم خطاهای فارسی وابسته به همان ورودی است.
+func ParseAllowanceVars(text string) (map[string]float64, []string) {
+	vars := map[string]float64{}
+	problems := []string{}
+	cleaned := normalizeAllowanceDigits(strings.TrimSpace(text))
+	if cleaned == "" {
+		return vars, problems
+	}
+	fields := strings.FieldsFunc(cleaned, func(r rune) bool {
+		// جداکننده‌ها: کاما و نقطه‌ویرگول لاتین/فارسی و خط تازه.
+		return r == ',' || r == ';' || r == '\n' || r == '،' || r == '؛' || r == '|'
+	})
+	for _, raw := range fields {
+		part := strings.TrimSpace(raw)
+		if part == "" {
+			continue
+		}
+		eq := strings.IndexAny(part, "=:")
+		if eq <= 0 {
+			problems = append(problems, "متغیر «"+part+"» باید به شکل نام=مقدار باشد.")
+			continue
+		}
+		name := strings.ToUpper(strings.TrimSpace(part[:eq]))
+		valueText := strings.TrimSpace(part[eq+1:])
+		if !isVarsName(name) {
+			problems = append(problems, "نام متغیر «"+name+"» معتبر نیست (حرف، رقم و زیرخط).")
+			continue
+		}
+		value, err := strconv.ParseFloat(valueText, 64)
+		if err != nil {
+			problems = append(problems, "مقدار متغیر «"+name+"» عدد نیست.")
+			continue
+		}
+		vars[name] = value
+	}
+	return vars, problems
+}
+
+// AllowanceVarsText متن خوانای متغیرها به ترتیب الفبا (برای فرم و گزارش).
+func AllowanceVarsText(vars map[string]float64) string {
+	if len(vars) == 0 {
+		return ""
+	}
+	names := make([]string, 0, len(vars))
+	for name := range vars {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	parts := make([]string, 0, len(names))
+	for _, name := range names {
+		parts = append(parts, name+"="+trimFloatText(vars[name]))
+	}
+	return strings.Join(parts, ", ")
+}
+
+// AllowanceCodeOfficial آیا کد در جدول رسمی «کد فوق العاده» هست.
+func AllowanceCodeOfficial(code string) bool {
+	_, ok := PayslipCodeByNumber(code)
+	return ok
+}
+
+// ValidAllowanceInternalCode آیا متن یک کد داخلی معتبر است (حرف/رقم، جداکننده - . _).
+func ValidAllowanceInternalCode(code string) bool {
+	value := normalizeAllowanceDigits(strings.TrimSpace(code))
+	if len([]rune(value)) < 2 || len([]rune(value)) > 20 {
+		return false
+	}
+	for _, r := range value {
+		switch {
+		case r >= '0' && r <= '9':
+		case r >= 'a' && r <= 'z':
+		case r >= 'A' && r <= 'Z':
+		case r == '-' || r == '_' || r == '.':
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+// ValidateAllowanceDefinition تعریف فوق العاده را می‌سنجد (بدون دامنه و پنجرهٔ اعتبار که
+// کار تخصیص است).
+func ValidateAllowanceDefinition(def AllowanceDefinition) map[string]string {
+	errs := map[string]string{}
+	code := strings.TrimSpace(def.Code)
+	if code == "" {
+		errs["code"] = "کد فوق العاده الزامی است."
+	} else if !AllowanceCodeOfficial(code) && !ValidAllowanceInternalCode(code) {
+		errs["code"] = "کد باید از جدول رسمی باشد یا کد داخلی معتبر (حرف و رقم، ۲ تا ۲۰ نویسه)."
+	}
+
+	def.Calc = strings.TrimSpace(def.Calc)
+	def.Rate = strings.TrimSpace(def.Rate)
+	def.Basis = strings.TrimSpace(def.Basis)
+	def.Formula = strings.TrimSpace(def.Formula)
+
+	// نوع قلم: اگر نگفته باشند از کد رسمی استنتاج می‌شود.
+	category := strings.TrimSpace(def.Category)
+	if category == "" {
+		if official, ok := PayslipCodeByNumber(code); ok {
+			if official.Kind == PayslipKindEarning {
+				category = AllowanceCategoryEarning
+			} else {
+				category = AllowanceCategoryDeduction
+			}
+		} else {
+			errs["category"] = "نوع قلم (مزایا یا کسور) الزامی است."
+		}
+	}
+
+	switch def.Calc {
+	case AllowanceCalcFixed, AllowanceCalcOnce:
+		if !isPositiveNumberText(def.Rate) {
+			errs["rate"] = "برای مبلغ ثابت یا یک‌بار مرتبه، مقدار مثبت (ریال) الزامی است."
+		}
+	case AllowanceCalcPercent, AllowanceCalcCoefficient:
+		if !isPositiveNumberText(def.Rate) {
+			errs["rate"] = "برای محاسبهٔ درصدی یا ضریبی، مقدار عددی الزامی است."
+		}
+		if def.Basis == "" {
+			errs["basis"] = "مبنای محاسبه الزامی است."
+		}
+	case AllowanceCalcFormula:
+		if def.Formula == "" {
+			errs["formula"] = "فرمول محاسبه الزامی است."
+		} else if _, err := EvalFormula(def.Formula, trialFormulaVars(def.Formula)); err != nil {
+			if _, ok := err.(*FormulaError); ok && strings.Contains(err.Error(), "متغیر") {
+				// متغیر ناشناخته در آزمون پذیرفته است؛ مقدارش از متغیرهای تعریف می‌آید.
+			} else {
+				errs["formula"] = "فرمول معتبر نیست: " + err.Error()
+			}
+		}
+	default:
+		errs["calc"] = "روش محاسبه الزامی است (مبلغ ثابت، یک‌بار مرتبه، درصدی، ضریبی یا فرمولی)."
+	}
+
+	if _, problems := ParseAllowanceVars(def.VarsText); len(problems) > 0 {
+		errs["vars"] = strings.Join(problems, " ")
+	}
+	if code := strings.TrimSpace(def.ReportCode); code != "" && !isReportCodeText(code) {
+		errs["reportCode"] = "کد گزارش باید فقط حرف و رقم باشد (حداکثر ۲۰ نویسه)."
+	}
+	return errs
+}
+
+// NormalizeAllowanceDefinition تعریف را کامل می‌کند: عنوان، نوع قلم و متغیرها از کد و متن
+// متغیرها پر می‌شوند تا فرم و گزارش یک تصویر ببینند.
+func NormalizeAllowanceDefinition(def AllowanceDefinition) AllowanceDefinition {
+	out := def
+	out.Code = strings.TrimSpace(def.Code)
+	if official, ok := PayslipCodeByNumber(out.Code); ok {
+		out.CodeOfficial = true
+		out.CodeTitleFa = official.TitleFa
+		if strings.TrimSpace(out.TitleFa) == "" {
+			out.TitleFa = official.TitleFa
+		}
+	}
+	if strings.TrimSpace(out.Category) == "" {
+		switch {
+		case out.CodeOfficial && mustPayslipKind(out.Code) != PayslipKindEarning:
+			out.Category = AllowanceCategoryDeduction
+		default:
+			out.Category = AllowanceCategoryEarning
+		}
+	}
+	vars, _ := ParseAllowanceVars(def.VarsText)
+	out.Vars = vars
+	out.VarsText = AllowanceVarsText(vars)
+	out.Calc = strings.TrimSpace(def.Calc)
+	out.Rate = strings.TrimSpace(def.Rate)
+	out.Basis = strings.TrimSpace(def.Basis)
+	out.Formula = strings.TrimSpace(def.Formula)
+	out.ReportCode = strings.TrimSpace(def.ReportCode)
+	return out
+}
+
+// mustPayslipKind نوع قلم رسمی یک کد (برای استنتاج نوع قلم تعریف).
+func mustPayslipKind(code string) string {
+	if official, ok := PayslipCodeByNumber(code); ok {
+		return official.Kind
+	}
+	return PayslipKindEarning
+}
+
+// MergeAllowanceDefinition تعریف و تخصیص را یکی می‌کند: مقدار/مبنای تخصیص اگر بازنویسی
+// شده باشد بر تعریف مقدم است، وگرنه همه‌چیز از تعریف می‌آید.
+//
+// تخصیص‌های قدیمی (بدون Definition) دست‌نخورده برمی‌گردند تا سابقهٔ ثبت‌شده از کار نیفتد.
+func MergeAllowanceDefinition(def AllowanceDefinition, a AllowanceAssignment) AllowanceAssignment {
+	if strings.TrimSpace(a.Definition) == "" {
+		return a
+	}
+	out := a
+	out.Code = def.Code
+	out.TitleFa = def.TitleFa
+	out.Category = def.Category
+	out.Calc = def.Calc
+	out.Basis = def.Basis
+	out.Formula = def.Formula
+	out.Taxable = def.Taxable
+	out.Insured = def.Insured
+	out.ShowOnPayslip = def.ShowOnPayslip
+	out.ShowInReports = def.ShowInReports
+	out.ReportCode = def.ReportCode
+	// بازنویسی‌های همین تخصیص.
+	if rate := strings.TrimSpace(a.RateOverride); rate != "" {
+		out.Rate = rate
+	} else {
+		out.Rate = def.Rate
+	}
+	if basis := strings.TrimSpace(a.BasisOverride); basis != "" {
+		out.Basis = basis
+	}
+	if out.TitleFa == "" {
+		out.TitleFa = def.CodeTitleFa
+	}
+	return out
+}
+
+// trimFloatText عدد اعشاری را بی‌صفر انتهایی به متن تبدیل می‌کند.
+func trimFloatText(v float64) string {
+	return strconv.FormatFloat(v, 'f', -1, 64)
+}
+
+// isVarsName بررسی نام متغیر (حرف شروع، حرف/رقم/زیرخط).
+func isVarsName(name string) bool {
+	if name == "" {
+		return false
+	}
+	for i, r := range name {
+		switch {
+		case r >= 'A' && r <= 'Z':
+		case r >= '0' && r <= '9':
+			if i == 0 {
+				return false
+			}
+		case r == '_':
+			if i == 0 {
+				return false
+			}
+		default:
+			return false
+		}
+	}
+	return true
+}
+
 // ValidateAllowanceAssignment ورودی یک تخصیص را می‌سنجد و خطاهای فیلدبه‌فیلد می‌دهد.
+//
+// دو حالت پذیرفته است:
+//   - تخصیص «تعریف‌محور»: شناسهٔ تعریف آمده و کد/روش محاسبه کارِ تعریف است؛ اینجا فقط
+//     دامنه، پنجرهٔ اعتبار و بازنویسی‌ها سنجیده می‌شود.
+//   - تخصیص «قدیمی/درون‌خطی»: بدون تعریف ثبت شده و کد، نوع قلم و روش محاسبه‌اش در خودش
+//     است (سازگاری با سابقهٔ ثبت‌شده).
 func ValidateAllowanceAssignment(in AllowanceAssignment) map[string]string {
 	errs := map[string]string{}
+
+	defBased := strings.TrimSpace(in.Definition) != ""
+	if defBased {
+		if rate := strings.TrimSpace(in.RateOverride); rate != "" && !isPositiveNumberText(rate) {
+			errs["rateOverride"] = "بازنویسی مقدار باید عددی مثبت باشد."
+		}
+		return allowanceScopeErrors(in, errs)
+	}
 
 	code := strings.TrimSpace(in.Code)
 	if code == "" {
@@ -309,6 +617,21 @@ func ValidateAllowanceAssignment(in AllowanceAssignment) map[string]string {
 		errs["reportCode"] = "کد گزارش باید فقط حرف و رقم باشد (حداکثر ۲۰ نویسه)."
 	}
 
+	return allowanceScopeErrors(in, errs)
+}
+
+// allowanceScopeErrors سنجش مشترک دامنه و پنجرهٔ اعتبار (برای هر دو حالت تخصیص).
+func allowanceScopeErrors(in AllowanceAssignment, errs map[string]string) map[string]string {
+	if errs == nil {
+		errs = map[string]string{}
+	}
+	if !isMonthText(in.EffectiveFrom) {
+		errs["effectiveFrom"] = "ماه شروع اعتبار باید به قالب YYYY/MM باشد."
+	}
+	if to := strings.TrimSpace(in.EffectiveTo); to != "" && !isMonthText(to) {
+		errs["effectiveTo"] = "ماه پایان اعتبار باید به قالب YYYY/MM باشد."
+	}
+
 	kind := strings.TrimSpace(in.Target.Kind)
 	if kind == "" {
 		errs["target.kind"] = "دامنهٔ تخصیص الزامی است."
@@ -327,7 +650,6 @@ func ValidateAllowanceAssignment(in AllowanceAssignment) map[string]string {
 			errs["target.value"] = "برای این دامنه، مقدار (کارمند/واحد/نوع استخدام/گروه) الزامی است."
 		}
 	}
-
 	return errs
 }
 
@@ -337,8 +659,37 @@ func ValidateAllowanceAssignment(in AllowanceAssignment) map[string]string {
 // می‌شود. هر سطر می‌گوید مشمول مالیات و بیمه است یا نه، و منبعش (شناسهٔ تخصیص) را هم
 // برمی‌گرداند تا بازبینی سند ممکن باشد.
 func ResolveAllowanceAssignments(assignments []AllowanceAssignment, employee AllowanceEmployee, env AllowanceEnv) []AllowanceLine {
+	return ResolveAllowanceLines(nil, assignments, employee, env)
+}
+
+// ResolveAllowanceLines مثل ResolveAllowanceAssignments است، با این تفاوت که تعریف‌های
+// فوق العاده را هم می‌شناسد: هر تخصیص با تعریفش یکی می‌شود (MergeAllowanceDefinition) و
+// متغیرهای تعریف به محیط محاسبه اضافه می‌گردند.
+//
+// تخصیص‌های بدون تعریف (سابقهٔ ثبت‌شده) دست‌نخورده و با همان قاعده‌های پیشین حساب می‌شوند.
+func ResolveAllowanceLines(definitions map[string]AllowanceDefinition, assignments []AllowanceAssignment, employee AllowanceEmployee, env AllowanceEnv) []AllowanceLine {
 	out := []AllowanceLine{}
-	for _, a := range assignments {
+	for _, raw := range assignments {
+		a := raw
+		defEnv := env
+		defID := strings.TrimSpace(a.Definition)
+		if defID != "" {
+			def, ok := definitions[defID]
+			if !ok {
+				// تعریف پیدا نشد: تخصیص بی‌مرجع حساب نمی‌شود ولی بی‌صدا هم نمی‌ماند.
+				out = append(out, AllowanceLine{
+					Category:     AllowanceCategoryEarning,
+					CategoryFa:   CategoryFa(AllowanceCategoryEarning),
+					SourceFa:     "تخصیص " + defID,
+					DefinitionID: defID,
+					AssignmentID: a.ID,
+					DetailFa:     "تعریف فوق العاده «" + defID + "» یافت نشد؛ تخصیص حساب نشد.",
+				})
+				continue
+			}
+			a = MergeAllowanceDefinition(def, a)
+			defEnv = allowanceEnvWithVars(env, def.Vars)
+		}
 		if status := strings.TrimSpace(a.Status); status != "" && status != "active" {
 			continue
 		}
@@ -348,8 +699,25 @@ func ResolveAllowanceAssignments(assignments []AllowanceAssignment, employee All
 		if !allowanceInWindow(a, env.Period) {
 			continue
 		}
-		out = append(out, resolveAllowanceAssignment(a, env))
+		out = append(out, resolveAllowanceAssignment(a, defEnv))
 	}
+	return out
+}
+
+// allowanceEnvWithVars متغیرهای تعریف را به محیط اضافه می‌کند؛ متغیرهای درخواست مقدم‌اند.
+func allowanceEnvWithVars(env AllowanceEnv, defVars map[string]float64) AllowanceEnv {
+	if len(defVars) == 0 {
+		return env
+	}
+	vars := map[string]float64{}
+	for name, value := range defVars {
+		vars[name] = value
+	}
+	for name, value := range env.Vars {
+		vars[name] = value
+	}
+	out := env
+	out.Vars = vars
 	return out
 }
 
@@ -425,6 +793,60 @@ func AllowanceReportLines(lines []AllowanceLine) []AllowanceLine {
 		if l.ShowInReports {
 			out = append(out, l)
 		}
+	}
+	return out
+}
+
+// AllowanceOverlapWarnings هم‌پوشانی تخصیص‌ها را گزارش می‌کند: وقتی یک قلم (همان تعریف یا
+// همان کد) از دو تخصیص فعال برای یک کارمند می‌آید، مبلغ دوبار حساب می‌شود.
+//
+// چرا لازم است: با جدا شدن «تعریف» از «تخصیص»، دو تخصیص می‌توانند به یک تعریف وصل شوند
+// (مثلاً یکی برای گروه استخدامی و یکی برای یک کارمند داخل همان گروه). این می‌تواند عمدی
+// باشد، پس حساب متوقف نمی‌شود ولی بی‌صدا هم نمی‌ماند و در پیش‌نمایش و فیش هشدار داده می‌شود.
+func AllowanceOverlapWarnings(lines []AllowanceLine) []string {
+	type bucket struct {
+		code   string
+		title  string
+		count  int
+		amount int64
+	}
+	buckets := map[string]*bucket{}
+	order := []string{}
+	for _, l := range lines {
+		// سطر بی‌تخصیص (مثل پیام «تعریف پیدا نشد») یا سطر حساب‌نشده در هم‌پوشانی نمی‌آید.
+		if l.AssignmentID == "" || (!l.Resolved && l.Amount == 0) {
+			continue
+		}
+		// کلید هم‌پوشانی، «کد قلم» است تا تخصیص تعریف‌محور و تخصیص قدیمی با همان کد هم
+		// دیده شوند؛ اگر کد نبود، شناسهٔ تعریف کلید می‌شود.
+		key := strings.TrimSpace(l.Code)
+		if key == "" {
+			key = "def:" + strings.TrimSpace(l.DefinitionID)
+		} else {
+			key = "code:" + key
+		}
+		item, ok := buckets[key]
+		if !ok {
+			item = &bucket{code: strings.TrimSpace(l.Code), title: strings.TrimSpace(l.TitleFa)}
+			buckets[key] = item
+			order = append(order, key)
+		}
+		item.count++
+		item.amount += l.Amount
+	}
+	out := []string{}
+	for _, key := range order {
+		item := buckets[key]
+		if item.count < 2 {
+			continue
+		}
+		label := item.title
+		if item.code != "" {
+			label = item.code + " (" + item.title + ")"
+		}
+		out = append(out, "قلم «"+label+"» از "+strconv.Itoa(item.count)+
+			" تخصیص فعال برای این کارمند می‌آید و جمع آن "+formatRial(item.amount)+
+			" ریال محاسبه شد؛ اگر عمدی نیست یکی از تخصیص‌ها را پایان دهید تا دوبار حساب نشود.")
 	}
 	return out
 }
@@ -515,6 +937,7 @@ func resolveAllowanceAssignment(a AllowanceAssignment, env AllowanceEnv) Allowan
 		ShowInReports: a.ShowInReports,
 		ReportCode:    strings.TrimSpace(a.ReportCode),
 		AssignmentID:  a.ID,
+		DefinitionID:  strings.TrimSpace(a.Definition),
 		SourceFa:      "تخصیص " + a.Target.Kind + ": " + a.Target.Value,
 	}
 	if a.Target.Kind == AllowanceTargetAll {

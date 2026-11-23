@@ -12,28 +12,35 @@ import (
 	"hrms/internal/contracts"
 )
 
+// allowancePreviewLine یک سطر نتیجهٔ پیش‌نمایش تخصیص.
+type allowancePreviewLine struct {
+	Code          string `json:"code"`
+	TitleFa       string `json:"titleFa"`
+	Category      string `json:"category"`
+	Calc          string `json:"calc"`
+	Amount        int64  `json:"amount"`
+	Taxable       bool   `json:"taxable"`
+	Insured       bool   `json:"insured"`
+	ShowOnPayslip bool   `json:"showOnPayslip"`
+	SourceFa      string `json:"sourceFa"`
+	Resolved      bool   `json:"resolved"`
+	DetailFa      string `json:"detailFa"`
+	Assignment    string `json:"assignmentId"`
+	DefinitionID  string `json:"definitionId"`
+	ReportCode    string `json:"reportCode"`
+}
+
 // allowancePreviewAnswer پاسخ پیش‌نمایش تخصیص.
 type allowancePreviewAnswer struct {
-	Lines []struct {
-		Code       string `json:"code"`
-		TitleFa    string `json:"titleFa"`
-		Category   string `json:"category"`
-		Calc       string `json:"calc"`
-		Amount     int64  `json:"amount"`
-		Taxable    bool   `json:"taxable"`
-		Insured    bool   `json:"insured"`
-		SourceFa   string `json:"sourceFa"`
-		Resolved   bool   `json:"resolved"`
-		DetailFa   string `json:"detailFa"`
-		Assignment string `json:"assignmentId"`
-	} `json:"lines"`
+	Lines  []allowancePreviewLine `json:"lines"`
 	Totals struct {
 		Earnings        int64 `json:"earnings"`
 		Deductions      int64 `json:"deductions"`
 		TaxableEarnings int64 `json:"taxableEarnings"`
 		Lines           int   `json:"lines"`
 	} `json:"totals"`
-	Period string `json:"period"`
+	Bases  map[string]float64 `json:"bases"`
+	Period string             `json:"period"`
 }
 
 // TestASG05AllowanceDefaults می‌سنجد جدول رسمی کدها و فهرست‌های مرجع فرم تخصیص برمی‌گردد.
@@ -313,5 +320,263 @@ func TestASG11PayslipVisibility(t *testing.T) {
 	}
 	if !inReport {
 		t.Fatal("قلمی که «درج در گزارش» دارد باید در سطرهای گزارش باشد")
+	}
+}
+
+// allowanceDefinitionView یک تعریف فوق العاده در پاسخ پیش‌فرض‌ها.
+type allowanceDefinitionView struct {
+	ID              string          `json:"id"`
+	TitleFa         string          `json:"titleFa"`
+	Code            string          `json:"code"`
+	CodeOfficial    bool            `json:"codeOfficial"`
+	Category        string          `json:"category"`
+	Calc            string          `json:"calc"`
+	CalcFa          string          `json:"calcFa"`
+	Rate            string          `json:"rate"`
+	Basis           string          `json:"basis"`
+	Vars            string          `json:"vars"`
+	Taxable         bool            `json:"taxable"`
+	Insured         bool            `json:"insured"`
+	ShowOnPayslip   bool            `json:"showOnPayslip"`
+	ShowInReports   bool            `json:"showInReports"`
+	ReportCode      string          `json:"reportCode"`
+	Status          string          `json:"status"`
+	StatusFa        string          `json:"statusFa"`
+	AssignmentCount int             `json:"assignmentCount"`
+	Active          bool            `json:"active"`
+	Detail          json.RawMessage `json:"-"`
+}
+
+// TestASG14DefinitionFlow می‌سنجد گام یکم کار (تعریف فوق العاده) سرتاسری کار می‌کند:
+// تعریف‌های نمونه در پیش‌فرض‌ها می‌آیند، تعریف تازه با کد داخلی و متغیرها ثبت و فعال می‌شود
+// و تعریف نامعتبر با خطای فیلدی رد می‌گردد.
+func TestASG14DefinitionFlow(t *testing.T) {
+	h := newTestServer(t)
+	manager := login(t, h, "hr.manager", "demo")
+
+	// ---------- پیش‌فرض‌ها: فهرست تعریف‌ها با شمار تخصیص ----------
+	rec := call(t, h, http.MethodGet, "/api/v1/payroll/allowance-defaults", manager.AccessToken, nil)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("پیش‌فرض‌ها باید ۲۰۰ بدهد، %d داد: %s", rec.Code, rec.Body.String())
+	}
+	var defaults struct {
+		Definitions []allowanceDefinitionView `json:"definitions"`
+		Codes       []map[string]string       `json:"codes"`
+	}
+	decodeInto(t, rec, &defaults)
+	if len(defaults.Definitions) == 0 {
+		t.Fatalf("تعریف‌های نمونه باید در پیش‌فرض‌ها بیایند: %s", rec.Body.String())
+	}
+	var withVars, withAssignments int
+	for _, def := range defaults.Definitions {
+		if def.Code == "" || def.TitleFa == "" || def.Calc == "" || def.CalcFa == "" || def.StatusFa == "" {
+			t.Fatalf("هر تعریف باید کد، عنوان، روش و وضعیت فارسی داشته باشد: %+v", def)
+		}
+		if def.Vars != "" {
+			withVars++
+		}
+		if def.AssignmentCount > 0 {
+			withAssignments++
+		}
+	}
+	if withVars == 0 {
+		t.Fatalf("باید دست‌کم یک تعریف با متغیر باشد: %+v", defaults.Definitions)
+	}
+	if withAssignments == 0 {
+		t.Fatalf("تخصیص‌های نمونه باید به تعریف‌ها وصل باشند: %+v", defaults.Definitions)
+	}
+
+	// ---------- ثبت تعریف تازه با کد داخلی، فرمول و متغیر ----------
+	created := call(t, h, http.MethodPost, "/api/v1/payroll/records", manager.AccessToken, map[string]any{
+		"kind": "allowanceDefinition", "title": "فوق العادهٔ داخلی آزمون",
+		"fields": map[string]string{
+			"code": "X-100", "calc": "formula", "formula": "BASE*CHILDREN", "vars": "CHILDREN=2, SITE=1",
+			"category": "earning", "showOnPayslip": "بله", "showInReports": "بله", "reportCode": "X100-R",
+		},
+	})
+	if created.Code != http.StatusCreated && created.Code != http.StatusOK {
+		t.Fatalf("ثبت تعریف باید ۲۰۱ بدهد، %d داد: %s", created.Code, created.Body.String())
+	}
+	var record contracts.Record
+	decodeInto(t, created, &record)
+	if record.Fields["vars"] != "CHILDREN=2, SITE=1" {
+		t.Fatalf("متغیرها باید خوانا در رکورد بمانند: %+v", record.Fields)
+	}
+	if record.Fields["category"] != "earning" {
+		t.Fatalf("نوع قلم تعریف باید ذخیره شود: %+v", record.Fields)
+	}
+	act := call(t, h, http.MethodPost, "/api/v1/payroll/records/"+record.ID+"/action",
+		manager.AccessToken, map[string]any{"action": "activate"})
+	if act.Code != http.StatusOK {
+		t.Fatalf("فعال‌سازی تعریف باید ۲۰۰ بدهد، %d داد: %s", act.Code, act.Body.String())
+	}
+
+	// تعریف تازه در پیش‌فرض‌ها با کد داخلی (غیررسمی) و متغیر دیده می‌شود.
+	rec = call(t, h, http.MethodGet, "/api/v1/payroll/allowance-defaults", manager.AccessToken, nil)
+	var after []allowanceDefinitionView
+	var refreshed struct {
+		Definitions []allowanceDefinitionView `json:"definitions"`
+	}
+	decodeInto(t, rec, &refreshed)
+	after = refreshed.Definitions
+	found := false
+	for _, def := range after {
+		if def.ID != record.ID {
+			continue
+		}
+		found = true
+		if def.CodeOfficial {
+			t.Fatal("کد داخلی نباید رسمی شمرده شود")
+		}
+		if def.Vars != "CHILDREN=2, SITE=1" || !def.Active {
+			t.Fatalf("تعریف تازه باید متغیر و وضعیت فعال داشته باشد: %+v", def)
+		}
+	}
+	if !found {
+		t.Fatalf("تعریف تازه در پیش‌فرض‌ها نیست: %+v", after)
+	}
+
+	// ---------- تعریف نامعتبر: مقدار صفر برای مبلغ ثابت ----------
+	bad := call(t, h, http.MethodPost, "/api/v1/payroll/records", manager.AccessToken, map[string]any{
+		"kind": "allowanceDefinition", "title": "تعریف نادرست",
+		"fields": map[string]string{"code": "151", "calc": "fixed", "rate": "0"},
+	})
+	if bad.Code != http.StatusUnprocessableEntity {
+		t.Fatalf("تعریف نامعتبر باید ۴۲۲ بدهد، %d داد: %s", bad.Code, bad.Body.String())
+	}
+	if !strings.Contains(bad.Body.String(), "fields.rate") {
+		t.Fatalf("خطا باید روی فیلد مقدار باشد: %s", bad.Body.String())
+	}
+}
+
+// TestASG15GroupAssignment می‌سنجد گام دوم کار کار می‌کند: یک تعریف به گروه استخدامی و به
+// یک کارمند تخصیص می‌یابد، مبلغ از تعریف می‌آید، بازنویسی مقدار اثر می‌کند و بلوک فیش همان
+// سطر تعریف‌محور را نشان می‌دهد.
+func TestASG15GroupAssignment(t *testing.T) {
+	h := newTestServer(t)
+	manager := login(t, h, "hr.manager", "demo")
+
+	// ---------- گام ۱: تعریف فوق العادهٔ کارگاهی (درصدی از مبنای فوق العاده‌ها) ----------
+	created := call(t, h, http.MethodPost, "/api/v1/payroll/records", manager.AccessToken, map[string]any{
+		"kind": "allowanceDefinition", "title": "فوق العادهٔ کارگاهی — تعریف آزمون",
+		"fields": map[string]string{
+			"code": "122", "calc": "percent", "rate": "10", "basis": "allowanceBase",
+			"taxable": "بله", "insured": "بله",
+			"showOnPayslip": "بله", "showInReports": "بله", "reportCode": "122-R",
+		},
+	})
+	if created.Code != http.StatusCreated && created.Code != http.StatusOK {
+		t.Fatalf("ثبت تعریف باید ۲۰۱ بدهد، %d داد: %s", created.Code, created.Body.String())
+	}
+	var definition contracts.Record
+	decodeInto(t, created, &definition)
+	activate := func(kind, id string) {
+		t.Helper()
+		rec := call(t, h, http.MethodPost, "/api/v1/payroll/records/"+id+"/action",
+			manager.AccessToken, map[string]any{"action": "activate"})
+		if rec.Code != http.StatusOK {
+			t.Fatalf("فعال‌سازی %s باید ۲۰۰ بدهد، %d داد: %s", kind, rec.Code, rec.Body.String())
+		}
+	}
+	activate("تعریف", definition.ID)
+
+	// ---------- گام ۲: تخصیص تعریف به گروه استخدامی «رسمی نفت» ----------
+	groupAssignment := call(t, h, http.MethodPost, "/api/v1/payroll/records", manager.AccessToken, map[string]any{
+		"kind": "allowanceAssignment", "title": "تخصیص کارگاهی — گروه استخدامی رسمی نفت",
+		"fields": map[string]string{
+			"definition": definition.ID, "targetKind": "employmentType", "targetValue": "official_oil",
+			"effectiveFrom": "1405/01",
+		},
+	})
+	if groupAssignment.Code != http.StatusCreated && groupAssignment.Code != http.StatusOK {
+		t.Fatalf("تخصیص تعریف‌محور باید ثبت شود، %d داد: %s", groupAssignment.Code, groupAssignment.Body.String())
+	}
+	var group contracts.Record
+	decodeInto(t, groupAssignment, &group)
+	activate("تخصیص گروهی", group.ID)
+
+	// ---------- پیش‌نمایش کارمند گروه: مبلغ از تعریف (۱۰٪ مبنای فوق العاده‌ها) ----------
+	preview := call(t, h, http.MethodPost, "/api/v1/payroll/allowance-preview", manager.AccessToken,
+		map[string]any{"employeeId": "EMP-001"})
+	if preview.Code != http.StatusOK {
+		t.Fatalf("پیش‌نمایش باید ۲۰۰ بدهد، %d داد: %s", preview.Code, preview.Body.String())
+	}
+	var answer allowancePreviewAnswer
+	decodeInto(t, preview, &answer)
+	base := answer.Bases["allowanceBase"]
+	if base <= 0 {
+		t.Fatalf("مبنای فوق العاده‌ها باید در پاسخ باشد: %+v", answer.Bases)
+	}
+	wantAmount := int64(base * 10 / 100)
+	var line *allowancePreviewLine
+	for i := range answer.Lines {
+		if answer.Lines[i].DefinitionID == definition.ID {
+			line = &answer.Lines[i]
+		}
+	}
+	if line == nil {
+		t.Fatalf("سطر تعریف‌محور در پیش‌نمایش نیامد: %+v", answer.Lines)
+	}
+	if line.Code != "122" || line.Amount != wantAmount || !line.Taxable || !line.Insured || line.ReportCode != "122-R" {
+		t.Fatalf("سطر تعریف‌محور درست نیست (انتظار %d): %+v", wantAmount, line)
+	}
+
+	// ---------- بازنویسی مقدار برای یک کارمند خاص (۱۵٪) ----------
+	personAssignment := call(t, h, http.MethodPost, "/api/v1/payroll/records", manager.AccessToken, map[string]any{
+		"kind": "allowanceAssignment", "title": "تخصیص کارگاهی — کارمند خاص",
+		"fields": map[string]string{
+			"definition": definition.ID, "rateOverride": "15",
+			"targetKind": "employee", "targetValue": "EMP-003", "effectiveFrom": "1405/01",
+		},
+	})
+	if personAssignment.Code != http.StatusCreated && personAssignment.Code != http.StatusOK {
+		t.Fatalf("تخصیص فردی باید ثبت شود، %d داد: %s", personAssignment.Code, personAssignment.Body.String())
+	}
+	var person contracts.Record
+	decodeInto(t, personAssignment, &person)
+	activate("تخصیص فردی", person.ID)
+
+	personPreview := call(t, h, http.MethodPost, "/api/v1/payroll/allowance-preview", manager.AccessToken,
+		map[string]any{"employeeId": "EMP-003"})
+	var personAnswer allowancePreviewAnswer
+	decodeInto(t, personPreview, &personAnswer)
+	var overrideLine *allowancePreviewLine
+	for i := range personAnswer.Lines {
+		if personAnswer.Lines[i].DefinitionID == definition.ID {
+			overrideLine = &personAnswer.Lines[i]
+		}
+	}
+	if overrideLine == nil {
+		t.Fatalf("سطر تعریف‌محور برای کارمند خاص نیامد: %+v", personAnswer.Lines)
+	}
+	personBase := personAnswer.Bases["allowanceBase"]
+	if overrideLine.Amount != int64(personBase*15/100) {
+		t.Fatalf("بازنویسی ۱۵٪ باید اثر کند: %+v (مبنا %v)", overrideLine, personBase)
+	}
+
+	// ---------- بلوک فیش: همان سطر تعریف‌محور ----------
+	slip := call(t, h, http.MethodPost, "/api/v1/payroll/payslip", manager.AccessToken,
+		map[string]any{"employeeId": "EMP-001"})
+	if slip.Code != http.StatusOK {
+		t.Fatalf("فیش باید ۲۰۰ بدهد، %d داد: %s", slip.Code, slip.Body.String())
+	}
+	var slipAnswer struct {
+		Assignments struct {
+			Lines []struct {
+				Code         string `json:"code"`
+				Amount       int64  `json:"amount"`
+				DefinitionID string `json:"definitionId"`
+			} `json:"lines"`
+		} `json:"assignments"`
+	}
+	decodeInto(t, slip, &slipAnswer)
+	found := false
+	for _, l := range slipAnswer.Assignments.Lines {
+		if l.DefinitionID == definition.ID && l.Code == "122" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("بلوک فیش باید سطر تعریف‌محور را نشان دهد: %+v", slipAnswer.Assignments.Lines)
 	}
 }

@@ -47,7 +47,9 @@ func Descriptor() recordkit.Descriptor {
 			bankFilesKind(),
 			// روش پرداخت هر کارمند: کدام موتور محاسبه مسئول این کارمند است.
 			employeePayModelKind(),
-			// تخصیص فوق العاده: پیوند کد رسمی به کارمند یا گروهی از کارکنان.
+			// تعریف فوق العاده: گام یکم — کد، روش محاسبه، متغیرها، مشمولیت کسور و جای نمایش.
+			allowanceDefinitionKind(),
+			// تخصیص فوق العاده: گام دوم — پیوند یک تعریف به کارمند یا گروهی از کارکنان.
 			allowanceAssignmentKind(),
 		},
 	}
@@ -436,10 +438,12 @@ func parseMoney(raw string) float64 {
 
 // Seed پارامترها، اقلام حقوق، دوره‌ها و کارانهٔ نمونه.
 func Seed() []contracts.RecordInput {
-	// روش پرداخت کارکنان و تخصیص فوق‌العاده‌ها در انتهای بذر می‌آیند تا صفحه‌های مربوط در
-	// نصب تازه هم داده داشته باشند.
+	// روش پرداخت کارکنان، «تعریف فوق العاده» و «تخصیص فوق العاده» در انتهای بذر می‌آیند تا
+	// صفحه‌های مربوط در نصب تازه هم داده داشته باشند. تعریف‌ها پیش از تخصیص‌ها می‌آیند چون
+	// تخصیص به شناسهٔ تعریف ارجاع می‌دهد (ALD-0001 ...).
 	records := append(append(append(payParamSeeds(), payItemSeeds()...), payrollSeedRecords()...),
 		employeePayModelSeeds()...)
+	records = append(records, allowanceDefinitionSeeds()...)
 	return append(records, allowanceAssignmentSeeds()...)
 }
 

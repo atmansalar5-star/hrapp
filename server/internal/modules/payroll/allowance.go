@@ -41,18 +41,23 @@ func registerAllowanceEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *re
 	// جدول رسمی کدها و فهرست‌های مرجع فرم تخصیص.
 	mux.HandleFunc("GET /api/v1/payroll/allowance-defaults", read(func(w http.ResponseWriter, r *http.Request) {
 		params := oilPayParams(deps, nil)
+		definitions := activeAllowanceDefinitions(r.Context(), svc)
 		httpx.WriteJSON(w, http.StatusOK, map[string]any{
 			"codes":       rules.PayslipCodes(),
 			"calcKinds":   rules.AllowanceCalcKinds(),
 			"bases":       rules.AllowanceBasisKeys(),
 			"targetKinds": rules.AllowanceTargetKinds(),
 			"employees":   allowanceEmployees(r.Context(), deps, params),
+			// تعریف‌های فوق العاده (گام یکم) با شمار تخصیص هر تعریف؛ فرم گام دوم از همین
+			// فهرست پر می‌شود و فهرست گام یکم هم از آن ساخته می‌شود.
+			"definitions": allowanceDefinitionViews(r.Context(), svc, definitions),
 			"period":      oilPeriod(deps),
 			"today":       payTodayFa(deps),
 			"gaps":        rules.PayslipCodeGaps(),
-			"noteFa": "کد رسمی را انتخاب کنید، روش محاسبه و مشمولیت کسور را تعیین کنید و " +
-				"دامنه را روی یک کارمند یا گروهی از کارکنان بگذارید. قاعده‌های محاسبه و " +
-				"تطبیق دامنه در سرور اجرا می‌شود.",
+			"noteFa": "گام یکم: فوق العاده را تعریف کنید (کد رسمی یا کد داخلی، روش محاسبه، " +
+				"متغیرها، مشمولیت کسور و جای نمایش در فیش و گزارش)؛ گام دوم: همان تعریف را " +
+				"به یک گروه استخدامی یا کارمند تخصیص دهید. قاعده‌های محاسبه و تطبیق دامنه " +
+				"در سرور اجرا می‌شود.",
 		})
 	}))
 
@@ -72,20 +77,27 @@ func registerAllowanceEndpoints(mux *http.ServeMux, deps modulekit.Deps, svc *re
 		if period == "" {
 			period = oilPeriod(deps)
 		}
+		definitions := activeAllowanceDefinitions(r.Context(), svc)
 		assignments := activeAllowanceAssignments(r.Context(), svc)
 		bases := allowanceBases(view, deps, in.Bases)
-		lines := rules.ResolveAllowanceAssignments(assignments, view, rules.AllowanceEnv{Bases: bases, Period: period})
+		lines := rules.ResolveAllowanceLines(definitions, assignments, view,
+			rules.AllowanceEnv{Bases: bases, Period: period})
 		totals := rules.SumAllowanceLines(lines)
 
 		httpx.WriteJSON(w, http.StatusOK, map[string]any{
-			"employee":    view,
-			"period":      period,
-			"lines":       lines,
-			"totals":      totals,
-			"bases":       bases,
-			"assignments": len(assignments),
-			"noteFa": "سطرها از تخصیص‌های فعال همین کارمند ساخته شده‌اند؛ «مشمول مالیات» و " +
-				"«مشمول بیمه» روی هر سطر نشان داده می‌شود.",
+			"employee":     view,
+			"period":       period,
+			"lines":        lines,
+			"payslipLines": rules.AllowancePayslipLines(lines),
+			"reportLines":  rules.AllowanceReportLines(lines),
+			"totals":       totals,
+			"bases":        bases,
+			"definitions":  len(definitions),
+			"assignments":  len(assignments),
+			// هشدار هم‌پوشانی: یک قلم از دو تخصیص فعال می‌آید (مبلغ دوبار حساب می‌شود).
+			"warningsFa": rules.AllowanceOverlapWarnings(lines),
+			"noteFa": "سطرها از تخصیص‌های فعال همین کارمند ساخته شده‌اند؛ مبلغ و روش محاسبه از " +
+				"«تعریف فوق العاده» می‌آید و بازنویسی هر تخصیص بر آن مقدم است.",
 		})
 	}))
 }
@@ -211,6 +223,9 @@ func activeAllowanceAssignments(ctx context.Context, svc *recordkit.Service) []r
 			Rate:          strings.TrimSpace(f["rate"]),
 			Basis:         strings.TrimSpace(f["basis"]),
 			Formula:       strings.TrimSpace(f["formula"]),
+			Definition:    strings.TrimSpace(f["definition"]),
+			RateOverride:  strings.TrimSpace(f["rateOverride"]),
+			BasisOverride: strings.TrimSpace(f["basisOverride"]),
 			Taxable:       boolField(f["taxable"]),
 			Insured:       boolField(f["insured"]),
 			ShowOnPayslip: boolFieldOrEmpty(f["showOnPayslip"]),
@@ -237,7 +252,7 @@ func allowanceAssignmentBlock(ctx context.Context, deps modulekit.Deps, svc *rec
 			"reportLines": []rules.AllowanceLine{}, "totals": rules.AllowanceTotals{}}
 	}
 	bases := allowanceBases(view, deps, nil)
-	lines := rules.ResolveAllowanceAssignments(activeAllowanceAssignments(ctx, svc), view,
+	lines := rules.ResolveAllowanceLines(activeAllowanceDefinitions(ctx, svc), activeAllowanceAssignments(ctx, svc), view,
 		rules.AllowanceEnv{Bases: bases, Period: period})
 	return map[string]any{
 		"lines":        lines,
@@ -245,9 +260,105 @@ func allowanceAssignmentBlock(ctx context.Context, deps modulekit.Deps, svc *rec
 		"reportLines":  rules.AllowanceReportLines(lines),
 		"totals":       rules.SumAllowanceLines(lines),
 		"bases":        bases,
+		"warningsFa":   rules.AllowanceOverlapWarnings(lines),
 		"noteFa": "هر قلم تخصیص می‌گوید در فیش حقوقی دیده شود یا نه و در گزارش‌های چاپی " +
 			"درج شود یا نه؛ «کد گزارش» همان کد رسمی گزارش (کدال) است.",
 	}
+}
+
+// activeAllowanceDefinitions تعریف‌های فعال فوق العاده را می‌خواند و با شناسه نگاشت می‌کند.
+//
+// چرا فعال: تعریف پیش‌نویس یا پایان‌یافته نباید در محاسبه بیاید؛ ولی تعریف پایان‌یافته
+// هم در فهرست می‌ماند تا سابقهٔ تخصیص‌های وابسته قابل بازبینی باشد.
+func activeAllowanceDefinitions(ctx context.Context, svc *recordkit.Service) map[string]rules.AllowanceDefinition {
+	out := map[string]rules.AllowanceDefinition{}
+	if svc == nil {
+		return out
+	}
+	page, err := svc.List(ctx, contracts.RecordFilter{
+		Module: "payroll", Kind: domain.KindAllowanceDefinition, Scope: "all", Size: 500,
+	})
+	if err != nil {
+		return out
+	}
+	for _, rec := range page.Items {
+		if rec.Status != "active" {
+			continue
+		}
+		out[rec.ID] = allowanceDefinitionOf(rec)
+	}
+	return out
+}
+
+// allowanceDefinitionOf نگاشت رکورد تعریف به ساختار قواعد.
+func allowanceDefinitionOf(rec contracts.Record) rules.AllowanceDefinition {
+	f := rec.Fields
+	return rules.NormalizeAllowanceDefinition(rules.AllowanceDefinition{
+		ID:            rec.ID,
+		Code:          strings.TrimSpace(f["code"]),
+		TitleFa:       strings.TrimSpace(f["titleFa"]),
+		Category:      strings.TrimSpace(f["category"]),
+		Calc:          strings.TrimSpace(f["calc"]),
+		Rate:          strings.TrimSpace(f["rate"]),
+		Basis:         strings.TrimSpace(f["basis"]),
+		Formula:       strings.TrimSpace(f["formula"]),
+		VarsText:      strings.TrimSpace(f["vars"]),
+		Taxable:       boolField(f["taxable"]),
+		Insured:       boolField(f["insured"]),
+		ShowOnPayslip: boolFieldOrEmpty(f["showOnPayslip"]),
+		ShowInReports: boolFieldOrEmpty(f["showInReports"]),
+		ReportCode:    strings.TrimSpace(f["reportCode"]),
+		NoteFa:        strings.TrimSpace(f["noteFa"]),
+		Status:        rec.Status,
+	})
+}
+
+// allowanceDefinitionViews فهرست تعریف‌ها برای فرم دو مرحله‌ای: هر تعریف با عنوان کد رسمی،
+// توضیح روش محاسبه، متغیرها و شمار تخصیص‌های وابسته.
+func allowanceDefinitionViews(ctx context.Context, svc *recordkit.Service, active map[string]rules.AllowanceDefinition) []map[string]any {
+	out := []map[string]any{}
+	if svc == nil {
+		return out
+	}
+	page, err := svc.List(ctx, contracts.RecordFilter{
+		Module: "payroll", Kind: domain.KindAllowanceDefinition, Scope: "all", Size: 500,
+	})
+	if err != nil {
+		return out
+	}
+	// شمار تخصیص‌های هر تعریف از فهرست تخصیص‌ها شمرده می‌شود (پیوند ALD ← ALW).
+	counts := map[string]int{}
+	if assigns, err := svc.List(ctx, contracts.RecordFilter{
+		Module: "payroll", Kind: domain.KindAllowanceAssignment, Scope: "all", Size: 500,
+	}); err == nil {
+		for _, a := range assigns.Items {
+			if def := strings.TrimSpace(a.Fields["definition"]); def != "" {
+				counts[def]++
+			}
+		}
+	}
+	for _, rec := range page.Items {
+		def := allowanceDefinitionOf(rec)
+		view := map[string]any{
+			"id": def.ID, "titleFa": def.TitleFa, "code": def.Code,
+			"codeTitleFa": def.CodeTitleFa, "codeOfficial": def.CodeOfficial,
+			"category": def.Category, "categoryFa": rules.CategoryFa(def.Category),
+			"calc": def.Calc, "calcFa": rules.AllowanceCalcTitleFa(def.Calc),
+			"rate": def.Rate, "basis": def.Basis, "basisFa": rules.AllowanceBasisTitleFa(def.Basis),
+			"formula": def.Formula,
+			"vars":    def.VarsText, "varsText": def.VarsText,
+			"taxable": def.Taxable, "insured": def.Insured,
+			"showOnPayslip": def.ShowOnPayslip, "showInReports": def.ShowInReports,
+			"reportCode": def.ReportCode, "noteFa": def.NoteFa,
+			"status": rec.Status, "statusFa": rec.StatusFa,
+			"assignmentCount": counts[def.ID],
+		}
+		if _, ok := active[def.ID]; ok {
+			view["active"] = true
+		}
+		out = append(out, view)
+	}
+	return out
 }
 
 // boolFieldOrEmpty خواندن پرچم بله/خیر با پیش‌فرض «بله» برای مقدار خالی.
