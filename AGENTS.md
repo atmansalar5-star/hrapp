@@ -72,6 +72,14 @@
   کسب‌وکاری در n8n نوشته نمی‌شود** و تصمیم تأیید در سرور می‌ماند. طراحی:
   `docs/integration-n8n-fa.md`، راهنمای عملی: `integrations/n8n/README.md`.
 
+- **اتصال Claude Code به دیپ‌سیک (بیرون از مخزن):** خط فرمان رسمی Claude Code روی این ماشین
+  با `%USERPROFILE%\tools\claude-deepseek\claude-ds.cmd` اجرا می‌شود؛ این راه‌انداز مسیر
+  سازگار با Anthropic درگاه Token Harbor (`https://tokenharbor.ai/v1/messages`) را با مدل
+  `deepseek-v4.1-flash:free` به کار می‌برد و کلید را از همان فهرست روتر `D:\apikey.txt`
+  **فقط-خواندنی** برمی‌دارد (گزارش وضعیت: `claude-ds-check.cmd`). هیچ فایل مخزن را دست
+  نمی‌زند و جایگزین `dsh` نیست؛ برای دیدن وضعیت کلیدها و متغیرها:
+  `%USERPROFILE%\tools\claude-deepseek\README.md`.
+
 ## ۳. قواعد کاری که همیشه برقرار است
 
 - **هیچ قاعدهٔ کسب‌وکاری در UI نیست.** قواعد در دامنه (و در هستهٔ Rust به‌صورت مرجع) می‌مانند.

@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+      "Read(./server/data/**)",
+      "Read(./server/bonus-data/**)",
+      "Read(./deployment-data/**)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(./**/*.pfx)",
+      "Read(./**/*.dump.sql)"
+    ],
+    "allow": [
+      "Bash(git status)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(node tools/check/verify.mjs)",
+      "Bash(node tools/gen/gen.mjs --check)",
+      "Bash(node tools/skills/check-skills.mjs)"
+    ]
+  }
+}
