@@ -8,6 +8,7 @@ import (
 
 	"hrms/internal/platform/calendar"
 	"hrms/internal/platform/recordkit"
+	"hrms/internal/rules"
 )
 
 // این فایل «تخصیص وام» را اعلام می‌کند: واحد وام یک نوع وام را با مبلغ و اقساط مشخص
@@ -135,12 +136,9 @@ func ComputeLoanTermsWith(req LoanGrantRequest, extra GrantPolicy) (LoanTerms, e
 		installments = 12
 	}
 
-	feeAmount := int64(float64(req.Amount) * t.FeeRatePercent / 100)
-	total := req.Amount + feeAmount
-	perInstallment := total / int64(installments)
-	if total%int64(installments) != 0 {
-		perInstallment++ // گرد به ریال به بالا تا جمع اقساط از مبلغ وام کم نیاید.
-	}
+	feeAmount := rules.LoanFeeAmount(req.Amount, t.FeeRatePercent)
+	total := rules.LoanTotalPayable(req.Amount, feeAmount)
+	perInstallment := rules.LoanInstallmentAmount(total, installments)
 
 	return LoanTerms{
 		FeeRatePercent:    t.FeeRatePercent,
@@ -158,14 +156,16 @@ func ComputeLoanTermsWith(req LoanGrantRequest, extra GrantPolicy) (LoanTerms, e
 // جدا نشود (همان قاعده‌ای که ماژول پاداش هم دارد).
 func LoanFields(req LoanGrantRequest, terms LoanTerms) map[string]string {
 	return map[string]string{
-		"loanType":            strings.TrimSpace(req.LoanType),
-		"bank":                strings.TrimSpace(req.Bank),
-		"management":          strings.TrimSpace(req.Management),
-		"amount":              itoa64(req.Amount),
-		"installments":        itoa(terms.Installments),
-		"installmentAmount":   itoa64(terms.InstallmentAmount),
-		"feeRate":             trimFloat(terms.FeeRatePercent),
-		"feeAmount":           itoa64(terms.FeeAmount),
+		"loanType":          strings.TrimSpace(req.LoanType),
+		"bank":              strings.TrimSpace(req.Bank),
+		"management":        strings.TrimSpace(req.Management),
+		"amount":            itoa64(req.Amount),
+		"installments":      itoa(terms.Installments),
+		"installmentAmount": itoa64(terms.InstallmentAmount),
+		"feeRate":           trimFloat(terms.FeeRatePercent),
+		"feeAmount":         itoa64(terms.FeeAmount),
+		// ماه شروع کسر اقساط از تاریخ پرداخت ساخته میشود (قاعده در rules).
+		"firstPeriod":         rules.LoanFirstPeriod(req.ReceivedDate),
 		"supplementOf":        strings.TrimSpace(req.SupplementOf),
 		"guarantorName":       strings.TrimSpace(req.GuarantorName),
 		"guarantorNationalId": strings.TrimSpace(req.GuarantorNationalID),

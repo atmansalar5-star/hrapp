@@ -900,6 +900,13 @@ pub static POLICIES: &[ModulePolicy] = &[
             icon: "hourglass",
             roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
         },
+        ScreenPolicy {
+            key: "loanStatement",
+            title_fa: "صورت حساب وام‌ها",
+            component: "LoanStatementScreen",
+            icon: "file-invoice",
+            roles: &[RoleKey::Admin, RoleKey::HrManager, RoleKey::HrSpec],
+        },
         ],
     },
     ModulePolicy {

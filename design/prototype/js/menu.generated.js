@@ -245,6 +245,7 @@ window.HRMS_MENU = [
         { page: "loans", label: "وام کارکنان", icon: "hand-coins", roles: ['admin', 'hr_manager', 'hr_spec', 'employee'] },
         { page: "loanInstallments", label: "اقساط و بازپرداخت", icon: "receipt", roles: ['admin', 'hr_manager', 'hr_spec'] },
         { page: "retirementFiles", label: "پرونده‌های بازنشستگی", icon: "hourglass", roles: ['admin', 'hr_manager', 'hr_spec'] },
+        { page: "loanStatement", label: "صورت حساب وام‌ها", icon: "file-invoice", roles: ['admin', 'hr_manager', 'hr_spec'] },
         ],
       },
       ],

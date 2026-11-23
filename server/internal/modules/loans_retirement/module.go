@@ -66,9 +66,19 @@ func (m *Module) Register(mux *http.ServeMux, deps modulekit.Deps) {
 	// مرحلهٔ ارسال به مدیریت مالی، سهم شرکتی/ارکان ثالث و طبقهٔ نرخ کارمزد.
 	mux.HandleFunc("GET /api/v1/loans/quota-dashboard", r("read", h.QuotaDashboard))
 
+	// صورت حساب و اقساط وام: کارتابل صورت حساب‌ها، صورت حساب یک وام، پیش‌نمایش جدول
+	// اقساط، ساخت/به‌روزرسانی رکوردهای قسط و فهرست اقساط یک دوره برای کسر از حقوق.
+	mux.HandleFunc("GET /api/v1/loans/statements", r("read", h.Statements))
+	mux.HandleFunc("GET /api/v1/loans/statement", r("read", h.Statement))
+	mux.HandleFunc("POST /api/v1/loans/schedule/preview", r("read", h.SchedulePreview))
+	mux.HandleFunc("POST /api/v1/loans/{id}/schedule", r("write", h.BuildSchedule))
+	mux.HandleFunc("GET /api/v1/loans/installments-due", r("read", h.DueInstallments))
+
 	// منبع دادهٔ گزارش «وام کارکنان» برای گزارش‌ساز؛ شامل انواع وام، بانک عامل،
 	// کارمزد، اقساط، اطلاعات ضامن و زمان دریافت.
 	deps.Ports.RegisterReportSource(loansReportSource{svc: svc})
+	// منبع «اقساط وام‌ها»: هر قسط یک سطر با ماه کسر، سهم اصل/کارمزد و وضعیت کسر.
+	deps.Ports.RegisterReportSource(loanInstallmentsReportSource{svc: svc})
 
 	deps.Logger(m.ID()).Info("ماژول وام و بازنشستگی با فرم تخصیص وام، پنل امتیازبندی، داشبورد سهمیه و منبع گزارش وام ثبت شد", "routes", 16)
 }

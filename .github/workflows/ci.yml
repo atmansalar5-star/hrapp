@@ -38,6 +38,8 @@ jobs:
         run: node tools/check/pcs-spec.mjs
       - name: ردیابی اسپک تخصیص فوق العاده (ASG ⇄ آزمون/سند)
         run: node tools/check/asg-spec.mjs
+      - name: ردیابی اسپک صورت حساب وام (LOAN ⇄ آزمون/سند)
+        run: node tools/check/loan-spec.mjs
 
   go:
     name: سرور Go

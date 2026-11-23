@@ -7,6 +7,7 @@ import (
 
 	"hrms/internal/contracts"
 	"hrms/internal/platform/recordkit"
+	"hrms/internal/rules"
 )
 
 // Descriptor شناسهٔ ماژول وام و بازنشستگی.
@@ -33,11 +34,17 @@ func Descriptor() recordkit.Descriptor {
 					"installmentAmount|میزان هر قسط|money|0",
 					"feeRate|نرخ کارمزد (درصد)|number|0",
 					"feeAmount|مبلغ کارمزد|money|0",
+					// ماه شروع کسر اقساط؛ خالی یعنی ماه بعد از تاریخ پرداخت. قاعدهٔ
+					// ساخت جدول اقساط در بستهٔ rules است، نه در UI.
+					"firstPeriod|شروع کسر اقساط (YYYY/MM)|text|0",
+					// تسویهٔ پیش از موعد: مبلغ و تاریخ تسویه، مبنای کاهش مانده بدهی است.
+					"settleDate|تاریخ تسویه|date|0",
+					"settledAmount|مبلغ تسویه|money|0",
 					"supplementOf|متممِ وام (شناسهٔ وام پایه)|text|0",
 					"guarantorName|نام ضامن|text|0",
 					"guarantorNationalId|کد ملی ضامن|text|0",
 					"guarantorRelation|نسبت ضامن|text|0",
-					"receivedDate|زمان دریافت|date|0",
+					"receivedDate|تاریخ پرداخت وام|date|0",
 					"purpose|هدف وام|text|0",
 				),
 				Statuses: recordkit.Statuses(
@@ -64,8 +71,17 @@ func Descriptor() recordkit.Descriptor {
 			{
 				Key: "loanInstallments", TitleFa: "قسط وام", IDPrefix: "INST", EmployeeScoped: true,
 				Fields: recordkit.Fields(
+					// پیوند قسط به وام پایه و شمارهٔ قسط، ستون‌های جدول اقساط را می‌سازد؛
+					// بدون این دو، قسط فقط یک سررسید تنها بود و صورت حساب وام ممکن نبود.
+					"loan|شناسهٔ وام|text|0",
+					"seq|شمارهٔ قسط|number|0",
+					"period|ماه کسر (YYYY/MM)|text|0",
 					"dueDate|سررسید|date|1",
 					"amount|مبلغ قسط|money|1",
+					"principal|سهم اصل|money|0",
+					"fee|سهم کارمزد|money|0",
+					"paidDate|تاریخ کسر/پرداخت|date|0",
+					"method|روش پرداخت (حقوق/نقدی/بانکی)|select|0",
 				),
 				Statuses:    recordkit.Statuses("pending|در انتظار پرداخت", "paid|پرداخت‌شده", "overdue|معوق"),
 				Initial:     "pending",
@@ -74,6 +90,7 @@ func Descriptor() recordkit.Descriptor {
 					"pay|ثبت پرداخت قسط|primary|paid|0|hr_manager",
 					"overdue|ثبت معوق شدن|danger|overdue|1|hr_manager",
 				),
+				Validate: validateInstallment,
 			},
 			{
 				Key: "retirementFiles", TitleFa: "پروندهٔ بازنشستگی", IDPrefix: "RET", EmployeeScoped: true,
@@ -121,6 +138,93 @@ func validateLoanWith(in contracts.RecordInput, acceptManagement func(string) bo
 	if m := strings.TrimSpace(in.Fields["management"]); m != "" && !ValidQuotaUnit(m) {
 		if acceptManagement == nil || !acceptManagement(m) {
 			return &recordkit.RuleError{Message: "مدیریت «" + m + "» در جدول سهمیهٔ تسهیلات شناخته نشد."}
+		}
+	}
+
+	// ---------- شرایط مالی وام: اعتبارسنجی + پرکردن از قواعد ----------
+	//
+	// قاعده‌های محاسبه در بستهٔ rules است؛ اینجا فقط شکل فیلد سنجیده و مقدارهای محاسباتی
+	// (کارمزد، مبلغ قسط، ماه شروع کسر) نوشته می‌شوند تا فرم و فیش و صورت حساب یک عدد
+	// ببینند. ورودی مرحلهٔ «درخواست» (بی‌اقساط یا بی‌تاریخ پرداخت) رد نمی‌شود؛ فقط مقدار
+	// نامعتبر یا خارج از سقف رد می‌شود.
+	f := in.Fields
+	details := map[string]string{}
+	amount := int64Field(f["amount"])
+	installments := int64Field(f["installments"])
+	feeRate := floatField(f["feeRate"])
+	feeAmount := int64Field(f["feeAmount"])
+
+	if strings.TrimSpace(f["amount"]) != "" && amount <= 0 {
+		details["fields.amount"] = "مبلغ وام باید بزرگ‌تر از صفر باشد."
+	}
+	if installments < 0 {
+		details["fields.installments"] = "تعداد اقساط نمی‌تواند منفی باشد."
+	}
+	if installments > 600 {
+		details["fields.installments"] = "تعداد اقساط بیش از ۶۰۰ ماه پذیرفته نمی‌شود."
+	}
+	if feeRate < 0 || feeRate > 100 {
+		details["fields.feeRate"] = "نرخ کارمزد باید بین صفر و ۱۰۰ درصد باشد."
+	}
+	if feeAmount < 0 {
+		details["fields.feeAmount"] = "مبلغ کارمزد نمی‌تواند منفی باشد."
+	}
+	if raw := strings.TrimSpace(f["firstPeriod"]); raw != "" && rules.LoanPeriod(raw) == "" {
+		details["fields.firstPeriod"] = "ماه شروع کسر اقساط باید به قالب شمسی YYYY/MM باشد."
+	}
+	if int64Field(f["settledAmount"]) > 0 && strings.TrimSpace(f["settleDate"]) == "" {
+		details["fields.settleDate"] = "برای مبلغ تسویه، تاریخ تسویه الزامی است."
+	}
+	if len(details) > 0 {
+		return &recordkit.ValidationError{Details: details}
+	}
+
+	// کارمزد: اگر نرخ دارد و مبلغ کارمزد خالی است، از قواعد محاسبه می‌شود.
+	if amount > 0 && feeRate > 0 && strings.TrimSpace(f["feeAmount"]) == "" {
+		f["feeAmount"] = itoa64(rules.LoanFeeAmount(amount, feeRate))
+		feeAmount = int64Field(f["feeAmount"])
+	}
+	// مبلغ هر قسط: از جمع قابل بازپرداخت و تعداد اقساط (تعداد صفر = بدون جدول اقساط).
+	if amount > 0 && installments > 0 {
+		f["installmentAmount"] = itoa64(rules.LoanInstallmentAmount(rules.LoanTotalPayable(amount, feeAmount), int(installments)))
+	}
+	// ماه شروع کسر: خالی ⇒ ماه بعد از تاریخ پرداخت وام.
+	if strings.TrimSpace(f["firstPeriod"]) == "" {
+		if period := rules.LoanFirstPeriod(f["receivedDate"]); period != "" {
+			f["firstPeriod"] = period
+		}
+	}
+	return nil
+}
+
+// validateInstallment قاعدهٔ دامنهٔ قسط وام: ماه کسر و سررسید باید شمسی باشند، مبلغ با
+// جمع سهم اصل و کارمزد بخواند و قسط بی‌پیوند به وام (پیوند خالی) هم مجاز باشد ولی در
+// صورت حساب شمرده نشود.
+func validateInstallment(in contracts.RecordInput) error {
+	f := in.Fields
+	details := map[string]string{}
+	if raw := strings.TrimSpace(f["period"]); raw != "" && rules.LoanPeriod(raw) == "" {
+		details["fields.period"] = "ماه کسر باید به قالب شمسی YYYY/MM باشد."
+	}
+	amount := int64Field(f["amount"])
+	principal := int64Field(f["principal"])
+	fee := int64Field(f["fee"])
+	if strings.TrimSpace(f["amount"]) != "" && amount <= 0 {
+		details["fields.amount"] = "مبلغ قسط باید بزرگ‌تر از صفر باشد."
+	}
+	if (principal > 0 || fee > 0) && amount != principal+fee {
+		details["fields.amount"] = "مبلغ قسط با جمع سهم اصل و کارمزد نمی‌خواند."
+	}
+	if seq := int64Field(f["seq"]); seq < 0 {
+		details["fields.seq"] = "شمارهٔ قسط نمی‌تواند منفی باشد."
+	}
+	if len(details) > 0 {
+		return &recordkit.ValidationError{Details: details}
+	}
+	if period := rules.LoanPeriod(f["period"]); period != "" {
+		f["period"] = period
+		if strings.TrimSpace(f["dueDate"]) == "" {
+			f["dueDate"] = period + "/01"
 		}
 	}
 	return nil

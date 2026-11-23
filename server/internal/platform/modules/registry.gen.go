@@ -358,6 +358,7 @@ var All = []Module{
 			{Key: "loans", Order: 1, Icon: "hand-coins", TitleFa: "وام کارکنان", Component: "LoansScreen", Roles: []string{"admin", "hr_manager", "hr_spec", "employee"}},
 			{Key: "loanInstallments", Order: 2, Icon: "receipt", TitleFa: "اقساط و بازپرداخت", Component: "LoanInstallmentsScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 			{Key: "retirementFiles", Order: 3, Icon: "hourglass", TitleFa: "پرونده‌های بازنشستگی", Component: "RetirementFilesScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
+			{Key: "loanStatement", Order: 4, Icon: "file-invoice", TitleFa: "صورت حساب وام‌ها", Component: "LoanStatementScreen", Roles: []string{"admin", "hr_manager", "hr_spec"}},
 		},
 	},
 	{

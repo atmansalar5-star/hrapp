@@ -1,5 +1,7 @@
 package contracts
 
+import "hrms/internal/rules"
+
 // LoanOption یک گزینهٔ انتخابی در پنل وام (نوع وام یا بانک عامل) است.
 type LoanOption struct {
 	Key             string  `json:"key"`
@@ -133,4 +135,104 @@ type LoanGrantResult struct {
 	// Created شمار رکوردهایی که در همین فراخوانی ساخته شدند (در پیش‌نمایش صفر).
 	Created int    `json:"created"`
 	NoteFa  string `json:"noteFa"`
+}
+
+/* ---------------------- صورت حساب و اقساط وام ---------------------- */
+
+// LoanStatementView صورت حساب یک وام برای رابط و گزارش: سرصفحهٔ وام (بانک، مدیریت،
+// ضامن) به‌همراه صورت حساب کاملِ ساخته‌شده در بستهٔ قواعد.
+type LoanStatementView struct {
+	LoanID             string `json:"loanId"`
+	TitleFa            string `json:"titleFa"`
+	EmployeeID         string `json:"employeeId,omitempty"`
+	EmployeeName       string `json:"employeeName,omitempty"`
+	Status             string `json:"status"`
+	StatusFa           string `json:"statusFa"`
+	BankFa             string `json:"bankFa,omitempty"`
+	ManagementFa       string `json:"managementFa,omitempty"`
+	PurposeFa          string `json:"purpose,omitempty"`
+	GuarantorName      string `json:"guarantorName,omitempty"`
+	GuarantorRelation  string `json:"guarantorRelation,omitempty"`
+	InstallmentRecords int    `json:"installmentRecords"`
+	// Statement صورت حساب کامل: شرایط، جدول اقساط، تاریخچه و مانده بدهی.
+	Statement rules.LoanStatement `json:"statement"`
+}
+
+// LoanCodeGap نوع وامی که در جدول رسمی کد فیش ندارد (برای مکاتبهٔ مالی).
+type LoanCodeGap struct {
+	Key     string `json:"key"`
+	TitleFa string `json:"titleFa"`
+}
+
+// LoanStatementTotals جمع‌های کارتابل صورت حساب وام‌ها.
+type LoanStatementTotals struct {
+	Loans            int   `json:"loans"`
+	Active           int   `json:"active"`
+	Amount           int64 `json:"amount"`
+	FeeAmount        int64 `json:"feeAmount"`
+	TotalPayable     int64 `json:"totalPayable"`
+	PaidAmount       int64 `json:"paidAmount"`
+	RemainingDebt    int64 `json:"remainingDebt"`
+	OverdueAmount    int64 `json:"overdueAmount"`
+	MonthlyDeduction int64 `json:"monthlyDeduction"`
+}
+
+// LoanStatementPage کارتابل صورت حساب وام‌ها: فهرست وام‌ها با مانده بدهی و جمع‌ها.
+type LoanStatementPage struct {
+	Items    []LoanStatementView `json:"items"`
+	Count    int                 `json:"count"`
+	Totals   LoanStatementTotals `json:"totals"`
+	PeriodFa string              `json:"periodFa,omitempty"`
+	TodayFa  string              `json:"todayFa,omitempty"`
+	CodeGaps []LoanCodeGap       `json:"codeGaps,omitempty"`
+	NoteFa   string              `json:"noteFa,omitempty"`
+}
+
+// LoanSchedulePreviewResult پیش‌نمایش جدول اقساط پیش از ثبت وام (بدون ذخیره‌سازی).
+type LoanSchedulePreviewResult struct {
+	Schedule          rules.LoanSchedule `json:"schedule"`
+	PaymentCode       string             `json:"paymentCode,omitempty"`
+	PaymentCodeFa     string             `json:"paymentCodeFa,omitempty"`
+	InstallmentCode   string             `json:"installmentCode,omitempty"`
+	InstallmentCodeFa string             `json:"installmentCodeFa,omitempty"`
+	CodeNoteFa        string             `json:"codeNoteFa,omitempty"`
+	Problems          []string           `json:"problems,omitempty"`
+	NoteFa            string             `json:"noteFa,omitempty"`
+}
+
+// LoanScheduleBuildResult نتیجهٔ ساخت/به‌روزرسانی رکوردهای قسط یک وام.
+type LoanScheduleBuildResult struct {
+	LoanID    string            `json:"loanId"`
+	Created   int               `json:"created"`
+	Updated   int               `json:"updated"`
+	Unchanged int               `json:"unchanged"`
+	Statement LoanStatementView `json:"statement"`
+	NoteFa    string            `json:"noteFa,omitempty"`
+}
+
+// LoanInstallmentDueRow یک قسط سررسیدشدهٔ یک دوره برای کسر از حقوق.
+type LoanInstallmentDueRow struct {
+	LoanID        string `json:"loanId"`
+	LoanTypeFa    string `json:"loanTypeFa,omitempty"`
+	EmployeeID    string `json:"employeeId,omitempty"`
+	EmployeeName  string `json:"employeeName,omitempty"`
+	Seq           int    `json:"seq"`
+	PeriodFa      string `json:"periodFa,omitempty"`
+	Amount        int64  `json:"amount"`
+	Status        string `json:"status"`
+	StatusFa      string `json:"statusFa"`
+	CodeFa        string `json:"codeFa,omitempty"`
+	CodeTitleFa   string `json:"codeTitleFa,omitempty"`
+	RemainingDebt int64  `json:"remainingDebt"`
+}
+
+// LoanInstallmentDuePage فهرست اقساط یک دوره برای پردازش حقوق.
+type LoanInstallmentDuePage struct {
+	Rows          []LoanInstallmentDueRow `json:"rows"`
+	Count         int                     `json:"count"`
+	PeriodFa      string                  `json:"periodFa,omitempty"`
+	TotalAmount   int64                   `json:"totalAmount"`
+	PaidAmount    int64                   `json:"paidAmount"`
+	PendingAmount int64                   `json:"pendingAmount"`
+	NoteFa        string                  `json:"noteFa,omitempty"`
 }

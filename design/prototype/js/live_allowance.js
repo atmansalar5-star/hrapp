@@ -47,8 +47,11 @@ function asgFormHtml() {
         ${field('مقدار / درصد / ضریب', `<input id="asgRate" class="num" placeholder="مثلاً 9000000 یا 15 یا 1.5">`)}
         ${field('مبنا (برای درصدی و ضریبی)', `<select id="asgBasis"><option value="">—</option>${opts(d.bases, '')}</select>`)}
         ${field('فرمول (برای روش فرمولی)', `<input id="asgFormula" class="ltr" placeholder="مثلاً BASE*0.15+CHILDREN*1000000">`, 'متغیرها: BASE، ALLOWANCEBASE، ATTRACTIONBASE، GROSS و پارامترها.')}
-        ${field('مشمول مالیات', `<select id="asgTaxable"><option value="خیر">خیر</option><option value="بله">بله</option></select>`)}
-        ${field('مشمول بیمه/بازنشستگی', `<select id="asgInsured"><option value="خیر">خیر</option><option value="بله">بله</option></select>`)}
+        ${field('مشمول مالیات (درج در گزارش مالیات)', `<select id="asgTaxable"><option value="خیر">خیر</option><option value="بله">بله</option></select>`)}
+        ${field('مشمول بیمه/بازنشستگی (درج در گزارش بیمه)', `<select id="asgInsured"><option value="خیر">خیر</option><option value="بله">بله</option></select>`)}
+        ${field('نمایش در فیش حقوقی', `<select id="asgPayslip"><option value="بله">بله</option><option value="خیر">خیر</option></select>`)}
+        ${field('درج در گزارش‌های چاپی', `<select id="asgReports"><option value="بله">بله</option><option value="خیر">خیر</option></select>`)}
+        ${field('کد گزارش (کدال)', `<input id="asgReportCode" class="ltr" placeholder="مثلاً 151-1">`, 'کد رسمی گزارش سازمان؛ خالی بماند، در گزارش رسمی با عنوان قلم درج می‌شود.')}
         ${field('دامنهٔ تخصیص <span class="req">*</span>', `<select id="asgTargetKind">${opts(d.targetKinds, 'employee')}</select>`)}
         ${field('مقدار دامنه', `<input id="asgTargetValue" list="asgTargetList" placeholder="شناسهٔ کارمند، واحد، نوع استخدام یا گروه">
             <datalist id="asgTargetList">${empOpts}${unitOpts}${typeOpts}${gradeOpts}${groupOpts}</datalist>`, 'برای دامنهٔ «همهٔ کارکنان» خالی بماند.')}
@@ -74,6 +77,8 @@ function asgListHtml() {
     const value = f.calc === 'formula' ? esc(f.formula || '')
       : `${esc(f.rate || '')}${f.calc === 'percent' ? '٪' : ''}${f.basis ? ' × ' + esc(f.basis) : ''}`;
     const flags = `${f.taxable === 'بله' ? 'مالیات' : '—'} / ${f.insured === 'بله' ? 'بیمه' : '—'}`;
+    // جای نمایش قلم: فیش حقوقی، گزارش‌های چاپی و کد گزارش رسمی (کدال).
+    const showFlags = `${f.showOnPayslip === 'خیر' ? 'بدون فیش' : 'فیش'} / ${f.showInReports === 'خیر' ? 'بدون گزارش' : 'گزارش'}${f.reportCode ? ' · کد ' + esc(f.reportCode) : ''}`;
     const actions = r.status === 'active'
       ? `<button class="btn btn-sm btn-ghost" data-asg-act="close" data-asg-id="${esc(r.id)}">پایان</button>`
       : `<button class="btn btn-sm btn-primary" data-asg-act="activate" data-asg-id="${esc(r.id)}">فعال‌سازی</button>`;
@@ -84,6 +89,7 @@ function asgListHtml() {
       <td>${target}</td>
       <td class="num">${value}</td>
       <td class="muted" style="font-size:.72rem">${flags}</td>
+      <td class="muted" style="font-size:.72rem">${showFlags}</td>
       <td>${esc(f.effectiveFrom || '')}${f.effectiveTo ? ' تا ' + esc(f.effectiveTo) : ''}</td>
       <td>${pChip(r.status === 'active' ? 'c-ok' : 'c-wait', r.statusFa || r.status)}</td>
       <td><div class="row-actions">${actions}</div></td>
@@ -91,7 +97,7 @@ function asgListHtml() {
   });
   return `<div class="card card-pad" style="margin-bottom:12px">
       <div style="font-weight:600;margin-bottom:6px">تخصیص‌های ثبت‌شده (${fa(ASG_ROWS.length)})</div>
-      ${tbl(['شماره', 'کد و عنوان', 'روش', 'دامنه', 'مقدار', 'مشمول', 'اعتبار', 'وضعیت', 'عملیات'], rows, {count: ASG_ROWS.length})}
+      ${tbl(['شماره', 'کد و عنوان', 'روش', 'دامنه', 'مقدار', 'مشمول', 'نمایش/گزارش', 'اعتبار', 'وضعیت', 'عملیات'], rows, {count: ASG_ROWS.length})}
     </div>`;
 }
 
@@ -187,6 +193,8 @@ async function asgSave() {
     code: asgVal('asgCode'), titleFa: asgVal('asgTitle'), category: asgVal('asgCategory'),
     calc: asgVal('asgCalc'), rate: asgVal('asgRate'), basis: asgVal('asgBasis'),
     formula: asgVal('asgFormula'), taxable: asgVal('asgTaxable'), insured: asgVal('asgInsured'),
+    showOnPayslip: asgVal('asgPayslip'), showInReports: asgVal('asgReports'),
+    reportCode: asgVal('asgReportCode'),
     targetKind: asgVal('asgTargetKind'), targetValue: asgVal('asgTargetValue'),
     effectiveFrom: asgVal('asgFrom'), effectiveTo: asgVal('asgTo'), noteFa: asgVal('asgNote'),
   };
@@ -235,6 +243,7 @@ async function asgPreview() {
       ${statCard({ico: '➖', tint: '#FEE2E2', accent: '#DC2626', val: money(totals.deductions || 0), label: 'جمع کسور'})}
       ${statCard({ico: '🧾', tint: '#FEF3C7', accent: '#D97706', val: money(totals.taxableEarnings || 0), label: 'مشمول مالیات'})}
       ${statCard({ico: '🛡️', tint: '#EDE9FE', accent: '#7C3AED', val: money(totals.insuredEarnings || 0), label: 'مشمول بیمه'})}
+      ${statCard({ico: '🖨️', tint: '#DBEAFE', accent: '#2563EB', val: money(totals.payslipEarnings || 0), label: 'نمایش در فیش'})}
     </div>`;
   if (!lines.length) {
     asgPaint(out, cards + `<div class="card card-pad muted">برای این کارمند در این ماه تخصیص فعالی نیست.</div>`);
@@ -248,9 +257,12 @@ async function asgPreview() {
       <td class="num">${money(l.amount)}</td>
       <td>${l.taxable ? '✅' : '—'}</td>
       <td>${l.insured ? '✅' : '—'}</td>
+      <td>${l.showOnPayslip ? '✅' : '—'}</td>
+      <td>${l.showInReports ? '✅' : '—'}</td>
+      <td class="num ltr">${esc(l.reportCode || '')}</td>
       <td class="muted" style="font-size:.72rem">${esc(l.detailFa || '')}</td>
     </tr>`);
-  asgPaint(out, cards + tbl(['کد', 'عنوان', 'نوع', 'روش محاسبه', 'مبلغ (ریال)', 'مالیات', 'بیمه', 'شرح'],
+  asgPaint(out, cards + tbl(['کد', 'عنوان', 'نوع', 'روش محاسبه', 'مبلغ (ریال)', 'مالیات', 'بیمه', 'فیش', 'گزارش', 'کد گزارش', 'شرح'],
     rows, {count: lines.length}));
 }
 

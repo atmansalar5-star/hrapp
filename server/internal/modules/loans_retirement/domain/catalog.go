@@ -5,7 +5,11 @@
 // اعلام می‌شوند؛ سرور تنها منبع حقیقت است و UI هیچ نرخ یا معیاری از خودش نمی‌سازد.
 package domain
 
-import "strings"
+import (
+	"strings"
+
+	"hrms/internal/rules"
+)
 
 // LoanType یک نوع وام با پارامترهای پیش‌فرض آن.
 //
@@ -24,15 +28,18 @@ type LoanType struct {
 }
 
 // loanTypes فهرست مصوب انواع وام کارکنان.
+//
+// عنوان فارسی از بستهٔ rules می‌آید تا فیش حقوقی و صورت حساب وام همان نام را نشان دهند؛
+// نرخ کارمزد و سقف‌های مصوب سیاست سازمان‌اند و همین‌جا می‌مانند.
 func loanTypes() []LoanType {
 	return []LoanType{
-		{Key: "housingDeposit", TitleFa: "وام ودیعهٔ مسکن", FeeRatePercent: 4, MaxInstallments: 60, MaxAmount: 1_000_000_000, PurposeFa: "ودیعهٔ مسکن"},
-		{Key: "housingDepositSupplement", TitleFa: "متمم ودیعهٔ مسکن", IsSupplement: true, BaseKey: "housingDeposit", FeeRatePercent: 4, MaxInstallments: 36, MaxAmount: 300_000_000, PurposeFa: "تکمیل ودیعهٔ مسکن"},
-		{Key: "bank", TitleFa: "وام بانکی", FeeRatePercent: 18, MaxInstallments: 36, MaxAmount: 500_000_000, PurposeFa: "وام بانکی"},
-		{Key: "emergency", TitleFa: "وام اضطراری", FeeRatePercent: 0, MaxInstallments: 12, MaxAmount: 100_000_000, PurposeFa: "هزینهٔ اضطراری"},
-		{Key: "socialWork", TitleFa: "وام مددکاری", FeeRatePercent: 2, MaxInstallments: 24, MaxAmount: 150_000_000, PurposeFa: "حمایت مددکاری"},
-		{Key: "firstDegreeDeath", TitleFa: "وام فوت بستگان درجه یک", FeeRatePercent: 0, MaxInstallments: 24, MaxAmount: 80_000_000, PurposeFa: "هزینهٔ فوت بستگان درجه یک"},
-		{Key: "unforeseen", TitleFa: "وام حوادث مترقبه", FeeRatePercent: 1, MaxInstallments: 36, MaxAmount: 200_000_000, PurposeFa: "جبران خسارت حوادث مترقبه"},
+		{Key: "housingDeposit", TitleFa: rules.LoanTypeTitleFa("housingDeposit"), FeeRatePercent: 4, MaxInstallments: 60, MaxAmount: 1_000_000_000, PurposeFa: "ودیعهٔ مسکن"},
+		{Key: "housingDepositSupplement", TitleFa: rules.LoanTypeTitleFa("housingDepositSupplement"), IsSupplement: true, BaseKey: "housingDeposit", FeeRatePercent: 4, MaxInstallments: 36, MaxAmount: 300_000_000, PurposeFa: "تکمیل ودیعهٔ مسکن"},
+		{Key: "bank", TitleFa: rules.LoanTypeTitleFa("bank"), FeeRatePercent: 18, MaxInstallments: 36, MaxAmount: 500_000_000, PurposeFa: "وام بانکی"},
+		{Key: "emergency", TitleFa: rules.LoanTypeTitleFa("emergency"), FeeRatePercent: 0, MaxInstallments: 12, MaxAmount: 100_000_000, PurposeFa: "هزینهٔ اضطراری"},
+		{Key: "socialWork", TitleFa: rules.LoanTypeTitleFa("socialWork"), FeeRatePercent: 2, MaxInstallments: 24, MaxAmount: 150_000_000, PurposeFa: "حمایت مددکاری"},
+		{Key: "firstDegreeDeath", TitleFa: rules.LoanTypeTitleFa("firstDegreeDeath"), FeeRatePercent: 0, MaxInstallments: 24, MaxAmount: 80_000_000, PurposeFa: "هزینهٔ فوت بستگان درجه یک"},
+		{Key: "unforeseen", TitleFa: rules.LoanTypeTitleFa("unforeseen"), FeeRatePercent: 1, MaxInstallments: 36, MaxAmount: 200_000_000, PurposeFa: "جبران خسارت حوادث مترقبه"},
 	}
 }
 

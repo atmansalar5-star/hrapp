@@ -172,6 +172,15 @@ func unifiedPayslip(ctx context.Context, deps modulekit.Deps, svc *recordkit.Ser
 		notes = append(notes, mismatchFa)
 	}
 
+	// اقساط وام همین ماه: بلوک `loans` کنار فیش می‌آید و جمع اقساط سررسیدشده به «سایر
+	// کسور» موتور افزوده می‌شود تا واقعاً از خالص کم شود (قاعدهٔ حساب در rules است).
+	loanBlock, loanDeduction := loanPayslipBlock(ctx, deps, employee.ID, period)
+	if loanDeduction > 0 {
+		in.OtherDeductions += loanDeduction
+		notes = append(notes, "جمع اقساط وام این ماه ("+strconv.FormatInt(loanDeduction, 10)+
+			" ریال) به سایر کسور فیش افزوده شد؛ ریز اقساط در بخش «وام‌ها» آمده است.")
+	}
+
 	switch model {
 	case rules.PayModelOil:
 		payload := oilPayslip(ctx, deps, oilInputFor(employee, in, oilPayParams(deps, nil)))
@@ -205,6 +214,8 @@ func unifiedPayslip(ctx context.Context, deps modulekit.Deps, svc *recordkit.Ser
 	// تخصیص فوق العاده‌های همین کارمند (کد رسمی، مبلغ، مشمولیت مالیات/بیمه) کنار فیش
 	// می‌آید؛ جمع این سطرها بیرون از محاسبهٔ موتور گزارش می‌شود تا فیش هر نظام دست‌نخورده بماند.
 	result["assignments"] = allowanceAssignmentBlock(ctx, deps, svc, employee.ID, period)
+	// بلوک اقساط وام: هر وام با شرایط، قسط همین دوره، کد رسمی و مانده بدهی.
+	result["loans"] = loanBlock
 	return result, nil
 }
 

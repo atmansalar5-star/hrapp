@@ -32,8 +32,13 @@ func allowanceAssignmentKind() recordkit.Kind {
 			"rate|مقدار، درصد یا ضریب|text|0",
 			"basis|مبنای محاسبه (base/allowanceBase/attractionBase/gross/insuranceBase/constant)|select|0",
 			"formula|فرمول محاسبه|text|0",
-			"taxable|مشمول مالیات (بله/خیر)|select|0",
-			"insured|مشمول بیمه و بازنشستگی (بله/خیر)|select|0",
+			"taxable|مشمول مالیات (درج در گزارش مالیات) (بله/خیر)|select|0",
+			"insured|مشمول بیمه و بازنشستگی (درج در گزارش بیمه) (بله/خیر)|select|0",
+			// جای نمایش و درج قلم در خروجی‌ها: فیش حقوقی، گزارش‌های چاپی و کد گزارش رسمی
+			// (کدال). خالی یعنی «بله» تا رفتار گذشته حفظ شود.
+			"showOnPayslip|نمایش در فیش حقوقی (بله/خیر)|select|0",
+			"showInReports|درج در گزارش‌های چاپی (بله/خیر)|select|0",
+			"reportCode|کد گزارش (کدال) — حرف و رقم|text|0",
 			"targetKind|دامنهٔ تخصیص (employee/department/employmentType/jobGrade/payGroup/all)|select|1",
 			"targetValue|مقدار دامنه (شناسهٔ کارمند، واحد، نوع استخدام یا گروه)|text|0",
 			"effectiveFrom|ماه شروع اعتبار (YYYY/MM)|text|1",
@@ -64,6 +69,14 @@ func validateAllowanceAssignment(in contracts.RecordInput) error {
 			f["titleFa"] = code.TitleFa
 		}
 	}
+	// جای نمایش قلم: خالی یعنی «بله» (هم فیش حقوقی و هم گزارش‌های چاپی) تا رفتار پیش از
+	// افزودن این دو فیلد عوض نشود.
+	if strings.TrimSpace(f["showOnPayslip"]) == "" {
+		f["showOnPayslip"] = "بله"
+	}
+	if strings.TrimSpace(f["showInReports"]) == "" {
+		f["showInReports"] = "بله"
+	}
 	// نوع قلم هم اگر خالی باشد از جدول رسمی استنتاج می‌شود (کسور/مزایا).
 	if strings.TrimSpace(f["category"]) == "" {
 		if code, ok := rules.PayslipCodeByNumber(f["code"]); ok {
@@ -85,6 +98,9 @@ func validateAllowanceAssignment(in contracts.RecordInput) error {
 		Formula:       strings.TrimSpace(f["formula"]),
 		Taxable:       isYes(f["taxable"]),
 		Insured:       isYes(f["insured"]),
+		ShowOnPayslip: isYesOrEmpty(f["showOnPayslip"]),
+		ShowInReports: isYesOrEmpty(f["showInReports"]),
+		ReportCode:    strings.TrimSpace(f["reportCode"]),
 		Target:        rules.AllowanceTarget{Kind: strings.TrimSpace(f["targetKind"]), Value: strings.TrimSpace(f["targetValue"])},
 		EffectiveFrom: strings.TrimSpace(f["effectiveFrom"]),
 		EffectiveTo:   strings.TrimSpace(f["effectiveTo"]),
@@ -147,6 +163,15 @@ func allowanceAssignmentSeeds() []contracts.RecordInput {
 			},
 			SeedStatus: "active"},
 	}
+}
+
+// isYesOrEmpty مثل isYes است، با این تفاوت که مقدار خالی «بله» شمرده می‌شود (پیش‌فرض
+// نمایش در فیش و گزارش‌ها برای تخصیص‌های قدیمی که این دو فیلد را ندارند).
+func isYesOrEmpty(raw string) bool {
+	if strings.TrimSpace(raw) == "" {
+		return true
+	}
+	return isYes(raw)
 }
 
 // isYes پاسخ مثبت فارسی/لاتین را می‌سنجد (فیلدهای بله/خیر فرم).

@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"hrms/internal/contracts"
 	"hrms/internal/modules/loans_retirement/domain"
 	"hrms/internal/platform/calendar"
 	"hrms/internal/platform/recordkit"
 	"hrms/internal/platform/repfilter"
+	"hrms/internal/rules"
 )
 
 // loansReportSource منبع دادهٔ «وام کارکنان» برای گزارش‌ساز است.
@@ -35,12 +37,23 @@ func reportLoanFields() []contracts.ReportField {
 		{Key: "installmentAmount", LabelFa: "میزان هر قسط", Type: "money"},
 		{Key: "feeRate", LabelFa: "نرخ کارمزد (درصد)", Type: "number"},
 		{Key: "feeAmount", LabelFa: "مبلغ کارمزد", Type: "money"},
+		// اقلام صورت حساب: جمع قابل بازپرداخت، کسرشده و مانده بدهی از جدول اقساط می‌آید.
+		{Key: "totalPayable", LabelFa: "جمع قابل بازپرداخت", Type: "money"},
+		{Key: "paidAmount", LabelFa: "جمع اقساط کسرشده", Type: "money"},
+		{Key: "paidInstallments", LabelFa: "اقساط کسرشده", Type: "number"},
+		{Key: "remainingInstallments", LabelFa: "اقساط باقی‌مانده", Type: "number"},
+		{Key: "remainingDebt", LabelFa: "مانده بدهی", Type: "money"},
+		{Key: "overdueAmount", LabelFa: "اقساط معوق (مبلغ)", Type: "money"},
+		{Key: "firstPeriod", LabelFa: "شروع کسر اقساط", Type: "text"},
+		{Key: "lastPeriod", LabelFa: "پایان اقساط", Type: "text"},
+		{Key: "paymentCode", LabelFa: "کد پرداخت وام", Type: "text"},
+		{Key: "installmentCode", LabelFa: "کد کسر قسط", Type: "text"},
 		{Key: "supplementFa", LabelFa: "متمم وام", Type: "text"},
 		{Key: "supplementOf", LabelFa: "متممِ وام (شناسهٔ وام پایه)", Type: "text"},
 		{Key: "guarantorName", LabelFa: "نام ضامن", Type: "text"},
 		{Key: "guarantorNationalId", LabelFa: "کد ملی ضامن", Type: "text"},
 		{Key: "guarantorRelation", LabelFa: "نسبت ضامن", Type: "text"},
-		{Key: "receivedDate", LabelFa: "زمان دریافت", Type: "date"},
+		{Key: "receivedDate", LabelFa: "تاریخ پرداخت وام", Type: "date"},
 		{Key: "statusFa", LabelFa: "وضعیت", Type: "text"},
 		{Key: "purpose", LabelFa: "هدف وام", Type: "text"},
 	}
@@ -109,16 +122,34 @@ func (s loansReportSource) Rows(ctx context.Context, req contracts.ReportRequest
 	if err != nil {
 		return contracts.ReportResult{}, err
 	}
+	// اقساط برای محاسبهٔ مانده بدهی و «کسرشده/باقی‌مانده» یک بار خوانده می‌شود؛ گزارش
+	// ستون‌های صورت حساب را از همان جدول اقساط می‌دهد، نه از عدد دستی.
+	installments, err := s.svc.List(ctx, contracts.RecordFilter{
+		Module: "loans_retirement", Kind: "loanInstallments", Scope: "all", Page: 1, Size: 5000,
+	})
+	if err != nil {
+		installments = contracts.RecordPage{}
+	}
+	byLoan := map[string][]contracts.Record{}
+	for _, inst := range installments.Items {
+		id := strings.TrimSpace(inst.Fields["loan"])
+		if id == "" {
+			continue
+		}
+		byLoan[id] = append(byLoan[id], inst)
+	}
+	period := reportPeriodFa()
 
 	rows := make([][]string, 0, len(page.Items))
-	var amountTotal, feeTotal float64
+	var amountTotal, feeTotal, remainingTotal float64
 	// فیلترهای سادهٔ منبع (نوع وام، بانک عامل، وضعیت) چندانتخابی‌اند: کاربر می‌تواند
 	// چند گزینه را تیک بزند و رابط آن‌ها را با کاما می‌فرستد.
 	loanTypes := contracts.SplitValues(req.Filters["loanType"])
 	banks := contracts.SplitValues(req.Filters["bank"])
 	statuses := contracts.SplitValues(req.Filters["status"])
 	for _, rec := range page.Items {
-		values := loanValues(rec)
+		statement, _ := domain.LoanStatementOf(rec, byLoan[rec.ID], period)
+		values := loanValues(rec, statement)
 		if !contracts.MatchValue("", loanTypes, rec.Fields["loanType"]) {
 			continue
 		}
@@ -134,6 +165,7 @@ func (s loansReportSource) Rows(ctx context.Context, req contracts.ReportRequest
 		}
 		amountTotal += floatOf(values["amount"])
 		feeTotal += floatOf(values["feeAmount"])
+		remainingTotal += floatOf(values["remainingDebt"])
 		row := make([]string, 0, len(cols))
 		for _, c := range cols {
 			row = append(row, values[c.Key])
@@ -151,35 +183,69 @@ func (s loansReportSource) Rows(ctx context.Context, req contracts.ReportRequest
 		Summary: []contracts.ReportSummary{
 			{Key: "amount", LabelFa: "جمع مبلغ وام‌ها", Total: amountTotal},
 			{Key: "feeAmount", LabelFa: "جمع کارمزد وام‌ها", Total: feeTotal},
+			{Key: "remainingDebt", LabelFa: "جمع مانده بدهی وام‌ها", Total: remainingTotal},
 		},
 	}, nil
 }
 
-// loanValues مقادیر هر قلم را برای یک رکورد وام می‌سازد.
-func loanValues(rec contracts.Record) map[string]string {
+// loanValues مقادیر هر قلم را برای یک رکورد وام می‌سازد. اقلام صورت حساب (جمع قابل
+// بازپرداخت، کسرشده، مانده بدهی، کدها) از صورت حساب همان وام می‌آید تا گزارش و صورت حساب
+// و فیش یک عدد بدهند.
+func loanValues(rec contracts.Record, statement rules.LoanStatement) map[string]string {
 	supplement := "خیر"
 	if strings.TrimSpace(rec.Fields["supplementOf"]) != "" {
 		supplement = "بله"
 	}
 	return map[string]string{
-		"id":                  rec.ID,
-		"employeeName":        rec.EmployeeName,
-		"loanTypeFa":          domain.LoanTypeTitleFa(rec.Fields["loanType"]),
-		"bankFa":              bankFa(rec.Fields["bank"]),
-		"amount":              num(rec.Fields["amount"]),
-		"installments":        num(rec.Fields["installments"]),
-		"installmentAmount":   num(rec.Fields["installmentAmount"]),
-		"feeRate":             num(rec.Fields["feeRate"]),
-		"feeAmount":           num(rec.Fields["feeAmount"]),
-		"supplementFa":        supplement,
-		"supplementOf":        rec.Fields["supplementOf"],
-		"guarantorName":       rec.Fields["guarantorName"],
-		"guarantorNationalId": rec.Fields["guarantorNationalId"],
-		"guarantorRelation":   rec.Fields["guarantorRelation"],
-		"receivedDate":        rec.Fields["receivedDate"],
-		"statusFa":            rec.StatusFa,
-		"purpose":             rec.Fields["purpose"],
+		"id":                    rec.ID,
+		"employeeName":          rec.EmployeeName,
+		"loanTypeFa":            domain.LoanTypeTitleFa(rec.Fields["loanType"]),
+		"bankFa":                bankFa(rec.Fields["bank"]),
+		"amount":                num(rec.Fields["amount"]),
+		"installments":          num(rec.Fields["installments"]),
+		"installmentAmount":     num(rec.Fields["installmentAmount"]),
+		"feeRate":               num(rec.Fields["feeRate"]),
+		"feeAmount":             num(rec.Fields["feeAmount"]),
+		"totalPayable":          itoa64r(statement.TotalPayable),
+		"paidAmount":            itoa64r(statement.Balance.PaidAmount),
+		"paidInstallments":      itoa64r(int64(statement.Balance.PaidCount)),
+		"remainingInstallments": itoa64r(int64(statement.Balance.RemainingInstallments)),
+		"remainingDebt":         itoa64r(statement.Balance.RemainingDebt),
+		"overdueAmount":         itoa64r(statement.Balance.OverdueAmount),
+		"firstPeriod":           statement.FirstPeriodFa,
+		"lastPeriod":            statement.LastPeriodFa,
+		"paymentCode":           statement.PaymentCode,
+		"installmentCode":       statement.InstallmentCode,
+		"supplementFa":          supplement,
+		"supplementOf":          rec.Fields["supplementOf"],
+		"guarantorName":         rec.Fields["guarantorName"],
+		"guarantorNationalId":   rec.Fields["guarantorNationalId"],
+		"guarantorRelation":     rec.Fields["guarantorRelation"],
+		"receivedDate":          rec.Fields["receivedDate"],
+		"statusFa":              rec.StatusFa,
+		"purpose":               rec.Fields["purpose"],
 	}
+}
+
+// itoa64r عدد را برای ستون گزارش به رشته تبدیل می‌کند (صفر ⇒ رشتهٔ خالی تا ستون خالی بماند).
+func itoa64r(v int64) string {
+	if v == 0 {
+		return "0"
+	}
+	return strconv.FormatInt(v, 10)
+}
+
+// reportPeriodFa ماه جاری شمسی برای مرجع «معوق» در گزارش.
+func reportPeriodFa() string {
+	today, err := calendar.FromGregorian(time.Now())
+	if err != nil {
+		return ""
+	}
+	text := today.String()
+	if len(text) < 7 {
+		return ""
+	}
+	return text[:7]
 }
 
 func bankFa(key string) string {
@@ -205,4 +271,128 @@ func floatOf(v string) float64 {
 		return 0
 	}
 	return f
+}
+
+/* --------------------------- منبع گزارش اقساط --------------------------- */
+
+// loanInstallmentsReportSource منبع «اقساط وام‌ها» برای گزارش‌ساز: هر قسط یک سطر با ماه
+// کسر، سهم اصل و کارمزد، وضعیت کسر و کد رسمی؛ مبنای پیگیری ماه‌به‌ماه کسور وام.
+type loanInstallmentsReportSource struct{ svc *recordkit.Service }
+
+// reportInstallmentFields اقلام انتخاب‌شدنی گزارش اقساط.
+func reportInstallmentFields() []contracts.ReportField {
+	return []contracts.ReportField{
+		{Key: "id", LabelFa: "شناسهٔ قسط", Type: "text"},
+		{Key: "loan", LabelFa: "شناسهٔ وام", Type: "text"},
+		{Key: "employeeName", LabelFa: "نام کارمند", Type: "text"},
+		{Key: "seq", LabelFa: "شمارهٔ قسط", Type: "number"},
+		{Key: "period", LabelFa: "ماه کسر", Type: "text"},
+		{Key: "dueDate", LabelFa: "سررسید", Type: "date"},
+		{Key: "amount", LabelFa: "مبلغ قسط", Type: "money"},
+		{Key: "principal", LabelFa: "سهم اصل", Type: "money"},
+		{Key: "fee", LabelFa: "سهم کارمزد", Type: "money"},
+		{Key: "statusFa", LabelFa: "وضعیت قسط", Type: "text"},
+		{Key: "paidDate", LabelFa: "تاریخ کسر", Type: "date"},
+		{Key: "methodFa", LabelFa: "روش پرداخت", Type: "text"},
+	}
+}
+
+// Metadata معرفی منبع اقساط.
+func (s loanInstallmentsReportSource) Metadata() contracts.ReportSourceMeta {
+	statuses := []contracts.ReportFilterOption{}
+	if kind, ok := domain.Descriptor().KindByKey("loanInstallments"); ok {
+		for _, st := range kind.Statuses {
+			statuses = append(statuses, contracts.ReportFilterOption{Value: st.Value, LabelFa: st.LabelFa})
+		}
+	}
+	return contracts.ReportSourceMeta{
+		Key: "loanInstallments", TitleFa: "اقساط وام‌ها", Fields: reportInstallmentFields(),
+		Filters: []contracts.ReportFilterDef{
+			{Key: "status", LabelFa: "وضعیت قسط", Type: "select", Options: statuses, Multiple: true},
+		},
+	}
+}
+
+// Rows سطرهای گزارش اقساط.
+func (s loanInstallmentsReportSource) Rows(ctx context.Context, req contracts.ReportRequest) (contracts.ReportResult, error) {
+	if s.svc == nil {
+		return contracts.ReportResult{}, fmt.Errorf("دادهٔ اقساط وام در این استقرار در دسترس نیست")
+	}
+	fields := reportInstallmentFields()
+	byKey := map[string]contracts.ReportField{}
+	for _, f := range fields {
+		byKey[f.Key] = f
+	}
+	cols := fields
+	if len(req.Items) > 0 {
+		cols = cols[:0]
+		for _, key := range req.Items {
+			if f, ok := byKey[key]; ok {
+				cols = append(cols, f)
+			}
+		}
+		if len(cols) == 0 {
+			cols = fields
+		}
+	}
+	limit := req.Limit
+	if limit <= 0 || limit > 5000 {
+		limit = 5000
+	}
+	page, err := s.svc.List(ctx, contracts.RecordFilter{
+		Module: "loans_retirement", Kind: "loanInstallments", Scope: "all", Page: 1, Size: limit,
+	})
+	if err != nil {
+		return contracts.ReportResult{}, err
+	}
+	statuses := contracts.SplitValues(req.Filters["status"])
+	rows := make([][]string, 0, len(page.Items))
+	var total, pending, paid float64
+	for _, rec := range page.Items {
+		if !contracts.MatchValue("", statuses, rec.Status) {
+			continue
+		}
+		values := map[string]string{
+			"id":           rec.ID,
+			"loan":         rec.Fields["loan"],
+			"employeeName": rec.EmployeeName,
+			"seq":          num(rec.Fields["seq"]),
+			"period":       rec.Fields["period"],
+			"dueDate":      rec.Fields["dueDate"],
+			"amount":       num(rec.Fields["amount"]),
+			"principal":    num(rec.Fields["principal"]),
+			"fee":          num(rec.Fields["fee"]),
+			"statusFa":     rec.StatusFa,
+			"paidDate":     rec.Fields["paidDate"],
+			"methodFa":     rules.LoanPaymentMethodFa(rec.Fields["method"]),
+		}
+		if !repfilter.Matches(values, req.Conditions) {
+			continue
+		}
+		amount := floatOf(values["amount"])
+		total += amount
+		if rec.Status == "paid" {
+			paid += amount
+		} else {
+			pending += amount
+		}
+		row := make([]string, 0, len(cols))
+		for _, c := range cols {
+			row = append(row, values[c.Key])
+		}
+		rows = append(rows, row)
+	}
+	return contracts.ReportResult{
+		Source:  "loanInstallments",
+		TitleFa: "اقساط وام‌ها",
+		Columns: cols,
+		Rows:    rows,
+		Total:   len(rows),
+		NoteFa:  "هر سطر یک قسط وام است؛ مبلغ قسط، سهم اصل و کارمزد از جدول اقساط همان وام می‌آید.",
+		Summary: []contracts.ReportSummary{
+			{Key: "amount", LabelFa: "جمع اقساط", Total: total},
+			{Key: "paid", LabelFa: "جمع اقساط کسرشده", Total: paid},
+			{Key: "pending", LabelFa: "جمع اقساط در انتظار", Total: pending},
+		},
+	}, nil
 }

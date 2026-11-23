@@ -21141,6 +21141,17 @@
             "hr_manager",
             "hr_spec"
           ]
+        },
+        {
+          "key": "loanStatement",
+          "order": 4,
+          "titleFa": "صورت حساب وام‌ها",
+          "component": "LoanStatementScreen",
+          "roles": [
+            "admin",
+            "hr_manager",
+            "hr_spec"
+          ]
         }
       ]
     },

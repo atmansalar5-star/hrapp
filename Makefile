@@ -52,6 +52,7 @@ verify:
 	node tools/check/cpf-spec.mjs
 	node tools/check/pcs-spec.mjs
 	node tools/check/asg-spec.mjs
+	node tools/check/loan-spec.mjs
 
 # فرهنگ داده و نمودار ERD: بازتولید فایل‌های نسخه‌دار از کاتالوگ زندهٔ پایگاه‌داده.
 #   make datadict          بازتولید سه فایل در DATADICT_TMP

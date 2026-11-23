@@ -390,6 +390,7 @@ export const MODULES: ModuleSpec[] = [
       { key: "loans", order: 1, icon: "hand-coins", titleFa: "وام کارکنان", purposeFa: "ثبت درخواست وام کارکنان از صندوق، بررسی اهلیت و ضامن، تعیین مبلغ و دورهٔ بازپرداخت و صدور مصوبهٔ وام.", component: "LoansScreen", roles: ["admin", "hr_manager", "hr_spec", "employee"] },
       { key: "loanInstallments", order: 2, icon: "receipt", titleFa: "اقساط و بازپرداخت", purposeFa: "پیگیری اقساط وام‌های جاری، کسر خودکار از حقوق، ثبت بازپرداخت پیش از موعد و کنترل معوقات پیش از تسویه‌حساب.", component: "LoanInstallmentsScreen", roles: ["admin", "hr_manager", "hr_spec"] },
       { key: "retirementFiles", order: 3, icon: "hourglass", titleFa: "پرونده‌های بازنشستگی", purposeFa: "شناسایی کارکنان مشمول بازنشستگی، تشکیل پرونده و هماهنگی با صندوق بازنشستگی و تأمین اجتماعی تا صدور حکم و تسویه.", component: "RetirementFilesScreen", roles: ["admin", "hr_manager", "hr_spec"] },
+      { key: "loanStatement", order: 4, icon: "file-invoice", titleFa: "صورت حساب وام‌ها", purposeFa: "مشاهدهٔ صورت حساب کامل هر وام: پرداخت یک‌بارهٔ تسهیلات، جدول اقساط ماهانه از تعداد اقساط، کارمزد، تاریخچهٔ کسر و مانده بدهی — با امکان ساخت جدول اقساط و گزارش‌گیری.", component: "LoanStatementScreen", roles: ["admin", "hr_manager", "hr_spec"] },
     ],
   },
   {

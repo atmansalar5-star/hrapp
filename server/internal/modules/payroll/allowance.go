@@ -213,6 +213,9 @@ func activeAllowanceAssignments(ctx context.Context, svc *recordkit.Service) []r
 			Formula:       strings.TrimSpace(f["formula"]),
 			Taxable:       boolField(f["taxable"]),
 			Insured:       boolField(f["insured"]),
+			ShowOnPayslip: boolFieldOrEmpty(f["showOnPayslip"]),
+			ShowInReports: boolFieldOrEmpty(f["showInReports"]),
+			ReportCode:    strings.TrimSpace(f["reportCode"]),
 			Target:        rules.AllowanceTarget{Kind: strings.TrimSpace(f["targetKind"]), Value: strings.TrimSpace(f["targetValue"])},
 			EffectiveFrom: strings.TrimSpace(f["effectiveFrom"]),
 			EffectiveTo:   strings.TrimSpace(f["effectiveTo"]),
@@ -224,19 +227,35 @@ func activeAllowanceAssignments(ctx context.Context, svc *recordkit.Service) []r
 }
 
 // allowanceAssignmentBlock بلوک تخصیص‌ها برای پاسخ مسیر یکپارچهٔ فیش.
+//
+// `lines` همهٔ سطرهای تخصیص‌یافته است و `payslipLines` فقط آنها که در فرم «نمایش در فیش
+// حقوقی» دارند؛ تصمیم نمایش در خود سند تخصیص ثبت شده و اینجا فقط اجرا می‌شود.
 func allowanceAssignmentBlock(ctx context.Context, deps modulekit.Deps, svc *recordkit.Service, employeeID, period string) map[string]any {
 	view, ok := allowanceEmployeeView(ctx, deps, oilPayParams(deps, nil), employeeID)
 	if !ok {
-		return map[string]any{"lines": []rules.AllowanceLine{}, "totals": rules.AllowanceTotals{}}
+		return map[string]any{"lines": []rules.AllowanceLine{}, "payslipLines": []rules.AllowanceLine{},
+			"reportLines": []rules.AllowanceLine{}, "totals": rules.AllowanceTotals{}}
 	}
 	bases := allowanceBases(view, deps, nil)
 	lines := rules.ResolveAllowanceAssignments(activeAllowanceAssignments(ctx, svc), view,
 		rules.AllowanceEnv{Bases: bases, Period: period})
 	return map[string]any{
-		"lines":  lines,
-		"totals": rules.SumAllowanceLines(lines),
-		"bases":  bases,
+		"lines":        lines,
+		"payslipLines": rules.AllowancePayslipLines(lines),
+		"reportLines":  rules.AllowanceReportLines(lines),
+		"totals":       rules.SumAllowanceLines(lines),
+		"bases":        bases,
+		"noteFa": "هر قلم تخصیص می‌گوید در فیش حقوقی دیده شود یا نه و در گزارش‌های چاپی " +
+			"درج شود یا نه؛ «کد گزارش» همان کد رسمی گزارش (کدال) است.",
 	}
+}
+
+// boolFieldOrEmpty خواندن پرچم بله/خیر با پیش‌فرض «بله» برای مقدار خالی.
+func boolFieldOrEmpty(raw string) bool {
+	if strings.TrimSpace(raw) == "" {
+		return true
+	}
+	return boolField(raw)
 }
 
 // boolField فیلد بله/خیر رکورد را می‌خواند (بله/yes/true/1).

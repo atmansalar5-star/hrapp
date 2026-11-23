@@ -198,6 +198,12 @@ type AllowanceAssignment struct {
 	// Taxable مشمول مالیات و Insured مشمول بیمه/بازنشستگی.
 	Taxable bool `json:"taxable"`
 	Insured bool `json:"insured"`
+	// ShowOnPayslip نمایش این قلم در فیش حقوقی و ShowInReports درج آن در گزارش‌های چاپی.
+	// خالی‌بودن در فرم یعنی «بله» (رفتار گذشته حفظ می‌شود).
+	ShowOnPayslip bool `json:"showOnPayslip"`
+	ShowInReports bool `json:"showInReports"`
+	// ReportCode کد گزارش (کدال / کد رسمی گزارش سازمان) برای درج در گزارش‌های رسمی.
+	ReportCode string `json:"reportCode,omitempty"`
 	// Target دامنهٔ اثر: یک کارمند یا گروهی از کارکنان.
 	Target AllowanceTarget `json:"target"`
 	// EffectiveFrom ماه شروع (YYYY/MM) و EffectiveTo ماه پایان (خالی = تا اطلاع).
@@ -216,22 +222,25 @@ type AllowanceEnv struct {
 
 // AllowanceLine سطر نتیجهٔ یک تخصیص برای یک کارمند.
 type AllowanceLine struct {
-	Code         string  `json:"code"`
-	TitleFa      string  `json:"titleFa"`
-	Category     string  `json:"category"`
-	CategoryFa   string  `json:"categoryFa"`
-	Calc         string  `json:"calc"`
-	CalcFa       string  `json:"calcFa"`
-	Amount       int64   `json:"amount"`
-	Rate         float64 `json:"rate,omitempty"`
-	Basis        string  `json:"basis,omitempty"`
-	BasisFa      string  `json:"basisFa,omitempty"`
-	Taxable      bool    `json:"taxable"`
-	Insured      bool    `json:"insured"`
-	Resolved     bool    `json:"resolved"`
-	SourceFa     string  `json:"sourceFa"`
-	AssignmentID string  `json:"assignmentId,omitempty"`
-	DetailFa     string  `json:"detailFa,omitempty"`
+	Code          string  `json:"code"`
+	TitleFa       string  `json:"titleFa"`
+	Category      string  `json:"category"`
+	CategoryFa    string  `json:"categoryFa"`
+	Calc          string  `json:"calc"`
+	CalcFa        string  `json:"calcFa"`
+	Amount        int64   `json:"amount"`
+	Rate          float64 `json:"rate,omitempty"`
+	Basis         string  `json:"basis,omitempty"`
+	BasisFa       string  `json:"basisFa,omitempty"`
+	Taxable       bool    `json:"taxable"`
+	Insured       bool    `json:"insured"`
+	ShowOnPayslip bool    `json:"showOnPayslip"`
+	ShowInReports bool    `json:"showInReports"`
+	ReportCode    string  `json:"reportCode,omitempty"`
+	Resolved      bool    `json:"resolved"`
+	SourceFa      string  `json:"sourceFa"`
+	AssignmentID  string  `json:"assignmentId,omitempty"`
+	DetailFa      string  `json:"detailFa,omitempty"`
 }
 
 // ValidateAllowanceAssignment ورودی یک تخصیص را می‌سنجد و خطاهای فیلدبه‌فیلد می‌دهد.
@@ -294,6 +303,11 @@ func ValidateAllowanceAssignment(in AllowanceAssignment) map[string]string {
 	if to := strings.TrimSpace(in.EffectiveTo); to != "" && !isMonthText(to) {
 		errs["effectiveTo"] = "ماه پایان اعتبار باید به قالب YYYY/MM باشد."
 	}
+	// کد گزارش (کدال/کد رسمی گزارش) اختیاری است؛ اگر آمد باید کوتاه و ماشین‌خوان باشد
+	// تا در گزارش رسمی بی‌ابهام درج شود.
+	if code := strings.TrimSpace(in.ReportCode); code != "" && !isReportCodeText(code) {
+		errs["reportCode"] = "کد گزارش باید فقط حرف و رقم باشد (حداکثر ۲۰ نویسه)."
+	}
 
 	kind := strings.TrimSpace(in.Target.Kind)
 	if kind == "" {
@@ -346,7 +360,13 @@ type AllowanceTotals struct {
 	TaxableEarnings int64 `json:"taxableEarnings"`
 	InsuredEarnings int64 `json:"insuredEarnings"`
 	TaxableDeduct   int64 `json:"taxableDeductions"`
-	Lines           int   `json:"lines"`
+	// PayslipEarnings/PayslipDeductions جمع اقلامی که در فیش حقوقی نمایش داده می‌شوند.
+	PayslipEarnings   int64 `json:"payslipEarnings"`
+	PayslipDeductions int64 `json:"payslipDeductions"`
+	// ReportEarnings/ReportDeductions جمع اقلامی که در گزارش‌های چاپی درج می‌شوند.
+	ReportEarnings   int64 `json:"reportEarnings"`
+	ReportDeductions int64 `json:"reportDeductions"`
+	Lines            int   `json:"lines"`
 }
 
 // SumAllowanceLines جمع سطرها را می‌سازد.
@@ -359,6 +379,12 @@ func SumAllowanceLines(lines []AllowanceLine) AllowanceTotals {
 			if l.Taxable {
 				t.TaxableDeduct += l.Amount
 			}
+			if l.ShowOnPayslip {
+				t.PayslipDeductions += l.Amount
+			}
+			if l.ShowInReports {
+				t.ReportDeductions += l.Amount
+			}
 			continue
 		}
 		t.Earnings += l.Amount
@@ -368,8 +394,39 @@ func SumAllowanceLines(lines []AllowanceLine) AllowanceTotals {
 		if l.Insured {
 			t.InsuredEarnings += l.Amount
 		}
+		if l.ShowOnPayslip {
+			t.PayslipEarnings += l.Amount
+		}
+		if l.ShowInReports {
+			t.ReportEarnings += l.Amount
+		}
 	}
 	return t
+}
+
+// AllowancePayslipLines سطرهایی که باید روی فیش حقوقی دیده شوند.
+//
+// چرا جدا: تخصیص می‌تواند برای گزارش‌های مالی و رسمی فعال باشد ولی روی فیش کارمند نیاید
+// (مثل اقلام رفاهی که سازمان نخواهد در فیش چاپ شود)؛ این فیلتر همان تصمیم فرم است.
+func AllowancePayslipLines(lines []AllowanceLine) []AllowanceLine {
+	out := []AllowanceLine{}
+	for _, l := range lines {
+		if l.ShowOnPayslip {
+			out = append(out, l)
+		}
+	}
+	return out
+}
+
+// AllowanceReportLines سطرهایی که در گزارش‌های چاپی/رسمی درج می‌شوند.
+func AllowanceReportLines(lines []AllowanceLine) []AllowanceLine {
+	out := []AllowanceLine{}
+	for _, l := range lines {
+		if l.ShowInReports {
+			out = append(out, l)
+		}
+	}
+	return out
 }
 
 // allowanceInWindow آیا ماه محاسبه در پنجرهٔ اعتبار تخصیص است.
@@ -446,16 +503,19 @@ func resolveAllowanceAssignment(a AllowanceAssignment, env AllowanceEnv) Allowan
 		}
 	}
 	line := AllowanceLine{
-		Code:         strings.TrimSpace(a.Code),
-		TitleFa:      title,
-		Category:     category,
-		CategoryFa:   CategoryFa(category),
-		Calc:         strings.TrimSpace(a.Calc),
-		CalcFa:       AllowanceCalcTitleFa(a.Calc),
-		Taxable:      a.Taxable,
-		Insured:      a.Insured,
-		AssignmentID: a.ID,
-		SourceFa:     "تخصیص " + a.Target.Kind + ": " + a.Target.Value,
+		Code:          strings.TrimSpace(a.Code),
+		TitleFa:       title,
+		Category:      category,
+		CategoryFa:    CategoryFa(category),
+		Calc:          strings.TrimSpace(a.Calc),
+		CalcFa:        AllowanceCalcTitleFa(a.Calc),
+		Taxable:       a.Taxable,
+		Insured:       a.Insured,
+		ShowOnPayslip: a.ShowOnPayslip,
+		ShowInReports: a.ShowInReports,
+		ReportCode:    strings.TrimSpace(a.ReportCode),
+		AssignmentID:  a.ID,
+		SourceFa:      "تخصیص " + a.Target.Kind + ": " + a.Target.Value,
 	}
 	if a.Target.Kind == AllowanceTargetAll {
 		line.SourceFa = "تخصیص برای همهٔ کارکنان"
@@ -524,6 +584,25 @@ func trialFormulaVars(expr string) map[string]float64 {
 		out[name] = 1
 	}
 	return out
+}
+
+// isReportCodeText آیا متن یک کد گزارش معتبر است (حرف/رقم لاتین یا فارسی، حداکثر ۲۰ نویسه).
+func isReportCodeText(raw string) bool {
+	value := normalizeAllowanceDigits(strings.TrimSpace(raw))
+	if value == "" || len([]rune(value)) > 20 {
+		return false
+	}
+	for _, r := range value {
+		switch {
+		case r >= '0' && r <= '9':
+		case r >= 'a' && r <= 'z':
+		case r >= 'A' && r <= 'Z':
+		case r == '-' || r == '_' || r == '.':
+		default:
+			return false
+		}
+	}
+	return true
 }
 
 // isPositiveNumberText آیا متن یک عدد مثبت است.

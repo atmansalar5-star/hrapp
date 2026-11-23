@@ -828,6 +828,42 @@ function pbmPayrollSlipHtml(slip) {
   return totals + liveTable(['شرح', 'مبلغ (ریال)'], rows, rows.length);
 }
 
+/** بلوک وام‌ها در فیش: پرداخت یک‌بارهٔ تسهیلات، قسط همین ماه، کد رسمی و مانده بدهی. */
+function pbmLoansHtml(r) {
+  const loans = (r && r.loans) || {};
+  const lines = loans.lines || [];
+  const disb = loans.disbursements || [];
+  const totals = loans.totals || {};
+  if (!lines.length && !disb.length) return '';
+  const rows = lines.map(l => `<tr>
+      <td class="num ltr">${esc(l.loanId)}</td>
+      <td>${esc(l.titleFa || '')}</td>
+      <td class="num">${pbmMoney(l.installmentAmount)}</td>
+      <td class="num">${l.seq ? pbmMoney(l.dueAmount) : '—'}</td>
+      <td class="num ltr">${esc(l.codeFa || '—')}</td>
+      <td class="num">${pbmMoney(l.balance ? l.balance.remainingDebt : 0)}</td>
+      <td class="muted" style="font-size:.72rem">${esc(l.periodStatusFa || '')}</td>
+    </tr>`);
+  const disbRows = disb.map(d => `<tr>
+      <td class="num ltr">${esc(d.loanId)}</td>
+      <td>${esc(d.titleFa || '')}</td>
+      <td class="num ltr">${esc(d.codeFa || '—')}</td>
+      <td class="num">${pbmMoney(d.amount)}</td>
+      <td>${esc(d.dateFa || '')}</td>
+    </tr>`);
+  const disbBlock = disbRows.length
+    ? '<div style="font-weight:600;margin:8px 0 4px">پرداخت یک‌بارهٔ تسهیلات در این ماه</div>' +
+      liveTable(['شناسهٔ وام', 'عنوان', 'کد پرداخت', 'مبلغ (ریال)', 'تاریخ'], disbRows, disbRows.length)
+    : '';
+  return `<div class="card card-pad" style="margin-bottom:10px">
+      <div style="font-weight:600;margin-bottom:6px">وام‌ها و اقساط این ماه</div>` +
+    liveTable(['شناسهٔ وام', 'عنوان', 'مبلغ هر قسط', 'قسط این ماه', 'کد رسمی', 'مانده بدهی', 'وضعیت'],
+      rows, rows.length) + disbBlock +
+    `<div class="muted" style="font-size:.73rem;margin-top:6px">جمع اقساط کسرشده: ${pbmMoney(totals.deducted || 0)} ریال —
+       جمع مانده بدهی: ${pbmMoney(totals.remainingDebt || 0)} ریال. ${esc(loans.noteFa || '')}</div>
+    </div>`;
+}
+
 /** فیش هر موتور را با همان ساختار خودش نشان می‌دهد. */
 function pbmSlipHtml(r) {
   const slip = r.slip || {};
@@ -859,7 +895,7 @@ async function pbmRun() {
       ${liveWarnBox(r.notesFa || [])}
       <div class="muted" style="font-size:.73rem">فیش بر پایهٔ روش پرداخت همین کارمند ساخته شد؛
         محاسبه و درصدها همه از سرور آمده‌اند.</div>
-    </div>` + pbmSlipHtml(r);
+    </div>` + pbmSlipHtml(r) + pbmLoansHtml(r);
 }
 
 /** اتصال رویدادها (بدون هندلر درون‌خطی — سقف امنیتی رابط رعایت می‌شود). */

@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+
+	"hrms/internal/contracts"
 )
 
 // allowancePreviewAnswer پاسخ پیش‌نمایش تخصیص.
@@ -225,5 +227,91 @@ func TestASG07AssignmentRecordValidation(t *testing.T) {
 	}
 	if !strings.Contains(rec.Body.String(), "fields.code") {
 		t.Fatalf("خطا باید روی فیلد کد باشد: %s", rec.Body.String())
+	}
+}
+
+// TestASG11PayslipVisibility می‌سنجد جای نمایش هر قلم تخصیص (فیش حقوقی / گزارش چاپی / کد
+// گزارش) در بلوک فیش رعایت می‌شود: قلمی که «نمایش در فیش» ندارد از سطرهای فیش کنار گذاشته
+// می‌شود ولی در گزارش‌های چاپی می‌آید.
+func TestASG11PayslipVisibility(t *testing.T) {
+	h := newTestServer(t)
+	manager := login(t, h, "hr.manager", "demo")
+
+	created := call(t, h, http.MethodPost, "/api/v1/payroll/records", manager.AccessToken, map[string]any{
+		"kind": "allowanceAssignment", "title": "پاداش نوروزی — فقط گزارش",
+		"fields": map[string]string{
+			"code": "364", "calc": "fixed", "rate": "5000000",
+			"taxable": "خیر", "insured": "خیر",
+			"showOnPayslip": "خیر", "showInReports": "بله", "reportCode": "364-R",
+			"targetKind": "employee", "targetValue": "EMP-001",
+			"effectiveFrom": "1405/01",
+		},
+	})
+	if created.Code != http.StatusCreated && created.Code != http.StatusOK {
+		t.Fatalf("ثبت تخصیص باید ۲۰۱ بدهد، %d داد: %s", created.Code, created.Body.String())
+	}
+	var record contracts.Record
+	decodeInto(t, created, &record)
+	// پرچم‌ها در رکورد ذخیره شده‌اند.
+	if record.Fields["showOnPayslip"] != "خیر" || record.Fields["showInReports"] != "بله" {
+		t.Fatalf("پرچم‌های نمایش ذخیره نشدند: %+v", record.Fields)
+	}
+	if record.Fields["reportCode"] != "364-R" {
+		t.Fatalf("کد گزارش ذخیره نشد: %+v", record.Fields)
+	}
+	act := call(t, h, http.MethodPost, "/api/v1/payroll/records/"+record.ID+"/action",
+		manager.AccessToken, map[string]any{"action": "activate"})
+	if act.Code != http.StatusOK {
+		t.Fatalf("فعال‌سازی باید ۲۰۰ بدهد، %d داد: %s", act.Code, act.Body.String())
+	}
+
+	slip := call(t, h, http.MethodPost, "/api/v1/payroll/payslip", manager.AccessToken,
+		map[string]any{"employeeId": "EMP-001"})
+	if slip.Code != http.StatusOK {
+		t.Fatalf("فیش باید ۲۰۰ بدهد، %d داد: %s", slip.Code, slip.Body.String())
+	}
+	type line struct {
+		Code          string `json:"code"`
+		ShowOnPayslip bool   `json:"showOnPayslip"`
+		ShowInReports bool   `json:"showInReports"`
+		ReportCode    string `json:"reportCode"`
+	}
+	var answer struct {
+		Assignments struct {
+			Lines        []line `json:"lines"`
+			PayslipLines []line `json:"payslipLines"`
+			ReportLines  []line `json:"reportLines"`
+		} `json:"assignments"`
+	}
+	decodeInto(t, slip, &answer)
+
+	inLines, inPayslip, inReport := false, false, false
+	for _, l := range answer.Assignments.Lines {
+		if l.Code != "364" {
+			continue
+		}
+		inLines = true
+		if l.ShowOnPayslip || !l.ShowInReports || l.ReportCode != "364-R" {
+			t.Fatalf("پرچم‌های قلم ۳۶۴ در بلوک فیش درست نیست: %+v", l)
+		}
+	}
+	for _, l := range answer.Assignments.PayslipLines {
+		if l.Code == "364" {
+			inPayslip = true
+		}
+	}
+	for _, l := range answer.Assignments.ReportLines {
+		if l.Code == "364" {
+			inReport = true
+		}
+	}
+	if !inLines {
+		t.Fatalf("قلم ۳۶۴ باید در سطرهای تخصیص باشد: %+v", answer.Assignments.Lines)
+	}
+	if inPayslip {
+		t.Fatal("قلمی که «نمایش در فیش» ندارد نباید در سطرهای فیش بیاید")
+	}
+	if !inReport {
+		t.Fatal("قلمی که «درج در گزارش» دارد باید در سطرهای گزارش باشد")
 	}
 }

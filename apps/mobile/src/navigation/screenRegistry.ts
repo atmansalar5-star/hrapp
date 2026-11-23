@@ -162,6 +162,7 @@ import JobQualificationScreen from '../features/jobclass/JobQualificationScreen'
 import LoansScreen from '../features/loans_retirement/LoansScreen';
 import LoanInstallmentsScreen from '../features/loans_retirement/LoanInstallmentsScreen';
 import RetirementFilesScreen from '../features/loans_retirement/RetirementFilesScreen';
+import LoanStatementScreen from '../features/loans_retirement/LoanStatementScreen';
 
 // واحد روابط کار و مددکاری اجتماعی — شکایات و امور ایثارگران
 import ComplaintsScreen from '../features/grievances/ComplaintsScreen';
@@ -307,6 +308,7 @@ export const SCREEN_REGISTRY: Record<string, ComponentType> = {
   LoansScreen,
   LoanInstallmentsScreen,
   RetirementFilesScreen,
+  LoanStatementScreen,
   ComplaintsScreen,
   VeteransAffairsScreen,
   StatsOverviewScreen,

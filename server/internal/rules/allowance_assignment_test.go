@@ -198,3 +198,48 @@ func TestASG04Validation(t *testing.T) {
 		}
 	}
 }
+
+// TestASG10ReportingFlags می‌سنجد جای نمایش هر قلم تخصیص (فیش حقوقی، گزارش‌های چاپی و کد
+// گزارش رسمی) در محاسبه و جمع‌ها رعایت می‌شود و کد گزارش نامعتبر رد می‌شود.
+func TestASG10ReportingFlags(t *testing.T) {
+	employee := AllowanceEmployee{ID: "EMP-001"}
+	assignments := []AllowanceAssignment{
+		{ID: "A1", Code: "151", TitleFa: "مسکن", Category: AllowanceCategoryEarning,
+			Calc: AllowanceCalcFixed, Rate: "9000000", ShowOnPayslip: true, ShowInReports: false,
+			ReportCode: "151-R", Target: AllowanceTarget{Kind: AllowanceTargetAll}, EffectiveFrom: "1405/01"},
+		{ID: "A2", Code: "5400", TitleFa: "کسر اقساط وام اضطراری", Category: AllowanceCategoryDeduction,
+			Calc: AllowanceCalcFixed, Rate: "2000000", ShowOnPayslip: false, ShowInReports: true,
+			ReportCode: "5400-R", Target: AllowanceTarget{Kind: AllowanceTargetAll}, EffectiveFrom: "1405/01"},
+	}
+	lines := ResolveAllowanceAssignments(assignments, employee, AllowanceEnv{Period: "1405/02"})
+	if len(lines) != 2 {
+		t.Fatalf("دو تخصیص باید دو سطر بدهد: %+v", lines)
+	}
+	if lines[0].ReportCode != "151-R" || !lines[0].ShowOnPayslip || lines[0].ShowInReports {
+		t.Fatalf("پرچم‌های نمایش سطر اول درست منتقل نشده: %+v", lines[0])
+	}
+	totals := SumAllowanceLines(lines)
+	if totals.PayslipEarnings != 9_000_000 || totals.ReportEarnings != 0 {
+		t.Fatalf("جمع مزایای فیش/گزارش درست نیست: %+v", totals)
+	}
+	if totals.PayslipDeductions != 0 || totals.ReportDeductions != 2_000_000 {
+		t.Fatalf("جمع کسور فیش/گزارش درست نیست: %+v", totals)
+	}
+	if payslip := AllowancePayslipLines(lines); len(payslip) != 1 || payslip[0].Code != "151" {
+		t.Fatalf("سطرهای فیش باید فقط اقلام «نمایش در فیش» باشند: %+v", payslip)
+	}
+	if reports := AllowanceReportLines(lines); len(reports) != 1 || reports[0].Code != "5400" {
+		t.Fatalf("سطرهای گزارش باید فقط اقلام «درج در گزارش» باشند: %+v", reports)
+	}
+
+	base := AllowanceAssignment{Code: "151", Calc: AllowanceCalcFixed, Rate: "1",
+		Target: AllowanceTarget{Kind: AllowanceTargetAll}, EffectiveFrom: "1405/01"}
+	base.ReportCode = "151-R"
+	if errs := ValidateAllowanceAssignment(base); len(errs) != 0 {
+		t.Fatalf("کد گزارش معتبر نباید خطا بدهد: %+v", errs)
+	}
+	base.ReportCode = "کد نادرست!"
+	if errs := ValidateAllowanceAssignment(base); errs["reportCode"] == "" {
+		t.Fatalf("کد گزارش نامعتبر باید رد شود: %+v", errs)
+	}
+}
